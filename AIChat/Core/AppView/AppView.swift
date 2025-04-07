@@ -7,17 +7,17 @@
 
 import SwiftUI
 
-// tabbar - signed in
+// tabBar - signed in
 // onboarding - signed out
 
 struct AppView: View {
     
-    @AppStorage("showTabbarView") var showTabBar: Bool = false
+    @AppStorage("showTabBarView") var showTabBar: Bool = false
     
     var body: some View {
         AppViewBuilder(
             showTabBar: showTabBar,
-            tabbarView: {
+            tabBarView: {
                 ZStack {
                     Color.red.ignoresSafeArea()
                     Text("TabBar!")
@@ -35,7 +35,7 @@ struct AppView: View {
     }
 }
 
-#Preview("AppView - Tabbar") {
+#Preview("AppView - TabBar") {
     AppView(showTabBar: true)
 }
 

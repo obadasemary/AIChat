@@ -7,16 +7,16 @@
 
 import SwiftUI
 
-struct AppViewBuilder<TabbarView: View, OnboardingView: View>: View {
+struct AppViewBuilder<TabBarView: View, OnboardingView: View>: View {
     
     var showTabBar: Bool = false
-    @ViewBuilder var tabbarView: TabbarView
+    @ViewBuilder var tabBarView: TabBarView
     @ViewBuilder var onboardingView: OnboardingView
     
     var body: some View {
         ZStack {
             if showTabBar {
-                tabbarView
+                tabBarView
                     .transition(.move(edge: .trailing))
             } else {
                 onboardingView
@@ -34,7 +34,7 @@ private struct PreviewView: View {
     var body: some View {
         AppViewBuilder(
             showTabBar: showTabBar,
-            tabbarView: {
+            tabBarView: {
                 ZStack {
                     Color.red.ignoresSafeArea()
                     Text("TabBar!")
