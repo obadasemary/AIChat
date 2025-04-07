@@ -22,12 +22,7 @@ struct ProfileView: View {
                 }
         }
         .sheet(isPresented: $showSettingsView) {
-            ZStack {
-                Color.orange.ignoresSafeArea()
-                Text("SettingsView")
-                    .foregroundStyle(.white)
-                    .font(.largeTitle)
-            }
+            SettingsView()
         }
     }
     
@@ -47,4 +42,5 @@ struct ProfileView: View {
 
 #Preview {
     ProfileView()
+        .environment(AppState())
 }
