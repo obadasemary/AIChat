@@ -1,14 +1,77 @@
-line_length:
-  warning: 300  # Set a warning when lines exceed 300 characters
-type_body_length:
-  warning: 500  # Set a warning when a type body exceeds 500 lines
-file_length:
-  warning: 750  # Set a warning when a file exceeds 750 lines
-
 disabled_rules:
+  - unused_closure_parameter
+  - closure_parameter_position
+  - discarded_notification_center_observer
+  - notification_center_detachment
   - trailing_whitespace
+  - identifier_name
+  - mark
+  - opening_brace
+  - multiple_closures_with_trailing_closure
+  - colon
+  - trailing_newline
+  - closure_spacing
+  - valid_ibinspectable
+  - object_literal
+  - type_name
+  - for_where
+  - nesting
+  - comment_spacing
+  - prohibited_super_call
+  - implicitly_unwrapped_optional
+  - inclusive_language
+  
+opt_in_rules:
+  - empty_count
+  - vertical_whitespace
+  - redundant_nil_coalescing
+  - multiline_parameters
+  - force_unwrapping
+  - private_action
+  - overridden_super_call
 
-excluded:
-  - .git
-  - Pods
+excluded: # paths to ignore during linting.
   - Carthage
+  - Pods
+  - Library/External
+  - Libraries/Breadfast/BreadfastAPI/BreadfastAPI/Classes/GraphQL
+  - Libraries/Breadfast/BreadfastAnalyticsHelper
+
+type_body_length:
+  - 400
+  - 400
+
+function_body_length:
+  - 50
+  - 50
+
+line_length:
+  - 400
+  - 400
+
+function_parameter_count:
+  - 5
+  - 5
+
+cyclomatic_complexity:
+  - 13
+  - 13
+
+force_unwrapping:
+  severity: error
+
+force_try:
+  severity: error
+
+overridden_super_call:
+  severity: error
+
+private_action:
+  severity: error
+
+multiline_parameters:
+  severity: error
+
+reporter: "xcode" # reporter type (xcode, json, csv, checkstyle)
+
+warning_threshold: 100
