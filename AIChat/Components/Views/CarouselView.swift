@@ -12,6 +12,7 @@ struct CarouselView<Content: View, T: Hashable>: View {
     var items: [T]
     @ViewBuilder var content: (T) -> Content
     @State private var selection: T?
+    @State private var timer: Timer?
     
     var body: some View {
         VStack(spacing: 12) {
@@ -46,6 +47,10 @@ struct CarouselView<Content: View, T: Hashable>: View {
             })
             .onAppear {
                 updateSelectionIfNeeded()
+                startAutoScroll()
+            }
+            .onDisappear {
+                stopAutoScroll()
             }
             
             HStack(spacing: 8) {
@@ -65,6 +70,29 @@ struct CarouselView<Content: View, T: Hashable>: View {
         if selection == nil || selection == items.last {
             selection = items.first
         }
+    }
+    
+    private func startAutoScroll() {
+        stopAutoScroll()
+        timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
+            DispatchQueue.main.async {
+                guard let current = selection, let currentIndex = items.firstIndex(of: current) else {
+                    selection = items.first
+                    return
+                }
+                
+                let nextIndex = (currentIndex + 1) % items.count
+                let nextItem = items[nextIndex]
+                withAnimation {
+                    selection = nextItem
+                }
+            }
+        }
+    }
+
+    private func stopAutoScroll() {
+        timer?.invalidate()
+        timer = nil
     }
 }
 
