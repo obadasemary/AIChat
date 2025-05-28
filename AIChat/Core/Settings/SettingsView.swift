@@ -74,7 +74,7 @@ struct SettingsView: View {
             HStack(spacing: 8) {
                 Text("Version")
                 Spacer(minLength: 0)
-                Text("1.0.0")
+                Text(Utilities.appVersion ?? "")
                     .foregroundStyle(.secondary)
             }
             .rowFormatting()
@@ -83,7 +83,7 @@ struct SettingsView: View {
             HStack(spacing: 8) {
                 Text("Build Number")
                 Spacer(minLength: 0)
-                Text("3")
+                Text(Utilities.buildNumber ?? "")
                     .foregroundStyle(.secondary)
             }
             .rowFormatting()
