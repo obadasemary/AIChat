@@ -13,6 +13,8 @@ struct SettingsView: View {
     @Environment(AppState.self) private var appState
     
     @State private var isPremium: Bool = false
+    @State private var isAnonymousUser: Bool = true
+    @State private var showCreateAccountView: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -22,17 +24,30 @@ struct SettingsView: View {
                 applicationSection
             }
             .navigationTitle("Settings")
+            .sheet(isPresented: $showCreateAccountView) {
+                CreateAccountView()
+                    .presentationDetents([.medium])
+            }
         }
     }
     
     private var accountSection: some View {
         Section {
-            Text("Sign Out")
-                .rowFormatting()
-                .anyButton(.highlight) {
-                    onSignOutPressed()
-                }
-                .removeListRowFormatting()
+            if isAnonymousUser {
+                Text("Save & Backup Account")
+                    .rowFormatting()
+                    .anyButton(.highlight) {
+                        onCreateAccountPressed()
+                    }
+                    .removeListRowFormatting()
+            } else {
+                Text("Sign Out")
+                    .rowFormatting()
+                    .anyButton(.highlight) {
+                        onSignOutPressed()
+                    }
+                    .removeListRowFormatting()
+            }
             
             Text("Delete Account")
                 .foregroundStyle(.red)
@@ -112,6 +127,10 @@ struct SettingsView: View {
             try? await Task.sleep(for: .seconds(1))
             appState.updateViewState(showTabBarView: false)
         }
+    }
+    
+    func onCreateAccountPressed() {
+        showCreateAccountView = true
     }
 }
 
