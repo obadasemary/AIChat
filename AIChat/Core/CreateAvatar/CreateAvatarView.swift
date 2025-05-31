@@ -8,8 +8,27 @@
 import SwiftUI
 
 struct CreateAvatarView: View {
+    
+    @Environment(\.dismiss) private var dismiss
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack {
+            List {
+                
+            }
+            .navigationTitle("Create Avatar")
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Image(systemName: "xmark")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .anyButton(.plain) {
+                            dismiss()
+                        }
+                        .foregroundStyle(.accent)
+                }
+            }
+        }
     }
 }
 
