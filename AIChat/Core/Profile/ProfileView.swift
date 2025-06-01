@@ -65,6 +65,7 @@ struct ProfileView: View {
                 Group {
                     if isLoading {
                         ProgressView()
+                            .tint(.accent)
                     } else {
                         Text("Click + to create your first avatar")
                     }
