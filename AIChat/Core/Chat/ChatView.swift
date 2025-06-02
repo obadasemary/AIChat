@@ -78,6 +78,23 @@ struct ChatView: View {
             .padding(.vertical, 6)
             .background(Color(uiColor: .secondarySystemBackground))
     }
+    
+    private func onSendMessageTapped() {
+        guard !textFieldText.isEmpty, let currentUser else { return }
+        
+        let content = textFieldText
+        
+        let message = ChatMessageModel(
+            id: UUID().uuidString,
+            chatId: UUID().uuidString,
+            authorId: currentUser.userId,
+            content: content,
+            seenByIds: nil,
+            dateCreated: .now
+        )
+        
+        chatMessages.append(message)
+        textFieldText = ""
     }
 }
 
