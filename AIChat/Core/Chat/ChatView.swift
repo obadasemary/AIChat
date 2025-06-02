@@ -16,27 +16,39 @@ struct ChatView: View {
     
     var body: some View {
         VStack(spacing: .zero) {
-            ScrollView {
-                LazyVStack(spacing: 24) {
-                    ForEach(chatMessages) { message in
-                        let isCurrentUser = message.authorId == currentUser?.userId
-                        ChatBubbleViewBuilder(
-                            message: message,
-                            isCurrentUser: isCurrentUser,
-                            imageName: nil
-                        )
+            scrollViewSection
             textFieldSection
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                .padding(8)
-            }
-            
-            Rectangle()
-                .frame(height: 50)
         }
         .navigationTitle(avatar?.name ?? "Chat")
         .toolbarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Image(systemName: "ellipsis")
+                    .padding(8)
+                    .anyButton {
+                        
+                    }
+            }
+        }
+    }
+    
+    private var scrollViewSection: some View {
+        ScrollView {
+            LazyVStack(spacing: 24) {
+                ForEach(chatMessages) { message in
+                    let isCurrentUser = message.authorId == currentUser?.userId
+                    ChatBubbleViewBuilder(
+                        message: message,
+                        isCurrentUser: isCurrentUser,
+                        imageName: nil
+                    )
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(8)
+        }
+    }
+    
     private var textFieldSection: some View {
         TextField("Type your message...", text: $textFieldText)
             .keyboardType(.alphabet)
