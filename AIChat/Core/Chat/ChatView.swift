@@ -31,6 +31,16 @@ struct ChatView: View {
                     }
             }
         }
+        .confirmationDialog("", isPresented: $showChatSettings) {
+            Button("Report User / Chat", role: .destructive) {
+                
+            }
+            Button("Delete Chat", role: .destructive) {
+                
+            }
+        } message: {
+            Text("What would you like to do?")
+        }
     }
     
     private var scrollViewSection: some View {
