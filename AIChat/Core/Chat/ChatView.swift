@@ -15,6 +15,8 @@ struct ChatView: View {
     @State private var textFieldText: String = ""
     
     @State private var showChatSettings: Bool = false
+    @State private var scrollPosition: String?
+    
     var body: some View {
         VStack(spacing: .zero) {
             scrollViewSection
@@ -53,6 +55,7 @@ struct ChatView: View {
                         isCurrentUser: isCurrentUser,
                         imageName: nil
                     )
+                    .id(message.id)
                 }
             }
             .frame(maxWidth: .infinity)
@@ -60,7 +63,9 @@ struct ChatView: View {
             .rotationEffect(.degrees(180))
         }
         .rotationEffect(.degrees(180))
+        .scrollPosition(id: $scrollPosition, anchor: .center)
         .animation(.default, value: chatMessages.count)
+        .animation(.default, value: scrollPosition)
     }
     
     private var textFieldSection: some View {
@@ -106,6 +111,8 @@ struct ChatView: View {
             seenByIds: nil,
             dateCreated: .now
         )
+        
+        scrollPosition = message.id
         
         chatMessages.append(message)
         textFieldText = ""
