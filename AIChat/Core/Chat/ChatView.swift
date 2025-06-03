@@ -14,6 +14,7 @@ struct ChatView: View {
     @State private var currentUser: UserModel? = .mock
     @State private var textFieldText: String = ""
     
+    @State private var showChatSettings: Bool = false
     var body: some View {
         VStack(spacing: .zero) {
             scrollViewSection
@@ -26,7 +27,7 @@ struct ChatView: View {
                 Image(systemName: "ellipsis")
                     .padding(8)
                     .anyButton {
-                        
+                        onChatSettingsTapped()
                     }
             }
         }
@@ -95,6 +96,10 @@ struct ChatView: View {
         
         chatMessages.append(message)
         textFieldText = ""
+    }
+    
+    private func onChatSettingsTapped() {
+        showChatSettings = true
     }
 }
 
