@@ -57,7 +57,10 @@ struct ChatView: View {
             }
             .frame(maxWidth: .infinity)
             .padding(8)
+            .rotationEffect(.degrees(180))
         }
+        .rotationEffect(.degrees(180))
+        .animation(.default, value: chatMessages.count)
     }
     
     private var textFieldSection: some View {
