@@ -18,6 +18,7 @@ struct ChatView: View {
     
     @State private var showAlert: AnyAppAlert?
     @State private var showChatSettings: AnyAppAlert?
+    @State private var showProfileModal: Bool = false
     
     var body: some View {
         VStack(spacing: .zero) {
@@ -37,6 +38,11 @@ struct ChatView: View {
         }
         .showCustomAlert(type: .confirmationDialog, alert: $showChatSettings)
         .showCustomAlert(alert: $showAlert)
+        .showModal(showModal: $showProfileModal) {
+            if let avatar {
+                profileModal(avatar: avatar)
+            }
+        }
     }
     
     private var scrollViewSection: some View {
@@ -47,7 +53,10 @@ struct ChatView: View {
                     ChatBubbleViewBuilder(
                         message: message,
                         isCurrentUser: isCurrentUser,
-                        imageName: nil
+                        imageName: isCurrentUser ? nil : avatar?.profileImageName,
+                        onImageTapped: {
+                            onAvatarImageTapped()
+                        }
                     )
                     .id(message.id)
                 }
@@ -90,6 +99,19 @@ struct ChatView: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
             .background(Color(uiColor: .secondarySystemBackground))
+    }
+    
+    private func profileModal(avatar: AvatarModel) -> some View {
+        ProfileModalView(
+            imageName: avatar.profileImageName,
+            title: avatar.name,
+            subtitle: avatar.characterOption?.rawValue.capitalized,
+            headline: avatar.characterDescription
+        ) {
+            showProfileModal = false
+        }
+        .padding()
+        .transition(.slide)
     }
     
     private func onSendMessageTapped() {
@@ -135,6 +157,10 @@ struct ChatView: View {
                 }
             )
         }
+    }
+    
+    private func onAvatarImageTapped() {
+        showProfileModal = true
     }
 }
 
