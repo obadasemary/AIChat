@@ -13,6 +13,8 @@ struct ChatBubbleViewBuilder: View {
     var isCurrentUser: Bool = false
     var imageName: String?
     
+    var onImageTapped: (() -> Void)?
+    
     var body: some View {
         ChatBubbleView(
             text: message.content ?? "",
@@ -21,7 +23,8 @@ struct ChatBubbleViewBuilder: View {
                 uiColor: .systemGray6
             ),
             showImage: !isCurrentUser,
-            imageName: imageName
+            imageName: imageName,
+            onImageTapped: onImageTapped
         )
         .frame(
             maxWidth: .infinity,

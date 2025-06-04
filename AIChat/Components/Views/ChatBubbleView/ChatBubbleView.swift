@@ -16,15 +16,23 @@ struct ChatBubbleView: View {
     var showImage: Bool = true
     var imageName: String? = nil
     
+    var onImageTapped: (() -> Void)?
+    
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
             if showImage {
                 ZStack {
                     if let imageName {
                         ImageLoaderView(urlString: imageName)
+                            .anyButton {
+                                onImageTapped?()
+                            }
                     } else {
                         Rectangle()
                             .fill(.secondary)
+                            .anyButton {
+                                onImageTapped?()
+                            }
                     }
                 }
                 .frame(width: 45, height: 45)
