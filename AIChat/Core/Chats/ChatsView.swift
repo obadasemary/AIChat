@@ -10,12 +10,23 @@ import SwiftUI
 struct ChatsView: View {
     
     @State private var chats: [ChatModel] = ChatModel.mocks
+    @State private var recentsAvatars: [AvatarModel] = AvatarModel.mocks
     
     @State private var path: [NavigationPathOption] = []
     
     var body: some View {
         NavigationStack(path: $path) {
             List {
+                if !recentsAvatars.isEmpty {
+                    recentsSection
+                }
+                chatsSection
+            }
+            .navigationTitle("Chats")
+            .navigationDestinationForCoreModule(path: $path)
+        }
+    }
+    
     private var recentsSection: some View {
         Section {
             ScrollView(.horizontal) {
@@ -47,6 +58,18 @@ struct ChatsView: View {
         }
 
     }
+    
+    private var chatsSection: some View {
+        Section {
+            if chats.isEmpty {
+                Text("Your chats will appear here...")
+                    .foregroundStyle(.secondary)
+                    .font(.title3)
+                    .frame(maxWidth: .infinity)
+                    .multilineTextAlignment(.center)
+                    .padding()
+                    .removeListRowFormatting()
+            } else {
                 ForEach(chats) { chat in
                     ChatRowCellViewBuilder(
                         currentUserId: nil, // FIXME: Add cuid
@@ -64,13 +87,17 @@ struct ChatsView: View {
                     .removeListRowFormatting()
                 }
             }
-            .navigationTitle("Chats")
-            .navigationDestinationForCoreModule(path: $path)
+        } header: {
+            Text("CHATS")
         }
     }
     
     private func onChatSelected(chat: ChatModel) {
         path.append(.chat(avatarId: chat.avatarId))
+    }
+    
+    private func onRecentsAvatarsTapped(avatar: AvatarModel) {
+        path.append(.chat(avatarId: avatar.avatarId))
     }
 }
 
