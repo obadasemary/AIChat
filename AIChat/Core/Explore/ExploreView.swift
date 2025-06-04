@@ -13,14 +13,17 @@ struct ExploreView: View {
     @State private var categories: [CharacterOption] = CharacterOption.allCases
     @State private var popularAvatars: [AvatarModel] = AvatarModel.mocks
     
+    @State private var path: [NavigationPathOption] = []
+    
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             List {
                 featuredSection
                 categoriesSection
                 popularSection
             }
             .navigationTitle("Explore")
+            .navigationDestinationForCoreModule(path: $path)
         }
     }
     
@@ -34,7 +37,7 @@ struct ExploreView: View {
                         imageName: avatar.profileImageName
                     )
                     .anyButton {
-                        
+                        onAvaterSelected(avatar: avatar)
                     }
                 }
             }
@@ -50,12 +53,19 @@ struct ExploreView: View {
                 ScrollView(.horizontal) {
                     HStack(spacing: 12) {
                         ForEach(categories, id: \.self) { category in
-                            CategoryCellView(
-                                title: category.plural.capitalized,
-                                imageName: Constants.randomImage
-                            )
-                            .anyButton {
-                                
+                            let imageName = popularAvatars
+                                .first(where: { $0.characterOption == category })?.profileImageName
+                            if let imageName {
+                                CategoryCellView(
+                                    title: category.plural.capitalized,
+                                    imageName: imageName
+                                )
+                                .anyButton {
+                                    onCategorySelected(
+                                        category: category,
+                                        imageName: imageName
+                                    )
+                                }
                             }
                         }
                     }
@@ -80,13 +90,30 @@ struct ExploreView: View {
                     subtitle: avatar.characterDescription
                 )
                 .anyButton(.highlight) {
-                    
+                    onAvaterSelected(avatar: avatar)
                 }
                 .removeListRowFormatting()
             }
         } header: {
             Text("Popular")
         }
+    }
+    
+    private func onAvaterSelected(avatar: AvatarModel) {
+        path.append(.chat(avatarId: avatar.avatarId))
+    }
+    
+    private func onCategorySelected(
+        category: CharacterOption,
+        imageName: String
+    ) {
+        path
+            .append(
+                .character(
+                    category: category,
+                    imageName: Constants.randomImage
+                )
+            )
     }
 }
 
