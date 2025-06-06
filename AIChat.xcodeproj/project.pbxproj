@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		AF2ECC132DE7D88A00BD1602 /* SwiftfulUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = AF2ECC122DE7D88A00BD1602 /* SwiftfulUtilities */; };
+		AF95B1772DF38774003D5BA0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = AF95B1762DF38774003D5BA0 /* FirebaseAuth */; };
 		AFA98BB32DA46E0600492141 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = AFA98BB22DA46E0600492141 /* SDWebImageSwiftUI */; };
 /* End PBXBuildFile section */
 
@@ -71,6 +72,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AFA98BB32DA46E0600492141 /* SDWebImageSwiftUI in Frameworks */,
+				AF95B1772DF38774003D5BA0 /* FirebaseAuth in Frameworks */,
 				AF2ECC132DE7D88A00BD1602 /* SwiftfulUtilities in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -135,6 +137,7 @@
 			packageProductDependencies = (
 				AFA98BB22DA46E0600492141 /* SDWebImageSwiftUI */,
 				AF2ECC122DE7D88A00BD1602 /* SwiftfulUtilities */,
+				AF95B1762DF38774003D5BA0 /* FirebaseAuth */,
 			);
 			productName = AIChat;
 			productReference = AF9034FB2DA3FDB000A35095 /* AIChat.app */;
@@ -221,6 +224,7 @@
 			packageReferences = (
 				AFA98BB12DA46E0600492141 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				AF2ECC112DE7D88A00BD1602 /* XCRemoteSwiftPackageReference "SwiftfulUtilities" */,
+				AF95B1752DF38774003D5BA0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = AF9034FC2DA3FDB000A35095 /* Products */;
@@ -659,6 +663,14 @@
 				minimumVersion = 1.1.6;
 			};
 		};
+		AF95B1752DF38774003D5BA0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.14.0;
+			};
+		};
 		AFA98BB12DA46E0600492141 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
@@ -674,6 +686,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AF2ECC112DE7D88A00BD1602 /* XCRemoteSwiftPackageReference "SwiftfulUtilities" */;
 			productName = SwiftfulUtilities;
+		};
+		AF95B1762DF38774003D5BA0 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AF95B1752DF38774003D5BA0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
 		};
 		AFA98BB22DA46E0600492141 /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
