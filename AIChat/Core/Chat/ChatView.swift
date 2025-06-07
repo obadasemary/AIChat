@@ -74,7 +74,7 @@ struct ChatView: View {
     }
     
     private var textFieldSection: some View {
-        TextField("Type your message...", text: $textFieldText)
+        TextField("Type your message...", text: $textFieldText, axis: .vertical)
             .keyboardType(.alphabet)
             .autocorrectionDisabled()
             .padding(12)
