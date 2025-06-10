@@ -8,6 +8,12 @@
 import FirebaseAuth
 import SwiftUI
 import SignInAppleAsync
+import SignInGoogleAsync
+import FirebaseCore
+
+// MARK: - Concurrency
+// GoogleSignInResult is only a pair of Strings, so we can safely mark it Sendable.
+extension GoogleSignInResult: @unchecked @retroactive Sendable {}
 
 extension EnvironmentValues {
     @Entry var authService: FirebaseAuthService = FirebaseAuthService()
@@ -27,7 +33,7 @@ struct FirebaseAuthService {
         return result.asAuthInfo
     }
     
-    func signInApple() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
+    func signInWithApple() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
         let helper = await SignInWithAppleHelper()
         let response = try await helper.signIn()
         
@@ -37,6 +43,29 @@ struct FirebaseAuthService {
             rawNonce: response.nonce
         )
         
+        return try await signIn(with: credential)
+    }
+    
+    func signInWithGoogle() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
+        
+        guard let clientID = FirebaseApp.app()?.options.clientID else {
+            throw AuthError.missingClientID
+        }
+        
+        let googleHelper = SignInWithGoogleHelper(GIDClientID: clientID)
+        let tokens = try await googleHelper.signIn()
+        
+        let credential = GoogleAuthProvider.credential(
+            withIDToken: tokens.idToken,
+            accessToken: tokens.accessToken
+        )
+        
+        return try await signIn(with: credential)
+    }
+    
+    private func signIn(
+        with credential: AuthCredential
+    ) async throws -> (user: UserAuthInfo, isNewUser: Bool) {
         if let user = Auth.auth().currentUser, user.isAnonymous {
             do {
                 let result = try await user.link(with: credential)
@@ -72,11 +101,14 @@ struct FirebaseAuthService {
     
     enum AuthError: LocalizedError {
         case userNotFound
+        case missingClientID
         
         var errorDescription: String? {
             switch self {
             case .userNotFound:
                 "Current authenticated User not found."
+            case .missingClientID:
+                "Firebase Client ID is missing."
             }
         }
     }

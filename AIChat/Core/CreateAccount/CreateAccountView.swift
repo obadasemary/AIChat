@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import GoogleSignIn
+import GoogleSignInSwift
 
 struct CreateAccountView: View {
     
@@ -31,10 +33,22 @@ struct CreateAccountView: View {
                 style: .black,
                 cornerRadius: 10
             )
+            .frame(maxWidth: 375)
             .frame(height: 55)
             .anyButton(.press) {
                 onSignInWithAppleTapped()
             }
+            
+            GoogleSignInButton(
+                viewModel: GoogleSignInButtonViewModel(
+                    scheme: .dark,
+                    style: .wide,
+                    state: .normal
+                )
+            ) {
+                onSignInWithGoogleTapped()
+            }
+            .frame(maxWidth: 375)
             
             Spacer()
         }
@@ -51,6 +65,19 @@ struct CreateAccountView: View {
                 dismiss()
             } catch {
                 print("Error signing in with Apple: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func onSignInWithGoogleTapped() {
+        Task {
+            do {
+                let result = try await authService.signInWithGoogle()
+                print("Signed in with Google ID: \(result.user.email ?? "Unknown")")
+                onDidSignIn?(result.isNewUser)
+                dismiss()
+            } catch {
+                print("Error signing in with Google: \(error.localizedDescription)")
             }
         }
     }
