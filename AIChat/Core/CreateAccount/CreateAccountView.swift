@@ -45,7 +45,7 @@ struct CreateAccountView: View {
     func onSignInWithAppleTapped() {
         Task {
             do {
-                let result = try await authService.signInApple()
+                let result = try await authService.signInWithApple()
                 print("Signed in with Apple ID: \(result.user.email ?? "Unknown")")
                 onDidSignIn?(result.isNewUser)
                 dismiss()
