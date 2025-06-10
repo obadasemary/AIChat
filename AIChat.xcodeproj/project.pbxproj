@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		AF2ECC132DE7D88A00BD1602 /* SwiftfulUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = AF2ECC122DE7D88A00BD1602 /* SwiftfulUtilities */; };
+		AF39868C2DF8C958000F064C /* SignInGoogleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = AF39868B2DF8C958000F064C /* SignInGoogleAsync */; };
 		AF95B1772DF38774003D5BA0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = AF95B1762DF38774003D5BA0 /* FirebaseAuth */; };
 		AFA98BB32DA46E0600492141 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = AFA98BB22DA46E0600492141 /* SDWebImageSwiftUI */; };
 		AFAA66B62DF4E4960013F8DC /* SignInAppleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = AFAA66B52DF4E4960013F8DC /* SignInAppleAsync */; };
@@ -73,6 +74,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AFAA66B62DF4E4960013F8DC /* SignInAppleAsync in Frameworks */,
+				AF39868C2DF8C958000F064C /* SignInGoogleAsync in Frameworks */,
 				AFA98BB32DA46E0600492141 /* SDWebImageSwiftUI in Frameworks */,
 				AF95B1772DF38774003D5BA0 /* FirebaseAuth in Frameworks */,
 				AF2ECC132DE7D88A00BD1602 /* SwiftfulUtilities in Frameworks */,
@@ -141,6 +143,7 @@
 				AF2ECC122DE7D88A00BD1602 /* SwiftfulUtilities */,
 				AF95B1762DF38774003D5BA0 /* FirebaseAuth */,
 				AFAA66B52DF4E4960013F8DC /* SignInAppleAsync */,
+				AF39868B2DF8C958000F064C /* SignInGoogleAsync */,
 			);
 			productName = AIChat;
 			productReference = AF9034FB2DA3FDB000A35095 /* AIChat.app */;
@@ -229,6 +232,7 @@
 				AF2ECC112DE7D88A00BD1602 /* XCRemoteSwiftPackageReference "SwiftfulUtilities" */,
 				AF95B1752DF38774003D5BA0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				AFAA66B42DF4E4960013F8DC /* XCRemoteSwiftPackageReference "SignInAppleAsync" */,
+				AF39868A2DF8C958000F064C /* XCRemoteSwiftPackageReference "SignInGoogleAsync" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = AF9034FC2DA3FDB000A35095 /* Products */;
@@ -667,6 +671,14 @@
 				minimumVersion = 1.1.6;
 			};
 		};
+		AF39868A2DF8C958000F064C /* XCRemoteSwiftPackageReference "SignInGoogleAsync" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftfulThinking/SignInGoogleAsync";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.1;
+			};
+		};
 		AF95B1752DF38774003D5BA0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -698,6 +710,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AF2ECC112DE7D88A00BD1602 /* XCRemoteSwiftPackageReference "SwiftfulUtilities" */;
 			productName = SwiftfulUtilities;
+		};
+		AF39868B2DF8C958000F064C /* SignInGoogleAsync */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AF39868A2DF8C958000F064C /* XCRemoteSwiftPackageReference "SignInGoogleAsync" */;
+			productName = SignInGoogleAsync;
 		};
 		AF95B1762DF38774003D5BA0 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
