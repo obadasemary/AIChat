@@ -11,15 +11,7 @@ import SignInAppleAsync
 import SignInGoogleAsync
 import FirebaseCore
 
-// MARK: - Concurrency
-// GoogleSignInResult is only a pair of Strings, so we can safely mark it Sendable.
-extension GoogleSignInResult: @unchecked @retroactive Sendable {}
-
-extension EnvironmentValues {
-    @Entry var authService: FirebaseAuthService = FirebaseAuthService()
-}
-
-struct FirebaseAuthService {
+struct FirebaseAuthService: AuthServiceProtocol {
     
     func getAuthenticatedUser() -> UserAuthInfo? {
         guard let user = Auth.auth().currentUser else {
