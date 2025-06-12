@@ -1,13 +1,13 @@
 //
-//  AuthService.swift
+//  AuthServiceProtocol.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 11.06.2025.
 //
 
-import SwiftUI
+import Foundation
 
-protocol AuthService: Sendable {
+protocol AuthServiceProtocol: Sendable {
     
     func addAuthenticatedUserListener(
         onListenerAttached: (any NSObjectProtocol) -> Void

@@ -16,7 +16,7 @@ struct MockAuthService {
     }
 }
 
-extension MockAuthService: AuthService {
+extension MockAuthService: AuthServiceProtocol {
     
     func addAuthenticatedUserListener(onListenerAttached: (any NSObjectProtocol) -> Void) -> AsyncStream<UserAuthInfo?> {
         AsyncStream { continuation in
