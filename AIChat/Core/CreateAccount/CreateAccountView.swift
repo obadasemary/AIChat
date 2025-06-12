@@ -11,7 +11,7 @@ import GoogleSignInSwift
 struct CreateAccountView: View {
     
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.authService) private var authService
+    @Environment(AuthManager.self) private var authManager
     var title: String = "Create Account"
     var subtitle: String = "Don't lose your data! Connect to an SSO provider to save your account."
     var onDidSignIn: ((_ isNewUser: Bool) -> Void)?
@@ -58,7 +58,7 @@ struct CreateAccountView: View {
     func onSignInWithAppleTapped() {
         Task {
             do {
-                let result = try await authService.signInWithApple()
+                let result = try await authManager.signInWithApple()
                 print("Signed in with Apple ID: \(result.user.email ?? "Unknown")")
                 onDidSignIn?(result.isNewUser)
                 dismiss()
@@ -71,7 +71,7 @@ struct CreateAccountView: View {
     func onSignInWithGoogleTapped() {
         Task {
             do {
-                let result = try await authService.signInWithGoogle()
+                let result = try await authManager.signInWithGoogle()
                 print("Signed in with Google ID: \(result.user.email ?? "Unknown")")
                 onDidSignIn?(result.isNewUser)
                 dismiss()
