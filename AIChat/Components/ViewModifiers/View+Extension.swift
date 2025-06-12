@@ -70,4 +70,13 @@ extension View {
             self
         }
     }
+    
+    @ViewBuilder
+    func glassedEffect(in shape: some Shape, interactive: Bool = false) -> some View {
+        self.background {
+            shape.glassed()
+        }
+    }
 }
+
+
