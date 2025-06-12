@@ -1,5 +1,5 @@
 //
-//  AuthServiceProtocol.swift
+//  AuthService.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 11.06.2025.
@@ -7,11 +7,12 @@
 
 import SwiftUI
 
-extension EnvironmentValues {
-    @Entry var authService: AuthServiceProtocol = MockAuthService()
-}
-
-protocol AuthServiceProtocol: Sendable {
+protocol AuthService: Sendable {
+    
+    func addAuthenticatedUserListener(
+        onListenerAttached: (any NSObjectProtocol) -> Void
+    ) -> AsyncStream<UserAuthInfo?>
+    
     func getAuthenticatedUser() -> UserAuthInfo?
     
     func signInAnonymously() async throws -> (user: UserAuthInfo, isNewUser: Bool)
