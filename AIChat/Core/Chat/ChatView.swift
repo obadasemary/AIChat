@@ -36,6 +36,7 @@ struct ChatView: View {
                     .anyButton {
                         onChatSettingsTapped()
                     }
+                    .glassedEffect(in: .capsule)
             }
         }
         .showCustomAlert(type: .confirmationDialog, alert: $showChatSettings)
@@ -87,6 +88,7 @@ struct ChatView: View {
                     .anyButton(.plain) {
                         onSendMessageTapped()
                     }
+                    .glassedEffect(in: .capsule)
                     .disabled(textFieldText.isEmpty)
             }
             .background {

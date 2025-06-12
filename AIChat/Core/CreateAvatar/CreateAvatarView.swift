@@ -38,13 +38,14 @@ struct CreateAvatarView: View {
     }
     
     private var dismissButton: some View {
-        Image(systemName: "xmark")
-            .font(.title2)
+        Image(systemName: "xmark.circle")
+            .font(.title)
             .fontWeight(.semibold)
             .anyButton(.plain) {
                 onDismissButtonTapped()
             }
             .foregroundStyle(.accent)
+            .glassedEffect(in: .circle)
     }
     
     private var nameSection: some View {

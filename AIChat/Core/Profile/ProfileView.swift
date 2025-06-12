@@ -106,6 +106,7 @@ struct ProfileView: View {
                     .anyButton {
                         onNewAvatarButtonPressed()
                     }
+                    .glassedEffect(in: .circle)
             }
         }
     }
@@ -117,6 +118,7 @@ struct ProfileView: View {
             .anyButton {
                 onSettingsButtonPressed()
             }
+            .glassedEffect(in: .circle)
     }
     
     private func onSettingsButtonPressed() {

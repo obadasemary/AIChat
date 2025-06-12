@@ -11,11 +11,12 @@ extension View {
     func callToActionButton() -> some View {
         self
             .font(.headline)
-            .foregroundStyle(.white)
+            .foregroundStyle(.accent)
             .frame(maxWidth: .infinity)
             .frame(height: 50)
-            .background(.accent)
+//            .background(.accent)
             .cornerRadius(16)
+            .glassedEffect(in: .capsule)
     }
     
     func badgeButton() -> some View {

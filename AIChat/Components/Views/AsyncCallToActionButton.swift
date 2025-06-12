@@ -17,7 +17,7 @@ struct AsyncCallToActionButton: View {
         ZStack {
             if isLoading {
                 ProgressView()
-                    .tint(.white)
+                    .tint(.accent)
             } else {
                 Text(title)
             }
