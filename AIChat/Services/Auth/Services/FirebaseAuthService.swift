@@ -5,13 +5,13 @@
 //  Created by Abdelrahman Mohamed on 06.06.2025.
 //
 
+import Foundation
 import FirebaseAuth
-import SwiftUI
 import SignInAppleAsync
 import SignInGoogleAsync
 import FirebaseCore
 
-struct FirebaseAuthService: AuthService {
+struct FirebaseAuthService: AuthServiceProtocol {
     
     func addAuthenticatedUserListener(onListenerAttached: (any NSObjectProtocol) -> Void) -> AsyncStream<UserAuthInfo?> {
         AsyncStream { continuation in
