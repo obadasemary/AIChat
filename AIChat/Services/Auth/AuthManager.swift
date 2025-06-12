@@ -5,33 +5,40 @@
 //  Created by Abdelrahman Mohamed on 12.06.2025.
 //
 
-import SwiftUI
+import Foundation
+
+@MainActor
+protocol AuthManagerProtocol {
+    
+    func getAuthId() throws -> String
+    
+    func signInAnonymously() async throws -> (user: UserAuthInfo, isNewUser: Bool)
+    
+    func signInWithApple() async throws -> (user: UserAuthInfo, isNewUser: Bool)
+    
+    func signInWithGoogle() async throws -> (user: UserAuthInfo, isNewUser: Bool)
+    
+    func signOut() throws
+    
+    func deleteAccount() async throws
+}
 
 @MainActor
 @Observable
-class AuthManager {
+final class AuthManager {
     
-    private let service: AuthService
+    private let service: AuthServiceProtocol
     private(set) var auth: UserAuthInfo?
     private var listener: (any NSObjectProtocol)?
     
-    init(service: AuthService) {
+    init(service: AuthServiceProtocol) {
         self.service = service
         self.auth = service.getAuthenticatedUser()
         self.addAuthListener()
     }
-    
-    private func addAuthListener() {
-        Task {
-            for await value in service.addAuthenticatedUserListener(onListenerAttached: { listener in
-                self.listener = listener
-            }) {
-                self.auth = value
-                print("Auth listener success: \(value?.uid ?? "no uid")")
-            }
-        }
-    }
-    
+}
+
+extension AuthManager: AuthManagerProtocol {
     func getAuthId() throws -> String {
         guard let uid = auth?.uid else {
             throw AuthError.notSignedIn
@@ -59,6 +66,19 @@ class AuthManager {
     func deleteAccount() async throws {
         try await service.deleteAccount()
         auth = nil
+    }
+}
+
+private extension AuthManager {
+    private func addAuthListener() {
+        Task {
+            for await value in service.addAuthenticatedUserListener(onListenerAttached: { listener in
+                self.listener = listener
+            }) {
+                self.auth = value
+                print("Auth listener success: \(value?.uid ?? "no uid")")
+            }
+        }
     }
     
     enum AuthError: LocalizedError {
