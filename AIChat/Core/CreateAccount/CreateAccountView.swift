@@ -12,6 +12,8 @@ struct CreateAccountView: View {
     
     @Environment(\.dismiss) private var dismiss
     @Environment(AuthManager.self) private var authManager
+    @Environment(UserManager.self) private var userManager
+    
     var title: String = "Create Account"
     var subtitle: String = "Don't lose your data! Connect to an SSO provider to save your account."
     var onDidSignIn: ((_ isNewUser: Bool) -> Void)?
@@ -60,6 +62,9 @@ struct CreateAccountView: View {
             do {
                 let result = try await authManager.signInWithApple()
                 print("Signed in with Apple ID: \(result.user.email ?? "Unknown")")
+                try await userManager
+                    .logIn(auth: result.user, isNewUser: result.isNewUser)
+                print("Did log in user: \(result.user)")
                 onDidSignIn?(result.isNewUser)
                 dismiss()
             } catch {
@@ -73,6 +78,9 @@ struct CreateAccountView: View {
             do {
                 let result = try await authManager.signInWithGoogle()
                 print("Signed in with Google ID: \(result.user.email ?? "Unknown")")
+                try await userManager
+                    .logIn(auth: result.user, isNewUser: result.isNewUser)
+                print("Did log in user: \(result.user)")
                 onDidSignIn?(result.isNewUser)
                 dismiss()
             } catch {
