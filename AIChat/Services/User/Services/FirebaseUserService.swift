@@ -8,6 +8,7 @@
 
 import Foundation
 import FirebaseFirestore
+import SwiftfulFirestore
 
 struct FirebaseUserService: UserServiceProtocol {
     
@@ -19,5 +20,24 @@ struct FirebaseUserService: UserServiceProtocol {
         try collectionReference
             .document(user.userId)
             .setData(from: user, merge: true)
+    }
+    
+    func markOnboardingAsCompleted(userId: String, profileColorHex: String) async throws {
+        try await collectionReference
+            .document(userId)
+            .updateData(
+                [
+                    UserModel.CodingKeys.didCompleteOnboarding.rawValue: true,
+                    UserModel.CodingKeys.profileColorHex.rawValue: profileColorHex
+                ]
+            )
+    }
+    
+    func streamUser(userId: String) -> AsyncThrowingStream<UserModel, Error> {
+        collectionReference.streamDocument(id: userId)
+    }
+    
+    func deleteUser(userId: String) async throws {
+        try await collectionReference.document(userId).delete()
     }
 }
