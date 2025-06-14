@@ -11,6 +11,7 @@ struct SettingsView: View {
     
     @Environment(\.dismiss) private var dismiss
     @Environment(AuthManager.self) private var authManager
+    @Environment(UserManager.self) private var userManager
     @Environment(AppState.self) private var appState
     
     @State private var isPremium: Bool = false
@@ -136,6 +137,7 @@ struct SettingsView: View {
         Task {
             do {
                 try authManager.signOut()
+                userManager.signOut()
                 await dismissScreen()
             } catch {
                 showAlert = AnyAppAlert(error: error)
@@ -167,6 +169,7 @@ struct SettingsView: View {
         Task {
             do {
                 try await authManager.deleteAccount()
+                try await userManager.deleteCurrentUser()
                 await dismissScreen()
             } catch {
                 showAlert = AnyAppAlert(error: error)
@@ -194,6 +197,7 @@ fileprivate extension View {
 #Preview("No Auth") {
     SettingsView()
         .environment(AuthManager(service: MockAuthService(currentUser: nil)))
+        .environment(UserManager(service: MockUserService(currentUser: nil)))
         .environment(AppState())
 }
 
@@ -208,6 +212,7 @@ fileprivate extension View {
                 )
             )
         )
+        .environment(UserManager(service: MockUserService(currentUser: .mock)))
         .environment(AppState())
 }
 
@@ -222,5 +227,6 @@ fileprivate extension View {
                 )
             )
         )
+        .environment(UserManager(service: MockUserService(currentUser: .mock)))
         .environment(AppState())
 }
