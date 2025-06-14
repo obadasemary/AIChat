@@ -51,4 +51,39 @@ extension Color {
             return String(format: "#%06X", rgb)
         }
     }
+    
+    func asHex(alpha: Bool = false) -> String {
+        // Convert Color to UIColor
+        let uiColor = UIColor(self)
+        
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alphaValue: CGFloat = 0
+        
+        // Use guard to ensure all components can be extracted
+        guard uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alphaValue) else {
+            // Return a default color (black or transparent) if unable to extract components
+            return alpha ? "#00000000": "#000000"
+        }
+        
+        if alpha {
+            // Include alpha component in the hex string
+            return String(
+                format: "#%02lX%02lX%02lX%02lX",
+                lroundf(Float(alphaValue) * 255),
+                lroundf(Float(red) * 255),
+                lroundf(Float(green) * 255),
+                lroundf(Float(blue) * 255)
+            )
+        } else {
+            // Exclude alpha component from the hex string
+            return String(
+                format: "#%02lX%02lX%02lX",
+                lroundf(Float(red) * 255),
+                lroundf(Float(green) * 255),
+                lroundf(Float(blue) * 255)
+            )
+        }
+    }
 }
