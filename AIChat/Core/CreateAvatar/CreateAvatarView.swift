@@ -12,7 +12,7 @@ struct CreateAvatarView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(AIManager.self) private var aiManager
     
-    @State private var avatarName: String = "Mezzo"
+    @State private var avatarName: String = ""
     @State private var characterOption: CharacterOption = .default
     @State private var characterAction: CharacterAction = .default
     @State private var characterLocation: CharacterLocation = .default
