@@ -1,0 +1,34 @@
+//
+//  AIManager.swift
+//  AIChat
+//
+//  Created by Abdelrahman Mohamed on 15.06.2025.
+//
+
+import SwiftUI
+
+@MainActor
+protocol AIManagerProtocol {
+    func generateImage(input: String) async throws -> UIImage
+}
+
+@MainActor
+@Observable
+final class AIManager {
+    
+    private let service: AIServiceProtocol
+    
+    init(service: AIServiceProtocol) {
+        self.service = service
+    }
+}
+
+extension AIManager: AIManagerProtocol {
+    func generateImage(input: String) async throws -> UIImage {
+        try await service.generateImage(input: input)
+    }
+}
+
+private extension AIManager {
+    
+}

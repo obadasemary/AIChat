@@ -1,32 +1,17 @@
 //
-//  AIChatApp.swift
+//  AppDelegate.swift
 //  AIChat
 //
-//  Created by Abdelrahman Mohamed on 07.04.2025.
+//  Created by Abdelrahman Mohamed on 15.06.2025.
 //
 
-import SwiftUI
+import Foundation
 import FirebaseCore
 import GoogleSignIn
 
-@main
-struct AIChatApp: App {
-    
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    
-    var body: some Scene {
-        WindowGroup {
-            AppView()
-                .environment(delegate.authManager)
-                .environment(delegate.userManager)
-        }
-    }
-}
-
 class AppDelegate: NSObject, UIApplicationDelegate {
     
-    var authManager: AuthManager!
-    var userManager: UserManager!
+    var dependencies: Dependencies!
     
     func application(
         _ application: UIApplication,
@@ -38,8 +23,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: clientID)
         }
         
-        authManager = AuthManager(service: FirebaseAuthService())
-        userManager = UserManager(services: ProductionUserServices())
+        dependencies = Dependencies()
         
         return true
     }
