@@ -145,14 +145,13 @@ struct CreateAvatarView: View {
         isGenerating = true
         Task {
             do {
-                
                 let prompt = AvatarDescriptionBuilder(
                     characterOption: characterOption,
                     characterAction: characterAction,
                     characterLocation: characterLocation
-                ).characterDescription
+                )
                 
-                generatedImage = try await aiManager.generateImage(input: prompt)
+                generatedImage = try await aiManager.generateImage(input: prompt.characterDescription)
             } catch {
                 print("Error generating image: \(error)")
             }
