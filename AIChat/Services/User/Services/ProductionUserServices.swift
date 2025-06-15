@@ -9,5 +9,7 @@ import Foundation
 
 struct ProductionUserServices: UserServicesProtocol {
     let remoteService: RemoteUserServiceProtocol = FirebaseUserService()
-    let localStorage: LocalUserServiceProtocol = FileManagerUserPersistance()
+    let localStorage: LocalUserServiceProtocol = FileManagerUserPersistance(
+        keychain: KeychainHelper()
+    )
 }
