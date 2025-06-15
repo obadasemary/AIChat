@@ -10,7 +10,9 @@ import Foundation
 import FirebaseFirestore
 import SwiftfulFirestore
 
-struct FirebaseUserService: UserServiceProtocol {
+typealias ListenerRegistration = FirebaseFirestore.ListenerRegistration
+
+struct FirebaseUserService: RemoteUserServiceProtocol {
     
     var collectionReference: CollectionReference {
         Firestore.firestore().collection("users")

@@ -16,7 +16,7 @@ struct MockUserService {
     }
 }
 
-extension MockUserService: UserServiceProtocol {
+extension MockUserService: RemoteUserServiceProtocol {
     
     func saveUser(user: UserModel) async throws {}
 

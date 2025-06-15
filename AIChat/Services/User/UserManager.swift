@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import FirebaseFirestore
 
 protocol UserManagerProtocol: Sendable {
     
@@ -20,13 +19,15 @@ protocol UserManagerProtocol: Sendable {
 @Observable
 final class UserManager {
     
-    private let service: UserServiceProtocol
+    private let remoteService: RemoteUserServiceProtocol
+    private let localStorage: LocalUserServiceProtocol
     private(set) var currentUser: UserModel?
     private var currentUserListener: ListenerRegistration?
     
-    init(service: UserServiceProtocol) {
-        self.service = service
-        self.currentUser = nil
+    init(services: UserServicesProtocol) {
+        self.remoteService = services.remoteService
+        self.localStorage = services.localStorage
+        self.currentUser = localStorage.getCurrentUser()
     }
 }
 
@@ -36,13 +37,13 @@ extension UserManager: UserManagerProtocol {
         let creationVersion = isNewUser ? Utilities.appVersion : nil
         let user = UserModel(auth: auth, creationVersion: creationVersion)
         
-        try await service.saveUser(user: user)
+        try await remoteService.saveUser(user: user)
         addCurrentUserListener(userId: auth.uid)
     }
     
     func markOnboardingCompleteForCurrentUser(profileColorHex: String) async throws {
         let uId = try currentUserId()
-        try await service
+        try await remoteService
             .markOnboardingAsCompleted(
                 userId: uId,
                 profileColorHex: profileColorHex
@@ -57,7 +58,7 @@ extension UserManager: UserManagerProtocol {
     
     func deleteCurrentUser() async throws {
         let uId = try currentUserId()
-        try await service.deleteUser(userId: uId)
+        try await remoteService.deleteUser(userId: uId)
         signOut()
     }
 }
@@ -68,8 +69,9 @@ private extension UserManager {
         currentUserListener?.remove()
         Task {
             do {
-                for try await value in service.streamUser(userId: userId) {
+                for try await value in remoteService.streamUser(userId: userId) {
                     self.currentUser = value
+                    saveCurrentUserLocally()
                     print("Successfully listened to user changes for userId: \(value.userId)")
                 }
             } catch {
@@ -84,6 +86,18 @@ private extension UserManager {
         }
         
         return uId
+    }
+    
+    func saveCurrentUserLocally() {
+        Task {
+            do {
+                try localStorage.saveCurrentUser(user: currentUser)
+                print("Success saved current user locally")
+            } catch {
+                print("Error saving current user locally: \(error)")
+            }
+            
+        }
     }
     
     enum UserManagerError: LocalizedError {
