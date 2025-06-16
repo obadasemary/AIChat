@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum CharacterOption: String, CaseIterable, Hashable {
+enum CharacterOption: String, CaseIterable, Hashable, Codable {
     case man, woman, alien, dog, cat, robot
     
     static var `default`: Self { .robot }
@@ -39,13 +39,13 @@ enum CharacterOption: String, CaseIterable, Hashable {
     }
 }
 
-enum CharacterAction: String, CaseIterable, Hashable {
+enum CharacterAction: String, CaseIterable, Hashable, Codable {
     case smiling, sitting, eating, drinking, walking, running, jumping, sleeping, shopping, studying, working, relaxing, fighting, kissing, hugging, crying, laughing
     
     static var `default`: Self { .fighting }
 }
 
-enum CharacterLocation: String, CaseIterable, Hashable {
+enum CharacterLocation: String, CaseIterable, Hashable, Codable {
     case park, mall, museum, city, mountain, desert, forest, beach, ocean, space
     
     static var `default`: Self { .space }

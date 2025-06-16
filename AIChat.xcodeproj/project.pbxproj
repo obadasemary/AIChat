@@ -17,6 +17,7 @@
 		AFCB2B912DFC779000694E6E /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = AFCB2B902DFC779000694E6E /* FirebaseFirestore */; };
 		AFCB2BA02DFDC20B00694E6E /* SwiftfulFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = AFCB2B9F2DFDC20B00694E6E /* SwiftfulFirestore */; };
 		AFEF44072DFF1489000E87DC /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = AFEF44062DFF1489000E87DC /* OpenAI */; };
+		AFEF464A2E007365000E87DC /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = AFEF46492E007365000E87DC /* FirebaseStorage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +87,7 @@
 				AFA98BB32DA46E0600492141 /* SDWebImageSwiftUI in Frameworks */,
 				AF95B1772DF38774003D5BA0 /* FirebaseAuth in Frameworks */,
 				AFCB2B912DFC779000694E6E /* FirebaseFirestore in Frameworks */,
+				AFEF464A2E007365000E87DC /* FirebaseStorage in Frameworks */,
 				AF2ECC132DE7D88A00BD1602 /* SwiftfulUtilities in Frameworks */,
 				AF3986932DF8D2E5000F064C /* GoogleSignIn in Frameworks */,
 			);
@@ -167,6 +169,7 @@
 				AFCB2B902DFC779000694E6E /* FirebaseFirestore */,
 				AFCB2B9F2DFDC20B00694E6E /* SwiftfulFirestore */,
 				AFEF44062DFF1489000E87DC /* OpenAI */,
+				AFEF46492E007365000E87DC /* FirebaseStorage */,
 			);
 			productName = AIChat;
 			productReference = AF9034FB2DA3FDB000A35095 /* AIChat.app */;
@@ -805,6 +808,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AFEF44052DFF1489000E87DC /* XCRemoteSwiftPackageReference "OpenAI" */;
 			productName = OpenAI;
+		};
+		AFEF46492E007365000E87DC /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AF95B1752DF38774003D5BA0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

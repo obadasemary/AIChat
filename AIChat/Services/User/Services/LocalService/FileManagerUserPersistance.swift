@@ -8,7 +8,11 @@
 import Foundation
 
 struct FileManagerUserPersistance {
-    private let userDocumentKey: String = "current_user"
+    private let userDocumentKey: String
+    
+    init(userDocumentKey: String = "current_user") {
+        self.userDocumentKey = userDocumentKey
+    }
 }
 
 extension FileManagerUserPersistance: LocalUserServiceProtocol {

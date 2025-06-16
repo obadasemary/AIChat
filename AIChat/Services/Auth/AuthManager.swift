@@ -7,21 +7,7 @@
 
 import Foundation
 
-@MainActor
-protocol AuthManagerProtocol {
-    
-    func getAuthId() throws -> String
-    
-    func signInAnonymously() async throws -> (user: UserAuthInfo, isNewUser: Bool)
-    
-    func signInWithApple() async throws -> (user: UserAuthInfo, isNewUser: Bool)
-    
-    func signInWithGoogle() async throws -> (user: UserAuthInfo, isNewUser: Bool)
-    
-    func signOut() throws
-    
-    func deleteAccount() async throws
-}
+
 
 @MainActor
 @Observable

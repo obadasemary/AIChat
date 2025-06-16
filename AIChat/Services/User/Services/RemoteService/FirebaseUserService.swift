@@ -12,11 +12,17 @@ import SwiftfulFirestore
 
 typealias ListenerRegistration = FirebaseFirestore.ListenerRegistration
 
-struct FirebaseUserService: RemoteUserServiceProtocol {
+struct FirebaseUserService {
+    private let collectionReference: CollectionReference
     
-    var collectionReference: CollectionReference {
-        Firestore.firestore().collection("users")
+    init(
+        collectionReference: CollectionReference = Firestore.firestore().collection("users")
+    ) {
+        self.collectionReference = collectionReference
     }
+}
+
+extension FirebaseUserService: RemoteUserServiceProtocol {
     
     func saveUser(user: UserModel) async throws {
         try collectionReference

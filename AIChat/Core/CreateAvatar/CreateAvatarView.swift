@@ -11,6 +11,8 @@ struct CreateAvatarView: View {
     
     @Environment(\.dismiss) private var dismiss
     @Environment(AIManager.self) private var aiManager
+    @Environment(AuthManager.self) private var authManager
+    @Environment(AvatarManager.self) private var avatarManager
     
     @State private var avatarName: String = ""
     @State private var characterOption: CharacterOption = .default
@@ -19,6 +21,7 @@ struct CreateAvatarView: View {
     
     @State private var isGenerating: Bool = false
     @State private var generatedImage: UIImage?
+    @State private var showAlert: AnyAppAlert?
     @State private var isSaving: Bool = false
     
     var body: some View {
@@ -35,6 +38,7 @@ struct CreateAvatarView: View {
                     dismissButton
                 }
             }
+            .showCustomAlert(alert: $showAlert)
         }
     }
     
@@ -145,13 +149,20 @@ struct CreateAvatarView: View {
         isGenerating = true
         Task {
             do {
-                let prompt = AvatarDescriptionBuilder(
+                _ = AvatarDescriptionBuilder(
                     characterOption: characterOption,
                     characterAction: characterAction,
                     characterLocation: characterLocation
                 )
                 
-                generatedImage = try await aiManager.generateImage(input: prompt.characterDescription)
+                let (data, _) = try await URLSession.shared.data(from: URL(string: Constants.randomImage)!)
+                if let image = UIImage(data: data) {
+                    // Use `image` on the main thread
+                    await MainActor.run {
+                        self.generatedImage = image
+                    }
+                }
+//                generatedImage = try await aiManager.generateImage(input: prompt.characterDescription)
             } catch {
                 print("Error generating image: \(error)")
             }
@@ -160,12 +171,32 @@ struct CreateAvatarView: View {
     }
     
     private func onSaveTapped() {
+        guard let generatedImage else { return }
         isSaving = true
-        
         Task {
-            try? await Task.sleep(for: .seconds(3))
-            dismiss()
-            isSaving = false
+            do {
+                try TextValidationHelper.checkIfTextIsValid(text: avatarName)
+                let uId = try authManager.getAuthId()
+                
+                let avatar = AvatarModel(
+                    avatarId: UUID().uuidString,
+                    name: avatarName,
+                    characterOption: characterOption,
+                    characterAction: characterAction,
+                    characterLocation: characterLocation,
+                    profileImageName: nil,
+                    authorId: uId,
+                    dateCreated: .now
+                )
+                
+                try await avatarManager
+                    .createAvatar(avatar: avatar, image: generatedImage)
+                
+                dismiss()
+                isSaving = false
+            } catch {
+                showAlert = AnyAppAlert(error: error)
+            }
         }
     }
 }
@@ -173,4 +204,8 @@ struct CreateAvatarView: View {
 #Preview {
     CreateAvatarView()
         .environment(AIManager(service: MockAIServer()))
+        .environment(AvatarManager(service: MockAvatarService()))
+        .environment(
+            AuthManager(service: MockAuthService(currentUser: .mock()))
+        )
 }

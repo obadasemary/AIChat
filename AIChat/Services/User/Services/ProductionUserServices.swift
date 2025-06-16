@@ -8,6 +8,14 @@
 import Foundation
 
 struct ProductionUserServices: UserServicesProtocol {
-    let remoteService: RemoteUserServiceProtocol = FirebaseUserService()
-    let localStorage: LocalUserServiceProtocol = FileManagerUserPersistance()
+    let remoteService: RemoteUserServiceProtocol
+    let localStorage: LocalUserServiceProtocol
+    
+    init(
+        remoteService: RemoteUserServiceProtocol = FirebaseUserService(),
+        localStorage: LocalUserServiceProtocol = FileManagerUserPersistance()
+    ) {
+        self.remoteService = remoteService
+        self.localStorage = localStorage
+    }
 }
