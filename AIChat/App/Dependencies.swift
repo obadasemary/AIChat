@@ -6,16 +6,23 @@
 //
 
 import Foundation
+import FirebaseFirestore
 
 @MainActor
 struct Dependencies {
     let authManager: AuthManager
     let userManager: UserManager
     let aiManager: AIManager
+    let avatarManager: AvatarManager
     
     init() {
         authManager = AuthManager(service: FirebaseAuthService())
         userManager = UserManager(services: ProductionUserServices())
         aiManager = AIManager(service: OpenAIServer())
+        avatarManager = AvatarManager(
+            service: FirebaseAvatarService(
+                firebaseImageUploadServiceProtocol: FirebaseImageUploadService()
+            )
+        )
     }
 }

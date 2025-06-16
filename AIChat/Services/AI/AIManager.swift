@@ -8,11 +8,6 @@
 import SwiftUI
 
 @MainActor
-protocol AIManagerProtocol {
-    func generateImage(input: String) async throws -> UIImage
-}
-
-@MainActor
 @Observable
 final class AIManager {
     
@@ -29,6 +24,4 @@ extension AIManager: AIManagerProtocol {
     }
 }
 
-private extension AIManager {
-    
-}
+private extension AIManager {}
