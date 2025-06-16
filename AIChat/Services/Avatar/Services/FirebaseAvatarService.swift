@@ -35,6 +35,39 @@ extension FirebaseAvatarService: AvatarServiceProtocol {
         
         try await saveUser(avatar: avatar)
     }
+    
+    func getFeaturedAvatars() async throws -> [AvatarModel] {
+        try await collectionReference
+            .limit(to: 50)
+            .getAllDocuments()
+            .shuffled()
+            .first(upTo: 5) ?? []
+    }
+    
+    func getPopularAvatars() async throws -> [AvatarModel] {
+        try await collectionReference
+            .limit(to: 200)
+            .getAllDocuments()
+    }
+    
+    func getAvatarsForCategory(category: CharacterOption) async throws -> [AvatarModel] {
+        try await collectionReference
+            .whereField(
+                AvatarModel.CodingKeys.characterOption.rawValue,
+                isEqualTo: category.rawValue
+            )
+            .limit(to: 200)
+            .getAllDocuments()
+    }
+    
+    func getAvatarsForAuthor(userId: String) async throws -> [AvatarModel] {
+        try await collectionReference
+            .whereField(
+                AvatarModel.CodingKeys.authorId.rawValue,
+                isEqualTo: userId
+            )
+            .getAllDocuments()
+    }
 }
 
 private extension FirebaseAvatarService {
