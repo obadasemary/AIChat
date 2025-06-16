@@ -9,21 +9,56 @@ import SwiftUI
 
 struct ExploreView: View {
     
-    @State private var featuredAvatars: [AvatarModel] = AvatarModel.mocks
+    @Environment(AvatarManager.self) private var avatarManager
+    
+    @State private var featuredAvatars: [AvatarModel] = []
     @State private var categories: [CharacterOption] = CharacterOption.allCases
-    @State private var popularAvatars: [AvatarModel] = AvatarModel.mocks
+    @State private var popularAvatars: [AvatarModel] = []
     
     @State private var path: [NavigationPathOption] = []
     
     var body: some View {
         NavigationStack(path: $path) {
             List {
-                featuredSection
-                categoriesSection
-                popularSection
+                if featuredAvatars.isEmpty && popularAvatars.isEmpty {
+                    ProgressView()
+                        .frame(maxWidth: .infinity)
+                        .removeListRowFormatting()
+                }
+                if !featuredAvatars.isEmpty {
+                    featuredSection
+                }
+                if !popularAvatars.isEmpty {
+                    categoriesSection
+                    popularSection
+                }
             }
             .navigationTitle("Explore")
             .navigationDestinationForCoreModule(path: $path)
+            .task {
+                await loadFeaturedAvatars()
+            }
+            .task {
+                await loadPopularAvatars()
+            }
+        }
+    }
+    
+    private func loadFeaturedAvatars() async {
+        guard featuredAvatars.isEmpty else { return }
+        do {
+            featuredAvatars = try await avatarManager.getFeaturedAvatars()
+        } catch {
+            print("Error loading featured avatars: \(error)")
+        }
+    }
+    
+    private func loadPopularAvatars() async {
+        guard popularAvatars.isEmpty else { return }
+        do {
+            popularAvatars = try await avatarManager.getPopularAvatars()
+        } catch {
+            print("Error loading featured avatars: \(error)")
         }
     }
     
@@ -111,7 +146,7 @@ struct ExploreView: View {
             .append(
                 .character(
                     category: category,
-                    imageName: Constants.randomImage
+                    imageName: imageName
                 )
             )
     }
@@ -119,4 +154,11 @@ struct ExploreView: View {
 
 #Preview {
     ExploreView()
+        .environment(
+            AvatarManager(
+                service: FirebaseAvatarService(
+                    firebaseImageUploadServiceProtocol: FirebaseImageUploadService()
+                )
+            )
+        )
 }
