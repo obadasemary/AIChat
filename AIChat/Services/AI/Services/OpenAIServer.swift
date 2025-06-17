@@ -12,7 +12,7 @@ struct OpenAIServer {
     
     private let openAI: OpenAI
     
-    init(openAI: OpenAI = OpenAI(apiToken: "")) {
+    init(openAI: OpenAI = OpenAI(apiToken: Keys.openAIAPIKey)) {
         self.openAI = openAI
     }
 }
