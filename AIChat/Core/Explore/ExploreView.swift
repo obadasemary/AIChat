@@ -41,11 +41,14 @@ struct ExploreView: View {
             .task {
                 await loadPopularAvatars()
             }
+            .refreshable {
+                await refreshAvatars()
+            }
         }
     }
     
-    private func loadFeaturedAvatars() async {
-        guard featuredAvatars.isEmpty else { return }
+    private func loadFeaturedAvatars(force: Bool = false) async {
+        guard featuredAvatars.isEmpty || force else { return }
         do {
             featuredAvatars = try await avatarManager.getFeaturedAvatars()
         } catch {
@@ -53,13 +56,19 @@ struct ExploreView: View {
         }
     }
     
-    private func loadPopularAvatars() async {
-        guard popularAvatars.isEmpty else { return }
+    private func loadPopularAvatars(force: Bool = false) async {
+        guard popularAvatars.isEmpty || force else { return }
         do {
             popularAvatars = try await avatarManager.getPopularAvatars()
         } catch {
             print("Error loading featured avatars: \(error)")
         }
+    }
+    
+    private func refreshAvatars() async {
+        async let featuredAvatars: () = loadFeaturedAvatars(force: true)
+        async let popularAvatars: () = loadPopularAvatars(force: true)
+        _ = await (featuredAvatars, popularAvatars)
     }
     
     private var featuredSection: some View {
@@ -89,7 +98,8 @@ struct ExploreView: View {
                     HStack(spacing: 12) {
                         ForEach(categories, id: \.self) { category in
                             let imageName = popularAvatars
-                                .first(where: { $0.characterOption == category })?.profileImageName
+                                .last(where: { $0.characterOption == category })?
+                                .profileImageName
                             if let imageName {
                                 CategoryCellView(
                                     title: category.plural.capitalized,

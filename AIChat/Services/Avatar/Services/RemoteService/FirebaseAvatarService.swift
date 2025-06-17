@@ -50,6 +50,10 @@ extension FirebaseAvatarService: RemoteAvatarServiceProtocol {
     
     func getPopularAvatars() async throws -> [AvatarModel] {
         try await collectionReference
+            .order(
+                by: AvatarModel.CodingKeys.clickCount.rawValue,
+                descending: true
+            )
             .limit(to: 200)
             .getAllDocuments()
     }
@@ -70,7 +74,18 @@ extension FirebaseAvatarService: RemoteAvatarServiceProtocol {
                 AvatarModel.CodingKeys.authorId.rawValue,
                 isEqualTo: userId
             )
+            .order(
+                by: AvatarModel.CodingKeys.dateCreated.rawValue,
+                descending: true
+            )
             .getAllDocuments()
+//            .sorted(by: { ($0.dateCreated ?? .distantPast) > ($1.dateCreated ?? .distantPast) })
+    }
+    
+    func incrementAvatarClickCount(avatarId: String) async throws {
+        try await collectionReference.document(avatarId).updateData([
+            AvatarModel.CodingKeys.clickCount.rawValue: FieldValue.increment(Int64(1))
+        ])
     }
 }
 

@@ -25,8 +25,9 @@ final class AvatarManager {
 
 extension AvatarManager: AvatarManagerProtocol {
     
-    func addRecentAvatar(avatar: AvatarModel) throws {
+    func addRecentAvatar(avatar: AvatarModel) async throws {
         try localStorage.addRecentAvatar(avatar: avatar)
+        try await remoteService.incrementAvatarClickCount(avatarId: avatar.id)
     }
     
     func getRecentAvatars() throws -> [AvatarModel] {
