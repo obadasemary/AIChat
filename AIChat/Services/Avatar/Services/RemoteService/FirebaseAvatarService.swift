@@ -24,7 +24,7 @@ struct FirebaseAvatarService {
     }
 }
 
-extension FirebaseAvatarService: AvatarServiceProtocol {
+extension FirebaseAvatarService: RemoteAvatarServiceProtocol {
     
     func createAvatar(avatar: AvatarModel, image: UIImage) async throws {
         let path = "avatars/\(avatar.avatarId)"
