@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ChatsView: View {
     
+    @Environment(AvatarManager.self) private var avatarManager
+    
     @State private var chats: [ChatModel] = ChatModel.mocks
     @State private var recentsAvatars: [AvatarModel] = AvatarModel.mocks
     
@@ -24,6 +26,17 @@ struct ChatsView: View {
             }
             .navigationTitle("Chats")
             .navigationDestinationForCoreModule(path: $path)
+            .onAppear {
+                loadRecentAvatars()
+            }
+        }
+    }
+    
+    private func loadRecentAvatars() {
+        do {
+            recentsAvatars = try avatarManager.getRecentAvatars()
+        } catch {
+            print("Faild to load recents avatars: \(error)")
         }
     }
     
@@ -103,4 +116,5 @@ struct ChatsView: View {
 
 #Preview {
     ChatsView()
+        .environment(AvatarManager(remoteService: MockAvatarService()))
 }

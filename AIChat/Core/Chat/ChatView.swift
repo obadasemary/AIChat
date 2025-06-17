@@ -55,6 +55,8 @@ struct ChatView: View {
     private func loadAvatar() async {
         do {
             avatar = try await avatarManager.getAvatar(id: avatarId)
+            guard let avatar else { return }
+            try? avatarManager.addRecentAvatar(avatar: avatar)
         } catch {
             print("Error loading avatar: \(error)")
         }
@@ -182,6 +184,6 @@ struct ChatView: View {
 #Preview {
     NavigationStack {
         ChatView(avatarId: AvatarModel.mock.avatarId)
-            .environment(AvatarManager(service: MockAvatarService()))
+            .environment(AvatarManager(remoteService: MockAvatarService()))
     }
 }
