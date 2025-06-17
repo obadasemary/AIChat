@@ -13,6 +13,11 @@ extension MockAvatarService: AvatarServiceProtocol {
     
     func createAvatar(avatar: AvatarModel, image: UIImage) async throws {}
     
+    func getAvatar(id: String) async throws -> AvatarModel? {
+        try await Task.sleep(for: .seconds(1))
+        return AvatarModel.mock
+    }
+    
     func getFeaturedAvatars() async throws -> [AvatarModel] {
         try await Task.sleep(for: .seconds(1))
         return AvatarModel.mocks.shuffled()
