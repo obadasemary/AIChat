@@ -156,7 +156,7 @@ struct ExploreView: View {
     ExploreView()
         .environment(
             AvatarManager(
-                service: FirebaseAvatarService(
+                remoteService: FirebaseAvatarService(
                     firebaseImageUploadServiceProtocol: FirebaseImageUploadService()
                 )
             )

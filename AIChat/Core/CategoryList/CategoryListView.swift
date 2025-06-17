@@ -79,7 +79,7 @@ struct CategoryListView: View {
     CategoryListView(path: .constant([]))
         .environment(
             AvatarManager(
-                service: FirebaseAvatarService(
+                remoteService: FirebaseAvatarService(
                     firebaseImageUploadServiceProtocol: FirebaseImageUploadService()
                 )
             )
