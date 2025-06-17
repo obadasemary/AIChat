@@ -150,16 +150,8 @@ struct ProfileView: View {
 
 #Preview {
     ProfileView()
-        .environment(
-            UserManager(services: MockUserServices(currentUser: .mock))
-        )
-        .environment(
-            AvatarManager(
-                service: FirebaseAvatarService(
-                    firebaseImageUploadServiceProtocol: FirebaseImageUploadService()
-                )
-            )
-        )
+        .environment(UserManager(services: MockUserServices(currentUser: .mock)))
+        .environment(AvatarManager(service: MockAvatarService()))
         .environment(
             AuthManager(service: MockAuthService(currentUser: .mock()))
         )
