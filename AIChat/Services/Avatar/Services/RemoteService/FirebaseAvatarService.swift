@@ -36,6 +36,10 @@ extension FirebaseAvatarService: AvatarServiceProtocol {
         try await saveUser(avatar: avatar)
     }
     
+    func getAvatar(id: String) async throws -> AvatarModel? {
+        try await collectionReference.getDocument(id: id)
+    }
+    
     func getFeaturedAvatars() async throws -> [AvatarModel] {
         try await collectionReference
             .limit(to: 50)
