@@ -24,6 +24,10 @@ extension AvatarManager: AvatarManagerProtocol {
         try await service.createAvatar(avatar: avatar, image: image)
     }
     
+    func getAvatar(id: String) async throws -> AvatarModel? {
+        try await service.getAvatar(id: id)
+    }
+    
     func getFeaturedAvatars() async throws -> [AvatarModel] {
         try await service.getFeaturedAvatars()
     }
