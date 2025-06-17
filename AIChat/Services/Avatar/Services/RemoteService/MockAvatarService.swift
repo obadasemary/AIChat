@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MockAvatarService {}
 
-extension MockAvatarService: AvatarServiceProtocol {
+extension MockAvatarService: RemoteAvatarServiceProtocol {
     
     func createAvatar(avatar: AvatarModel, image: UIImage) async throws {}
     

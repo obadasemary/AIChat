@@ -11,37 +11,50 @@ import SwiftUI
 @Observable
 final class AvatarManager {
     
-    private let service: AvatarServiceProtocol
+    private let remoteService: RemoteAvatarServiceProtocol
+    private let localStorage: LocalAvatarServicePersistenceProtocol
     
-    init(service: AvatarServiceProtocol) {
-        self.service = service
+    init(
+        remoteService: RemoteAvatarServiceProtocol,
+        localStorage: LocalAvatarServicePersistenceProtocol = MockLocalAvatarServicePersistence()
+    ) {
+        self.remoteService = remoteService
+        self.localStorage = localStorage
     }
 }
 
 extension AvatarManager: AvatarManagerProtocol {
+    
+    func addRecentAvatar(avatar: AvatarModel) throws {
+        try localStorage.addRecentAvatar(avatar: avatar)
+    }
+    
+    func getRecentAvatars() throws -> [AvatarModel] {
+        try localStorage.getRecentAvatars()
+    }
 
     func createAvatar(avatar: AvatarModel, image: UIImage) async throws {
-        try await service.createAvatar(avatar: avatar, image: image)
+        try await remoteService.createAvatar(avatar: avatar, image: image)
     }
     
     func getAvatar(id: String) async throws -> AvatarModel? {
-        try await service.getAvatar(id: id)
+        try await remoteService.getAvatar(id: id)
     }
     
     func getFeaturedAvatars() async throws -> [AvatarModel] {
-        try await service.getFeaturedAvatars()
+        try await remoteService.getFeaturedAvatars()
     }
 
     func getPopularAvatars() async throws -> [AvatarModel] {
-        try await service.getPopularAvatars()
+        try await remoteService.getPopularAvatars()
     }
     
     func getAvatarsForCategory(category: CharacterOption) async throws -> [AvatarModel] {
-        try await service.getAvatarsForCategory(category: category)
+        try await remoteService.getAvatarsForCategory(category: category)
     }
     
     func getAvatarsForAuthor(userId: String) async throws -> [AvatarModel] {
-        try await service.getAvatarsForAuthor(userId: userId)
+        try await remoteService.getAvatarsForAuthor(userId: userId)
     }
 }
 

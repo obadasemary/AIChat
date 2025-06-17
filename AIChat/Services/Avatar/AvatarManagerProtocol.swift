@@ -8,6 +8,8 @@
 import SwiftUI
 
 protocol AvatarManagerProtocol: Sendable {
+    @MainActor func addRecentAvatar(avatar: AvatarModel) throws
+    @MainActor func getRecentAvatars() throws -> [AvatarModel]
     func createAvatar(avatar: AvatarModel, image: UIImage) async throws
     func getAvatar(id: String) async throws -> AvatarModel?
     func getFeaturedAvatars() async throws -> [AvatarModel]
