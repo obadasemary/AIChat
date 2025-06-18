@@ -11,9 +11,12 @@ struct ExploreView: View {
     
     @Environment(AvatarManager.self) private var avatarManager
     
-    @State private var featuredAvatars: [AvatarModel] = []
     @State private var categories: [CharacterOption] = CharacterOption.allCases
+    
+    @State private var featuredAvatars: [AvatarModel] = []
     @State private var popularAvatars: [AvatarModel] = []
+    @State private var isLoadingFeatured: Bool = true
+    @State private var isLoadingPopular: Bool = true
     
     @State private var path: [NavigationPathOption] = []
     
@@ -21,9 +24,11 @@ struct ExploreView: View {
         NavigationStack(path: $path) {
             List {
                 if featuredAvatars.isEmpty && popularAvatars.isEmpty {
-                    ProgressView()
-                        .frame(maxWidth: .infinity)
-                        .removeListRowFormatting()
+                    if isLoadingFeatured || isLoadingPopular {
+                        loadingIndicator
+                    } else {
+                        contentUnavailableView
+                    }
                 }
                 if !featuredAvatars.isEmpty {
                     featuredSection
@@ -54,21 +59,44 @@ struct ExploreView: View {
         } catch {
             print("Error loading featured avatars: \(error)")
         }
+        
+        isLoadingFeatured = false
     }
     
     private func loadPopularAvatars(force: Bool = false) async {
-        guard popularAvatars.isEmpty || force else { return }
+        guard popularAvatars.isEmpty || force else {
+            return
+        }
         do {
             popularAvatars = try await avatarManager.getPopularAvatars()
         } catch {
             print("Error loading featured avatars: \(error)")
         }
+        
+        isLoadingPopular = false
     }
     
     private func refreshAvatars() async {
         async let featuredAvatars: () = loadFeaturedAvatars(force: true)
         async let popularAvatars: () = loadPopularAvatars(force: true)
         _ = await (featuredAvatars, popularAvatars)
+    }
+    
+    private var loadingIndicator: some View {
+        ProgressView()
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 200)
+            .removeListRowFormatting()
+    }
+    
+    private var contentUnavailableView: some View {
+        ContentUnavailableView(
+            "No Connection",
+            systemImage: "wifi.slash",
+            description: Text("Please check your internet connection and try again later.")
+        )
+        .padding(.vertical, 200)
+        .removeListRowFormatting()
     }
     
     private var featuredSection: some View {
@@ -162,13 +190,40 @@ struct ExploreView: View {
     }
 }
 
-#Preview {
+#Preview("Remote Service") {
     ExploreView()
         .environment(
             AvatarManager(
                 remoteService: FirebaseAvatarService(
                     firebaseImageUploadServiceProtocol: FirebaseImageUploadService()
                 )
+            )
+        )
+}
+
+#Preview("Mock Has Data") {
+    ExploreView()
+        .environment(
+            AvatarManager(
+                remoteService: MockAvatarService()
+            )
+        )
+}
+
+#Preview("Mock No Data") {
+    ExploreView()
+        .environment(
+            AvatarManager(
+                remoteService: MockAvatarService(avatars: [])
+            )
+        )
+}
+
+#Preview("Mock Slow Loading") {
+    ExploreView()
+        .environment(
+            AvatarManager(
+                remoteService: MockAvatarService(delay: 2)
             )
         )
 }

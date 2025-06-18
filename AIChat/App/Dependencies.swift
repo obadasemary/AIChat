@@ -5,7 +5,7 @@
 //  Created by Abdelrahman Mohamed on 15.06.2025.
 //
 
-import Foundation
+import SwiftUI
 import FirebaseFirestore
 
 @MainActor
@@ -27,3 +27,23 @@ struct Dependencies {
         )
     }
 }
+
+extension View {
+    func previewEnvironment(isSignedIn: Bool = true) -> some View {
+        self
+            .environment(AIManager(service: MockAIServer()))
+            .environment(AvatarManager(remoteService: MockAvatarService()))
+            .environment(
+                UserManager(
+                    services: MockUserServices(currentUser: isSignedIn ? .mock : nil)
+                )
+            )
+            .environment(
+                AuthManager(
+                    service: MockAuthService(currentUser: isSignedIn ? .mock() : nil)
+                )
+            )
+            .environment(AppState())
+    }
+}
+

@@ -77,7 +77,7 @@ struct UserModel: Codable {
                 userId: "mock_user_id_1",
                 creationDate: now,
                 didCompleteOnboarding: true,
-                profileColorHex: "#FF5733"
+                profileColorHex: "#7DCEA0"
             ),
             UserModel(
                 userId: "mock_user_id_2",
@@ -89,7 +89,7 @@ struct UserModel: Codable {
                 userId: "mock_user_id_3",
                 creationDate: now.addingTimeInterval(days: -3, hours: -2),
                 didCompleteOnboarding: true,
-                profileColorHex: "#7DCEA0"
+                profileColorHex: "#5C6BC0"
             ),
             UserModel(
                 userId: "mock_user_id_4",
