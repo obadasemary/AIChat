@@ -31,12 +31,10 @@ struct CategoryListView: View {
             )
             .removeListRowFormatting()
             
-            if avatars.isEmpty && isLoading {
-                ProgressView()
-                    .padding(40)
-                    .frame(maxWidth: .infinity)
-                    .listRowSeparator(.hidden)
-                    .removeListRowFormatting()
+            if isLoading {
+                loadingIndicator
+            } else if avatars.isEmpty {
+                contentUnavailableView
             } else {
                 ForEach(avatars, id: \.self) { avatar in
                     CustomListCellView(
@@ -59,6 +57,25 @@ struct CategoryListView: View {
         }
     }
     
+    private var loadingIndicator: some View {
+        ProgressView()
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 200)
+            .listRowSeparator(.hidden)
+            .removeListRowFormatting()
+    }
+    
+    private var contentUnavailableView: some View {
+        ContentUnavailableView(
+            "No Avatars Found",
+            systemImage: "bolt.slash",
+            description: Text("No Avatars Found For This Category Yet.")
+        )
+        .listRowSeparator(.hidden)
+        .padding(.vertical, 100)
+        .removeListRowFormatting()
+    }
+    
     private func loadAvatars() async {
         do {
             avatars = try await avatarManager
@@ -75,13 +92,49 @@ struct CategoryListView: View {
     }
 }
 
-#Preview {
+#Preview("Remote Service") {
     CategoryListView(path: .constant([]))
         .environment(
             AvatarManager(
                 remoteService: FirebaseAvatarService(
                     firebaseImageUploadServiceProtocol: FirebaseImageUploadService()
                 )
+            )
+        )
+}
+
+#Preview("Mock Has Data") {
+    CategoryListView(path: .constant([]))
+        .environment(
+            AvatarManager(
+                remoteService: MockAvatarService()
+            )
+        )
+}
+
+#Preview("Mock No Data") {
+    CategoryListView(path: .constant([]))
+        .environment(
+            AvatarManager(
+                remoteService: MockAvatarService(avatars: [])
+            )
+        )
+}
+
+#Preview("Mock Slow Loading") {
+    CategoryListView(path: .constant([]))
+        .environment(
+            AvatarManager(
+                remoteService: MockAvatarService(delay: 2)
+            )
+        )
+}
+
+#Preview("Error Loading") {
+    CategoryListView(path: .constant([]))
+        .environment(
+            AvatarManager(
+                remoteService: MockAvatarService(delay: 5, showError: true)
             )
         )
 }
