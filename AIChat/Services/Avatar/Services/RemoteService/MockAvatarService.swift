@@ -63,6 +63,10 @@ extension MockAvatarService: RemoteAvatarServiceProtocol {
     }
     
     func incrementAvatarClickCount(avatarId: String) async throws {}
+    
+    func removeAuthorIdFromAvatar(avatarId: String) async throws {}
+    
+    func removeAuthorIdFromAllUserAvatars(userId: String) async throws {}
 }
 
 private extension MockAvatarService {

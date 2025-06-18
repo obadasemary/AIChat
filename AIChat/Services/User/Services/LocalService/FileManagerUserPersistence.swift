@@ -1,5 +1,5 @@
 //
-//  FileManagerUserPersistance.swift
+//  FileManagerUserPersistence.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 15.06.2025.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct FileManagerUserPersistance {
+struct FileManagerUserPersistence {
     private let userDocumentKey: String
     
     init(userDocumentKey: String = "current_user") {
@@ -15,7 +15,7 @@ struct FileManagerUserPersistance {
     }
 }
 
-extension FileManagerUserPersistance: LocalUserServiceProtocol {
+extension FileManagerUserPersistence: LocalUserServiceProtocol {
     func getCurrentUser() -> UserModel? {
         try? FileManager.getDocument(key: userDocumentKey)
     }

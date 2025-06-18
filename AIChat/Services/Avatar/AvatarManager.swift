@@ -57,6 +57,14 @@ extension AvatarManager: AvatarManagerProtocol {
     func getAvatarsForAuthor(userId: String) async throws -> [AvatarModel] {
         try await remoteService.getAvatarsForAuthor(userId: userId)
     }
+    
+    func removeAuthorIdFromAvatar(avatarId: String) async throws {
+        try await remoteService.removeAuthorIdFromAvatar(avatarId: avatarId)
+    }
+    
+    func removeAuthorIdFromAllUserAvatars(userId: String) async throws {
+        try await remoteService.removeAuthorIdFromAllUserAvatars(userId: userId)
+    }
 }
 
 private extension AvatarManager {}
