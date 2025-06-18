@@ -83,9 +83,31 @@ extension FirebaseAvatarService: RemoteAvatarServiceProtocol {
     }
     
     func incrementAvatarClickCount(avatarId: String) async throws {
-        try await collectionReference.document(avatarId).updateData([
-            AvatarModel.CodingKeys.clickCount.rawValue: FieldValue.increment(Int64(1))
-        ])
+        try await collectionReference
+            .document(avatarId)
+            .updateData([
+                AvatarModel.CodingKeys.clickCount.rawValue: FieldValue.increment(Int64(1))
+            ])
+    }
+    
+    func removeAuthorIdFromAvatar(avatarId: String) async throws {
+        try await collectionReference
+            .document(avatarId)
+            .updateData([AvatarModel.CodingKeys.authorId.rawValue: NSNull()])
+    }
+    
+    func removeAuthorIdFromAllUserAvatars(userId: String) async throws {
+        let avatars = try await getAvatarsForAuthor(userId: userId)
+        
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for avatar in avatars {
+                group.addTask {
+                    try await removeAuthorIdFromAvatar(avatarId: avatar.avatarId)
+                }
+            }
+            
+            try await group.waitForAll()
+        }
     }
 }
 

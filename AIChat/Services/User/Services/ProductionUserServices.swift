@@ -13,7 +13,7 @@ struct ProductionUserServices: UserServicesProtocol {
     
     init(
         remoteService: RemoteUserServiceProtocol = FirebaseUserService(),
-        localStorage: LocalUserServiceProtocol = FileManagerUserPersistance()
+        localStorage: LocalUserServiceProtocol = FileManagerUserPersistence()
     ) {
         self.remoteService = remoteService
         self.localStorage = localStorage

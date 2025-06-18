@@ -14,6 +14,6 @@ struct MockUserServices: UserServicesProtocol {
     
     init(currentUser: UserModel? = nil) {
         self.remoteService = MockUserService(currentUser: currentUser)
-        self.localStorage = MockUserPersistance(currentUser: currentUser)
+        self.localStorage = MockUserPersistence(currentUser: currentUser)
     }
 }
