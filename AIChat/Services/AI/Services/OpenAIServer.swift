@@ -6,7 +6,10 @@
 //
 
 import SwiftUI
-import OpenAI
+@preconcurrency import OpenAI
+
+typealias ChatContent = ChatQuery.ChatCompletionMessageParam.ChatCompletionUserMessageParam.Content.VisionContent
+typealias ChatText = ChatQuery.ChatCompletionMessageParam.ChatCompletionUserMessageParam.Content.VisionContent.ChatCompletionContentPartTextParam
 
 struct OpenAIServer {
     
@@ -34,6 +37,52 @@ extension OpenAIServer: AIServiceProtocol {
         }
         
         return image
+    }
+    
+    func generateText(chats: [AIChatModel]) async throws -> AIChatModel {
+        
+        let message = chats.compactMap({ $0.toOpenAIModel() })
+        
+        let query = ChatQuery(
+            messages: message,
+            model: .gpt3_5Turbo
+        )
+            
+        do {
+            let result = try await openAI.chats(query: query)
+            guard
+                let chat = result.choices.first?.message,
+                let model = AIChatModel(chat: chat)
+            else {
+                throw OpenAIError.invalidResponse
+            }
+            print("Returned Message: \(String(describing: chat.content))")
+            return model
+        } catch {
+            print("Error decoding chat response: \(error)")
+            throw error
+        }
+    }
+    
+    func generateTextWithOAIV043(input: String) async throws {
+        
+        let query = ChatQuery(
+            messages: [
+                .user(.init(content: .string(input)))
+            ],
+            model: .gpt4_o
+        )
+        
+        do {
+            let result = try await openAI.chats(query: query)
+            guard let chat = result.choices.first?.message else {
+                throw OpenAIError.invalidResponse
+            }
+            print("Returned Message: \(String(describing: chat.content))")
+        } catch {
+            print("Error decoding chat response: \(error)")
+            throw error
+        }
     }
     
     func generateImageWithAPI(input: String) async throws -> UIImage {
@@ -108,4 +157,64 @@ struct OpenAIImageResponse: Decodable {
         let b64_json: String
     }
     let data: [ImageData]
+}
+
+struct AIChatModel {
+    
+    let role: AIChatRole
+    let message: String
+    
+    init(role: AIChatRole, message: String) {
+        self.role = role
+        self.message = message
+    }
+    
+    init?(chat: ChatResult.Choice.ChatCompletionMessage) {
+        self.role = AIChatRole(role: chat.role)
+        if let string = chat.content?.string {
+            self.message = string
+        } else {
+            return nil
+        }
+    }
+    
+    func toOpenAIModel() -> ChatQuery.ChatCompletionMessageParam? {
+        ChatQuery.ChatCompletionMessageParam(
+            role: role.openAIRole,
+            content: [ChatContent.chatCompletionContentPartTextParam(ChatText(text: message))]
+        )
+    }
+}
+
+enum AIChatRole {
+    case system
+    case user
+    case assistant
+    case tool
+    
+    init(role: ChatQuery.ChatCompletionMessageParam.Role) {
+        switch role {
+        case .system:
+            self = .system
+        case .user:
+            self = .user
+        case .assistant:
+            self = .assistant
+        case .tool:
+            self = .tool
+        }
+    }
+    
+    var openAIRole: ChatQuery.ChatCompletionMessageParam.Role {
+        switch self {
+        case .system:
+            .system
+        case .user:
+            .user
+        case .assistant:
+            .assistant
+        case .tool:
+            .tool
+        }
+    }
 }

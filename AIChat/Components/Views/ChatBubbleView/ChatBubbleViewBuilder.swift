@@ -17,7 +17,7 @@ struct ChatBubbleViewBuilder: View {
     
     var body: some View {
         ChatBubbleView(
-            text: message.content ?? "",
+            text: message.content?.message ?? "",
             textColor: isCurrentUser ? .white: .primary,
             backgroundColor: isCurrentUser ? .accent: Color(
                 uiColor: .systemGray6
@@ -45,7 +45,10 @@ struct ChatBubbleViewBuilder: View {
                     id: UUID().uuidString,
                     chatId: UUID().uuidString,
                     authorId: UUID().uuidString,
-                    content: "Yes I am one of the best Error: this application, or a library it uses, has passed an invalid numeric value (NaN, or not-a-number) to CoreGraphics API and this value is being ignored. Please fix this problem.",
+                    content: AIChatModel(
+                        role: .user,
+                        message: "Yes I am one of the best Error: this application, or a library it uses, has passed an invalid numeric value (NaN, or not-a-number) to CoreGraphics API and this value is being ignored. Please fix this problem."
+                    ),
                     seenByIds: nil,
                     dateCreated: .now
                 ),
@@ -56,7 +59,10 @@ struct ChatBubbleViewBuilder: View {
                     id: UUID().uuidString,
                     chatId: UUID().uuidString,
                     authorId: UUID().uuidString,
-                    content: "Yes I am one of the best Error: this application, or a library it uses.",
+                    content: AIChatModel(
+                        role: .user,
+                        message: "Yes I am one of the best Error: this application, or a library it uses."
+                    ),
                     seenByIds: nil,
                     dateCreated: .now
                 ),
@@ -67,7 +73,10 @@ struct ChatBubbleViewBuilder: View {
                     id: UUID().uuidString,
                     chatId: UUID().uuidString,
                     authorId: UUID().uuidString,
-                    content: "Yes I am one of the best Error: this application, or a library it uses, has passed an invalid numeric value (NaN, or not-a-number) to CoreGraphics API and this value is being ignored. Please fix this problem.",
+                    content: AIChatModel(
+                        role: .user,
+                        message: "Yes I am one of the best Error: this application, or a library it uses, has passed an invalid numeric value (NaN, or not-a-number) to CoreGraphics API and this value is being ignored. Please fix this problem."
+                    ),
                     seenByIds: nil,
                     dateCreated: .now
                 ),

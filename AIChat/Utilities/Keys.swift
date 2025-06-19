@@ -8,7 +8,5 @@
 import Foundation
 
 struct Keys {
-    static let openAIAPIKey = "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"
-    
-//    "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"
+    static let openAIAPIKey = "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"
 }
