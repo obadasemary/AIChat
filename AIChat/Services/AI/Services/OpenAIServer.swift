@@ -63,6 +63,15 @@ extension OpenAIServer: AIServiceProtocol {
             throw error
         }
     }
+}
+
+private extension OpenAIServer {
+    enum OpenAIError: LocalizedError {
+        case invalidPrompt
+        case invalidURL
+        case invalidResponse
+        case decodingFailed
+    }
     
     func generateTextWithOAIV043(input: String) async throws {
         
@@ -127,94 +136,25 @@ extension OpenAIServer: AIServiceProtocol {
 
         return image
     }
-}
-
-private extension OpenAIServer {
-    enum OpenAIError: LocalizedError {
-        case invalidPrompt
-        case invalidURL
-        case invalidResponse
-        case decodingFailed
-    }
-}
-
-struct OpenAIImageRequest: Encodable {
-    let prompt: String
-    let n: Int
-    let size: String
-    let response_format: String
     
-    init(prompt: String, n: Int = 1, size: String = "512x512", response_format: String = "b64_json") {
-        self.prompt = prompt
-        self.n = n
-        self.size = size
-        self.response_format = response_format
-    }
-}
-
-struct OpenAIImageResponse: Decodable {
-    struct ImageData: Decodable {
-        let b64_json: String
-    }
-    let data: [ImageData]
-}
-
-struct AIChatModel {
-    
-    let role: AIChatRole
-    let message: String
-    
-    init(role: AIChatRole, message: String) {
-        self.role = role
-        self.message = message
-    }
-    
-    init?(chat: ChatResult.Choice.ChatCompletionMessage) {
-        self.role = AIChatRole(role: chat.role)
-        if let string = chat.content?.string {
-            self.message = string
-        } else {
-            return nil
+    struct OpenAIImageRequest: Encodable {
+        let prompt: String
+        let n: Int
+        let size: String
+        let response_format: String
+        
+        init(prompt: String, n: Int = 1, size: String = "512x512", response_format: String = "b64_json") {
+            self.prompt = prompt
+            self.n = n
+            self.size = size
+            self.response_format = response_format
         }
     }
-    
-    func toOpenAIModel() -> ChatQuery.ChatCompletionMessageParam? {
-        ChatQuery.ChatCompletionMessageParam(
-            role: role.openAIRole,
-            content: [ChatContent.chatCompletionContentPartTextParam(ChatText(text: message))]
-        )
-    }
-}
 
-enum AIChatRole {
-    case system
-    case user
-    case assistant
-    case tool
-    
-    init(role: ChatQuery.ChatCompletionMessageParam.Role) {
-        switch role {
-        case .system:
-            self = .system
-        case .user:
-            self = .user
-        case .assistant:
-            self = .assistant
-        case .tool:
-            self = .tool
+    struct OpenAIImageResponse: Decodable {
+        struct ImageData: Decodable {
+            let b64_json: String
         }
-    }
-    
-    var openAIRole: ChatQuery.ChatCompletionMessageParam.Role {
-        switch self {
-        case .system:
-            .system
-        case .user:
-            .user
-        case .assistant:
-            .assistant
-        case .tool:
-            .tool
-        }
+        let data: [ImageData]
     }
 }
