@@ -64,6 +64,26 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
         profileImageName = imageName
     }
     
+    static func newAvatar(
+        name: String,
+        option: CharacterOption,
+        action: CharacterAction,
+        location: CharacterLocation,
+        authorId: String
+    ) -> Self {
+        AvatarModel(
+            avatarId: UUID().uuidString,
+            name: name,
+            characterOption: option,
+            characterAction: action,
+            characterLocation: location,
+            profileImageName: nil,
+            authorId: authorId,
+            dateCreated: .now,
+            clickCount: 0
+        )
+    }
+    
     static var mock: Self {
         mocks[0]
     }

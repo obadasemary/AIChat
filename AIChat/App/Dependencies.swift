@@ -14,6 +14,7 @@ struct Dependencies {
     let userManager: UserManager
     let aiManager: AIManager
     let avatarManager: AvatarManager
+    let chatManager: ChatManager
     
     init() {
         authManager = AuthManager(service: FirebaseAuthService())
@@ -25,12 +26,14 @@ struct Dependencies {
             ),
             localStorage: SwiftDataLocalAvatarServicePersistence()
         )
+        chatManager = ChatManager(service: FirebaseChatService())
     }
 }
 
 extension View {
     func previewEnvironment(isSignedIn: Bool = true) -> some View {
         self
+            .environment(ChatManager(service: MockChatService()))
             .environment(AIManager(service: MockAIServer()))
             .environment(AvatarManager(remoteService: MockAvatarService()))
             .environment(

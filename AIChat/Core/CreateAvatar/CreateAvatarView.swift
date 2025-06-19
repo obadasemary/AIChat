@@ -176,18 +176,14 @@ struct CreateAvatarView: View {
         Task {
             do {
                 try TextValidationHelper.checkIfTextIsValid(text: avatarName)
-                let uId = try authManager.getAuthId()
+                let userId = try authManager.getAuthId()
                 
-                let avatar = AvatarModel(
-                    avatarId: UUID().uuidString,
+                let avatar = AvatarModel.newAvatar(
                     name: avatarName,
-                    characterOption: characterOption,
-                    characterAction: characterAction,
-                    characterLocation: characterLocation,
-                    profileImageName: nil,
-                    authorId: uId,
-                    dateCreated: .now,
-                    clickCount: 0
+                    option: characterOption,
+                    action: characterAction,
+                    location: characterLocation,
+                    authorId: userId
                 )
                 
                 try await avatarManager
