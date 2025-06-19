@@ -13,11 +13,11 @@ struct TextValidationHelper {
             throw TextValidationError.notEnoughCharacters(min: minimumCharactersCount)
         }
         
-        let badWords: [String] = ["bad", "word"]
-        
-        if badWords.contains(where: text.lowercased().contains) {
-            throw TextValidationError.hasBadWords
-        }
+//        let badWords: [String] = ["bad", "word"]
+//        
+//        if badWords.contains(where: text.lowercased().contains) {
+//            throw TextValidationError.hasBadWords
+//        }
     }
     
     enum TextValidationError: LocalizedError {
