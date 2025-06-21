@@ -49,8 +49,9 @@ struct CategoryListView: View {
                 }
             }
         }
+        .scrollBounceBehavior(.basedOnSize)
         .showCustomAlert(alert: $showAlert)
-        .ignoresSafeArea()
+        .ignoresSafeArea(edges: .top)
         .listStyle(.plain)
         .task {
             await loadAvatars()
@@ -88,7 +89,7 @@ struct CategoryListView: View {
     }
     
     private func onAvatarTapped(avatar: AvatarModel) {
-        path.append(.chat(avatarId: avatar.avatarId))
+        path.append(.chat(avatarId: avatar.avatarId, chat: nil))
     }
 }
 

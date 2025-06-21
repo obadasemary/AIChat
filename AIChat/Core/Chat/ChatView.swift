@@ -18,7 +18,9 @@ struct ChatView: View {
     @State private var chatMessages: [ChatMessageModel] = []
     @State private var avatar: AvatarModel?
     @State private var currentUser: UserModel?
-    @State private var chat: ChatModel?
+    
+    var avatarId: String
+    @State var chat: ChatModel?
     
     @State private var textFieldText: String = ""
     @FocusState private var isTextFieldFocused: Bool
@@ -30,8 +32,6 @@ struct ChatView: View {
     @State private var isGeneratingResponse: Bool = false
     @State private var typingIndicatorMessage: ChatMessageModel?
     @State private var messageListener: ListenerRegistration?
-    
-    var avatarId: String
     
     var body: some View {
         VStack(spacing: .zero) {
@@ -112,7 +112,8 @@ private extension ChatView {
                     messageListener?.remove()
                     messageListener = listener
                 }) {
-                chatMessages = value.sorted(by: { $0.dateCreatedCalculated < $1.dateCreatedCalculated })
+                chatMessages = value
+                    .sortedByKeyPath(keyPath: \.dateCreatedCalculated)
                 scrollPosition = chatMessages.last?.id
             }
         } catch {
@@ -269,7 +270,7 @@ private extension ChatView {
                     id: UUID().uuidString,
                     chatId: chat.id,
                     authorId: avatarId,
-                    content: AIChatModel(role: .assistant, message: "✍️..."),
+                    content: AIChatModel(role: .assistant, message: "💬"),
                     seenByIds: [],
                     dateCreated: .now
                 )
@@ -368,6 +369,7 @@ private extension ChatView {
     }
 }
 
+// MARK: - Preview Working Chat
 #Preview("Working Chat") {
     NavigationStack {
         ChatView(avatarId: AvatarModel.mock.avatarId)
@@ -375,6 +377,7 @@ private extension ChatView {
     }
 }
 
+// MARK: - Preview Slow AI Generation
 #Preview("Slow AI Generation") {
     NavigationStack {
         ChatView(avatarId: AvatarModel.mock.avatarId)
@@ -383,6 +386,7 @@ private extension ChatView {
     }
 }
 
+// MARK: - Preview Failed AI Generation
 #Preview("Failed AI Generation") {
     NavigationStack {
         ChatView(avatarId: AvatarModel.mock.avatarId)

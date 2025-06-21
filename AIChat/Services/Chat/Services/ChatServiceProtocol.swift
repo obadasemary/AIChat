@@ -8,9 +8,11 @@
 protocol ChatServiceProtocol: Sendable {
     func createNewChat(chat: ChatModel) async throws
     func getChat(userId: String, avatarId: String) async throws -> ChatModel?
+    func getAllChats(userId: String) async throws -> [ChatModel]
     func addChatMessage(message: ChatMessageModel) async throws
     func streamChatMessages(
         chatId: String,
         onListenerConfigured: @escaping (ListenerRegistration) -> Void
     ) -> AsyncThrowingStream<[ChatMessageModel], any Error>
+    func getLastChatMessage(chatId: String) async throws -> ChatMessageModel?
 }

@@ -39,6 +39,7 @@ struct ChatRowCellView: View {
                         .foregroundColor(.secondary)
                 }
             }
+            .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
             
             if hasNewMessages {

@@ -28,6 +28,10 @@ extension ChatManager: ChatManagerProtocol {
         try await service.getChat(userId: userId, avatarId: avatarId)
     }
     
+    func getAllChats(userId: String) async throws -> [ChatModel] {
+        try await service.getAllChats(userId: userId)
+    }
+    
     func addChatMessage(message: ChatMessageModel) async throws {
         try await service
             .addChatMessage(message: message)
@@ -42,5 +46,9 @@ extension ChatManager: ChatManagerProtocol {
                 chatId: chatId,
                 onListenerConfigured: onListenerConfigured
             )
+    }
+    
+    func getLastChatMessage(chatId: String) async throws -> ChatMessageModel? {
+        try await service.getLastChatMessage(chatId: chatId)
     }
 }
