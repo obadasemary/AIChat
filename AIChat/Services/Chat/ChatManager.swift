@@ -59,4 +59,10 @@ extension ChatManager: ChatManagerProtocol {
     func deleteAllChatsForUser(userId: String) async throws {
         try await service.deleteAllChatsForUser(userId: userId)
     }
+    
+    func reportChat(chatId: String, userId: String) async throws {
+        let report = ChatReportModel.new(chatId: chatId, userId: userId)
+        
+        try await service.reportChat(report: report)
+    }
 }

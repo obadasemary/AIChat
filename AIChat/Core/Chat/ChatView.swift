@@ -325,7 +325,7 @@ private extension ChatView {
             AnyView(
                 Group {
                     Button("Report User / Chat", role: .destructive) {
-                        
+                        onReportChatTapped()
                     }
                     
                     Button("Delete Chat", role: .destructive) {
@@ -333,6 +333,26 @@ private extension ChatView {
                     }
                 }
             )
+        }
+    }
+    
+    func onReportChatTapped() {
+        Task {
+            do {
+                let chatId = try getChatId()
+                let userId = try authManager.getAuthId()
+                try await chatManager.reportChat(chatId: chatId, userId: userId)
+                
+                showAlert = AnyAppAlert(
+                    title: "🚨 Reported! 🚨",
+                    subtitle: "We will look into this as soon as possible. You may leave the chat at any time. Thanks for bringing this to our attention!"
+                )
+            } catch {
+                showAlert = AnyAppAlert(
+                    title: "Something went wrong",
+                    subtitle: "Please try again later."
+                )
+            }
         }
     }
     
