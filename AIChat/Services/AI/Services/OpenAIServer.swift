@@ -8,9 +8,6 @@
 import SwiftUI
 @preconcurrency import OpenAI
 
-typealias ChatContent = ChatQuery.ChatCompletionMessageParam.ChatCompletionUserMessageParam.Content.VisionContent
-typealias ChatText = ChatQuery.ChatCompletionMessageParam.ChatCompletionUserMessageParam.Content.VisionContent.ChatCompletionContentPartTextParam
-
 struct OpenAIServer {
     
     private let openAI: OpenAI
@@ -41,10 +38,10 @@ extension OpenAIServer: AIServiceProtocol {
     
     func generateText(chats: [AIChatModel]) async throws -> AIChatModel {
         
-        let message = chats.compactMap({ $0.toOpenAIModel() })
+        let messages = chats.compactMap({ $0.toOpenAIModel() })
         
         let query = ChatQuery(
-            messages: message,
+            messages: messages,
             model: .gpt3_5Turbo
         )
             
