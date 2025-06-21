@@ -173,7 +173,7 @@ struct ExploreView: View {
     }
     
     private func onAvaterSelected(avatar: AvatarModel) {
-        path.append(.chat(avatarId: avatar.avatarId))
+        path.append(.chat(avatarId: avatar.avatarId, chat: nil))
     }
     
     private func onCategorySelected(

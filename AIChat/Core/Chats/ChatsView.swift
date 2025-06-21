@@ -9,10 +9,15 @@ import SwiftUI
 
 struct ChatsView: View {
     
+    @Environment(AuthManager.self) private var authManager
     @Environment(AvatarManager.self) private var avatarManager
+    @Environment(ChatManager.self) private var chatManager
     
-    @State private var chats: [ChatModel] = ChatModel.mocks
-    @State private var recentsAvatars: [AvatarModel] = AvatarModel.mocks
+    @Environment(\.colorScheme) var colorScheme
+    
+    @State private var chats: [ChatModel] = []
+    @State private var isLoadingChats: Bool = true
+    @State private var recentsAvatars: [AvatarModel] = []
     
     @State private var path: [NavigationPathOption] = []
     
@@ -29,8 +34,15 @@ struct ChatsView: View {
             .onAppear {
                 loadRecentAvatars()
             }
+            .task {
+                await loadChats()
+            }
         }
     }
+}
+
+// MARK: - load
+private extension ChatsView {
     
     private func loadRecentAvatars() {
         do {
@@ -40,7 +52,42 @@ struct ChatsView: View {
         }
     }
     
-    private var recentsSection: some View {
+    private func loadChats() async {
+        do {
+            let uesrId = try authManager.getAuthId()
+            chats = try await chatManager
+                .getAllChats(userId: uesrId)
+                .sortedByKeyPath(keyPath: \.dateModified, ascending: false)
+        } catch {
+            print("Failed to load chats: \(error)")
+        }
+        isLoadingChats = false
+    }
+}
+
+// MARK: - SectionViews
+private extension ChatsView {
+    
+    private var loadingIndicator: some View {
+        ProgressView()
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 200)
+            .listRowSeparator(.hidden)
+            .removeListRowFormatting()
+    }
+    
+    var contentUnavailableView: some View {
+        ContentUnavailableView(
+            "No Chats Yet",
+            systemImage: "\(colorScheme == .dark ? "ellipsis.message.fill" : "ellipsis.message")",
+            description: Text("Your chats will appear here...")
+        )
+        .listRowSeparator(.hidden)
+        .padding(.vertical, 100)
+        .removeListRowFormatting()
+    }
+    
+    var recentsSection: some View {
         Section {
             ScrollView(.horizontal) {
                 LazyHStack(spacing: 8) {
@@ -72,27 +119,29 @@ struct ChatsView: View {
 
     }
     
-    private var chatsSection: some View {
+    var chatsSection: some View {
         Section {
-            if chats.isEmpty {
-                Text("Your chats will appear here...")
-                    .foregroundStyle(.secondary)
-                    .font(.title3)
-                    .frame(maxWidth: .infinity)
-                    .multilineTextAlignment(.center)
-                    .padding()
-                    .removeListRowFormatting()
+            if isLoadingChats {
+                loadingIndicator
+            } else if chats.isEmpty {
+                contentUnavailableView
+//                Text("Your chats will appear here...")
+//                    .foregroundStyle(.secondary)
+//                    .font(.title3)
+//                    .frame(maxWidth: .infinity)
+//                    .multilineTextAlignment(.center)
+//                    .padding()
+//                    .removeListRowFormatting()
             } else {
                 ForEach(chats) { chat in
                     ChatRowCellViewBuilder(
-                        currentUserId: nil, // FIXME: Add cuid
+                        currentUserId: authManager.auth?.uid,
                         chat: chat
                     ) {
-                        try? await Task.sleep(for: .seconds(1))
-                        return AvatarModel.mocks.randomElement()!
+                        try? await avatarManager.getAvatar(id: chat.avatarId)
                     } getLastChatMessage: {
-                        try? await Task.sleep(for: .seconds(1))
-                        return ChatMessageModel.mocks.randomElement()!
+                        try? await chatManager
+                            .getLastChatMessage(chatId: chat.id)
                     }
                     .anyButton(.highlight) {
                         onChatSelected(chat: chat)
@@ -101,20 +150,42 @@ struct ChatsView: View {
                 }
             }
         } header: {
-            Text("CHATS")
+            Text(chats.isEmpty ? "" : "CHATS")
         }
-    }
-    
-    private func onChatSelected(chat: ChatModel) {
-        path.append(.chat(avatarId: chat.avatarId))
-    }
-    
-    private func onRecentsAvatarsTapped(avatar: AvatarModel) {
-        path.append(.chat(avatarId: avatar.avatarId))
     }
 }
 
-#Preview {
+// MARK: - Action
+private extension ChatsView {
+    
+    func onChatSelected(chat: ChatModel) {
+        path.append(.chat(avatarId: chat.avatarId, chat: chat))
+    }
+    
+    func onRecentsAvatarsTapped(avatar: AvatarModel) {
+        path.append(.chat(avatarId: avatar.avatarId, chat: nil))
+    }
+}
+
+#Preview("Has Data") {
     ChatsView()
-        .environment(AvatarManager(remoteService: MockAvatarService()))
+        .previewEnvironment()
+}
+
+#Preview("No Data") {
+    ChatsView()
+        .environment(
+            AvatarManager(
+                remoteService: MockAvatarService(avatars: []),
+                localStorage: MockLocalAvatarServicePersistence(avatars: [])
+            )
+        )
+        .environment(ChatManager(service: MockChatService(chats: [])))
+        .previewEnvironment()
+}
+
+#Preview("Slow loading chats") {
+    ChatsView()
+        .environment(ChatManager(service: MockChatService(delay: 5.0)))
+        .previewEnvironment()
 }
