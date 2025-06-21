@@ -52,6 +52,8 @@ extension MockChatService: ChatServiceProtocol {
         messages.append(message)
     }
     
+    func markChatMessagesAsSeen(chatId: String, messageId: String, userId: String) async throws {}
+    
     func streamChatMessages(
         chatId: String
     ) -> AsyncThrowingStream<[ChatMessageModel], any Error> {

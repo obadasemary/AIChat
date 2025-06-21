@@ -135,6 +135,26 @@ private extension ChatView {
         .padding()
         .transition(.slide)
     }
+    
+    func onMessageDidAppear(message: ChatMessageModel) {
+        Task {
+            do {
+                let userId = try authManager.getAuthId()
+                let chatId = try getChatId()
+                
+                guard !message.hasBeenSeenBy(userId: userId) else { return }
+                
+                try await chatManager
+                    .markChatMessagesAsSeen(
+                        chatId: chatId,
+                        messageId: message.id,
+                        userId: userId
+                    )
+            } catch {
+                print("Field to mark Chat Messages As Seen \(error)")
+            }
+        }
+    }
 }
 
 // MARK: - SectionViews
@@ -143,6 +163,11 @@ private extension ChatView {
         ScrollView {
             LazyVStack(spacing: 24) {
                 ForEach(chatMessages + (typingIndicatorMessage.map { [$0] } ?? [])) { message in
+                    
+                    if messageIsDelayed(message: message) {                    
+                        timestampView(date: message.dateCreatedCalculated)
+                    }
+                    
                     let isCurrentUser = message.authorId == authManager.auth?.uid
                     ChatBubbleViewBuilder(
                         message: message,
@@ -153,22 +178,12 @@ private extension ChatView {
                             onAvatarImageTapped()
                         }
                     )
+                    .onAppear {
+                        onMessageDidAppear(message: message)
+                    }
                     .id(message.id)
                     .transition(.opacity)
                 }
-                //                ForEach(chatMessages) { message in
-                //                    let isCurrentUser = message.authorId == authManager.auth?.uid
-                //                    ChatBubbleViewBuilder(
-                //                        message: message,
-                //                        isCurrentUser: isCurrentUser,
-                //                        currentUserProfileColor: currentUser?.profileColorCalculated ?? .accent,
-                //                        imageName: isCurrentUser ? nil : avatar?.profileImageName,
-                //                        onImageTapped: {
-                //                            onAvatarImageTapped()
-                //                        }
-                //                    )
-                //                    .id(message.id)
-                //                }
             }
             .frame(maxWidth: .infinity)
             .padding(8)
@@ -176,10 +191,20 @@ private extension ChatView {
         }
         .rotationEffect(.degrees(180))
         .scrollPosition(id: $scrollPosition, anchor: .center)
-        //        .animation(.default, value: chatMessages.count)
-        //        .animation(.default, value: scrollPosition)
         .animation(.easeInOut, value: chatMessages.count)
         .animation(.easeInOut, value: scrollPosition)
+    }
+    
+    func timestampView(date: Date) -> some View {
+        Group {
+            Text(date.formatted(date: .abbreviated, time: .omitted))
+            +
+            Text(" • ")
+            +
+            Text(date.formatted(date: .omitted, time: .shortened))
+        }
+        .foregroundStyle(.secondary)
+        .font(.callout)
     }
     
     var textFieldSection: some View {
@@ -259,7 +284,6 @@ private extension ChatView {
                     .addChatMessage(
                         message: message
                     )
-//                chatMessages.append(message)
                 
                 // clear text field & scroll to bottom
                 
@@ -273,7 +297,6 @@ private extension ChatView {
                     dateCreated: .now
                 )
                 typingIndicatorMessage = typingMessage
-                //                scrollPosition = message.id
                 scrollPosition = typingMessage.id
                 textFieldText = ""
                 
@@ -302,7 +325,6 @@ private extension ChatView {
                     .addChatMessage(
                         message: newAIMessage
                     )
-//                chatMessages.append(newAIMessage)
                 isGeneratingResponse = false
                 
             } catch let error {
@@ -400,6 +422,23 @@ private extension ChatView {
         }
         
         return newChat
+    }
+    
+    func messageIsDelayed(message: ChatMessageModel) -> Bool {
+        let currentMessageDate = message.dateCreatedCalculated
+        
+        guard let index = chatMessages
+            .firstIndex(where: { $0.id == message.id}),
+              chatMessages.indices.contains(index - 1)
+        else {
+            return false
+        }
+        
+        let previousMessageDate = chatMessages[index - 1].dateCreatedCalculated
+        let timeDiff = currentMessageDate.timeIntervalSince(previousMessageDate)
+        let threshold: TimeInterval = 60 * 45
+        
+        return timeDiff > threshold
     }
 }
 

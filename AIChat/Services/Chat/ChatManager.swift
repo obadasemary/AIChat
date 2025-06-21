@@ -37,6 +37,15 @@ extension ChatManager: ChatManagerProtocol {
             .addChatMessage(message: message)
     }
     
+    func markChatMessagesAsSeen(chatId: String, messageId: String, userId: String) async throws {
+        try await service
+            .markChatMessagesAsSeen(
+                chatId: chatId,
+                messageId: messageId,
+                userId: userId
+            )
+    }
+    
     func streamChatMessages(
         chatId: String
     ) -> AsyncThrowingStream<[ChatMessageModel], any Error> {

@@ -64,6 +64,14 @@ extension FirebaseChatService: ChatServiceProtocol {
             ])
     }
     
+    func markChatMessagesAsSeen(chatId: String, messageId: String, userId: String) async throws {
+        try await messageCollectionReference(for: chatId)
+            .document(messageId)
+            .updateData([
+                ChatMessageModel.CodingKeys.seenByIds.rawValue: FieldValue.arrayUnion([userId])
+            ])
+    }
+    
     func streamChatMessages(
         chatId: String
     ) -> AsyncThrowingStream<[ChatMessageModel], any Error> {
