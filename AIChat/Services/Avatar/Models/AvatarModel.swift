@@ -91,7 +91,7 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
     static var mocks: [Self] {
         [
             AvatarModel(
-                avatarId: UUID().uuidString,
+                avatarId: "mock_ava_1",
                 name: "Alpha",
                 characterOption: .alien,
                 characterAction: .smiling,
@@ -102,7 +102,7 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 clickCount: 10
             ),
             AvatarModel(
-                avatarId: UUID().uuidString,
+                avatarId: "mock_ava_2",
                 name: "Beta",
                 characterOption: .dog,
                 characterAction: .drinking,
@@ -113,7 +113,7 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 clickCount: 100
             ),
             AvatarModel(
-                avatarId: UUID().uuidString,
+                avatarId: "mock_ava_3",
                 name: "Gamma",
                 characterOption: .cat,
                 characterAction: .eating,
@@ -124,7 +124,7 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 clickCount: 5
             ),
             AvatarModel(
-                avatarId: UUID().uuidString,
+                avatarId: "mock_ava_4",
                 name: "Delta",
                 characterOption: .woman,
                 characterAction: .shopping,
@@ -135,7 +135,7 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 clickCount: 50
             ),
             AvatarModel(
-                avatarId: UUID().uuidString,
+                avatarId: "mock_ava_5",
                 name: "Zeta",
                 characterOption: .robot,
                 characterAction: .jumping,

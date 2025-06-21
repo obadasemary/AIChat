@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ChatMessageModel: Identifiable {
+struct ChatMessageModel: Identifiable, Codable {
     let id: String
     let chatId: String
     let authorId: String?
@@ -29,6 +29,15 @@ struct ChatMessageModel: Identifiable {
         self.content = content
         self.seenByIds = seenByIds
         self.dateCreated = dateCreated
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case chatId = "chat_id"
+        case authorId = "author_id"
+        case content
+        case seenByIds = "seen_by_ids"
+        case dateCreated = "date_created"
     }
     
     func hasBeenSeenBy(userId: String) -> Bool {
@@ -78,7 +87,7 @@ struct ChatMessageModel: Identifiable {
             ChatMessageModel(
                 id: "msg1",
                 chatId: "1",
-                authorId: "mock_user_id_1",
+                authorId: UserAuthInfo.mock().uid,
                 content: AIChatModel(
                     role: .user,
                     message: "Hello, how are you?"
@@ -89,7 +98,7 @@ struct ChatMessageModel: Identifiable {
             ChatMessageModel(
                 id: "msg2",
                 chatId: "2",
-                authorId: "mock_user_id_2",
+                authorId: AvatarModel.mock.avatarId,
                 content: AIChatModel(
                     role: .assistant,
                     message: "I'm doing well, thanks for asking!"
@@ -100,7 +109,7 @@ struct ChatMessageModel: Identifiable {
             ChatMessageModel(
                 id: "msg3",
                 chatId: "3",
-                authorId: "mock_user_id_3",
+                authorId: UserAuthInfo.mock().uid,
                 content: AIChatModel(
                     role: .assistant,
                     message: "Anyone up for a game tonight?"
@@ -111,7 +120,7 @@ struct ChatMessageModel: Identifiable {
             ChatMessageModel(
                 id: "msg4",
                 chatId: "1",
-                authorId: "mock_user_id_1",
+                authorId: AvatarModel.mock.avatarId,
                 content: AIChatModel(
                     role: .user,
                     message: "Sure, count me in!"
