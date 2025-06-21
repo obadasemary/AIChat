@@ -59,6 +59,8 @@ extension MockChatService: ChatServiceProtocol {
         
         return ChatMessageModel.mocks.randomElement()
     }
+    
+    func deleteChat(chatId: String) async throws {}
 }
 
 private extension MockChatService {

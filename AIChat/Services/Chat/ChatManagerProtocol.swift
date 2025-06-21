@@ -12,4 +12,5 @@ protocol ChatManagerProtocol {
     func addChatMessage(message: ChatMessageModel) async throws
     func streamChatMessages(chatId: String, onListenerConfigured: @escaping (ListenerRegistration) -> Void) -> AsyncThrowingStream<[ChatMessageModel], any Error>
     func getLastChatMessage(chatId: String) async throws -> ChatMessageModel?
+    func deleteChat(chatId: String) async throws
 }
