@@ -23,4 +23,9 @@ extension ChatManager: ChatManagerProtocol {
     func createNewChat(chat: ChatModel) async throws {
         try await service.createNewChat(chat: chat)
     }
+    
+    func addChatMessage(message: ChatMessageModel) async throws {
+        try await service
+            .addChatMessage(message: message)
+    }
 }
