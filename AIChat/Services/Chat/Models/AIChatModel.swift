@@ -8,7 +8,7 @@
 import Foundation
 import OpenAI
 
-struct AIChatModel {
+struct AIChatModel: Codable {
     
     let role: AIChatRole
     let message: String

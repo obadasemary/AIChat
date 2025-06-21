@@ -8,7 +8,7 @@
 import Foundation
 import OpenAI
 
-enum AIChatRole {
+enum AIChatRole: String, Codable {
     case system
     case user
     case assistant
