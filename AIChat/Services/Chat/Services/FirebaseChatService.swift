@@ -80,6 +80,15 @@ extension FirebaseChatService: ChatServiceProtocol {
         
         return messages.first
     }
+    
+    func deleteChat(chatId: String) async throws {
+        async let deleteChat: () = try await collectionReference
+            .deleteDocument(id: chatId)
+        async let deleteMessages: () = try await messageCollectionReference(for: chatId)
+            .deleteAllDocuments()
+        
+        let (_, _) = await (try deleteChat, try deleteMessages)
+    }
 }
 
 private extension FirebaseChatService {

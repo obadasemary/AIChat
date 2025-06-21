@@ -51,4 +51,8 @@ extension ChatManager: ChatManagerProtocol {
     func getLastChatMessage(chatId: String) async throws -> ChatMessageModel? {
         try await service.getLastChatMessage(chatId: chatId)
     }
+    
+    func deleteChat(chatId: String) async throws {
+        try await service.deleteChat(chatId: chatId)
+    }
 }

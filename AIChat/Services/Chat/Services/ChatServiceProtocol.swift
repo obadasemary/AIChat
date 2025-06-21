@@ -15,4 +15,5 @@ protocol ChatServiceProtocol: Sendable {
         onListenerConfigured: @escaping (ListenerRegistration) -> Void
     ) -> AsyncThrowingStream<[ChatMessageModel], any Error>
     func getLastChatMessage(chatId: String) async throws -> ChatMessageModel?
+    func deleteChat(chatId: String) async throws
 }

@@ -15,6 +15,8 @@ struct ChatView: View {
     @Environment(ChatManager.self) private var chatManager
     @Environment(AIManager.self) private var aiManager
     
+    @Environment(\.dismiss) private var dismiss
+    
     @State private var chatMessages: [ChatMessageModel] = []
     @State private var avatar: AvatarModel?
     @State private var currentUser: UserModel?
@@ -327,10 +329,26 @@ private extension ChatView {
                     }
                     
                     Button("Delete Chat", role: .destructive) {
-                        
+                        onDeleteChatTapped()
                     }
                 }
             )
+        }
+    }
+    
+    func onDeleteChatTapped() {
+        Task {
+            do {
+                let chatId = try getChatId()
+                try await chatManager.deleteChat(chatId: chatId)
+                
+                dismiss()
+            } catch {
+                showAlert = AnyAppAlert(
+                    title: "Something went wrong",
+                    subtitle: "Please try again later."
+                )
+            }
         }
     }
     
