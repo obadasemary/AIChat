@@ -37,14 +37,12 @@ extension ChatManager: ChatManagerProtocol {
             .addChatMessage(message: message)
     }
     
-    nonisolated func streamChatMessages(
-        chatId: String,
-        onListenerConfigured: @escaping (ListenerRegistration) -> Void
+    func streamChatMessages(
+        chatId: String
     ) -> AsyncThrowingStream<[ChatMessageModel], any Error> {
         service
             .streamChatMessages(
-                chatId: chatId,
-                onListenerConfigured: onListenerConfigured
+                chatId: chatId
             )
     }
     

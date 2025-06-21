@@ -7,7 +7,7 @@
 
 
 import Foundation
-import FirebaseFirestore
+@preconcurrency import FirebaseFirestore
 import SwiftfulFirestore
 
 typealias ListenerRegistration = FirebaseFirestore.ListenerRegistration

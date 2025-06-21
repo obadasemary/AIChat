@@ -109,11 +109,7 @@ private extension ChatView {
             let chatId = try getChatId()
             print("Listening to chat messages for chatId: \(chatId)")
             
-            for try await value in chatManager
-                .streamChatMessages(chatId: chatId, onListenerConfigured: { listener in
-                    messageListener?.remove()
-                    messageListener = listener
-                }) {
+            for try await value in chatManager.streamChatMessages(chatId: chatId) {
                 chatMessages = value
                     .sortedByKeyPath(keyPath: \.dateCreatedCalculated)
                 scrollPosition = chatMessages.last?.id

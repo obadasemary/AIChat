@@ -65,8 +65,7 @@ extension FirebaseChatService: ChatServiceProtocol {
     }
     
     func streamChatMessages(
-        chatId: String,
-        onListenerConfigured: @escaping (ListenerRegistration) -> Void
+        chatId: String
     ) -> AsyncThrowingStream<[ChatMessageModel], any Error> {
         messageCollectionReference(for: chatId)
             .streamAllDocuments()
