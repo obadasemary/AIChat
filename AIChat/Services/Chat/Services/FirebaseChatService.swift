@@ -11,11 +11,14 @@ import SwiftfulFirestore
 struct FirebaseChatService {
     
     private let collectionReference: CollectionReference
+    private let reportsCollectionReference: CollectionReference
     
     init(
-        collectionReference: CollectionReference = Firestore.firestore().collection("chats")
+        collectionReference: CollectionReference = Firestore.firestore().collection("chats"),
+        reportsCollectionReference: CollectionReference = Firestore.firestore().collection("chat_reports")
     ) {
         self.collectionReference = collectionReference
+        self.reportsCollectionReference = reportsCollectionReference
     }
 }
 
@@ -102,6 +105,10 @@ extension FirebaseChatService: ChatServiceProtocol {
             
             try await group.waitForAll()
         }
+    }
+    
+    func reportChat(report: ChatReportModel) async throws {
+        try await reportsCollectionReference.setDocument(document: report)
     }
 }
 
