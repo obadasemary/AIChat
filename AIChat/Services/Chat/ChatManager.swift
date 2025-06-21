@@ -24,8 +24,23 @@ extension ChatManager: ChatManagerProtocol {
         try await service.createNewChat(chat: chat)
     }
     
+    func getChat(userId: String, avatarId: String) async throws -> ChatModel? {
+        try await service.getChat(userId: userId, avatarId: avatarId)
+    }
+    
     func addChatMessage(message: ChatMessageModel) async throws {
         try await service
             .addChatMessage(message: message)
+    }
+    
+    nonisolated func streamChatMessages(
+        chatId: String,
+        onListenerConfigured: @escaping (ListenerRegistration) -> Void
+    ) -> AsyncThrowingStream<[ChatMessageModel], any Error> {
+        service
+            .streamChatMessages(
+                chatId: chatId,
+                onListenerConfigured: onListenerConfigured
+            )
     }
 }

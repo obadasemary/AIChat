@@ -40,6 +40,10 @@ struct ChatMessageModel: Identifiable, Codable {
         case dateCreated = "date_created"
     }
     
+    var dateCreatedCalculated: Date {
+        dateCreated ?? .distantPast
+    }
+    
     func hasBeenSeenBy(userId: String) -> Bool {
         guard let seenByIds, !seenByIds.isEmpty else {
             return false

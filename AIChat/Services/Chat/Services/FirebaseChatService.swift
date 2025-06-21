@@ -27,6 +27,23 @@ extension FirebaseChatService: ChatServiceProtocol {
             .setData(from: chat, merge: true)
     }
     
+    func getChat(userId: String, avatarId: String) async throws -> ChatModel? {
+//        let result: [ChatModel] = try await collectionReference
+//            .whereField(ChatModel.CodingKeys.userId.rawValue, isEqualTo: userId)
+//            .whereField(
+//                ChatModel.CodingKeys.avatarId.rawValue,
+//                isEqualTo: avatarId
+//            )
+//            .getAllDocuments()
+//        
+//        return result.first
+        
+        try await collectionReference
+            .getDocument(
+                id: ChatModel.chatId(userId: userId, avatarId: avatarId)
+            )
+    }
+    
     func addChatMessage(message: ChatMessageModel) async throws {
         try messageCollectionReference(for: message.chatId)
             .document(message.id)
@@ -36,6 +53,14 @@ extension FirebaseChatService: ChatServiceProtocol {
             .document(message.chatId).updateData([
                 ChatModel.CodingKeys.dateModified.rawValue: Date.now
             ])
+    }
+    
+    func streamChatMessages(
+        chatId: String,
+        onListenerConfigured: @escaping (ListenerRegistration) -> Void
+    ) -> AsyncThrowingStream<[ChatMessageModel], any Error> {
+        messageCollectionReference(for: chatId)
+            .streamAllDocuments()
     }
 }
 

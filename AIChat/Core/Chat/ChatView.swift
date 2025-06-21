@@ -15,7 +15,7 @@ struct ChatView: View {
     @Environment(ChatManager.self) private var chatManager
     @Environment(AIManager.self) private var aiManager
     
-    @State private var chatMessages: [ChatMessageModel] = ChatMessageModel.mocks
+    @State private var chatMessages: [ChatMessageModel] = []
     @State private var avatar: AvatarModel?
     @State private var currentUser: UserModel?
     @State private var chat: ChatModel?
@@ -28,6 +28,7 @@ struct ChatView: View {
     @State private var showProfileModal: Bool = false
     @State private var isGeneratingResponse: Bool = false
     @State private var typingIndicatorMessage: ChatMessageModel?
+    @State private var messageListener: ListenerRegistration?
     
     var avatarId: String
     
@@ -64,17 +65,22 @@ struct ChatView: View {
         .task {
             await loadAvatar()
         }
+        .task {
+            await loadChat()
+            await listenToChatMessages()
+        }
         .onAppear {
             loadCurrentUser()
         }
+        .onDisappear {
+            messageListener?.remove()
+        }
     }
-    
-    
 }
 
 // MARK: - load
 private extension ChatView {
-    private func loadAvatar() async {
+    func loadAvatar() async {
         do {
             avatar = try await avatarManager.getAvatar(id: avatarId)
             guard let avatar else { return }
@@ -84,13 +90,40 @@ private extension ChatView {
         }
     }
     
-    private func loadCurrentUser() {
+    func loadChat() async {
+        do {
+            let userId = try authManager.getAuthId()
+            chat = try await chatManager
+                .getChat(userId: userId, avatarId: avatarId)
+            print("Successfully loading chat: \(String(describing: chat))")
+        } catch {
+            print("Error loading chat: \(error)")
+        }
+    }
+    
+    func listenToChatMessages() async {
+        do {
+            let chatId = try getChatId()
+            print("Listening to chat messages for chatId: \(chatId)")
+            
+            for try await value in chatManager
+                .streamChatMessages(chatId: chatId, onListenerConfigured: { listener in
+                    messageListener?.remove()
+                    messageListener = listener
+                }) {
+                chatMessages = value.sorted(by: { $0.dateCreatedCalculated < $1.dateCreatedCalculated })
+                scrollPosition = chatMessages.last?.id
+            }
+        } catch {
+            print("Failed to attach chat message listener: \(error)")
+        }
+    }
+    
+    func loadCurrentUser() {
         currentUser = userManager.currentUser
     }
     
-    
-    
-    private func profileModal(avatar: AvatarModel) -> some View {
+    func profileModal(avatar: AvatarModel) -> some View {
         ProfileModalView(
             imageName: avatar.profileImageName,
             title: avatar.name,
@@ -106,7 +139,7 @@ private extension ChatView {
 
 // MARK: - SectionViews
 private extension ChatView {
-    private var scrollViewSection: some View {
+    var scrollViewSection: some View {
         ScrollView {
             LazyVStack(spacing: 24) {
                 ForEach(chatMessages + (typingIndicatorMessage.map { [$0] } ?? [])) { message in
@@ -149,9 +182,9 @@ private extension ChatView {
         .animation(.easeInOut, value: scrollPosition)
     }
     
-    private var textFieldSection: some View {
+    var textFieldSection: some View {
         TextField("Type your message...", text: $textFieldText, axis: .vertical)
-            .keyboardType(.alphabet)
+            .keyboardType(.default)
             .autocorrectionDisabled()
             .padding(12)
             .padding(.trailing, 60)
@@ -183,7 +216,7 @@ private extension ChatView {
 // MARK: - Action
 private extension ChatView {
     
-    private func onSendMessageTapped() {
+    func onSendMessageTapped() {
         guard !textFieldText.isEmpty else { return }
         
         let content = textFieldText
@@ -219,7 +252,7 @@ private extension ChatView {
                     .addChatMessage(
                         message: message
                     )
-                chatMessages.append(message)
+//                chatMessages.append(message)
                 
                 // clear text field & scroll to bottom
                 
@@ -255,7 +288,7 @@ private extension ChatView {
                     .addChatMessage(
                         message: newAIMessage
                     )
-                chatMessages.append(newAIMessage)
+//                chatMessages.append(newAIMessage)
                 isGeneratingResponse = false
                 
             } catch let error {
@@ -266,7 +299,7 @@ private extension ChatView {
         }
     }
     
-    private func onChatSettingsTapped() {
+    func onChatSettingsTapped() {
         showChatSettings = AnyAppAlert(
             title: "",
             subtitle: "What would you like to do?"
@@ -285,23 +318,37 @@ private extension ChatView {
         }
     }
     
-    private func onAvatarImageTapped() {
+    func onAvatarImageTapped() {
         showProfileModal = true
     }
 }
 
 // MARK: - helper func
 private extension ChatView {
+    func getChatId() throws -> String {
+        guard let chat else {
+            throw ChatViewEror.failedToCreateNewChat
+        }
+        return chat.id
+    }
+    
     enum ChatViewEror: Error {
         case failedToCreateNewChat
     }
     
-    private func createNewChat(userId: String) async throws -> ChatModel {
+    func createNewChat(userId: String) async throws -> ChatModel {
         let newChat = ChatModel.new(
             userId: userId,
             avatarId: avatarId
         )
         try await chatManager.createNewChat(chat: newChat)
+        
+        defer {
+            Task {
+                await listenToChatMessages()
+            }
+        }
+        
         return newChat
     }
 }
