@@ -10,4 +10,6 @@ struct MockChatService {}
 extension MockChatService: ChatServiceProtocol {
     
     func createNewChat(chat: ChatModel) async throws {}
+    
+    func addChatMessage(message: ChatMessageModel) async throws {}
 }
