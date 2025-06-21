@@ -89,6 +89,20 @@ extension FirebaseChatService: ChatServiceProtocol {
         
         let (_, _) = await (try deleteChat, try deleteMessages)
     }
+    
+    func deleteAllChatsForUser(userId: String) async throws {
+        let chats = try await getAllChats(userId: userId)
+        
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for chat in chats {
+                group.addTask {
+                    try await deleteChat(chatId: chat.id)
+                }
+            }
+            
+            try await group.waitForAll()
+        }
+    }
 }
 
 private extension FirebaseChatService {

@@ -55,4 +55,8 @@ extension ChatManager: ChatManagerProtocol {
     func deleteChat(chatId: String) async throws {
         try await service.deleteChat(chatId: chatId)
     }
+    
+    func deleteAllChatsForUser(userId: String) async throws {
+        try await service.deleteAllChatsForUser(userId: userId)
+    }
 }
