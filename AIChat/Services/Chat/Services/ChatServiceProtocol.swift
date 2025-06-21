@@ -16,4 +16,5 @@ protocol ChatServiceProtocol: Sendable {
     ) -> AsyncThrowingStream<[ChatMessageModel], any Error>
     func getLastChatMessage(chatId: String) async throws -> ChatMessageModel?
     func deleteChat(chatId: String) async throws
+    func deleteAllChatsForUser(userId: String) async throws
 }
