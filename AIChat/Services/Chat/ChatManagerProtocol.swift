@@ -7,4 +7,5 @@
 
 protocol ChatManagerProtocol {
     func createNewChat(chat: ChatModel) async throws
+    func addChatMessage(message: ChatMessageModel) async throws
 }
