@@ -21,6 +21,7 @@ struct ChatView: View {
     @State private var chat: ChatModel?
     
     @State private var textFieldText: String = ""
+    @FocusState private var isTextFieldFocused: Bool
     @State private var scrollPosition: String?
     
     @State private var showAlert: AnyAppAlert?
@@ -186,6 +187,13 @@ private extension ChatView {
         TextField("Type your message...", text: $textFieldText, axis: .vertical)
             .keyboardType(.default)
             .autocorrectionDisabled()
+            .focused($isTextFieldFocused)
+            .onSubmit {
+                isTextFieldFocused = false
+                if !textFieldText.isEmpty {
+                    onSendMessageTapped()
+                }
+            }
             .padding(12)
             .padding(.trailing, 60)
             .overlay(alignment: .trailing) {
@@ -272,7 +280,14 @@ private extension ChatView {
                 
                 // Generate AI response
                 isGeneratingResponse = true
-                let aiChats = chatMessages.compactMap({ $0.content })
+                var aiChats = chatMessages.compactMap({ $0.content })
+                if let avatarDescription = avatar?.characterDescription {
+                    let systemMessage: AIChatModel = AIChatModel(
+                        role: .system,
+                        message: "You are a \(avatarDescription) with the intelligence of an AI. We are having a VERY casual conversation. You are my friend."
+                    )
+                    aiChats.insert(systemMessage, at: 0)
+                }
                 let response = try await aiManager.generateText(chats: aiChats)
                 typingIndicatorMessage = nil
                 
