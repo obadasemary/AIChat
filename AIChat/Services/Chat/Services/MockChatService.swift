@@ -7,18 +7,22 @@
 
 import Foundation
 
-struct MockChatService {
+@MainActor
+class MockChatService {
     
     let chats: [ChatModel]
+    @Published private var messages: [ChatMessageModel]
     let delay: Double
     let showError: Bool
     
     init(
         chats: [ChatModel] = ChatModel.mocks,
+        messages: [ChatMessageModel] = ChatMessageModel.mocks,
         delay: Double = 0.0,
         showError: Bool = false
     ) {
         self.chats = chats
+        self.messages = messages
         self.delay = delay
         self.showError = showError
     }
@@ -44,13 +48,22 @@ extension MockChatService: ChatServiceProtocol {
         return chats
     }
     
-    func addChatMessage(message: ChatMessageModel) async throws {}
+    func addChatMessage(message: ChatMessageModel) async throws {
+        messages.append(message)
+    }
     
     func streamChatMessages(
-        chatId: String,
-        onListenerConfigured: @escaping (ListenerRegistration) -> Void
+        chatId: String
     ) -> AsyncThrowingStream<[ChatMessageModel], any Error> {
-        AsyncThrowingStream { continuation in }
+        AsyncThrowingStream { continuation in
+            continuation.yield(messages)
+            
+            Task {
+                for await value in $messages.values {
+                    continuation.yield(value)
+                }
+            }
+        }
     }
     
     func getLastChatMessage(chatId: String) async throws -> ChatMessageModel? {
