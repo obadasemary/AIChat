@@ -13,6 +13,7 @@ import SwiftfulFirestore
 typealias ListenerRegistration = FirebaseFirestore.ListenerRegistration
 
 struct FirebaseUserService {
+    
     private let collectionReference: CollectionReference
     
     init(
