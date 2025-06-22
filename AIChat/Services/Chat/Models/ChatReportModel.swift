@@ -16,20 +16,6 @@ struct ChatReportModel: Codable, StringIdentifiable {
     let isActive: Bool
     let dateCreated: Date
     
-    init(
-        id: String,
-        chatId: String,
-        userId: String,
-        isActive: Bool,
-        dateCreated: Date
-    ) {
-        self.id = id
-        self.chatId = chatId
-        self.userId = userId
-        self.isActive = isActive
-        self.dateCreated = dateCreated
-    }
-    
     enum CodingKeys: String, CodingKey {
         case id
         case chatId = "chat_id"

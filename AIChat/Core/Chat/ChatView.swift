@@ -247,7 +247,7 @@ private extension ChatView {
 
 // MARK: - Action
 private extension ChatView {
-    
+    // swiftlint:disable function_body_length
     func onSendMessageTapped() {
         guard !textFieldText.isEmpty else { return }
         
@@ -334,6 +334,7 @@ private extension ChatView {
             isGeneratingResponse = false
         }
     }
+    // swiftlint:enable function_body_length
     
     func onChatSettingsTapped() {
         showChatSettings = AnyAppAlert(

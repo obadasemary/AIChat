@@ -14,6 +14,7 @@ enum BuildConfiguration {
     case dev
     case prod
     
+    // swiftlint:disable force_unwrapping
     func configureFirebase() {
         switch self {
         case .mock:
@@ -28,6 +29,7 @@ enum BuildConfiguration {
             FirebaseApp.configure(options: options)
         }
     }
+    // swiftlint:enable force_unwrapping
 }
 
 @MainActor

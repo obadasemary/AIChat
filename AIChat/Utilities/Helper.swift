@@ -33,5 +33,3 @@ extension String {
         return vowels.contains(firstChar) ? "An" : "A"
     }
 }
-
-

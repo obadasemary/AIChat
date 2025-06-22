@@ -21,10 +21,12 @@ extension FileManager {
         return try JSONDecoder().decode(T.self, from: data)
     }
     
+    // swiftlint:disable force_unwrapping
     private static func getDocumentURL(for key: String) -> URL {
         FileManager.default
             .urls(for: .documentDirectory, in: .userDomainMask)
             .first!
             .appendingPathComponent("\(key).txt")
     }
+    // swiftlint:enable force_unwrapping
 }

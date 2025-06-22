@@ -16,20 +16,6 @@ struct ChatModel: Identifiable, Codable, Hashable, StringIdentifiable {
     let dateCreated: Date
     let dateModified: Date
     
-    init(
-        id: String,
-        userId: String,
-        avatarId: String,
-        dateCreated: Date,
-        dateModified: Date
-    ) {
-        self.id = id
-        self.userId = userId
-        self.avatarId = avatarId
-        self.dateCreated = dateCreated
-        self.dateModified = dateModified
-    }
-    
     enum CodingKeys: String, CodingKey {
         case id
         case userId = "user_id"
@@ -62,6 +48,7 @@ struct ChatModel: Identifiable, Codable, Hashable, StringIdentifiable {
         mocks[0]
     }
     
+    // swiftlint:disable force_unwrapping
     static var mocks: [Self] {
         let now = Date()
         return [
@@ -107,4 +94,5 @@ struct ChatModel: Identifiable, Codable, Hashable, StringIdentifiable {
             )
         ]
     }
+    // swiftlint:enable force_unwrapping
 }

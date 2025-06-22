@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 struct UserAuthInfo: Sendable, Codable {
     
     let uid: String

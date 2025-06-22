@@ -42,5 +42,3 @@ extension SwiftDataLocalAvatarServicePersistence: LocalAvatarServicePersistenceP
         return entities.map({ $0.toModel() })
     }
 }
-
-
