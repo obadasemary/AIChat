@@ -23,7 +23,16 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: clientID)
         }
         
-        dependencies = Dependencies()
+        
+        
+        #if MOCK
+        dependencies = Dependencies(configuration: .mock(isSignedIn: true))
+        #elseif DEV
+        dependencies = Dependencies(configuration: .dev)
+        #else
+        dependencies = Dependencies(configuration: .prod)
+        #endif
+        
         
         return true
     }
