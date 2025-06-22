@@ -17,23 +17,23 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
     ) -> Bool {
-        FirebaseApp.configure()
         
         if let clientID = FirebaseApp.app()?.options.clientID {
             GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: clientID)
         }
         
-        
+        let config: BuildConfiguration
         
         #if MOCK
-        dependencies = Dependencies(configuration: .mock(isSignedIn: true))
+        config = .mock(isSignedIn: true)
         #elseif DEV
-        dependencies = Dependencies(configuration: .dev)
+        config = .dev
         #else
-        dependencies = Dependencies(configuration: .prod)
+        config = .prod
         #endif
         
-        
+        config.configureFirebase()
+        dependencies = Dependencies(configuration: config)
         return true
     }
     

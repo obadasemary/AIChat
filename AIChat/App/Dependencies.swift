@@ -6,12 +6,28 @@
 //
 
 import SwiftUI
+import FirebaseCore
 import FirebaseFirestore
 
 enum BuildConfiguration {
     case mock(isSignedIn: Bool)
     case dev
     case prod
+    
+    func configureFirebase() {
+        switch self {
+        case .mock(let isSignedIn):
+            break
+        case .dev:
+            let pList = Bundle.main.path(forResource: "GoogleService-Info-Dev", ofType: "plist")!
+            let options = FirebaseOptions(contentsOfFile: pList)!
+            FirebaseApp.configure(options: options)
+        case .prod:
+            let pList = Bundle.main.path(forResource: "GoogleService-Info-Prod", ofType: "plist")!
+            let options = FirebaseOptions(contentsOfFile: pList)!
+            FirebaseApp.configure(options: options)
+        }
+    }
 }
 
 @MainActor
@@ -22,42 +38,17 @@ struct Dependencies {
     let avatarManager: AvatarManager
     let chatManager: ChatManager
     
-    init(configuration: BuildConfiguration) {
-        
-        switch configuration {
-        case .mock(isSignedIn: let isSignedIn):
-            authManager = AuthManager(service: MockAuthService(currentUser: isSignedIn ? .mock() : nil))
-            userManager = UserManager(services: MockUserServices(currentUser: isSignedIn ? .mock : nil))
-            aiManager = AIManager(service: MockAIServer())
-            avatarManager = AvatarManager(
-                remoteService: MockAvatarService(),
-                localStorage: MockLocalAvatarServicePersistence()
-            )
-            chatManager = ChatManager(service: MockChatService())
-        case .dev:
-            authManager = AuthManager(service: FirebaseAuthService())
-            userManager = UserManager(services: ProductionUserServices())
-            aiManager = AIManager(service: OpenAIServer())
-            avatarManager = AvatarManager(
-                remoteService: FirebaseAvatarService(
-                    firebaseImageUploadServiceProtocol: FirebaseImageUploadService()
-                ),
-                localStorage: SwiftDataLocalAvatarServicePersistence()
-            )
-            chatManager = ChatManager(service: FirebaseChatService())
-        case .prod:
-            authManager = AuthManager(service: FirebaseAuthService())
-            userManager = UserManager(services: ProductionUserServices())
-            aiManager = AIManager(service: OpenAIServer())
-            avatarManager = AvatarManager(
-                remoteService: FirebaseAvatarService(
-                    firebaseImageUploadServiceProtocol: FirebaseImageUploadService()
-                ),
-                localStorage: SwiftDataLocalAvatarServicePersistence()
-            )
-            chatManager = ChatManager(service: FirebaseChatService())
-            print("THIS IS A PRODUCTION BUILD")
-        }
+    init() {
+        authManager = AuthManager(service: FirebaseAuthService())
+        userManager = UserManager(services: ProductionUserServices())
+        aiManager = AIManager(service: OpenAIServer())
+        avatarManager = AvatarManager(
+            remoteService: FirebaseAvatarService(
+                firebaseImageUploadServiceProtocol: FirebaseImageUploadService()
+            ),
+            localStorage: SwiftDataLocalAvatarServicePersistence()
+        )
+        chatManager = ChatManager(service: FirebaseChatService())
     }
 }
 

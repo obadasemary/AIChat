@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>925847372979-taso0s11v0o6mbh1q46q99hjah5ab8ie.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.925847372979-taso0s11v0o6mbh1q46q99hjah5ab8ie</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDON9eXrJuAdF2TkQBflD0fJo9x_661k4A</string>
+	<key>GCM_SENDER_ID</key>
+	<string>925847372979</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.Obada.AIChat.dev</string>
+	<key>PROJECT_ID</key>
+	<string>aichat-b8847</string>
+	<key>STORAGE_BUCKET</key>
+	<string>aichat-b8847.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:925847372979:ios:137d55e6a98e41837bdcc6</string>
+</dict>
+</plist>
