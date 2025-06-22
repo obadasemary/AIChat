@@ -19,6 +19,15 @@ struct ExploreView: View {
     @State private var isLoadingPopular: Bool = true
     
     @State private var path: [NavigationPathOption] = []
+    @State private var showDevSettings: Bool = false
+    
+    private var showDevSettingsButton: Bool {
+        #if DEV || MOCk
+            return true
+        #else
+            return false
+        #endif
+    }
     
     var body: some View {
         NavigationStack(path: $path) {
@@ -39,6 +48,16 @@ struct ExploreView: View {
                 }
             }
             .navigationTitle("Explore")
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    if showDevSettingsButton {
+                        devSettingsButton
+                    }
+                }
+            }
+            .sheet(isPresented: $showDevSettings) {
+                DevSettingsView()
+            }
             .navigationDestinationForCoreModule(path: $path)
             .task {
                 await loadFeaturedAvatars()
@@ -172,6 +191,21 @@ struct ExploreView: View {
         }
     }
     
+    private var devSettingsButton: some View {
+        HStack {
+            Image(systemName:"rectangle.portrait.and.arrow.forward")
+            Text("Dev 🤫")
+        }
+        .badgeButton()
+        .anyButton(.press) {
+            onDevSettingsButtonTapped()
+        }
+    }
+    
+    private func onDevSettingsButtonTapped() {
+        showDevSettings = true
+    }
+    
     private func onAvaterSelected(avatar: AvatarModel) {
         path.append(.chat(avatarId: avatar.avatarId, chat: nil))
     }
@@ -190,17 +224,6 @@ struct ExploreView: View {
     }
 }
 
-#Preview("Remote Service") {
-    ExploreView()
-        .environment(
-            AvatarManager(
-                remoteService: FirebaseAvatarService(
-                    firebaseImageUploadServiceProtocol: FirebaseImageUploadService()
-                )
-            )
-        )
-}
-
 #Preview("Mock Has Data") {
     ExploreView()
         .environment(
@@ -208,6 +231,7 @@ struct ExploreView: View {
                 remoteService: MockAvatarService()
             )
         )
+//        .previewEnvironment()
 }
 
 #Preview("Mock No Data") {
@@ -217,6 +241,7 @@ struct ExploreView: View {
                 remoteService: MockAvatarService(avatars: [])
             )
         )
+//        .previewEnvironment()
 }
 
 #Preview("Mock Slow Loading") {
@@ -226,4 +251,17 @@ struct ExploreView: View {
                 remoteService: MockAvatarService(delay: 2)
             )
         )
+//        .previewEnvironment()
+}
+
+#Preview("Remote Service") {
+    ExploreView()
+        .environment(
+            AvatarManager(
+                remoteService: FirebaseAvatarService(
+                    firebaseImageUploadServiceProtocol: FirebaseImageUploadService()
+                )
+            )
+        )
+//        .previewEnvironment()
 }
