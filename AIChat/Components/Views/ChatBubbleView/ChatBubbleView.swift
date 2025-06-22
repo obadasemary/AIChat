@@ -14,7 +14,7 @@ struct ChatBubbleView: View {
     var backgroundColor: Color = Color(uiColor: .systemGray6)
     
     var showImage: Bool = true
-    var imageName: String? = nil
+    var imageName: String?
     
     var onImageTapped: (() -> Void)?
     
