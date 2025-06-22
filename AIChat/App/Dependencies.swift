@@ -16,7 +16,7 @@ enum BuildConfiguration {
     
     func configureFirebase() {
         switch self {
-        case .mock(let isSignedIn):
+        case .mock:
             break
         case .dev:
             let pList = Bundle.main.path(forResource: "GoogleService-Info-Dev", ofType: "plist")!
