@@ -23,6 +23,7 @@ struct MockAIServer {
 
 extension MockAIServer: AIServiceProtocol {
     
+    // swiftlint:disable force_unwrapping
     func generateImage(input: String) async throws -> UIImage {
         try await Task.sleep(for: .seconds(delay))
         try tryShowError()
@@ -33,6 +34,7 @@ extension MockAIServer: AIServiceProtocol {
         
         return image
     }
+    // swiftlint:enable force_unwrapping
     
     func generateText(chats: [AIChatModel]) async throws -> AIChatModel {
         try await Task.sleep(for: .seconds(delay))

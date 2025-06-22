@@ -145,6 +145,7 @@ struct CreateAvatarView: View {
         dismiss()
     }
     
+    // swiftlint:disable force_unwrapping
     private func onGenerateImageTapped() {
         isGenerating = true
         Task {
@@ -169,6 +170,7 @@ struct CreateAvatarView: View {
             isGenerating = false
         }
     }
+    // swiftlint:enable force_unwrapping
     
     private func onSaveTapped() {
         guard let generatedImage else { return }
