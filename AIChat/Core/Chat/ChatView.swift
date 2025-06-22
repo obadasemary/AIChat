@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// swiftlint:disable file_length
 struct ChatView: View {
     
     @Environment(UserManager.self) private var userManager
@@ -475,3 +476,4 @@ private extension ChatView {
             .previewEnvironment()
     }
 }
+// swiftlint:enable file_length
