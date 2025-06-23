@@ -22,7 +22,7 @@ struct ExploreView: View {
     @State private var showDevSettings: Bool = false
     
     private var showDevSettingsButton: Bool {
-        #if DEV || MOCk
+        #if DEV || MOCK
             return true
         #else
             return false

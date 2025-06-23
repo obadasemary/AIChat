@@ -39,6 +39,7 @@ struct Dependencies {
     let aiManager: AIManager
     let avatarManager: AvatarManager
     let chatManager: ChatManager
+    let logManager: LogManager
     
     init(configuration: BuildConfiguration) {
         switch configuration {
@@ -51,6 +52,11 @@ struct Dependencies {
                 localStorage: MockLocalAvatarServicePersistence()
             )
             chatManager = ChatManager(service: MockChatService())
+            logManager = LogManager(
+                services: [
+                    ConsoleService()
+                ]
+            )
         case .dev:
             authManager = AuthManager(service: FirebaseAuthService())
             userManager = UserManager(services: ProductionUserServices())
@@ -62,6 +68,11 @@ struct Dependencies {
                 localStorage: SwiftDataLocalAvatarServicePersistence()
             )
             chatManager = ChatManager(service: FirebaseChatService())
+            logManager = LogManager(
+                services: [
+                    ConsoleService()
+                ]
+            )
         case .prod:
             authManager = AuthManager(service: FirebaseAuthService())
             userManager = UserManager(services: ProductionUserServices())
@@ -73,7 +84,11 @@ struct Dependencies {
                 localStorage: SwiftDataLocalAvatarServicePersistence()
             )
             chatManager = ChatManager(service: FirebaseChatService())
-            print("THIS IS A PRODUCTION BUILD")
+            logManager = LogManager(
+                services: [
+                    
+                ]
+            )
         }
     }
 }
@@ -95,6 +110,7 @@ extension View {
                 )
             )
             .environment(AppState())
+            .environment(LogManager(services: []))
     }
 }
 

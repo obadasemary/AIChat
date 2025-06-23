@@ -20,6 +20,7 @@ struct AIChatApp: App {
                 .environment(delegate.dependencies.avatarManager)
                 .environment(delegate.dependencies.userManager)
                 .environment(delegate.dependencies.authManager)
+                .environment(delegate.dependencies.logManager)
         }
     }
 }
