@@ -11,6 +11,8 @@ struct AppView: View {
     
     @Environment(AuthManager.self) private var authManager
     @Environment(UserManager.self) private var userManager
+    @Environment(LogManager.self) private var logManager
+    
     @State var appState: AppState = .init()
     
     var body: some View {
@@ -26,6 +28,18 @@ struct AppView: View {
         .environment(appState)
         .task {
             await checkUserStatus()
+        }
+        .onAppear {
+            logManager
+                .identify(
+                    userId: "abc123",
+                    name: "mock user",
+                    email: "ai@example.com"
+                )
+            logManager
+                .addUserProperty(
+                    dict: UserModel.mock.eventParameters
+                )
         }
         .onChange(of: appState.showTabBar) { _, showTabBar in
             if !showTabBar {
