@@ -7,7 +7,7 @@
 
 protocol LogManagerProtocol: Sendable {
     func identify(userId: String, name: String?, email: String?)
-    func addUserProperty(dict: [String: Any])
+    func addUserProperty(dict: [String: Any], isHighPriority: Bool)
     func deleteUserProfile()
     func trackEvent(event: LoggableEvent)
     func trackScreen(event: LoggableEvent)

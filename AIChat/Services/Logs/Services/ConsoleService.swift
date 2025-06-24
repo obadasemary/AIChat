@@ -33,9 +33,9 @@ extension ConsoleService: LogServiceProtocol {
         logger.log(level: LogType.info, message: message)
     }
 
-    func addUserProperty(dict: [String : Any]) {
+    func addUserProperty(dict: [String : Any], isHighPriority: Bool) {
         var message = """
-📊 Log User Properties                
+📊 Log User Properties (isHighPriority: \(isHighPriority.description))
 """
         if printParameters {
             let sortedKeys = dict.keys.sorted()

@@ -70,7 +70,8 @@ struct Dependencies {
             chatManager = ChatManager(service: FirebaseChatService())
             logManager = LogManager(
                 services: [
-                    ConsoleService()
+                    ConsoleService(),
+                    FirebaseAnalyticsService()
                 ]
             )
         case .prod:
@@ -86,7 +87,7 @@ struct Dependencies {
             chatManager = ChatManager(service: FirebaseChatService())
             logManager = LogManager(
                 services: [
-                    
+                    FirebaseAnalyticsService()
                 ]
             )
         }

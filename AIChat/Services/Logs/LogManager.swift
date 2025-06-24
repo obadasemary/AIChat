@@ -26,15 +26,36 @@ extension LogManager: LogManagerProtocol {
         }
     }
 
-    nonisolated func addUserProperty(dict: [String : Any]) {
+    nonisolated func addUserProperty(dict: [String : Any], isHighPriority: Bool) {
         for service in self.services {
-            service.addUserProperty(dict: dict)
+            service.addUserProperty(dict: dict, isHighPriority: isHighPriority)
         }
     }
 
     nonisolated func deleteUserProfile() {
         for service in self.services {
             service.deleteUserProfile()
+        }
+    }
+    
+    func trackEvent(
+        eventName: String,
+        parameters: [String : Any]? = nil,
+        type: LogType = .analytic
+    ) {
+        let event = AnyLoggableEvent(
+            eventName: eventName,
+            parameters: parameters,
+            type: type
+        )
+        for service in self.services {
+            service.trackEvent(event: event)
+        }
+    }
+    
+    func trackEvent(event: AnyLoggableEvent) {
+        for service in self.services {
+            service.trackEvent(event: event)
         }
     }
 

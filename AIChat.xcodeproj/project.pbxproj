@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AF1B57892E0B526200C28263 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = AF1B57882E0B526200C28263 /* FirebaseAnalytics */; };
 		AF2ECC132DE7D88A00BD1602 /* SwiftfulUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = AF2ECC122DE7D88A00BD1602 /* SwiftfulUtilities */; };
 		AF39868C2DF8C958000F064C /* SignInGoogleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = AF39868B2DF8C958000F064C /* SignInGoogleAsync */; };
 		AF3986932DF8D2E5000F064C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = AF3986922DF8D2E5000F064C /* GoogleSignIn */; };
@@ -81,6 +82,7 @@
 			files = (
 				AFEF44072DFF1489000E87DC /* OpenAI in Frameworks */,
 				AFAA66B62DF4E4960013F8DC /* SignInAppleAsync in Frameworks */,
+				AF1B57892E0B526200C28263 /* FirebaseAnalytics in Frameworks */,
 				AF39868C2DF8C958000F064C /* SignInGoogleAsync in Frameworks */,
 				AFCB2BA02DFDC20B00694E6E /* SwiftfulFirestore in Frameworks */,
 				AF3986952DF8D2E5000F064C /* GoogleSignInSwift in Frameworks */,
@@ -170,6 +172,7 @@
 				AFCB2B9F2DFDC20B00694E6E /* SwiftfulFirestore */,
 				AFEF44062DFF1489000E87DC /* OpenAI */,
 				AFEF46492E007365000E87DC /* FirebaseStorage */,
+				AF1B57882E0B526200C28263 /* FirebaseAnalytics */,
 			);
 			productName = AIChat;
 			productReference = AF9034FB2DA3FDB000A35095 /* AIChat.app */;
@@ -556,6 +559,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.2;
@@ -915,6 +919,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		AF1B57882E0B526200C28263 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AF95B1752DF38774003D5BA0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
 		AF2ECC122DE7D88A00BD1602 /* SwiftfulUtilities */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = AF2ECC112DE7D88A00BD1602 /* XCRemoteSwiftPackageReference "SwiftfulUtilities" */;
