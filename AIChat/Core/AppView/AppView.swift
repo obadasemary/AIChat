@@ -38,8 +38,20 @@ struct AppView: View {
                 )
             logManager
                 .addUserProperty(
-                    dict: UserModel.mock.eventParameters
+                    dict: UserModel.mock.eventParameters,
+                    isHighPriority: false
                 )
+            
+            let event = AnyLoggableEvent(
+                eventName: "My New Event",
+                parameters: UserModel.mock.eventParameters,
+                type: .analytic
+            )
+            
+            logManager
+                .trackEvent(event: event)
+            logManager
+                .trackEvent(eventName: "Another Event")
         }
         .onChange(of: appState.showTabBar) { _, showTabBar in
             if !showTabBar {
@@ -127,9 +139,6 @@ struct AppView: View {
 
 #Preview("AppView - Onboarding") {
     AppView(appState: AppState(showTabBar: false))
-        .environment(AuthManager(service: MockAuthService(currentUser: nil)))
-        .environment(
-            UserManager(services: MockUserServices(currentUser: nil))
-        )
+        .previewEnvironment(isSignedIn: false)
 }
 
