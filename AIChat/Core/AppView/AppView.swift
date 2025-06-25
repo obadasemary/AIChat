@@ -42,6 +42,10 @@ struct AppView: View {
                     isHighPriority: false
                 )
             
+            
+            logManager.trackEvent(event: Event.gamma)
+            logManager.trackEvent(event: Event.delta)
+            
             let event = AnyLoggableEvent(
                 eventName: "My New Event",
                 parameters: UserModel.mock.eventParameters,
@@ -89,7 +93,7 @@ struct AppView: View {
 }
 
 public enum Event: LoggableEvent {
-    case alpha, beta, gamma, delta, epsilon, zeta
+    case alpha, beta, gamma, delta
     
     var eventName: String {
         switch self {
@@ -97,8 +101,6 @@ public enum Event: LoggableEvent {
         case .beta: "beta"
         case .gamma: "gamma"
         case .delta: "delta"
-        case .epsilon: "epsilon"
-        case .zeta: "zeta"
         }
     }
 
@@ -124,10 +126,6 @@ public enum Event: LoggableEvent {
                 .warning
         case .delta:
                 .severe
-        case .epsilon:
-                .warning
-        case .zeta:
-                .info
         }
     }
 }
