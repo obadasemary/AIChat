@@ -11,7 +11,17 @@ import Mixpanel
 struct MixpanelService {
     
     private var instance: MixpanelInstance {
+        #if DEV
+        let instance = Mixpanel.mainInstance()
+        instance.registerSuperProperties(["app_environment": "Dev"])
+        return instance
+        #elseif MOCK
         Mixpanel.mainInstance()
+        #else
+        let instance = Mixpanel.mainInstance()
+        instance.registerSuperProperties(["app_environment": "Prod"])
+        return instance
+        #endif
     }
     
     init(token: String, loggingEnabled: Bool = false) {
