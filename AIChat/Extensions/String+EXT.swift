@@ -19,7 +19,6 @@ extension String {
 }
 
 extension String {
-    
     static func convertToString(_ value: Any) -> String? {
         switch value {
         case let value as String:
@@ -45,5 +44,12 @@ extension String {
         default:
             nil
         }
+    }
+}
+
+extension String {
+    var stableHashValue: Int {
+        let unicodeScalars = self.unicodeScalars.map { $0.value }
+        return unicodeScalars.reduce(5381) { ($0 << 5) &+ $0 &+ Int($1) }
     }
 }

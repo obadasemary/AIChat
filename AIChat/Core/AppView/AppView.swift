@@ -62,50 +62,6 @@ struct AppView: View {
         }
     }
     
-    enum Event: LoggableEvent {
-        case alpha, beta, gamma, delta, epsilon, zeta
-        
-        var eventName: String {
-            switch self {
-            case .alpha: "alpha"
-            case .beta: "beta"
-            case .gamma: "gamma"
-            case .delta: "delta"
-            case .epsilon: "epsilon"
-            case .zeta: "zeta"
-            }
-        }
-
-        var parameters: [String : Any]? {
-            switch self {
-            case .alpha, .beta:
-                [
-                    "aaa": true,
-                    "bbb": 123
-                ]
-            default:
-                nil
-            }
-        }
-
-        var type: LogType {
-            switch self {
-            case .alpha:
-                    .info
-            case .beta:
-                    .analytic
-            case .gamma:
-                    .warning
-            case .delta:
-                    .severe
-            case .epsilon:
-                    .warning
-            case .zeta:
-                    .info
-            }
-        }
-    }
-    
     private func checkUserStatus() async {
         if let user = authManager.auth {
             // User is authenticated
@@ -128,6 +84,50 @@ struct AppView: View {
                 try? await Task.sleep(for: .seconds(5))
                 await checkUserStatus()
             }
+        }
+    }
+}
+
+public enum Event: LoggableEvent {
+    case alpha, beta, gamma, delta, epsilon, zeta
+    
+    var eventName: String {
+        switch self {
+        case .alpha: "alpha"
+        case .beta: "beta"
+        case .gamma: "gamma"
+        case .delta: "delta"
+        case .epsilon: "epsilon"
+        case .zeta: "zeta"
+        }
+    }
+
+    var parameters: [String : Any]? {
+        switch self {
+        case .alpha, .beta:
+            [
+                "aaa": true,
+                "bbb": 123
+            ]
+        default:
+            nil
+        }
+    }
+
+    var type: LogType {
+        switch self {
+        case .alpha:
+                .info
+        case .beta:
+                .analytic
+        case .gamma:
+                .warning
+        case .delta:
+                .severe
+        case .epsilon:
+                .warning
+        case .zeta:
+                .info
         }
     }
 }
