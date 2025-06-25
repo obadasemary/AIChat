@@ -46,9 +46,9 @@ extension FirebaseCrashlyticsService: LogServiceProtocol {
 
     func trackEvent(event: any LoggableEvent) {
         switch event.type {
-        case .info, .analytic, .warning:
+        case .info, .analytic:
             break
-        case .severe:
+        case .severe, .warning:
             let error = NSError(
                 domain: event.eventName,
                 code: event.eventName.stableHashValue,
