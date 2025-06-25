@@ -76,6 +76,4 @@ extension MixpanelService: LogServiceProtocol {
     func trackScreen(event: any LoggableEvent) {
         trackEvent(event: event)
     }
-
-    
 }

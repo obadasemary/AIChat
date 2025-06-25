@@ -231,7 +231,7 @@ struct ExploreView: View {
                 remoteService: MockAvatarService()
             )
         )
-//        .previewEnvironment()
+        .previewEnvironment()
 }
 
 #Preview("Mock No Data") {
@@ -241,7 +241,7 @@ struct ExploreView: View {
                 remoteService: MockAvatarService(avatars: [])
             )
         )
-//        .previewEnvironment()
+        .previewEnvironment()
 }
 
 #Preview("Mock Slow Loading") {
@@ -251,7 +251,7 @@ struct ExploreView: View {
                 remoteService: MockAvatarService(delay: 2)
             )
         )
-//        .previewEnvironment()
+        .previewEnvironment()
 }
 
 #Preview("Remote Service") {
@@ -263,5 +263,5 @@ struct ExploreView: View {
                 )
             )
         )
-//        .previewEnvironment()
+        .previewEnvironment()
 }

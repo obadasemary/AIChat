@@ -10,7 +10,7 @@ import FirebaseAnalytics
 
 struct FirebaseAnalyticsService {
     
-    init () {}
+    init() {}
 }
 
 extension FirebaseAnalyticsService: LogServiceProtocol {
