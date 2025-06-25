@@ -12,6 +12,7 @@
 		AF39868C2DF8C958000F064C /* SignInGoogleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = AF39868B2DF8C958000F064C /* SignInGoogleAsync */; };
 		AF3986932DF8D2E5000F064C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = AF3986922DF8D2E5000F064C /* GoogleSignIn */; };
 		AF3986952DF8D2E5000F064C /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = AF3986942DF8D2E5000F064C /* GoogleSignInSwift */; };
+		AF3E88B22E0B7CA1002FAC13 /* Mixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = AF3E88B12E0B7CA1002FAC13 /* Mixpanel */; };
 		AF95B1772DF38774003D5BA0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = AF95B1762DF38774003D5BA0 /* FirebaseAuth */; };
 		AFA98BB32DA46E0600492141 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = AFA98BB22DA46E0600492141 /* SDWebImageSwiftUI */; };
 		AFAA66B62DF4E4960013F8DC /* SignInAppleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = AFAA66B52DF4E4960013F8DC /* SignInAppleAsync */; };
@@ -89,6 +90,7 @@
 				AFA98BB32DA46E0600492141 /* SDWebImageSwiftUI in Frameworks */,
 				AF95B1772DF38774003D5BA0 /* FirebaseAuth in Frameworks */,
 				AFCB2B912DFC779000694E6E /* FirebaseFirestore in Frameworks */,
+				AF3E88B22E0B7CA1002FAC13 /* Mixpanel in Frameworks */,
 				AFEF464A2E007365000E87DC /* FirebaseStorage in Frameworks */,
 				AF2ECC132DE7D88A00BD1602 /* SwiftfulUtilities in Frameworks */,
 				AF3986932DF8D2E5000F064C /* GoogleSignIn in Frameworks */,
@@ -173,6 +175,7 @@
 				AFEF44062DFF1489000E87DC /* OpenAI */,
 				AFEF46492E007365000E87DC /* FirebaseStorage */,
 				AF1B57882E0B526200C28263 /* FirebaseAnalytics */,
+				AF3E88B12E0B7CA1002FAC13 /* Mixpanel */,
 			);
 			productName = AIChat;
 			productReference = AF9034FB2DA3FDB000A35095 /* AIChat.app */;
@@ -265,6 +268,7 @@
 				AF3986912DF8D2E5000F064C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				AFCB2B9E2DFDC20B00694E6E /* XCRemoteSwiftPackageReference "SwiftfulFirestore" */,
 				AFEF44052DFF1489000E87DC /* XCRemoteSwiftPackageReference "OpenAI" */,
+				AF3E88B02E0B7CA1002FAC13 /* XCRemoteSwiftPackageReference "mixpanel-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = AF9034FC2DA3FDB000A35095 /* Products */;
@@ -876,6 +880,14 @@
 				minimumVersion = 8.0.0;
 			};
 		};
+		AF3E88B02E0B7CA1002FAC13 /* XCRemoteSwiftPackageReference "mixpanel-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mixpanel/mixpanel-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 		AF95B1752DF38774003D5BA0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -943,6 +955,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AF3986912DF8D2E5000F064C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		AF3E88B12E0B7CA1002FAC13 /* Mixpanel */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AF3E88B02E0B7CA1002FAC13 /* XCRemoteSwiftPackageReference "mixpanel-swift" */;
+			productName = Mixpanel;
 		};
 		AF95B1762DF38774003D5BA0 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
