@@ -11,7 +11,10 @@
 			<string>Google Sign In</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.925847372979-5obuu4lcjgfngullm07ck43nives4gc5</string>
+                <!-- Prod -->
+                <string>com.googleusercontent.apps.925847372979-5obuu4lcjgfngullm07ck43nives4gc5</string>
+                <!-- Dev -->
+                <string>com.googleusercontent.apps.925847372979-taso0s11v0o6mbh1q46q99hjah5ab8ie</string>
 			</array>
 		</dict>
 	</array>
