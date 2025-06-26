@@ -41,7 +41,7 @@ struct ChatsView: View {
     }
 }
 
-// MARK: - load
+// MARK: - Load
 private extension ChatsView {
     
     private func loadRecentAvatars() {

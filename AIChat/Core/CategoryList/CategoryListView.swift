@@ -52,7 +52,7 @@ struct CategoryListView: View {
         }
         .scrollBounceBehavior(.basedOnSize)
         .showCustomAlert(alert: $showAlert)
-        .screenAppearAnalytics(name: "CategoryList")
+        .screenAppearAnalytics(name: Self.screenName)
         .ignoresSafeArea(edges: .top)
         .listStyle(.plain)
         .task {
