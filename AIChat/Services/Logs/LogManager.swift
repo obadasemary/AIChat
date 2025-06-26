@@ -38,7 +38,7 @@ extension LogManager: LogManagerProtocol {
         }
     }
     
-    func trackEvent(
+    nonisolated func trackEvent(
         eventName: String,
         parameters: [String : Any]? = nil,
         type: LogType = .analytic
@@ -53,7 +53,7 @@ extension LogManager: LogManagerProtocol {
         }
     }
     
-    func trackEvent(event: AnyLoggableEvent) {
+    nonisolated func trackEvent(event: AnyLoggableEvent) {
         for service in self.services {
             service.trackEvent(event: event)
         }
