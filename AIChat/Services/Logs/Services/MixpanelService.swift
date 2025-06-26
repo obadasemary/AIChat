@@ -53,6 +53,7 @@ extension MixpanelService: LogServiceProtocol {
     }
 
     func trackEvent(event: any LoggableEvent) {
+        guard event.type != .info else { return }
         
         var eventProperties: [String: MixpanelType] = [:]
         
