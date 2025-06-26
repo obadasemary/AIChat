@@ -50,3 +50,9 @@ extension View {
         modifier(AppearAnalyticsViewModifier(name: name))
     }
 }
+
+extension View {
+    static var screenName: String {
+        String(describing: Self.self)
+    }
+}
