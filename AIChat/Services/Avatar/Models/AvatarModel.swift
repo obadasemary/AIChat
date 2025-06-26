@@ -56,6 +56,21 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
         case clickCount = "click_count"
     }
     
+    var eventParameters: [String: Any] {
+        let dict: [String: Any?] = [
+            "avatar_\(CodingKeys.avatarId.rawValue)": avatarId,
+            "avatar_\(CodingKeys.name.rawValue)": name,
+            "avatar_\(CodingKeys.characterOption.rawValue)": characterOption,
+            "avatar_\(CodingKeys.characterAction.rawValue)": characterAction,
+            "avatar_\(CodingKeys.characterLocation.rawValue)": characterLocation,
+            "avatar_\(CodingKeys.profileImageName.rawValue)": profileImageName,
+            "avatar_\(CodingKeys.authorId.rawValue)": authorId,
+            "avatar_\(CodingKeys.dateCreated.rawValue)": dateCreated,
+            "avatar_\(CodingKeys.clickCount.rawValue)": clickCount
+        ]
+        return dict.compactMapValues { $0 }
+    }
+    
     var characterDescription: String {
         AvatarDescriptionBuilder(avatar: self).characterDescription
     }
