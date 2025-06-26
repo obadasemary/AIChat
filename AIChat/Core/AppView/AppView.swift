@@ -26,36 +26,9 @@ struct AppView: View {
             }
         )
         .environment(appState)
+        .screenAppearAnalytics(name: "AppView")
         .task {
             await checkUserStatus()
-        }
-        .onAppear {
-            logManager
-                .identify(
-                    userId: "abc123",
-                    name: "mock user",
-                    email: "ai@example.com"
-                )
-            logManager
-                .addUserProperty(
-                    dict: UserModel.mock.eventParameters,
-                    isHighPriority: false
-                )
-            
-            
-            logManager.trackEvent(event: Event.gamma)
-            logManager.trackEvent(event: Event.delta)
-            
-            let event = AnyLoggableEvent(
-                eventName: "My New Event",
-                parameters: UserModel.mock.eventParameters,
-                type: .analytic
-            )
-            
-            logManager
-                .trackEvent(event: event)
-            logManager
-                .trackEvent(eventName: "Another Event")
         }
         .onChange(of: appState.showTabBar) { _, showTabBar in
             if !showTabBar {
@@ -65,26 +38,32 @@ struct AppView: View {
             }
         }
     }
+}
+
+// MARK: - Action
+private extension AppView {
     
-    private func checkUserStatus() async {
+    func checkUserStatus() async {
         if let user = authManager.auth {
-            // User is authenticated
-            print("User already authenticated: \(user.uid)")
+            logManager.trackEvent(event: Event.existingAuthStart)
             do {
                 try await userManager.logIn(auth: user, isNewUser: false)
             } catch {
-                print("Failed to log in to auth for existing user: \(error)")
+                logManager
+                    .trackEvent(event: Event.existingAuthFail(error: error))
                 try? await Task.sleep(for: .seconds(5))
                 await checkUserStatus()
             }
         } else {
+            logManager.trackEvent(event: Event.anonymousAuthStart)
             do {
                 let result = try await authManager.signInAnonymously()
-                print("Sign in anonymous success: \(result.user.uid)")
+                logManager.trackEvent(event: Event.anonymousAuthSuccess)
                 try await userManager
                     .logIn(auth: result.user, isNewUser: result.isNewUser)
             } catch {
-                print("Failed to sign in to annonimously and login: \(error)")
+                logManager
+                    .trackEvent(event: Event.anonymousAuthFail(error: error))
                 try? await Task.sleep(for: .seconds(5))
                 await checkUserStatus()
             }
@@ -92,40 +71,43 @@ struct AppView: View {
     }
 }
 
-public enum Event: LoggableEvent {
-    case alpha, beta, gamma, delta
+// MARK: - Event
+private extension AppView {
     
-    var eventName: String {
-        switch self {
-        case .alpha: "alpha"
-        case .beta: "beta"
-        case .gamma: "gamma"
-        case .delta: "delta"
+    enum Event: LoggableEvent {
+        case existingAuthStart
+        case existingAuthFail(error: Error)
+        case anonymousAuthStart
+        case anonymousAuthSuccess
+        case anonymousAuthFail(error: Error)
+        
+        var eventName: String {
+            switch self {
+            case .existingAuthStart: "AppView_ExistingAuth_Start"
+            case .existingAuthFail: "AppView_ExistingAuth_Fail"
+            case .anonymousAuthStart: "AppView_AnonymousAuth_Start"
+            case .anonymousAuthSuccess: "AppView_AnonymousAuth_Success"
+            case .anonymousAuthFail: "AppView_AnonymousAuth_Fail"
+            }
         }
-    }
-
-    var parameters: [String : Any]? {
-        switch self {
-        case .alpha, .beta:
-            [
-                "aaa": true,
-                "bbb": 123
-            ]
-        default:
-            nil
+        
+        var parameters: [String : Any]? {
+            switch self {
+            case .existingAuthFail(error: let error),
+                    .anonymousAuthFail(error: let error):
+                error.eventParameters
+            default:
+                nil
+            }
         }
-    }
-
-    var type: LogType {
-        switch self {
-        case .alpha:
-                .info
-        case .beta:
-                .analytic
-        case .gamma:
-                .warning
-        case .delta:
-                .severe
+        
+        var type: LogType {
+            switch self {
+            case .existingAuthFail, .anonymousAuthFail:
+                    .severe
+            default:
+                    .analytic
+            }
         }
     }
 }
