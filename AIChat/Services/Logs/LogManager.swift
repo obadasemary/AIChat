@@ -26,9 +26,9 @@ extension LogManager: LogManagerProtocol {
         }
     }
 
-    nonisolated func addUserProperty(dict: [String : Any], isHighPriority: Bool) {
+    nonisolated func addUserProperties(dict: [String : Any], isHighPriority: Bool) {
         for service in self.services {
-            service.addUserProperty(dict: dict, isHighPriority: isHighPriority)
+            service.addUserProperties(dict: dict, isHighPriority: isHighPriority)
         }
     }
 

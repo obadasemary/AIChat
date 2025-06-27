@@ -34,7 +34,7 @@ extension MixpanelService: LogServiceProtocol {
         }
     }
 
-    func addUserProperty(dict: [String : Any], isHighPriority: Bool) {
+    func addUserProperties(dict: [String : Any], isHighPriority: Bool) {
         
         var userProperties: [String: MixpanelType] = [:]
         

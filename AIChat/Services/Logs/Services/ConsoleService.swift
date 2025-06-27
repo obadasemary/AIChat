@@ -33,7 +33,7 @@ extension ConsoleService: LogServiceProtocol {
         logger.log(level: LogType.info, message: message)
     }
 
-    func addUserProperty(dict: [String : Any], isHighPriority: Bool) {
+    func addUserProperties(dict: [String : Any], isHighPriority: Bool) {
         var message = """
 📊 Log User Properties (isHighPriority: \(isHighPriority.description))
 """
