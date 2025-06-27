@@ -27,7 +27,7 @@ extension FirebaseAnalyticsService: LogServiceProtocol {
         }
     }
 
-    func addUserProperty(dict: [String : Any], isHighPriority: Bool) {
+    func addUserProperties(dict: [String : Any], isHighPriority: Bool) {
         guard isHighPriority else { return }
         
         for (key, value) in dict {
