@@ -528,6 +528,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AIChat/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "AI Chat - Dev";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "Your data will be used to deliver personzlized ads and experiences";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -573,6 +574,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AIChat/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "AI Chat";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "Your data will be used to deliver personzlized ads and experiences";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -771,6 +773,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AIChat/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "AI Chat - Mock";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "Your data will be used to deliver personzlized ads and experiences";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
