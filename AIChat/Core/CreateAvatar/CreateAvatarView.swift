@@ -10,9 +10,11 @@ import SwiftUI
 struct CreateAvatarView: View {
     
     @Environment(\.dismiss) private var dismiss
+    
     @Environment(AIManager.self) private var aiManager
     @Environment(AuthManager.self) private var authManager
     @Environment(AvatarManager.self) private var avatarManager
+    @Environment(LogManager.self) private var logManager
     
     @State private var avatarName: String = ""
     @State private var characterOption: CharacterOption = .default
@@ -39,10 +41,17 @@ struct CreateAvatarView: View {
                 }
             }
             .showCustomAlert(alert: $showAlert)
+            .screenAppearAnalytics(name: "CreateAvatar")
         }
     }
     
-    private var dismissButton: some View {
+    
+}
+
+// MARK: - SectionViews
+private extension CreateAvatarView {
+    
+    var dismissButton: some View {
         Image(systemName: "xmark")
             .font(.title2)
             .fontWeight(.semibold)
@@ -52,7 +61,7 @@ struct CreateAvatarView: View {
             .foregroundStyle(.accent)
     }
     
-    private var nameSection: some View {
+    var nameSection: some View {
         Section {
             TextField("Avatar name", text: $avatarName)
         } header: {
@@ -60,7 +69,7 @@ struct CreateAvatarView: View {
         }
     }
     
-    private var attributesSection: some View {
+    var attributesSection: some View {
         Section {
             Picker(selection: $characterOption) {
                 ForEach(CharacterOption.allCases, id: \.self) { option in
@@ -93,7 +102,7 @@ struct CreateAvatarView: View {
         }
     }
     
-    private var avatarImageSection: some View {
+    var avatarImageSection: some View {
         Section {
             HStack(alignment: .top, spacing: 8) {
                 ZStack {
@@ -128,7 +137,7 @@ struct CreateAvatarView: View {
         }
     }
     
-    private var saveSection: some View {
+    var saveSection: some View {
         Section {
             AsyncCallToActionButton(
                 isLoading: isSaving,
@@ -140,17 +149,23 @@ struct CreateAvatarView: View {
             .disabled(generatedImage == nil)
         }
     }
+}
+
+// MARK: - Action
+private extension CreateAvatarView {
     
-    private func onDismissButtonTapped() {
+    func onDismissButtonTapped() {
+        logManager.trackEvent(event: Event.backButtonPressed)
         dismiss()
     }
     
     // swiftlint:disable force_unwrapping
-    private func onGenerateImageTapped() {
+    func onGenerateImageTapped() {
         isGenerating = true
+        logManager.trackEvent(event: Event.backButtonPressed)
         Task {
             do {
-                _ = AvatarDescriptionBuilder(
+                let avatarDescriptionBuilder = AvatarDescriptionBuilder(
                     characterOption: characterOption,
                     characterAction: characterAction,
                     characterLocation: characterLocation
@@ -164,15 +179,22 @@ struct CreateAvatarView: View {
                     }
                 }
 //                generatedImage = try await aiManager.generateImage(input: prompt.characterDescription)
+                logManager
+                    .trackEvent(
+                        event: Event.generateImageSuccess(
+                            avatarDescriptionBuilder: avatarDescriptionBuilder
+                        )
+                    )
             } catch {
-                print("Error generating image: \(error)")
+                logManager.trackEvent(event: Event.generateImageFail(error: error))
             }
             isGenerating = false
         }
     }
     // swiftlint:enable force_unwrapping
     
-    private func onSaveTapped() {
+    func onSaveTapped() {
+        logManager.trackEvent(event: Event.saveAvatarStart)
         guard let generatedImage else { return }
         isSaving = true
         Task {
@@ -190,11 +212,73 @@ struct CreateAvatarView: View {
                 
                 try await avatarManager
                     .createAvatar(avatar: avatar, image: generatedImage)
+                logManager
+                    .trackEvent(
+                        event: Event.saveAvatarSuccess(
+                            avatar: avatar
+                        )
+                    )
                 
                 dismiss()
                 isSaving = false
             } catch {
                 showAlert = AnyAppAlert(error: error)
+                logManager
+                    .trackEvent(
+                        event: Event.saveAvatarFail(
+                            error: error
+                        )
+                    )
+            }
+        }
+    }
+}
+
+// MARK: - Event
+private extension CreateAvatarView {
+    
+    enum Event: LoggableEvent {
+        case backButtonPressed
+        case generateImageStart
+        case generateImageSuccess(avatarDescriptionBuilder: AvatarDescriptionBuilder)
+        case generateImageFail(error: Error)
+        case saveAvatarStart
+        case saveAvatarSuccess(avatar: AvatarModel)
+        case saveAvatarFail(error: Error)
+
+        var eventName: String {
+            switch self {
+            case .backButtonPressed: "CreateAvatarView_BackButton_Pressed"
+            case .generateImageStart: "CreateAvatarView_GenImage_Start"
+            case .generateImageSuccess: "CreateAvatarView_GenImage_Success"
+            case .generateImageFail: "CreateAvatarView_GenImage_Fail"
+            case .saveAvatarStart: "CreateAvatarView_SaveAvatar_Start"
+            case .saveAvatarSuccess: "CreateAvatarView_SaveAvatar_Success"
+            case .saveAvatarFail: "CreateAvatarView_SaveAvatar_Fail"
+            }
+        }
+        
+        var parameters: [String: Any]? {
+            switch self {
+            case .generateImageSuccess(avatarDescriptionBuilder: let avatarDescriptionBuilder):
+                return avatarDescriptionBuilder.eventParameters
+            case .saveAvatarSuccess(avatar: let avatar):
+                return avatar.eventParameters
+            case .generateImageFail(error: let error), .saveAvatarFail(error: let error):
+                return error.eventParameters
+            default:
+                return nil
+            }
+        }
+        
+        var type: LogType {
+            switch self {
+            case .generateImageFail:
+                return .severe
+            case .saveAvatarFail:
+                return .warning
+            default:
+                return .analytic
             }
         }
     }
