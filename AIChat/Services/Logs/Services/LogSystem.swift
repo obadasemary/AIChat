@@ -41,13 +41,13 @@ enum LogType {
     var emoji: String {
         switch self {
         case .info:
-            "🔵"
+            "🚀🚀🚀"
         case .analytic:
-            "📊"
+            "📊📊📊"
         case .warning:
-            "⚠️"
+            "⚠️⚠️⚠️"
         case .severe:
-            "🔴"
+            "🚨🚨🚨"
         }
     }
     

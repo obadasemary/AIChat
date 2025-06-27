@@ -619,13 +619,13 @@ private extension ChatView {
         var type: LogType {
             switch self {
             case .loadAvatarFail,
-                    .loadMessagesFail,
                     .messageSeenFail,
                     .reportChatFail,
                     .deleteChatFail:
                     .severe
             case .loadChatFail,
-                    .sendMessageFail:
+                    .sendMessageFail,
+                    .loadMessagesFail:
                     .warning
             default:
                     .analytic

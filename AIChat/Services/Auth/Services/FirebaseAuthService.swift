@@ -11,7 +11,9 @@ import SignInAppleAsync
 import SignInGoogleAsync
 import FirebaseCore
 
-struct FirebaseAuthService: AuthServiceProtocol {
+struct FirebaseAuthService {}
+ 
+extension FirebaseAuthService: AuthServiceProtocol {
     
     func addAuthenticatedUserListener(onListenerAttached: (any NSObjectProtocol) -> Void) -> AsyncStream<UserAuthInfo?> {
         AsyncStream { continuation in
@@ -24,6 +26,10 @@ struct FirebaseAuthService: AuthServiceProtocol {
                 }
             }
         }
+    }
+    
+    func removeAuthenticatedUserListener(listener: any NSObjectProtocol) {
+        Auth.auth().removeStateDidChangeListener(listener)
     }
     
     func getAuthenticatedUser() -> UserAuthInfo? {
@@ -68,7 +74,34 @@ struct FirebaseAuthService: AuthServiceProtocol {
         return try await signIn(with: credential)
     }
     
-    private func signIn(
+    func signOut() throws {
+        try Auth.auth().signOut()
+    }
+    
+    func deleteAccount() async throws {
+        guard let user = Auth.auth().currentUser else {
+            throw AuthError.userNotFound
+        }
+        
+        do {
+            try await user.delete()
+        } catch let error as NSError {
+            let authError = AuthErrorCode(rawValue: error.code)
+            switch authError {
+            case .requiresRecentLogin:
+                try await reauthenticateUser(error: error)
+                
+                return try await user.delete()
+            default:
+                throw error
+            }
+        }
+    }
+}
+
+private extension FirebaseAuthService {
+    
+    func signIn(
         with credential: AuthCredential
     ) async throws -> (user: UserAuthInfo, isNewUser: Bool) {
         if let user = Auth.auth().currentUser, user.isAnonymous {
@@ -93,20 +126,35 @@ struct FirebaseAuthService: AuthServiceProtocol {
         return result.asAuthInfo
     }
     
-    func signOut() throws {
-        try Auth.auth().signOut()
-    }
-    
-    func deleteAccount() async throws {
-        guard let user = Auth.auth().currentUser else {
+    func reauthenticateUser(error: Error) async throws {
+        guard let user = Auth.auth().currentUser,
+              let providerId = user.providerData.first?.providerID
+        else {
             throw AuthError.userNotFound
         }
-        try await user.delete()
+        
+        switch providerId {
+        case "apple.com":
+            let result = try await signInWithApple()
+            
+            guard user.uid == result.user.uid else {
+                throw AuthError.reauthAccountChanged
+            }
+        case "google.com":
+            let result = try await signInWithGoogle()
+            
+            guard user.uid == result.user.uid else {
+                throw AuthError.reauthAccountChanged
+            }
+        default:
+            throw error
+        }
     }
-    
+      
     enum AuthError: LocalizedError {
         case userNotFound
         case missingClientID
+        case reauthAccountChanged
         
         var errorDescription: String? {
             switch self {
@@ -114,6 +162,8 @@ struct FirebaseAuthService: AuthServiceProtocol {
                 "Current authenticated User not found."
             case .missingClientID:
                 "Firebase Client ID is missing."
+            case .reauthAccountChanged:
+                "Reauthenticated user has switched accounts. Please check your account."
             }
         }
     }

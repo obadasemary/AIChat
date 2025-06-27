@@ -45,30 +45,31 @@ struct Dependencies {
     init(configuration: BuildConfiguration) {
         switch configuration {
         case .mock(isSignedIn: let isSignedIn):
-            authManager = AuthManager(service: MockAuthService(currentUser: isSignedIn ? .mock() : nil))
-            userManager = UserManager(services: MockUserServices(currentUser: isSignedIn ? .mock : nil))
+            logManager = LogManager(
+                services: [
+                    ConsoleService(printParameters: false)
+                ]
+            )
+            authManager = AuthManager(
+                service: MockAuthService(
+                    currentUser: isSignedIn ? .mock() : nil
+                ),
+                logManager: logManager
+            )
+            userManager = UserManager(
+                services: MockUserServices(
+                    currentUser: isSignedIn ? .mock : nil
+                ),
+                logManager: logManager
+            )
             aiManager = AIManager(service: MockAIServer())
             avatarManager = AvatarManager(
                 remoteService: MockAvatarService(),
                 localStorage: MockLocalAvatarServicePersistence()
             )
             chatManager = ChatManager(service: MockChatService())
-            logManager = LogManager(
-                services: [
-                    ConsoleService(printParameters: false)
-                ]
-            )
+            
         case .dev:
-            authManager = AuthManager(service: FirebaseAuthService())
-            userManager = UserManager(services: ProductionUserServices())
-            aiManager = AIManager(service: OpenAIServer())
-            avatarManager = AvatarManager(
-                remoteService: FirebaseAvatarService(
-                    firebaseImageUploadServiceProtocol: FirebaseImageUploadService()
-                ),
-                localStorage: SwiftDataLocalAvatarServicePersistence()
-            )
-            chatManager = ChatManager(service: FirebaseChatService())
             logManager = LogManager(
                 services: [
                     ConsoleService(),
@@ -77,9 +78,14 @@ struct Dependencies {
                     FirebaseCrashlyticsService()
                 ]
             )
-        case .prod:
-            authManager = AuthManager(service: FirebaseAuthService())
-            userManager = UserManager(services: ProductionUserServices())
+            authManager = AuthManager(
+                service: FirebaseAuthService(),
+                logManager: logManager
+            )
+            userManager = UserManager(
+                services: ProductionUserServices(),
+                logManager: logManager
+            )
             aiManager = AIManager(service: OpenAIServer())
             avatarManager = AvatarManager(
                 remoteService: FirebaseAvatarService(
@@ -88,6 +94,8 @@ struct Dependencies {
                 localStorage: SwiftDataLocalAvatarServicePersistence()
             )
             chatManager = ChatManager(service: FirebaseChatService())
+            
+        case .prod:
             logManager = LogManager(
                 services: [
                     FirebaseAnalyticsService(),
@@ -95,6 +103,22 @@ struct Dependencies {
                     FirebaseCrashlyticsService()
                 ]
             )
+            authManager = AuthManager(
+                service: FirebaseAuthService(),
+                logManager: logManager
+            )
+            userManager = UserManager(
+                services: ProductionUserServices(),
+                logManager: logManager
+            )
+            aiManager = AIManager(service: OpenAIServer())
+            avatarManager = AvatarManager(
+                remoteService: FirebaseAvatarService(
+                    firebaseImageUploadServiceProtocol: FirebaseImageUploadService()
+                ),
+                localStorage: SwiftDataLocalAvatarServicePersistence()
+            )
+            chatManager = ChatManager(service: FirebaseChatService())
         }
     }
     // swiftlint:enable function_body_length

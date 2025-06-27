@@ -42,11 +42,19 @@ extension AuthManager: AuthManagerProtocol {
     }
     
     func signInWithApple() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
-        try await service.signInWithApple()
+        defer {
+            addAuthListener()
+        }
+        
+        return try await service.signInWithApple()
     }
     
     func signInWithGoogle() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
-        try await service.signInWithGoogle()
+        defer {
+            addAuthListener()
+        }
+        
+        return try await service.signInWithGoogle()
     }
     
     func signOut() throws {
@@ -71,6 +79,9 @@ extension AuthManager: AuthManagerProtocol {
 private extension AuthManager {
     private func addAuthListener() {
         logManager?.trackEvent(event: Event.authListenerStart)
+        if let listener {
+            service.removeAuthenticatedUserListener(listener: listener)
+        }
         
         Task {
             for await value in service.addAuthenticatedUserListener(onListenerAttached: { listener in
