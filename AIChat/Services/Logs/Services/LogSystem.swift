@@ -10,10 +10,12 @@ import OSLog
 
 actor LogSystem {
     
+    // swiftlint:disable force_unwrapping
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
         category: "ConsoleLogger"
     )
+    // swiftlint:enable force_unwrapping
     
     func log(level: OSLogType, message: String) {
         logger.log(level: level, "\(message)")

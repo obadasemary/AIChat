@@ -8,10 +8,7 @@
 import Foundation
 import FirebaseCrashlytics
 
-struct FirebaseCrashlyticsService {
-    
-    init() {}
-}
+struct FirebaseCrashlyticsService {}
 
 extension FirebaseCrashlyticsService: LogServiceProtocol {
     

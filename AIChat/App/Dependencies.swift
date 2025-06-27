@@ -41,6 +41,7 @@ struct Dependencies {
     let chatManager: ChatManager
     let logManager: LogManager
     
+    // swiftlint:disable function_body_length
     init(configuration: BuildConfiguration) {
         switch configuration {
         case .mock(isSignedIn: let isSignedIn):
@@ -96,6 +97,7 @@ struct Dependencies {
             )
         }
     }
+    // swiftlint:enable function_body_length
 }
 
 extension View {

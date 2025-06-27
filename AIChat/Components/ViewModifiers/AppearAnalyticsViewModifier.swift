@@ -56,3 +56,9 @@ extension View {
         String(describing: Self.self)
     }
 }
+
+enum ScreenName {
+    static func from<T: View>(_ viewType: T.Type) -> String {
+        String(describing: viewType)
+    }
+}
