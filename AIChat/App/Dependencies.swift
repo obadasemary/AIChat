@@ -54,7 +54,7 @@ struct Dependencies {
             chatManager = ChatManager(service: MockChatService())
             logManager = LogManager(
                 services: [
-                    ConsoleService()
+                    ConsoleService(printParameters: false)
                 ]
             )
         case .dev:
@@ -73,7 +73,7 @@ struct Dependencies {
                     ConsoleService(),
                     FirebaseAnalyticsService(),
                     MixpanelService(token: Keys.mixpanelToken),
-                    FirebaseAnalyticsService()
+                    FirebaseCrashlyticsService()
                 ]
             )
         case .prod:
@@ -91,7 +91,7 @@ struct Dependencies {
                 services: [
                     FirebaseAnalyticsService(),
                     MixpanelService(token: Keys.mixpanelToken),
-                    FirebaseAnalyticsService()
+                    FirebaseCrashlyticsService()
                 ]
             )
         }
