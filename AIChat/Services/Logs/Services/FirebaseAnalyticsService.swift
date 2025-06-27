@@ -8,10 +8,7 @@
 import Foundation
 import FirebaseAnalytics
 
-struct FirebaseAnalyticsService {
-    
-    init() {}
-}
+struct FirebaseAnalyticsService {}
 
 extension FirebaseAnalyticsService: LogServiceProtocol {
     
@@ -61,6 +58,7 @@ extension FirebaseAnalyticsService: LogServiceProtocol {
             }
         }
         
+        // swiftlint:disable empty_count
         // Fix key length limits
         for (key, value) in parameters where key.count > 0 {
             parameters.removeValue(forKey: key)
@@ -68,6 +66,7 @@ extension FirebaseAnalyticsService: LogServiceProtocol {
             let newKey = key.clean(maxCharacters: 40)
             parameters[newKey] = value
         }
+        // swiftlint:enable empty_count
         
         // Fix value length limits
         for (key, value) in parameters {

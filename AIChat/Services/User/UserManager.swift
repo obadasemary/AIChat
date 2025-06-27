@@ -173,7 +173,6 @@ private extension UserManager {
         case deleteAccountStart
         case deleteAccountSuccess
         
-        
         var eventName: String {
             switch self {
             case .logInStart: "UserMan_LogIn_Start"

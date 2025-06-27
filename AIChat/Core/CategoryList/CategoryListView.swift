@@ -121,7 +121,6 @@ private extension CategoryListView {
         case loadAvatarsFail(error: Error)
         case avatarTapped(avatar: AvatarModel)
         
-        
         var eventName: String {
             switch self {
             case .loadAvatarsSuccess: "CategoryList_LoadAvatars_Start"

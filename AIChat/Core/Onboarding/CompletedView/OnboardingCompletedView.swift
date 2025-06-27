@@ -47,8 +47,6 @@ struct OnboardingCompletedView: View {
         .screenAppearAnalytics(name: "OnboardingCompletedView")
         .showCustomAlert(alert: $showAlert)
     }
-    
-    
 }
 
 // MARK: - Action

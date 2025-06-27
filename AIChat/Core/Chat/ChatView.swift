@@ -667,9 +667,3 @@ private extension ChatView {
     }
 }
 // swiftlint:enable file_length
-
-enum ScreenName {
-    static func from<T: View>(_ viewType: T.Type) -> String {
-        String(describing: viewType)
-    }
-}
