@@ -12,6 +12,7 @@ struct ProfileView: View {
     @Environment(AuthManager.self) private var authManager
     @Environment(UserManager.self) private var userManager
     @Environment(AvatarManager.self) private var avatarManager
+    @Environment(LogManager.self) private var logManager
     
     @State private var showSettingsView: Bool = false
     @State private var showCreateAvatarView: Bool = false
@@ -31,6 +32,7 @@ struct ProfileView: View {
             .navigationTitle("Profile")
             .navigationDestinationForCoreModule(path: $path)
             .showCustomAlert(alert: $showAlert)
+            .screenAppearAnalytics(name: "ProfileView")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     settingsButton
@@ -51,21 +53,41 @@ struct ProfileView: View {
             await loadData()
         }
     }
+}
+
+// MARK: - Load
+private extension ProfileView {
     
-    private func loadData() async {
+    func loadData() async {
         self.currentUser = userManager.currentUser
+        logManager.trackEvent(event: Event.loadAvatarsStart)
+        
         do {
             let userId = try authManager.getAuthId()
             myAvatars = try await avatarManager
                 .getAvatarsForAuthor(userId: userId)
+            logManager.trackEvent(
+                event: Event.loadAvatarsSuccess(
+                    count: myAvatars.count
+                )
+            )
         } catch {
-            print("Faild to load user avatars: \(error)")
+            logManager
+                .trackEvent(
+                    event: Event.loadAvatarsFail(
+                        error: error
+                    )
+                )
         }
         
         isLoading = false
     }
+}
+
+// MARK: - SectionViews
+private extension ProfileView {
     
-    private var myInfoSection: some View {
+    var myInfoSection: some View {
         Section {
             ZStack {
                 Circle()
@@ -79,7 +101,7 @@ struct ProfileView: View {
         }
     }
     
-    private var myAvatarsSection: some View {
+    var myAvatarsSection: some View {
         Section {
             if myAvatars.isEmpty {
                 Group {
@@ -127,7 +149,7 @@ struct ProfileView: View {
         }
     }
     
-    private var settingsButton: some View {
+    var settingsButton: some View {
         Image(systemName: "gear")
             .font(.headline)
             .foregroundStyle(.accent)
@@ -135,35 +157,119 @@ struct ProfileView: View {
                 onSettingsButtonPressed()
             }
     }
+}
+
+// MARK: - Action
+private extension ProfileView {
     
-    private func onSettingsButtonPressed() {
+    func onSettingsButtonPressed() {
         showSettingsView = true
+        logManager.trackEvent(event: Event.settingsPressed)
     }
     
-    private func onNewAvatarButtonPressed() {
+    func onNewAvatarButtonPressed() {
         showCreateAvatarView = true
+        logManager.trackEvent(event: Event.newAvatarPressed)
     }
     
-    private func onAvatarSelected(avatar: AvatarModel) {
+    func onAvatarSelected(avatar: AvatarModel) {
         path.append(.chat(avatarId: avatar.avatarId, chat: nil))
+        logManager
+            .trackEvent(
+                event: Event.avatarPressed(
+                    avatar: avatar
+                )
+            )
     }
     
-    private func onDeleteAvatar(indexSet: IndexSet) {
+    func onDeleteAvatar(indexSet: IndexSet) {
         guard let index = indexSet.first else { return }
         let avatar = myAvatars[index]
+        logManager
+            .trackEvent(
+                event: Event.deleteAvatarStart(
+                    avatar: avatar
+                )
+            )
         
         Task {
             do {
                 try await avatarManager
                     .removeAuthorIdFromAvatar(avatarId: avatar.id)
                 myAvatars.remove(at: index)
+                logManager
+                    .trackEvent(
+                        event: Event.deleteAvatarSuccess(
+                            avatar: avatar
+                        )
+                    )
             } catch {
                 showAlert = AnyAppAlert(
                     title: "Unable to delete avatar",
                     subtitle: "Please try again later."
                 )
+                logManager
+                    .trackEvent(
+                        event: Event.deleteAvatarFail(
+                            error: error
+                        )
+                    )
             }
-        }        
+        }
+    }
+}
+
+// MARK: - Event
+private extension ProfileView {
+    
+    enum Event: LoggableEvent {
+        case loadAvatarsStart
+        case loadAvatarsSuccess(count: Int)
+        case loadAvatarsFail(error: Error)
+        case settingsPressed
+        case newAvatarPressed
+        case avatarPressed(avatar: AvatarModel)
+        case deleteAvatarStart(avatar: AvatarModel)
+        case deleteAvatarSuccess(avatar: AvatarModel)
+        case deleteAvatarFail(error: Error)
+        
+        var eventName: String {
+            switch self {
+            case .loadAvatarsStart: "ProfileView_LoadAvatars_Start"
+            case .loadAvatarsSuccess: "ProfileView_LoadAvatars_Success"
+            case .loadAvatarsFail: "ProfileView_LoadAvatars_Fail"
+            case .settingsPressed: "ProfileView_Settings_Pressed"
+            case .newAvatarPressed: "ProfileView_NewAvatar_Pressed"
+            case .avatarPressed: "ProfileView_Avatar_Pressed"
+            case .deleteAvatarStart: "ProfileView_DeleteAvatar_Start"
+            case .deleteAvatarSuccess: "ProfileView_DeleteAvatar_Success"
+            case .deleteAvatarFail: "ProfileView_DeleteAvatar_Fail"
+            }
+        }
+        
+        var parameters: [String: Any]? {
+            switch self {
+            case .loadAvatarsSuccess(count: let count):
+                return [
+                    "avatars_count": count
+                ]
+            case .loadAvatarsFail(error: let error), .deleteAvatarFail(error: let error):
+                return error.eventParameters
+            case .avatarPressed(avatar: let avatar), .deleteAvatarStart(avatar: let avatar), .deleteAvatarSuccess(avatar: let avatar):
+                return avatar.eventParameters
+            default:
+                return nil
+            }
+        }
+        
+        var type: LogType {
+            switch self {
+            case .loadAvatarsFail, .deleteAvatarFail:
+                return .severe
+            default:
+                return .analytic
+            }
+        }
     }
 }
 
