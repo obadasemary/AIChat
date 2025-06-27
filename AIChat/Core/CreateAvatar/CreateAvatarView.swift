@@ -44,8 +44,6 @@ struct CreateAvatarView: View {
             .screenAppearAnalytics(name: "CreateAvatar")
         }
     }
-    
-    
 }
 
 // MARK: - SectionViews
