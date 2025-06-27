@@ -12,11 +12,18 @@ import Foundation
 final class AuthManager {
     
     private let service: AuthServiceProtocol
+    private let logManager: LogManagerProtocol?
+    
     private(set) var auth: UserAuthInfo?
     private var listener: (any NSObjectProtocol)?
     
-    init(service: AuthServiceProtocol) {
+    init(
+        service: AuthServiceProtocol,
+        logManager: LogManagerProtocol? = nil
+    ) {
         self.service = service
+        self.logManager = logManager
+        
         self.auth = service.getAuthenticatedUser()
         self.addAuthListener()
     }
@@ -43,29 +50,85 @@ extension AuthManager: AuthManagerProtocol {
     }
     
     func signOut() throws {
+        logManager?.trackEvent(event: Event.signOutStart)
+        
         try service.signOut()
         auth = nil
+        
+        logManager?.trackEvent(event: Event.signOutSuccess)
     }
     
     func deleteAccount() async throws {
+        logManager?.trackEvent(event: Event.deleteAccountStart)
+        
         try await service.deleteAccount()
         auth = nil
+        
+        logManager?.trackEvent(event: Event.deleteAccountSuccess)
     }
 }
 
 private extension AuthManager {
     private func addAuthListener() {
+        logManager?.trackEvent(event: Event.authListenerStart)
+        
         Task {
             for await value in service.addAuthenticatedUserListener(onListenerAttached: { listener in
                 self.listener = listener
             }) {
                 self.auth = value
-                print("Auth listener success: \(value?.uid ?? "no uid")")
+                logManager?.trackEvent(event: Event.authListenerSuccess(user: value))
+                
+                if let value {
+                    logManager?.identify(userId: value.uid, name: nil, email: value.email)
+                    logManager?.addUserProperties(dict: value.eventParameters, isHighPriority: true)
+                    logManager?.addUserProperties(dict: Utilities.eventParameters, isHighPriority: false)
+                }
             }
         }
     }
     
     enum AuthError: LocalizedError {
         case notSignedIn
+    }
+}
+
+// MARK: - Event
+private extension AuthManager {
+    
+    enum Event: LoggableEvent {
+        case authListenerStart
+        case authListenerSuccess(user: UserAuthInfo?)
+        case signOutStart
+        case signOutSuccess
+        case deleteAccountStart
+        case deleteAccountSuccess
+
+        var eventName: String {
+            switch self {
+            case .authListenerStart: "AuthMan_AuthListener_Start"
+            case .authListenerSuccess: "AuthMan_AuthListener_Success"
+            case .signOutStart: "AuthMan_SignOut_Start"
+            case .signOutSuccess: "AuthMan_SignOut_Success"
+            case .deleteAccountStart: "AuthMan_DeleteAccount_Start"
+            case .deleteAccountSuccess: "AuthMan_DeleteAccount_Success"
+            }
+        }
+        
+        var parameters: [String: Any]? {
+            switch self {
+            case .authListenerSuccess(user: let user):
+                return user?.eventParameters
+            default:
+                return nil
+            }
+        }
+        
+        var type: LogType {
+            switch self {
+            default:
+                return .analytic
+            }
+        }
     }
 }
