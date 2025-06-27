@@ -10,6 +10,7 @@ import SwiftUI
 struct WelcomeView: View {
     
     @Environment(AppState.self) private var root
+    @Environment(LogManager.self) private var logManager
     
     @State var imageName: String = Constants.randomImage
     @State private var showSignInView: Bool = false
@@ -29,6 +30,7 @@ struct WelcomeView: View {
                 policyLinks
             }
         }
+        .screenAppearAnalytics(name: "WelcomeView")
         .sheet(isPresented: $showSignInView) {
             CreateAccountView(
                 title: "Sign In",
@@ -40,8 +42,12 @@ struct WelcomeView: View {
             .presentationDetents([.medium])
         }
     }
+}
+
+// MARK: - SectionViews
+private extension WelcomeView {
     
-    private var titleSection: some View {
+    var titleSection: some View {
         VStack(spacing: 8) {
             Text("AI Chat 🤙")
                 .font(.largeTitle)
@@ -53,7 +59,7 @@ struct WelcomeView: View {
         }
     }
     
-    private var ctaButtons: some View {
+    var ctaButtons: some View {
         VStack(spacing: 8) {
             NavigationLink {
                 OnboardingIntroView()
@@ -73,19 +79,7 @@ struct WelcomeView: View {
         }
     }
     
-    private func handleDidSignIn(isNewUser: Bool) {
-        if isNewUser {
-            
-        } else {
-            root.updateViewState(showTabBarView: true)
-        }
-    }
-    
-    private func onSignInPressed() {
-        showSignInView = true
-    }
-    
-    private var policyLinks: some View {
+    var policyLinks: some View {
         // swiftlint:disable force_unwrapping
         HStack(spacing: 8) {
             Link(destination: URL(string: Constants.termsOfServiceURL)!) {
@@ -102,7 +96,66 @@ struct WelcomeView: View {
     }
 }
 
+// MARK: - Action
+private extension WelcomeView {
+    
+    func handleDidSignIn(isNewUser: Bool) {
+        logManager
+            .trackEvent(
+                event: Event.didSignIn(
+                    isNewUser: isNewUser
+                )
+            )
+        
+        if isNewUser {
+            
+        } else {
+            root.updateViewState(showTabBarView: true)
+        }
+    }
+    
+    func onSignInPressed() {
+        showSignInView = true
+        logManager.trackEvent(event: Event.signInPressed)
+    }
+}
+
+// MARK: - Event
+private extension WelcomeView {
+    
+    enum Event: LoggableEvent {
+        case didSignIn(isNewUser: Bool)
+        case signInPressed
+        
+        var eventName: String {
+            switch self {
+            case .didSignIn: "WelcomeView_DidSignIn"
+            case .signInPressed: "WelcomeView_SignIn_Pressed"
+            }
+        }
+        
+        var parameters: [String: Any]? {
+            switch self {
+            case .didSignIn(isNewUser: let isNewUser):
+                return [
+                    "is_new_user": isNewUser
+                ]
+            default:
+                return nil
+            }
+        }
+        
+        var type: LogType {
+            switch self {
+            default:
+                return .analytic
+            }
+        }
+    }
+}
+
 #Preview {
     WelcomeView()
         .environment(AppState())
+        .previewEnvironment()
 }
