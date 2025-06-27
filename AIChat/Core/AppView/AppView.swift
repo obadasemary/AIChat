@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftfulUtilities
 
 struct AppView: View {
     
@@ -29,6 +30,10 @@ struct AppView: View {
         .screenAppearAnalytics(name: Self.screenName)
         .task {
             await checkUserStatus()
+        }
+        .task {
+            try? await Task.sleep(for: .seconds(2))
+            await showATTPromptIfNeeded()
         }
         .onChange(of: appState.showTabBar) { _, showTabBar in
             if !showTabBar {
@@ -69,6 +74,20 @@ private extension AppView {
             }
         }
     }
+    
+    func showATTPromptIfNeeded() async {
+        #if !DEBUG
+        let status = await AppTrackingTransparencyHelper
+            .requestTrackingAuthorization()
+        
+        logManager
+            .trackEvent(
+                event: Event.attStatus(
+                    dict: status.eventParameters
+                )
+            )
+        #endif
+    }
 }
 
 // MARK: - Event
@@ -80,6 +99,7 @@ private extension AppView {
         case anonymousAuthStart
         case anonymousAuthSuccess
         case anonymousAuthFail(error: Error)
+        case attStatus(dict: [String: Any])
         
         var eventName: String {
             switch self {
@@ -88,6 +108,7 @@ private extension AppView {
             case .anonymousAuthStart: "AppView_AnonymousAuth_Start"
             case .anonymousAuthSuccess: "AppView_AnonymousAuth_Success"
             case .anonymousAuthFail: "AppView_AnonymousAuth_Fail"
+            case .attStatus: "AppView_ATT_Status"
             }
         }
         
@@ -96,6 +117,8 @@ private extension AppView {
             case .existingAuthFail(error: let error),
                     .anonymousAuthFail(error: let error):
                 error.eventParameters
+            case .attStatus(dict: let dict):
+                dict
             default:
                 nil
             }
