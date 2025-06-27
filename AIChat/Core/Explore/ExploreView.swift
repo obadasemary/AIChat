@@ -10,6 +10,7 @@ import SwiftUI
 struct ExploreView: View {
     
     @Environment(AvatarManager.self) private var avatarManager
+    @Environment(LogManager.self) private var logManager
     
     @State private var categories: [CharacterOption] = CharacterOption.allCases
     
@@ -48,6 +49,7 @@ struct ExploreView: View {
                 }
             }
             .navigationTitle("Explore")
+            .screenAppearAnalytics(name: "ExploreView")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     if showDevSettingsButton {
@@ -70,45 +72,78 @@ struct ExploreView: View {
             }
         }
     }
+}
+
+// MARK: - Load
+private extension ExploreView {
     
-    private func loadFeaturedAvatars(force: Bool = false) async {
+    func loadFeaturedAvatars(force: Bool = false) async {
         guard featuredAvatars.isEmpty || force else { return }
+        logManager.trackEvent(event: Event.loadFeaturedAvatarsStart)
         do {
             featuredAvatars = try await avatarManager.getFeaturedAvatars()
+            logManager
+                .trackEvent(
+                    event: Event.loadFeaturedAvatarsSuccess(
+                        count: featuredAvatars.count
+                    )
+                )
         } catch {
-            print("Error loading featured avatars: \(error)")
+            logManager
+                .trackEvent(
+                    event: Event.loadFeaturedAvatarsFail(
+                        error: error
+                    )
+                )
         }
         
         isLoadingFeatured = false
     }
     
-    private func loadPopularAvatars(force: Bool = false) async {
+    func loadPopularAvatars(force: Bool = false) async {
         guard popularAvatars.isEmpty || force else {
             return
         }
+        logManager.trackEvent(event: Event.loadPopularAvatarsStart)
+        
         do {
             popularAvatars = try await avatarManager.getPopularAvatars()
+            logManager
+                .trackEvent(
+                    event: Event.loadPopularAvatarsSuccess(
+                        count: popularAvatars.count
+                    )
+                )
         } catch {
-            print("Error loading featured avatars: \(error)")
+            logManager
+                .trackEvent(
+                    event: Event.loadPopularAvatarsFail(
+                        error: error
+                    )
+                )
         }
         
         isLoadingPopular = false
     }
     
-    private func refreshAvatars() async {
+    func refreshAvatars() async {
         async let featuredAvatars: () = loadFeaturedAvatars(force: true)
         async let popularAvatars: () = loadPopularAvatars(force: true)
         _ = await (featuredAvatars, popularAvatars)
     }
+}
+
+// MARK: - SectionViews
+private extension ExploreView {
     
-    private var loadingIndicator: some View {
+    var loadingIndicator: some View {
         ProgressView()
             .frame(maxWidth: .infinity)
             .padding(.vertical, 200)
             .removeListRowFormatting()
     }
     
-    private var contentUnavailableView: some View {
+    var contentUnavailableView: some View {
         ContentUnavailableView(
             "No Connection",
             systemImage: "wifi.slash",
@@ -118,7 +153,7 @@ struct ExploreView: View {
         .removeListRowFormatting()
     }
     
-    private var featuredSection: some View {
+    var featuredSection: some View {
         Section {
             ZStack {
                 CarouselView(items: featuredAvatars) { avatar in
@@ -138,7 +173,7 @@ struct ExploreView: View {
         }
     }
     
-    private var categoriesSection: some View {
+    var categoriesSection: some View {
         Section {
             ZStack {
                 ScrollView(.horizontal) {
@@ -173,7 +208,7 @@ struct ExploreView: View {
         }
     }
     
-    private var popularSection: some View {
+    var popularSection: some View {
         Section {
             ForEach(popularAvatars, id: \.self) { avatar in
                 CustomListCellView(
@@ -191,7 +226,7 @@ struct ExploreView: View {
         }
     }
     
-    private var devSettingsButton: some View {
+    var devSettingsButton: some View {
         HStack {
             Image(systemName:"rectangle.portrait.and.arrow.forward")
             Text("Dev 🤫")
@@ -201,16 +236,30 @@ struct ExploreView: View {
             onDevSettingsButtonTapped()
         }
     }
+}
+
+// MARK: - Action
+private extension ExploreView {
     
-    private func onDevSettingsButtonTapped() {
+    func onDevSettingsButtonTapped() {
         showDevSettings = true
+        logManager
+            .trackEvent(
+                event: Event.devSettingsPressed
+            )
     }
     
-    private func onAvaterSelected(avatar: AvatarModel) {
+    func onAvaterSelected(avatar: AvatarModel) {
         path.append(.chat(avatarId: avatar.avatarId, chat: nil))
+        logManager
+            .trackEvent(
+                event: Event.avatarPressed(
+                    avatar: avatar
+                )
+            )
     }
     
-    private func onCategorySelected(
+    func onCategorySelected(
         category: CharacterOption,
         imageName: String
     ) {
@@ -221,6 +270,72 @@ struct ExploreView: View {
                     imageName: imageName
                 )
             )
+        logManager
+            .trackEvent(
+                event: Event.categoryPressed(
+                    category: category
+                )
+            )
+    }
+}
+
+// MARK: - Event
+private extension ExploreView {
+    
+    enum Event: LoggableEvent {
+        case devSettingsPressed
+        case tryAgainPressed
+        case loadFeaturedAvatarsStart
+        case loadFeaturedAvatarsSuccess(count: Int)
+        case loadFeaturedAvatarsFail(error: Error)
+        case loadPopularAvatarsStart
+        case loadPopularAvatarsSuccess(count: Int)
+        case loadPopularAvatarsFail(error: Error)
+        case avatarPressed(avatar: AvatarModel)
+        case categoryPressed(category: CharacterOption)
+
+        var eventName: String {
+            switch self {
+            case .devSettingsPressed:           return "ExploreView_DevSettings_Pressed"
+            case .tryAgainPressed:              return "ExploreView_TryAgain_Pressed"
+            case .loadFeaturedAvatarsStart:     return "ExploreView_LoadFeaturedAvatars_Start"
+            case .loadFeaturedAvatarsSuccess:   return "ExploreView_LoadFeaturedAvatars_Success"
+            case .loadFeaturedAvatarsFail:      return "ExploreView_LoadFeaturedAvatars_Fail"
+            case .loadPopularAvatarsStart:      return "ExploreView_LoadPopularAvatars_Start"
+            case .loadPopularAvatarsSuccess:    return "ExploreView_LoadPopularAvatars_Success"
+            case .loadPopularAvatarsFail:       return "ExploreView_LoadPopularAvatars_Fail"
+            case .avatarPressed:                return "ExploreView_Avatar_Pressed"
+            case .categoryPressed:              return "ExploreView_Category_Pressed"
+            }
+        }
+        
+        var parameters: [String: Any]? {
+            switch self {
+            case .loadPopularAvatarsSuccess(count: let count), .loadFeaturedAvatarsSuccess(count: let count):
+                return [
+                    "avatars_count": count
+                ]
+            case .loadPopularAvatarsFail(error: let error), .loadFeaturedAvatarsFail(error: let error):
+                return error.eventParameters
+            case .avatarPressed(avatar: let avatar):
+                return avatar.eventParameters
+            case .categoryPressed(category: let category):
+                return [
+                    "category": category.rawValue
+                ]
+            default:
+                return nil
+            }
+        }
+        
+        var type: LogType {
+            switch self {
+            case .loadPopularAvatarsFail, .loadFeaturedAvatarsFail:
+                return .severe
+            default:
+                return .analytic
+            }
+        }
     }
 }
 
