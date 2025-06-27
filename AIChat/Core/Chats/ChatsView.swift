@@ -192,14 +192,14 @@ private extension ChatsView {
         
         var eventName: String {
             switch self {
-            case .loadAvatarsStart:        return "ChatsView_LoadAvatars_Start"
-            case .loadAvatarsSuccess:      return "ChatsView_LoadAvatars_Success"
-            case .loadAvatarsFail:         return "ChatsView_LoadAvatars_Fail"
-            case .loadChatsStart:          return "ChatsView_LoadChats_Start"
-            case .loadChatsSuccess:        return "ChatsView_LoadChats_Success"
-            case .loadChatsFail:           return "ChatsView_LoadChats_Fail"
-            case .chatPressed:             return "ChatsView_Chat_Pressed"
-            case .avatarPressed:           return "ChatsView_Avatar_Pressed"
+            case .loadAvatarsStart: "ChatsView_LoadAvatars_Start"
+            case .loadAvatarsSuccess: "ChatsView_LoadAvatars_Success"
+            case .loadAvatarsFail: "ChatsView_LoadAvatars_Fail"
+            case .loadChatsStart: "ChatsView_LoadChats_Start"
+            case .loadChatsSuccess: "ChatsView_LoadChats_Success"
+            case .loadChatsFail: "ChatsView_LoadChats_Fail"
+            case .chatPressed: "ChatsView_Chat_Pressed"
+            case .avatarPressed: "ChatsView_Avatar_Pressed"
             }
         }
         
