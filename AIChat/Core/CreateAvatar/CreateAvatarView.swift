@@ -160,7 +160,7 @@ private extension CreateAvatarView {
     // swiftlint:disable force_unwrapping
     func onGenerateImageTapped() {
         isGenerating = true
-        logManager.trackEvent(event: Event.backButtonPressed)
+        logManager.trackEvent(event: Event.generateImageStart)
         Task {
             do {
                 let avatarDescriptionBuilder = AvatarDescriptionBuilder(
