@@ -11,6 +11,7 @@ struct ExploreView: View {
     
     @Environment(AvatarManager.self) private var avatarManager
     @Environment(LogManager.self) private var logManager
+    @Environment(PushManager.self) private var pushManager
     
     @State private var categories: [CharacterOption] = CharacterOption.allCases
     
@@ -21,6 +22,8 @@ struct ExploreView: View {
     
     @State private var path: [NavigationPathOption] = []
     @State private var showDevSettings: Bool = false
+    @State private var showNotificationButton: Bool = false
+    @State private var showPushNotificationModal: Bool = false
     
     private var showDevSettingsButton: Bool {
         #if DEV || MOCK
@@ -56,11 +59,19 @@ struct ExploreView: View {
                         devSettingsButton
                     }
                 }
+                ToolbarItem(placement: .topBarTrailing) {
+                    if showNotificationButton {
+                        pushNotificationButton
+                    }
+                }
             }
             .sheet(isPresented: $showDevSettings) {
                 DevSettingsView()
             }
             .navigationDestinationForCoreModule(path: $path)
+            .showModal(showModal: $showPushNotificationModal) {
+                pushNotificationModal
+            }
             .task {
                 await loadFeaturedAvatars()
             }
@@ -69,6 +80,12 @@ struct ExploreView: View {
             }
             .refreshable {
                 await refreshAvatars()
+            }
+            .task {
+                await handleShowPushNotificationButton()
+            }
+            .onFirstAppear {
+                schedulePushNotifications()
             }
         }
     }
@@ -130,6 +147,14 @@ private extension ExploreView {
         async let featuredAvatars: () = loadFeaturedAvatars(force: true)
         async let popularAvatars: () = loadPopularAvatars(force: true)
         _ = await (featuredAvatars, popularAvatars)
+    }
+    
+    func handleShowPushNotificationButton() async {
+        showNotificationButton = await pushManager.canRequestAuthorization()
+    }
+    
+    func schedulePushNotifications() {
+        pushManager.schedulePushNotificationForTheNextWeek()
     }
 }
 
@@ -236,6 +261,32 @@ private extension ExploreView {
             onDevSettingsButtonTapped()
         }
     }
+    
+    var pushNotificationButton: some View {
+        Image(systemName: "bell.fill")
+            .font(.headline)
+            .padding(4)
+            .tappableBackground()
+            .foregroundStyle(.accent)
+            .anyButton {
+                onPushNotificationButtonTapped()
+            }
+    }
+    
+    var pushNotificationModal: some View {
+        CustomModalView(
+            title: "Enable Push Notifications?",
+            subtitle: "We'll send you updates about new features and improvements",
+            primaryButtonTitle: "Enable",
+            primaryButtonAction: {
+                onEnablePushNotificationTapped()
+            },
+            secondaryButtonTitle: "Cancel",
+            secondaryButtonAction: {
+                onCancelPushNotificationTapped()
+            }
+        )
+    }
 }
 
 // MARK: - Action
@@ -246,6 +297,36 @@ private extension ExploreView {
         logManager
             .trackEvent(
                 event: Event.devSettingsPressed
+            )
+    }
+    
+    func onPushNotificationButtonTapped() {
+        showPushNotificationModal = true
+        logManager
+            .trackEvent(
+                event: Event.pushNotificationStart
+            )
+    }
+    
+    func onEnablePushNotificationTapped() {
+        showPushNotificationModal = false
+        
+        Task {
+            let isAuthorized = try await pushManager.reuestAuthorization()
+            logManager
+                .trackEvent(
+                    event: Event
+                        .pushNotificationEnabled(isAuthorized: isAuthorized)
+                )
+            await handleShowPushNotificationButton()
+        }
+    }
+    
+    func onCancelPushNotificationTapped() {
+        showPushNotificationModal = false
+        logManager
+            .trackEvent(
+                event: Event.pushNotificationCancel
             )
     }
     
@@ -293,47 +374,57 @@ private extension ExploreView {
         case loadPopularAvatarsFail(error: Error)
         case avatarPressed(avatar: AvatarModel)
         case categoryPressed(category: CharacterOption)
+        case pushNotificationStart
+        case pushNotificationEnabled(isAuthorized: Bool)
+        case pushNotificationCancel
 
         var eventName: String {
             switch self {
-            case .devSettingsPressed:           return "ExploreView_DevSettings_Pressed"
-            case .tryAgainPressed:              return "ExploreView_TryAgain_Pressed"
-            case .loadFeaturedAvatarsStart:     return "ExploreView_LoadFeaturedAvatars_Start"
-            case .loadFeaturedAvatarsSuccess:   return "ExploreView_LoadFeaturedAvatars_Success"
-            case .loadFeaturedAvatarsFail:      return "ExploreView_LoadFeaturedAvatars_Fail"
-            case .loadPopularAvatarsStart:      return "ExploreView_LoadPopularAvatars_Start"
-            case .loadPopularAvatarsSuccess:    return "ExploreView_LoadPopularAvatars_Success"
-            case .loadPopularAvatarsFail:       return "ExploreView_LoadPopularAvatars_Fail"
-            case .avatarPressed:                return "ExploreView_Avatar_Pressed"
-            case .categoryPressed:              return "ExploreView_Category_Pressed"
+            case .devSettingsPressed: "ExploreView_DevSettings_Pressed"
+            case .tryAgainPressed: "ExploreView_TryAgain_Pressed"
+            case .loadFeaturedAvatarsStart: "ExploreView_LoadFeaturedAvatars_Start"
+            case .loadFeaturedAvatarsSuccess: "ExploreView_LoadFeaturedAvatars_Success"
+            case .loadFeaturedAvatarsFail: "ExploreView_LoadFeaturedAvatars_Fail"
+            case .loadPopularAvatarsStart: "ExploreView_LoadPopularAvatars_Start"
+            case .loadPopularAvatarsSuccess: "ExploreView_LoadPopularAvatars_Success"
+            case .loadPopularAvatarsFail: "ExploreView_LoadPopularAvatars_Fail"
+            case .avatarPressed: "ExploreView_Avatar_Pressed"
+            case .categoryPressed: "ExploreView_Category_Pressed"
+            case .pushNotificationStart: "ExploreView_PushNotification_Start"
+            case .pushNotificationEnabled: "ExploreView_PushNotification_Enabled"
+            case .pushNotificationCancel: "ExploreView_PushNotification_Cancel"
             }
         }
         
         var parameters: [String: Any]? {
             switch self {
             case .loadPopularAvatarsSuccess(count: let count), .loadFeaturedAvatarsSuccess(count: let count):
-                return [
+                [
                     "avatars_count": count
                 ]
             case .loadPopularAvatarsFail(error: let error), .loadFeaturedAvatarsFail(error: let error):
-                return error.eventParameters
+                error.eventParameters
             case .avatarPressed(avatar: let avatar):
-                return avatar.eventParameters
+                avatar.eventParameters
             case .categoryPressed(category: let category):
-                return [
+                [
                     "category": category.rawValue
                 ]
+            case .pushNotificationEnabled(isAuthorized: let isAuthorized):
+                [
+                    "is_authorized": isAuthorized
+                ]
             default:
-                return nil
+                nil
             }
         }
         
         var type: LogType {
             switch self {
             case .loadPopularAvatarsFail, .loadFeaturedAvatarsFail:
-                return .severe
+                    .severe
             default:
-                return .analytic
+                    .analytic
             }
         }
     }

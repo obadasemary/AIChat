@@ -15,6 +15,7 @@ struct AIChatApp: App {
     var body: some Scene {
         WindowGroup {
             AppView()
+                .environment(delegate.dependencies.pushManager)
                 .environment(delegate.dependencies.chatManager)
                 .environment(delegate.dependencies.aiManager)
                 .environment(delegate.dependencies.avatarManager)
