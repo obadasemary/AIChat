@@ -40,6 +40,7 @@ struct Dependencies {
     let avatarManager: AvatarManager
     let chatManager: ChatManager
     let logManager: LogManager
+    let pushManager: PushManager
     
     // swiftlint:disable function_body_length
     init(configuration: BuildConfiguration) {
@@ -120,6 +121,8 @@ struct Dependencies {
             )
             chatManager = ChatManager(service: FirebaseChatService())
         }
+        
+        pushManager = PushManager(logManager: logManager)
     }
     // swiftlint:enable function_body_length
 }
@@ -127,6 +130,7 @@ struct Dependencies {
 extension View {
     func previewEnvironment(isSignedIn: Bool = true) -> some View {
         self
+            .environment(PushManager())
             .environment(ChatManager(service: MockChatService()))
             .environment(AIManager(service: MockAIServer()))
             .environment(AvatarManager(remoteService: MockAvatarService()))
