@@ -11,10 +11,18 @@
 			<string>Google Sign In</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-                <!-- Prod -->
-                <string>com.googleusercontent.apps.925847372979-5obuu4lcjgfngullm07ck43nives4gc5</string>
-                <!-- Dev -->
-                <string>com.googleusercontent.apps.925847372979-taso0s11v0o6mbh1q46q99hjah5ab8ie</string>
+				<string>com.googleusercontent.apps.925847372979-5obuu4lcjgfngullm07ck43nives4gc5</string>
+				<string>com.googleusercontent.apps.925847372979-taso0s11v0o6mbh1q46q99hjah5ab8ie</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>basic_deep_link</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>aiChat</string>
 			</array>
 		</dict>
 	</array>
