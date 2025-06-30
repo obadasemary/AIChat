@@ -32,6 +32,8 @@ struct SettingsView: View {
                 purchaseSection
                 applicationSection
             }
+            .lineLimit(1)
+            .minimumScaleFactor(0.5)
             .navigationTitle("Settings")
             .sheet(isPresented: $showCreateAccountView, onDismiss: {
                 setAnonymousAccountStatus()
@@ -360,15 +362,22 @@ private extension SettingsView {
     }
 }
 
-fileprivate extension View {
-    func rowFormatting() -> some View {
-        self
+private struct RowFormattingViewModifier: ViewModifier {
+    
+    @Environment(\.colorScheme) private var colorScheme
+    
+    func body(content: Content) -> some View {
+        content
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, 12)
             .padding(.horizontal, 16)
-            .background {
-                Color(uiColor: .systemBackground)
-            }
+            .background(colorScheme.backgroundPrimary)
+    }
+}
+
+fileprivate extension View {
+    func rowFormatting() -> some View {
+        modifier(RowFormattingViewModifier())
     }
 }
 

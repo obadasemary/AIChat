@@ -64,6 +64,8 @@ private extension CreateAvatarView {
             TextField("Avatar name", text: $avatarName)
         } header: {
             Text("Name your avatar *")
+                .lineLimit(1)
+                .minimumScaleFactor(0.3)
         }
     }
     
@@ -97,6 +99,8 @@ private extension CreateAvatarView {
             }
         } header: {
             Text("Attributes")
+                .lineLimit(1)
+                .minimumScaleFactor(0.3)
         }
     }
     
@@ -107,6 +111,8 @@ private extension CreateAvatarView {
                     Text("Generate image")
                         .underline()
                         .foregroundStyle(.accent)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.2)
                         .anyButton(.plain) {
                             onGenerateImageTapped()
                         }
@@ -130,6 +136,7 @@ private extension CreateAvatarView {
                         }
                     }
                     .clipShape(Circle())
+                    .frame(maxWidth: .infinity, maxHeight: 400)
             }
             .removeListRowFormatting()
         }
@@ -145,6 +152,8 @@ private extension CreateAvatarView {
             .removeListRowFormatting()
             .opacity(generatedImage == nil ? 0.5 : 1)
             .disabled(generatedImage == nil)
+            .frame(maxWidth: 500)
+            .frame(maxWidth: .infinity)
         }
     }
 }
