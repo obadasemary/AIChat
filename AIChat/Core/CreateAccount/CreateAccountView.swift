@@ -26,8 +26,12 @@ struct CreateAccountView: View {
                 Text(title)
                     .font(.largeTitle)
                     .fontWeight(.semibold)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
                 Text(subtitle)
                     .font(.body)
+                    .lineLimit(4)
+                    .minimumScaleFactor(0.5)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             
@@ -41,6 +45,7 @@ struct CreateAccountView: View {
             .anyButton(.press) {
                 onSignInWithAppleTapped()
             }
+            .frame(maxWidth: .infinity, alignment: .center)
             
             GoogleSignInButton(
                 viewModel: GoogleSignInButtonViewModel(
@@ -52,6 +57,7 @@ struct CreateAccountView: View {
                 onSignInWithGoogleTapped()
             }
             .frame(maxWidth: 375)
+            .frame(maxWidth: .infinity, alignment: .center)
             
             Spacer()
         }

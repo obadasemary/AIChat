@@ -136,6 +136,8 @@ private extension ProfileView {
         } header: {
             HStack(spacing: 0) {
                 Text("My avatars")
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
                 
                 Spacer()
                 

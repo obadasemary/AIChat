@@ -9,6 +9,8 @@ import SwiftUI
 
 struct CustomListCellView: View {
     
+    @Environment(\.colorScheme) private var colorScheme
+    
     var imageName: String?
     var title: String?
     var subtitle: String?
@@ -43,7 +45,7 @@ struct CustomListCellView: View {
         }
         .padding(12)
         .padding(.vertical, 4)
-        .background(Color(uiColor: .systemBackground))
+        .background(colorScheme.backgroundPrimary)
     }
 }
 
