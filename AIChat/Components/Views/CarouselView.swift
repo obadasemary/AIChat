@@ -76,7 +76,10 @@ struct CarouselView<Content: View, T: Hashable>: View {
         stopAutoScroll()
         timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
             DispatchQueue.main.async {
-                guard let current = selection, let currentIndex = items.firstIndex(of: current) else {
+                guard
+                    let current = selection,
+                    let currentIndex = items.firstIndex(of: current)
+                else {
                     selection = items.first
                     return
                 }
