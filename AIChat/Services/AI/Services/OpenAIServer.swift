@@ -27,9 +27,11 @@ extension OpenAIServer: AIServiceProtocol {
         
         let result = try await openAI.images(query: query)
         
-        guard let b64Json = result.data.first?.b64Json,
-              let data = Data(base64Encoded: b64Json),
-              let image = UIImage(data: data) else {
+        guard
+            let b64Json = result.data.first?.b64Json,
+            let data = Data(base64Encoded: b64Json),
+            let image = UIImage(data: data)
+        else {
             throw OpenAIError.invalidResponse
         }
         
@@ -125,9 +127,11 @@ private extension OpenAIServer {
         print("Raw response: \(String(data: data, encoding: .utf8) ?? "Unreadable")")
 
         let decoded = try JSONDecoder().decode(OpenAIImageResponse.self, from: data)
-        guard let b64Json = decoded.data.first?.b64_json,
-              let imageData = Data(base64Encoded: b64Json),
-              let image = UIImage(data: imageData) else {
+        guard
+            let b64Json = decoded.data.first?.b64_json,
+            let imageData = Data(base64Encoded: b64Json),
+            let image = UIImage(data: imageData)
+        else {
             throw OpenAIError.invalidResponse
         }
 
