@@ -17,28 +17,43 @@ struct AppView: View {
     @State var appState: AppState = .init()
     
     var body: some View {
-        AppViewBuilder(
-            showTabBar: appState.showTabBar,
-            tabBarView: {
-                TabBarView()
-            },
-            onboardingView: {
-                WelcomeView()
+        RootView(
+            delegate: RootDelegate(
+                onApplicationDidAppear: nil,
+                onApplicationWillEnterForeground: { _ in
+                    Task {
+                        await checkUserStatus()
+                    }
+                },
+                onApplicationDidBecomeActive: nil,
+                onApplicationWillResignActive: nil,
+                onApplicationDidEnterBackground: nil,
+                onApplicationWillTerminate: nil
+            )
+        ) {
+            AppViewBuilder(
+                showTabBar: appState.showTabBar,
+                tabBarView: {
+                    TabBarView()
+                },
+                onboardingView: {
+                    WelcomeView()
+                }
+            )
+            .environment(appState)
+            .screenAppearAnalytics(name: Self.screenName)
+            .task {
+                await checkUserStatus()
             }
-        )
-        .environment(appState)
-        .screenAppearAnalytics(name: Self.screenName)
-        .task {
-            await checkUserStatus()
-        }
-        .task {
-            try? await Task.sleep(for: .seconds(2))
-            await showATTPromptIfNeeded()
-        }
-        .onChange(of: appState.showTabBar) { _, showTabBar in
-            if !showTabBar {
-                Task {
-                    await checkUserStatus()
+            .task {
+                try? await Task.sleep(for: .seconds(2))
+                await showATTPromptIfNeeded()
+            }
+            .onChange(of: appState.showTabBar) { _, showTabBar in
+                if !showTabBar {
+                    Task {
+                        await checkUserStatus()
+                    }
                 }
             }
         }
