@@ -233,20 +233,29 @@ private extension SettingsView {
             do {
                 let userId = try authManager.getAuthId()
                 
-                async let deleteAuth: () = authManager.deleteAccount()
-                async let deleteUser: () = userManager.deleteCurrentUser()
-                async let deleteAvatar: () = avatarManager
-                    .removeAuthorIdFromAllUserAvatars(userId: userId)
-                async let deleteChats: () = chatManager.deleteAllChatsForUser(
-                    userId: userId
-                )
+//                async let deleteAuth: () = authManager.deleteAccount()
+//                async let deleteUser: () = userManager.deleteCurrentUser()
+//                async let deleteAvatar: () = avatarManager
+//                    .removeAuthorIdFromAllUserAvatars(userId: userId)
+//                async let deleteChats: () = chatManager.deleteAllChatsForUser(
+//                    userId: userId
+//                )
+//                
+//                let (_, _, _, _) = await (
+//                    try deleteAuth,
+//                    try deleteUser,
+//                    try deleteAvatar,
+//                    try deleteChats
+//                )
                 
-                let (_, _, _, _) = await (
-                    try deleteAuth,
-                    try deleteUser,
-                    try deleteAvatar,
-                    try deleteChats
-                )
+                try await chatManager.deleteAllChatsForUser(userId: userId)
+                
+                try await avatarManager
+                    .removeAuthorIdFromAllUserAvatars(userId: userId)
+                
+                try await userManager.deleteCurrentUser()
+                
+                try await authManager.deleteAccount()
                 
                 logManager.deleteUserProfile()
                 logManager
