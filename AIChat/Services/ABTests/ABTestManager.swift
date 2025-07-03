@@ -6,3 +6,22 @@
 //
 
 import Foundation
+
+protocol ABTestServiceProtocol {
+    
+}
+
+struct MockABTestService: ABTestServiceProtocol {
+    
+}
+
+@MainActor
+@Observable
+class ABTestManager {
+    
+    private let service: ABTestServiceProtocol
+    
+    init(service: ABTestServiceProtocol) {
+        self.service = service
+    }
+}
