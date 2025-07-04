@@ -12,6 +12,8 @@ struct ExploreView: View {
     @Environment(AvatarManager.self) private var avatarManager
     @Environment(LogManager.self) private var logManager
     @Environment(PushManager.self) private var pushManager
+    @Environment(AuthManager.self) private var authManager
+    @Environment(ABTestManager.self) private var abTestManager
     
     @State private var categories: [CharacterOption] = CharacterOption.allCases
     
@@ -24,6 +26,7 @@ struct ExploreView: View {
     @State private var showDevSettings: Bool = false
     @State private var showNotificationButton: Bool = false
     @State private var showPushNotificationModal: Bool = false
+    @State private var showCreateAccountView: Bool = false
     
     private var showDevSettingsButton: Bool {
         #if DEV || MOCK
@@ -68,6 +71,10 @@ struct ExploreView: View {
             .sheet(isPresented: $showDevSettings) {
                 DevSettingsView()
             }
+            .sheet(isPresented: $showCreateAccountView) {
+                CreateAccountView()
+                    .presentationDetents([.medium])
+            }
             .navigationDestinationForCoreModule(path: $path)
             .showModal(showModal: $showPushNotificationModal) {
                 pushNotificationModal
@@ -86,6 +93,7 @@ struct ExploreView: View {
             }
             .onFirstAppear {
                 schedulePushNotifications()
+                showCreateAccountScreenIfNeeded()
             }
             .onOpenURL { url in
                 handleDeepLink(url)
@@ -187,6 +195,21 @@ private extension ExploreView {
         }
         
         logManager.trackEvent(event: Event.deepLinkUnknown)
+    }
+    
+    private func showCreateAccountScreenIfNeeded() {
+        Task {
+            try? await Task.sleep(for: .seconds(2))
+            
+            guard
+                authManager.auth?.isAnonymous == true &&
+                abTestManager.activeTests.createAccountTest == true
+            else {
+                return
+            }
+            
+            showCreateAccountView = true
+        }
     }
 }
 
@@ -478,6 +501,24 @@ private extension ExploreView {
             AvatarManager(
                 remoteService: MockAvatarService()
             )
+        )
+        .previewEnvironment()
+}
+
+#Preview("Mock Has Data w/ create Acct Test") {
+    ExploreView()
+        .environment(
+            AvatarManager(
+                remoteService: MockAvatarService()
+            )
+        )
+        .environment(
+            AuthManager(
+                service: MockAuthService(currentUser: .mock(isAnonymous: true))
+            )
+        )
+        .environment(
+            ABTestManager(service: MockABTestService(createAccountTest: true))
         )
         .previewEnvironment()
 }
