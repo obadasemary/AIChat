@@ -41,6 +41,7 @@ struct Dependencies {
     let chatManager: ChatManager
     let logManager: LogManager
     let pushManager: PushManager
+    let abTestManager: ABTestManager
     
     // swiftlint:disable function_body_length
     init(configuration: BuildConfiguration) {
@@ -69,7 +70,10 @@ struct Dependencies {
                 localStorage: MockLocalAvatarServicePersistence()
             )
             chatManager = ChatManager(service: MockChatService())
-            
+            abTestManager = ABTestManager(
+                service: MockABTestService(),
+                logManager: logManager
+            )
         case .dev:
             logManager = LogManager(
                 services: [
@@ -95,7 +99,10 @@ struct Dependencies {
                 localStorage: SwiftDataLocalAvatarServicePersistence()
             )
             chatManager = ChatManager(service: FirebaseChatService())
-            
+            abTestManager = ABTestManager(
+                service: MockABTestService(),
+                logManager: logManager
+            )
         case .prod:
             logManager = LogManager(
                 services: [
@@ -120,6 +127,10 @@ struct Dependencies {
                 localStorage: SwiftDataLocalAvatarServicePersistence()
             )
             chatManager = ChatManager(service: FirebaseChatService())
+            abTestManager = ABTestManager(
+                service: MockABTestService(),
+                logManager: logManager
+            )
         }
         
         pushManager = PushManager(logManager: logManager)
@@ -130,6 +141,7 @@ struct Dependencies {
 extension View {
     func previewEnvironment(isSignedIn: Bool = true) -> some View {
         self
+            .environment(ABTestManager(service: MockABTestService()))
             .environment(PushManager())
             .environment(ChatManager(service: MockChatService()))
             .environment(AIManager(service: MockAIServer()))
