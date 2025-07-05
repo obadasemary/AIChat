@@ -12,12 +12,16 @@ struct DevSettingsView: View {
     
     @Environment(AuthManager.self) private var authManager
     @Environment(UserManager.self) private var userManager
+    @Environment(ABTestManager.self) private var abTestManager
     
     @Environment(\.dismiss) private var dismiss
+    
+    @State private var createAccountTest: Bool = false
     
     var body: some View {
         NavigationStack {
             List {
+                abTestSection
                 authInfoSection
                 userInfoSection
                 deviceInfoSection
@@ -29,10 +33,17 @@ struct DevSettingsView: View {
                 }
             }
             .screenAppearAnalytics(name: "DevSettings")
+            .onFirstAppear {
+                loadABTest()
+            }
         }
     }
+}
+
+// MARK: - SectionViews
+private extension DevSettingsView {
     
-    private var backButtonView: some View {
+    var backButtonView: some View {
         Image(systemName: "xmark")
             .font(.title2)
             .fontWeight(.black)
@@ -41,11 +52,20 @@ struct DevSettingsView: View {
             }
     }
     
-    private func onBackButtonTap() {
-        dismiss()
+    var abTestSection: some View {
+        Section {
+            Toggle("Create Account Test", isOn: $createAccountTest)
+                .onChange(
+                    of: createAccountTest,
+                    handleCreateAccountChange
+                )
+        } header: {
+            Text("AB Test")
+        }
+        .font(.caption)
     }
     
-    private var authInfoSection: some View {
+    var authInfoSection: some View {
         Section {
             let array = authManager
                 .auth?
@@ -60,7 +80,7 @@ struct DevSettingsView: View {
         }
     }
     
-    private var userInfoSection: some View {
+    var userInfoSection: some View {
         Section {
             let array = userManager
                 .currentUser?
@@ -75,7 +95,7 @@ struct DevSettingsView: View {
         }
     }
     
-    private var deviceInfoSection: some View {
+    var deviceInfoSection: some View {
         Section {
             let array = Utilities
                 .eventParameters
@@ -89,7 +109,7 @@ struct DevSettingsView: View {
         }
     }
     
-    private func itemRow(item: (key: String, value: Any)) -> some View {
+    func itemRow(item: (key: String, value: Any)) -> some View {
         HStack {
             Text(item.key)
             Spacer(minLength: 4)
@@ -103,6 +123,30 @@ struct DevSettingsView: View {
         .font(.caption)
         .lineLimit(1)
         .minimumScaleFactor(0.3)
+    }
+}
+
+// MARK: - Action
+private extension DevSettingsView {
+    
+    func onBackButtonTap() {
+        dismiss()
+    }
+    
+    func loadABTest() {
+        createAccountTest = abTestManager.activeTests.createAccountTest
+    }
+    
+    func handleCreateAccountChange(oldValue: Bool, newValue: Bool) {
+        if newValue != abTestManager.activeTests.createAccountTest {
+            do {
+                var tests = abTestManager.activeTests
+                tests.update(createAccountTest: newValue)
+                try abTestManager.override(updateTests: tests)
+            } catch {
+                createAccountTest = abTestManager.activeTests.createAccountTest
+            }
+        }
     }
 }
 
