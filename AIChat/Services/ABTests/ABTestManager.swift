@@ -7,9 +7,9 @@
 
 import Foundation
 
-struct ActiveABTest: Codable {
+struct ActiveABTests: Codable {
     
-    let createAccountTest: Bool
+    private(set) var createAccountTest: Bool
     
     init(createAccountTest: Bool) {
         self.createAccountTest = createAccountTest
@@ -25,24 +25,59 @@ struct ActiveABTest: Codable {
         ]
         return dict.compactMapValues { $0 }
     }
+    
+    mutating func update(createAccountTest newValue: Bool) {
+        createAccountTest = newValue
+    }
 }
 
 protocol ABTestServiceProtocol {
-    var activeTests: ActiveABTest { get }
+    var activeTests: ActiveABTests { get }
+    func saveUpdatedConfig(updatedTest: ActiveABTests) throws
 }
 
-struct MockABTestService {
+class MockABTestService {
     
-    let activeTests: ActiveABTest
+    var activeTests: ActiveABTests
     
     init(createAccountTest: Bool? = nil) {
-        self.activeTests = ActiveABTest(
+        self.activeTests = ActiveABTests(
             createAccountTest: createAccountTest ?? false
         )
     }
 }
 
-extension MockABTestService: ABTestServiceProtocol {}
+extension MockABTestService: ABTestServiceProtocol {
+    
+    func saveUpdatedConfig(updatedTest: ActiveABTests) throws {
+        activeTests = updatedTest
+    }
+}
+
+class LocalABTestService {
+    
+    @UserDefault(
+        key: ActiveABTests.CodingKeys.createAccountTest.rawValue,
+        defaultValue: .random()
+    ) private var createAccountTest: Bool
+    
+    var activeTests: ActiveABTests {
+        ActiveABTests(
+            createAccountTest: createAccountTest
+        )
+    }
+}
+
+extension LocalABTestService: ABTestServiceProtocol {
+    
+    func saveUpdatedConfig(updatedTest: ActiveABTests) throws {
+        createAccountTest = updatedTest.createAccountTest
+    }
+}
+
+protocol ABTestManagerProtocol {
+    func override(updateTests: ActiveABTests) throws
+}
 
 @MainActor
 @Observable
@@ -51,7 +86,7 @@ class ABTestManager {
     private let service: ABTestServiceProtocol
     private let logManager: LogManagerProtocol?
     
-    var activeTests: ActiveABTest
+    var activeTests: ActiveABTests
     
     init(
         service: ABTestServiceProtocol,
@@ -63,7 +98,20 @@ class ABTestManager {
         self.configure()
     }
     
-    private func configure() {
+}
+
+extension ABTestManager: @preconcurrency ABTestManagerProtocol {
+    
+    func override(updateTests: ActiveABTests) throws {
+        try service.saveUpdatedConfig(updatedTest: updateTests)
+        configure()
+    }
+}
+
+private extension ABTestManager {
+    
+    func configure() {
+        activeTests = service.activeTests
         logManager?
             .addUserProperties(
                 dict: activeTests.eventParameters,
