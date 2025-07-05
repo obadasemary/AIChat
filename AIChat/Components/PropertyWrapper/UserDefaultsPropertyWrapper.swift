@@ -8,6 +8,7 @@
 import Foundation
 
 protocol UserDefaultsCompatible {  }
+
 extension Bool: UserDefaultsCompatible {  }
 extension Int: UserDefaultsCompatible {  }
 extension Float: UserDefaultsCompatible {  }
