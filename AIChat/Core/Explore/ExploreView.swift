@@ -199,7 +199,7 @@ private extension ExploreView {
     
     private func showCreateAccountScreenIfNeeded() {
         Task {
-            try? await Task.sleep(for: .seconds(2))
+            try? await Task.sleep(for: .seconds(1))
             
             guard
                 authManager.auth?.isAnonymous == true &&
