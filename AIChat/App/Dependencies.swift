@@ -100,7 +100,7 @@ struct Dependencies {
             )
             chatManager = ChatManager(service: FirebaseChatService())
             abTestManager = ABTestManager(
-                service: MockABTestService(),
+                service: LocalABTestService(),
                 logManager: logManager
             )
         case .prod:
