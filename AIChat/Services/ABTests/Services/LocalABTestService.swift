@@ -19,7 +19,7 @@ class LocalABTestService {
         defaultValue: .random()
     ) private var onboardingCommunityTest: Bool
     
-    @UserDefaultِEnum(
+    @UserDefaultEnum(
         key: ActiveABTests.CodingKeys.categoryRowTest.rawValue,
         defaultValue: CategoryRowTestOption.allCases.randomElement()!
     ) private var categoryRowTest: CategoryRowTestOption
