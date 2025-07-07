@@ -45,3 +45,34 @@ struct UserDefault<T: UserDefaultsCompatible> {
         }
     }
 }
+
+@propertyWrapper
+struct UserDefaultEnum<T: RawRepresentable> where T.RawValue == String {
+    
+    private let key: String
+    private let defaultValue: T
+    
+    init(
+        key: String,
+        defaultValue: T
+    ) {
+        self.key = key
+        self.defaultValue = defaultValue
+    }
+    
+    var wrappedValue: T {
+        get {
+            if let savedValue = UserDefaults
+                .standard
+                .string(forKey: key),
+               let savedValue = T(rawValue: savedValue) {
+                return savedValue
+            } else {
+                UserDefaults.standard.set(defaultValue.rawValue, forKey: key)
+                return defaultValue
+            }
+        } nonmutating set {
+            UserDefaults.standard.set(newValue.rawValue, forKey: key)
+        }
+    }
+}
