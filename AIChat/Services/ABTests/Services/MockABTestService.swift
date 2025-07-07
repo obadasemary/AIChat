@@ -13,11 +13,13 @@ class MockABTestService {
     
     init(
         createAccountTest: Bool? = nil,
-        onboardingCommunityTest: Bool? = nil
+        onboardingCommunityTest: Bool? = nil,
+        categoryRowTest: CategoryRowTestOption? = nil
     ) {
         self.activeTests = ActiveABTests(
             createAccountTest: createAccountTest ?? false,
-            onboardingCommunityTest: onboardingCommunityTest ?? false
+            onboardingCommunityTest: onboardingCommunityTest ?? false,
+            categoryRowTest: categoryRowTest ?? .default
         )
     }
 }
