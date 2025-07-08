@@ -39,11 +39,57 @@ extension ABTestManager: @preconcurrency ABTestManagerProtocol {
 private extension ABTestManager {
     
     func configure() {
-        activeTests = service.activeTests
-        logManager?
-            .addUserProperties(
-                dict: activeTests.eventParameters,
-                isHighPriority: false
-            )
+        Task {
+            do {
+                activeTests = try await service.fetchUpdateConfig()
+                logManager?
+                    .trackEvent(
+                        event: Event.fetchRemoteConfigSuccess
+                    )
+                logManager?
+                    .addUserProperties(
+                        dict: activeTests.eventParameters,
+                        isHighPriority: false
+                    )
+            } catch {
+                logManager?
+                    .trackEvent(
+                        event: Event.fetchRemoteConfigFailure(error: error)
+                    )
+            }
+        }
+    }
+}
+
+private extension ABTestManager {
+    
+    enum Event: LoggableEvent {
+        case fetchRemoteConfigSuccess
+        case fetchRemoteConfigFailure(error: Error)
+        
+        var eventName: String {
+            switch self {
+            case .fetchRemoteConfigSuccess: "ABManager_FetchRemoteConfigSuccess"
+            case .fetchRemoteConfigFailure: "ABManager_FetchRemoteConfigFailure"
+            }
+        }
+        
+        var parameters: [String : Any]? {
+            switch self {
+            case .fetchRemoteConfigFailure(error: let error):
+                error.eventParameters
+            default:
+                nil
+            }
+        }
+        
+        var type: LogType {
+            switch self {
+            case .fetchRemoteConfigFailure:
+                    .severe
+            default:
+                    .analytic
+            }
+        }
     }
 }

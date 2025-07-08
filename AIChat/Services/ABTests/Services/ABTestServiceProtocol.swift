@@ -7,7 +7,9 @@
 
 import Foundation
 
-protocol ABTestServiceProtocol {
+@MainActor
+protocol ABTestServiceProtocol: Sendable {
     var activeTests: ActiveABTests { get }
     func saveUpdatedConfig(updatedTest: ActiveABTests) throws
+    func fetchUpdateConfig() async throws -> ActiveABTests
 }

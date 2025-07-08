@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 class LocalABTestService {
     
     @UserDefault(
@@ -39,5 +40,9 @@ extension LocalABTestService: ABTestServiceProtocol {
         createAccountTest = updatedTest.createAccountTest
         onboardingCommunityTest = updatedTest.onboardingCommunityTest
         categoryRowTest = updatedTest.categoryRowTest
+    }
+    
+    func fetchUpdateConfig() async throws -> ActiveABTests {
+        activeTests
     }
 }

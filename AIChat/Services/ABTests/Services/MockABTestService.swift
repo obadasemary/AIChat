@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 class MockABTestService {
     
     var activeTests: ActiveABTests
@@ -28,5 +29,9 @@ extension MockABTestService: ABTestServiceProtocol {
     
     func saveUpdatedConfig(updatedTest: ActiveABTests) throws {
         activeTests = updatedTest
+    }
+    
+    func fetchUpdateConfig() async throws -> ActiveABTests {
+        activeTests
     }
 }
