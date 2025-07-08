@@ -46,11 +46,21 @@ struct ExploreView: View {
                         contentUnavailableView
                     }
                 }
+                
+                if !popularAvatars.isEmpty {
+                    if abTestManager.activeTests.categoryRowTest == .top {
+                        categoriesSection
+                    }
+                }
+                
                 if !featuredAvatars.isEmpty {
                     featuredSection
                 }
+                
                 if !popularAvatars.isEmpty {
-                    categoriesSection
+                    if abTestManager.activeTests.categoryRowTest == .original {
+                        categoriesSection
+                    }
                     popularSection
                 }
             }
@@ -519,6 +529,36 @@ private extension ExploreView {
         )
         .environment(
             ABTestManager(service: MockABTestService(createAccountTest: true))
+        )
+        .previewEnvironment()
+}
+
+#Preview("CategoryRowTest: Original") {
+    ExploreView()
+        .environment(
+            ABTestManager(
+                service: MockABTestService(categoryRowTest: .original)
+            )
+        )
+        .previewEnvironment()
+}
+
+#Preview("CategoryRowTest: top") {
+    ExploreView()
+        .environment(
+            ABTestManager(
+                service: MockABTestService(categoryRowTest: .top)
+            )
+        )
+        .previewEnvironment()
+}
+
+#Preview("CategoryRowTest: hidden") {
+    ExploreView()
+        .environment(
+            ABTestManager(
+                service: MockABTestService(categoryRowTest: .hidden)
+            )
         )
         .previewEnvironment()
 }
