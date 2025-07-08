@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FirebaseRemoteConfig
 
 struct ActiveABTests: Codable {
     
@@ -24,9 +25,9 @@ struct ActiveABTests: Codable {
     }
     
     enum CodingKeys: String, CodingKey {
-        case createAccountTest = "_20250702_CreateAccTest"
-        case onboardingCommunityTest = "_20250702_OnbCommunityTest"
-        case categoryRowTest = "_20250702_CateegoryRowTest"
+        case createAccountTest = "_20250720_CreateAccTest"
+        case onboardingCommunityTest = "_20250720_OnbCommunityTest"
+        case categoryRowTest = "_20250720_CateegoryRowTest"
     }
     
     var eventParameters: [String: Any] {
@@ -58,5 +59,39 @@ enum CategoryRowTestOption: String, Codable, CaseIterable {
     
     static var `default`: Self {
         .original
+    }
+}
+
+extension ActiveABTests {
+    
+    init(config: RemoteConfig) {
+        let createAccountTest = config.configValue(
+            forKey: ActiveABTests.CodingKeys.categoryRowTest.rawValue
+        ).boolValue
+        print("FOUND CREATE ACCOUNT DATA: \(createAccountTest)")
+        self.createAccountTest = createAccountTest
+        
+        let onboardingCommunityTest = config.configValue(
+            forKey: ActiveABTests.CodingKeys.onboardingCommunityTest.rawValue
+        ).boolValue
+        self.onboardingCommunityTest = onboardingCommunityTest
+        
+        let categoryRowTestStringValue = config.configValue(
+            forKey: ActiveABTests.CodingKeys.categoryRowTest.rawValue
+        ).stringValue
+        if let option = CategoryRowTestOption(rawValue: categoryRowTestStringValue) {
+            self.categoryRowTest = option
+        } else {
+            self.categoryRowTest = .default
+        }
+    }
+    
+    // Converted to a NSObject dictionary to setDefaults within FirebaseABTestService
+    var asNSObjectDictionary: [String : NSObject]? {
+        [
+            CodingKeys.createAccountTest.rawValue: createAccountTest as NSObject,
+            CodingKeys.onboardingCommunityTest.rawValue: onboardingCommunityTest as NSObject,
+            CodingKeys.categoryRowTest.rawValue: categoryRowTest.rawValue as NSObject
+        ]
     }
 }
