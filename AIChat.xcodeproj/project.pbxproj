@@ -19,6 +19,7 @@
 		AFAA66B62DF4E4960013F8DC /* SignInAppleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = AFAA66B52DF4E4960013F8DC /* SignInAppleAsync */; };
 		AFCB2B912DFC779000694E6E /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = AFCB2B902DFC779000694E6E /* FirebaseFirestore */; };
 		AFCB2BA02DFDC20B00694E6E /* SwiftfulFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = AFCB2B9F2DFDC20B00694E6E /* SwiftfulFirestore */; };
+		AFCE8E3C2E1D443900CC88C7 /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = AFCE8E3B2E1D443900CC88C7 /* FirebaseRemoteConfig */; };
 		AFEF44072DFF1489000E87DC /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = AFEF44062DFF1489000E87DC /* OpenAI */; };
 		AFEF464A2E007365000E87DC /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = AFEF46492E007365000E87DC /* FirebaseStorage */; };
 /* End PBXBuildFile section */
@@ -91,6 +92,7 @@
 				AF3986952DF8D2E5000F064C /* GoogleSignInSwift in Frameworks */,
 				AFA98BB32DA46E0600492141 /* SDWebImageSwiftUI in Frameworks */,
 				AF95B1772DF38774003D5BA0 /* FirebaseAuth in Frameworks */,
+				AFCE8E3C2E1D443900CC88C7 /* FirebaseRemoteConfig in Frameworks */,
 				AFCB2B912DFC779000694E6E /* FirebaseFirestore in Frameworks */,
 				AF3E88B22E0B7CA1002FAC13 /* Mixpanel in Frameworks */,
 				AFEF464A2E007365000E87DC /* FirebaseStorage in Frameworks */,
@@ -180,6 +182,7 @@
 				AF1B57882E0B526200C28263 /* FirebaseAnalytics */,
 				AF3E88B12E0B7CA1002FAC13 /* Mixpanel */,
 				AF1E6BF42E0C4DE3005D93F8 /* FirebaseCrashlytics */,
+				AFCE8E3B2E1D443900CC88C7 /* FirebaseRemoteConfig */,
 			);
 			productName = AIChat;
 			productReference = AF9034FB2DA3FDB000A35095 /* AIChat.app */;
@@ -1027,6 +1030,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AFCB2B9E2DFDC20B00694E6E /* XCRemoteSwiftPackageReference "SwiftfulFirestore" */;
 			productName = SwiftfulFirestore;
+		};
+		AFCE8E3B2E1D443900CC88C7 /* FirebaseRemoteConfig */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AF95B1752DF38774003D5BA0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseRemoteConfig;
 		};
 		AFEF44062DFF1489000E87DC /* OpenAI */ = {
 			isa = XCSwiftPackageProductDependency;
