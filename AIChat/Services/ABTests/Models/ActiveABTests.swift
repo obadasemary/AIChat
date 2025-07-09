@@ -52,15 +52,7 @@ struct ActiveABTests: Codable {
     }
 }
 
-enum CategoryRowTestOption: String, Codable, CaseIterable {
-    case original
-    case top
-    case hidden
-    
-    static var `default`: Self {
-        .original
-    }
-}
+// MARK: REMOTE CONFIG
 
 extension ActiveABTests {
     
