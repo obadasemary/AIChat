@@ -15,10 +15,10 @@ extension StoreKitPurchaseService: PurchaseServiceProtocol {
     func listenForTransactions(onTransactionUpdated: ([PurchasedEntitlement]) async -> Void) async {
         for await update in StoreKit.Transaction.updates {
             if let transaction = try? update.payloadValue {
+                await transaction.finish()
+                
                 let entitlements = await getUserEntitlements()
                 await onTransactionUpdated(entitlements)
-                
-                await transaction.finish()
             }
         }
     }
@@ -61,5 +61,41 @@ extension StoreKitPurchaseService: PurchaseServiceProtocol {
         }
         
         return activeTransactions
+    }
+    
+    func getProducts(productIds: [String]) async throws -> [AnyProduct] {
+        let products = try await Product.products(for: productIds)
+        return products.compactMap({ AnyProduct(storeKitProduct: $0) })
+    }
+    
+    func restorePurchase() async throws -> [PurchasedEntitlement] {
+        try await AppStore.sync()
+        return await getUserEntitlements()
+    }
+    
+    func purchaseProduct(productId: String) async throws -> [PurchasedEntitlement] {
+        let products = try await Product.products(for: [productId])
+        
+        guard let product = products.first else {
+            throw Error.productNotFound
+        }
+        
+        let result = try await product.purchase()
+        
+        switch result {
+        case .success(let verificationResult):
+            let transaction = try verificationResult.payloadValue
+            await transaction.finish()
+            
+            return await getUserEntitlements()
+        case .userCancelled:
+            throw Error.userCancelledPurchase
+        default:
+            throw Error.failedToPurchase
+        }
+    }
+    
+    enum Error: LocalizedError {
+        case productNotFound, userCancelledPurchase, failedToPurchase
     }
 }
