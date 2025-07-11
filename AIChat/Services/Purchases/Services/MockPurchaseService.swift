@@ -25,4 +25,18 @@ extension MockPurchaseService: PurchaseServiceProtocol {
     func getUserEntitlements() async -> [PurchasedEntitlement] {
         activeEntitlements
     }
+    
+    func getProducts(productIds: [String]) async throws -> [AnyProduct] {
+        return AnyProduct.mocks.filter { product in
+            return productIds.contains(product.id)
+        }
+    }
+    
+    func restorePurchase() async throws -> [PurchasedEntitlement] {
+        activeEntitlements
+    }
+    
+    func purchaseProduct(productId: String) async throws -> [PurchasedEntitlement] {
+        activeEntitlements
+    }
 }
