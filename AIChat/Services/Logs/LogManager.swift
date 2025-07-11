@@ -71,7 +71,3 @@ extension LogManager: LogManagerProtocol {
         }
     }
 }
-
-private extension LogManager {
-    
-}
