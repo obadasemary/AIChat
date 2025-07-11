@@ -16,6 +16,7 @@ struct ChatView: View {
     @Environment(ChatManager.self) private var chatManager
     @Environment(AIManager.self) private var aiManager
     @Environment(LogManager.self) private var logManager
+    @Environment(PurchaseManager.self) private var purchaseManager
     
     @Environment(\.dismiss) private var dismiss
     
@@ -36,6 +37,7 @@ struct ChatView: View {
     @State private var isGeneratingResponse: Bool = false
     @State private var typingIndicatorMessage: ChatMessageModel?
     @State private var messageListener: ListenerRegistration?
+    @State private var showPaywall: Bool = false
     
     var body: some View {
         VStack(spacing: .zero) {
@@ -67,6 +69,9 @@ struct ChatView: View {
             if let avatar {
                 profileModal(avatar: avatar)
             }
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView()
         }
         .task {
             await loadAvatar()
@@ -275,6 +280,13 @@ private extension ChatView {
         
         Task {
             do {
+                // Show paywall if needed
+                let isPremium = purchaseManager.entitlements.hasActiveEntitlement
+                if !isPremium && chatMessages.count >= 3 {
+                    showPaywall = true
+                    return
+                }
+                
                 // Get userId
                 let userId = try authManager.getAuthId()
                 
@@ -522,6 +534,8 @@ private extension ChatView {
         case sendMessageStart(chat: ChatModel?, avatar: AvatarModel?)
         case sendMessageFail(error: Error)
         
+        case sendMessagePaywall(chat: ChatModel?, avatar: AvatarModel?)
+        
         case sendMessageSent(chat: ChatModel?, avatar: AvatarModel?, message: ChatMessageModel)
         case sendMessageResponse(chat: ChatModel?, avatar: AvatarModel?, message: ChatMessageModel)
         case sendMessageResponseSent(chat: ChatModel?, avatar: AvatarModel?, message: ChatMessageModel)
@@ -560,6 +574,8 @@ private extension ChatView {
                 "\(ScreenName.from(ChatView.self))_SendMessage_Start"
             case .sendMessageFail:
                 "\(ScreenName.from(ChatView.self))_SendMessage_Fail"
+            case .sendMessagePaywall:
+                "\(ScreenName.from(ChatView.self))_SendMessage_Paywall"
             case .sendMessageSent:
                 "\(ScreenName.from(ChatView.self))_SendMessage_Sent"
             case .sendMessageResponse:
@@ -602,7 +618,8 @@ private extension ChatView {
                     .reportChatFail(error: let error),
                     .deleteChatFail(error: let error):
                 return error.eventParameters
-            case .sendMessageStart(chat: let chat, avatar: let avatar):
+            case .sendMessageStart(chat: let chat, avatar: let avatar),
+                    .sendMessagePaywall(chat: let chat, avatar: let avatar):
                 var dict = chat?.eventParameters ?? [:]
                 dict.merge(avatar?.eventParameters)
                 return dict
@@ -636,10 +653,23 @@ private extension ChatView {
     }
 }
 
-// MARK: - Preview Working Chat
-#Preview("Working Chat") {
+// MARK: - Preview Working Chat Not Premium
+#Preview("Working Chat - Not Premium") {
     NavigationStack {
         ChatView(avatarId: AvatarModel.mock.avatarId)
+            .previewEnvironment()
+    }
+}
+
+// MARK: - Preview Working Chat Premium
+#Preview("Working Chat - Premium") {
+    NavigationStack {
+        ChatView(avatarId: AvatarModel.mock.avatarId)
+            .environment(
+                PurchaseManager(
+                    service: MockPurchaseService(activeEntitlements: [.mock])
+                )
+            )
             .previewEnvironment()
     }
 }
