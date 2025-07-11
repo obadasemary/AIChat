@@ -6,24 +6,7 @@
 //
 
 import SwiftUI
-
-enum EntitlementOption: Codable, CaseIterable {
-    case yearly
-    case monthly
-    
-    var productId: String {
-        switch self {
-        case .yearly:
-            return "com.Obada.AIChat.yearly"
-        case .monthly:
-            return "com.Obada.AIChat.monthly"
-        }
-    }
-    
-    static var allProductIds: [String] {
-        EntitlementOption.allCases.map({ $0.productId })
-    }
-}
+import StoreKit
 
 struct PaywallView: View {
     
@@ -129,36 +112,6 @@ private extension PaywallView {
                     .analytic
             }
         }
-    }
-}
-
-import StoreKit
-
-struct StoreKitPaywallView: View {
-    
-    var onInAppPurchaseStart: ((Product) async -> Void)?
-    var onInAppPurchaseCompletion: (
-        (Product, Result<Product.PurchaseResult, any Error>) async -> Void
-    )?
-    
-    var body: some View {
-        SubscriptionStoreView(productIDs: EntitlementOption.allProductIds) {
-            VStack(spacing: 8) {
-                Text("AI Chat 🤙")
-                    .font(.largeTitle)
-                    .fontWeight(.semibold)
-                
-                Text("Get premium access to unlock all features.")
-                    .font(.subheadline)
-            }
-            .foregroundStyle(.white)
-            .multilineTextAlignment(.center)
-            .containerBackground(Color.accent.gradient, for: .subscriptionStore)
-        }
-        .storeButton(.visible, for: .restorePurchases)
-        .subscriptionStoreControlStyle(.prominentPicker)
-        .onInAppPurchaseStart(perform: onInAppPurchaseStart)
-        .onInAppPurchaseCompletion(perform: onInAppPurchaseCompletion)
     }
 }
 
