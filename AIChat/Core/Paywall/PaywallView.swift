@@ -10,21 +10,90 @@ import StoreKit
 
 struct PaywallView: View {
     
+    @Environment(PurchaseManager.self) private var purchaseManager
     @Environment(LogManager.self) private var logManager
     @Environment(\.dismiss) private var dismiss
+
+    @State private var products: [AnyProduct] = []
+    @State private var productIds: [String] = EntitlementOption.allProductIds
+    @State private var showAlert: AnyAppAlert?
     
     var body: some View {
-        StoreKitPaywallView(
-            onInAppPurchaseStart: onPurchaseStart,
-            onInAppPurchaseCompletion: onPurchaseComplete
-        )
+        ZStack {
+            if products.isEmpty {
+                ProgressView()
+            } else {
+                CustomPaywallView(
+                    products: products,
+                    onBackButtonPressed: onBackButtonPressed,
+                    onRestorePurchasePressed: onRestorePurchasePressed,
+                    onPurchaseProductPressed: onPurchaseProductPressed
+                )
+            }
+        }
+//        StoreKitPaywallView(
+//            productIds: productIds,
+//            onInAppPurchaseStart: onPurchaseStart,
+//            onInAppPurchaseCompletion: onPurchaseComplete
+//        )
         .screenAppearAnalytics(name: "Paywall")
+        .showCustomAlert(alert: $showAlert)
+        .task {
+            await onLoadProducts()
+        }
     }
 }
 
 // MARK: - Action
 
 private extension PaywallView {
+    
+    private func onLoadProducts() async {
+        do {
+            products = try await purchaseManager.getProducts(productIds: productIds)
+        } catch {
+            showAlert = AnyAppAlert(error: error)
+        }
+    }
+    
+    private func onBackButtonPressed() {
+        logManager.trackEvent(event: Event.backButtonPressed)
+        dismiss()
+    }
+    
+    private func onRestorePurchasePressed() {
+        logManager.trackEvent(event: Event.restorePurchaseStart)
+
+        Task {
+            do {
+                let entitlements = try await purchaseManager.restorePurchase()
+                
+                if entitlements.hasActiveEntitlement {
+                    dismiss()
+                }
+            } catch {
+                showAlert = AnyAppAlert(error: error)
+            }
+        }
+    }
+    
+    private func onPurchaseProductPressed(product: AnyProduct) {
+        logManager.trackEvent(event: Event.purchaseStart(product: product))
+
+        Task {
+            do {
+                let entitlements = try await purchaseManager.purchaseProduct(productId: product.id)
+                logManager.trackEvent(event: Event.purchaseSuccess(product: product))
+
+                if entitlements.hasActiveEntitlement {
+                    dismiss()
+                }
+            } catch {
+                logManager.trackEvent(event: Event.purchaseFail(error: error))
+                showAlert = AnyAppAlert(error: error)
+            }
+        }
+    }
     
     func onPurchaseStart(product: StoreKit.Product) {
         let product = AnyProduct(storeKitProduct: product)
@@ -77,6 +146,9 @@ private extension PaywallView {
         case purchaseCanceled(product: AnyProduct)
         case purchaseUnknown(product: AnyProduct)
         case purchaseFail(error: Error)
+        case loadProductsStart
+        case restorePurchaseStart
+        case backButtonPressed
         
         var eventName: String {
             switch self {
@@ -86,6 +158,9 @@ private extension PaywallView {
             case .purchaseCanceled: "Paywall_Purchase_Canceled"
             case .purchaseUnknown: "Paywall_Purchase_Unknown"
             case .purchaseFail: "Paywall_Purchase_Fail"
+            case .loadProductsStart: "Paywall_Load_Start"
+            case .restorePurchaseStart: "Paywall_Restore_Start"
+            case .backButtonPressed: "Paywall_BackButton_Pressed"
             }
         }
         
@@ -99,8 +174,8 @@ private extension PaywallView {
                 product.eventParameters
             case .purchaseFail(error: let error):
                 error.eventParameters
-//            default:
-//                nil
+            default:
+                nil
             }
         }
         
