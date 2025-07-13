@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "E4350D91-ADD7-473E-9C99-BC24832553AE",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:AIChat.xcodeproj",
+      "identifier" : "AF9034FA2DA3FDB000A35095",
+      "name" : "AIChat"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:AIChat.xcodeproj",
+        "identifier" : "AF90350B2DA3FDB100A35095",
+        "name" : "AIChatTests"
+      }
+    }
+  ],
+  "version" : 1
+}
