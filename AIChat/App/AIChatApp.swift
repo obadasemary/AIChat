@@ -6,8 +6,20 @@
 //
 
 import SwiftUI
+import SwiftfulUtilities
 
 @main
+struct AppEntryPoint {
+    
+    static func main() {
+        if Utilities.isUnitTesting {
+            TestingApp.main()
+        } else {
+            AIChatApp.main()
+        }
+    }
+}
+
 struct AIChatApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
@@ -24,6 +36,14 @@ struct AIChatApp: App {
                 .environment(delegate.dependencies.userManager)
                 .environment(delegate.dependencies.authManager)
                 .environment(delegate.dependencies.logManager)
+        }
+    }
+}
+
+struct TestingApp: App {
+    var body: some Scene {
+        WindowGroup {
+            Text("Testing")
         }
     }
 }
