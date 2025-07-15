@@ -42,7 +42,7 @@ extension LocalABTestService: ABTestServiceProtocol {
         categoryRowTest = updatedTest.categoryRowTest
     }
     
-    func fetchUpdateConfig() async throws -> ActiveABTests {
+    func fetchUpdatedConfig() async throws -> ActiveABTests {
         activeTests
     }
 }

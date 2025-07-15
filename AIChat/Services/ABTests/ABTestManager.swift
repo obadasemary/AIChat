@@ -41,7 +41,7 @@ private extension ABTestManager {
     func configure() {
         Task {
             do {
-                activeTests = try await service.fetchUpdateConfig()
+                activeTests = try await service.fetchUpdatedConfig()
                 logManager?
                     .trackEvent(
                         event: Event.fetchRemoteConfigSuccess
