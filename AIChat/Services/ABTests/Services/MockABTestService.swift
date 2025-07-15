@@ -12,6 +12,11 @@ class MockABTestService {
     
     var activeTests: ActiveABTests
     
+    /// Initialize with a pre-built ActiveABTests instance.
+    init(activeTests: ActiveABTests) {
+        self.activeTests = activeTests
+    }
+    
     init(
         createAccountTest: Bool? = nil,
         onboardingCommunityTest: Bool? = nil,
@@ -31,7 +36,7 @@ extension MockABTestService: ABTestServiceProtocol {
         activeTests = updatedTest
     }
     
-    func fetchUpdateConfig() async throws -> ActiveABTests {
+    func fetchUpdatedConfig() async throws -> ActiveABTests {
         activeTests
     }
 }

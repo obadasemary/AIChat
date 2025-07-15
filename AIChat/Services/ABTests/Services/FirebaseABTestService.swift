@@ -40,7 +40,7 @@ extension FirebaseABTestService: ABTestServiceProtocol {
         assertionFailure("Error: Firebase AB Test are not configurable from the client.")
     }
     
-    func fetchUpdateConfig() async throws -> ActiveABTests {
+    func fetchUpdatedConfig() async throws -> ActiveABTests {
         let status = try await RemoteConfig.remoteConfig().fetchAndActivate()
         
         switch status {
