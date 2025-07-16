@@ -6,6 +6,7 @@
 //
 
 import Testing
+import Foundation
 @testable import AIChat
 
 struct ActiveABTestsTests {
@@ -49,7 +50,7 @@ struct ActiveABTestsTests {
         )
     }
     
-    @Test("MockABTestService save")
+    @Test("MockABTestService Save Updated Config")
     func test_mockService_Save() async throws {
         // Prepare an initial ActiveABTests instance
         let initialData = makeRandomData()
@@ -73,7 +74,7 @@ struct ActiveABTestsTests {
         )
     }
     
-    @Test("MockABTestService fetch and save")
+    @Test("MockABTestService Fetch and Save")
     func test_mockService_fetchAndSave() async throws {
         // Prepare an initial ActiveABTests instance
         let initialData = makeRandomData()
