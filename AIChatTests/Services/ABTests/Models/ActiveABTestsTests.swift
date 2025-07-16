@@ -116,4 +116,27 @@ struct ActiveABTestsTests {
         )
         #expect(fetchedConfig.categoryRowTest == initialData.categoryRowTest)
     }
+
+    @Test("ActiveABTests Event Parameters")
+    func testEventParameters() async throws {
+        let initialData = makeRandomData()
+        let initialModel = makeModel(from: initialData)
+        let service = await MockABTestService(activeTests: initialModel)
+        
+        let params = await service.activeTests.eventParameters
+        
+        #expect(
+            params["test_20250720_CreateAccTest"] as? Bool == initialData
+                .createAccountTest
+        )
+        #expect(
+            params["test_20250720_OnbCommunityTest"] as? Bool == initialData
+                .createAccountTest
+        )
+        #expect(
+            params["test_20250720_CateegoryRowTest"] as? String == initialData
+                .categoryRowTest
+                .rawValue
+        )
+    }
 }
