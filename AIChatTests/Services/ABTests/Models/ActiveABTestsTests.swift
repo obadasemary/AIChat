@@ -139,4 +139,30 @@ struct ActiveABTestsTests {
                 .rawValue
         )
     }
+
+    @Test("ActiveABTests Codable Conformance")
+    func testCodableConformance() async throws {
+        let randomCreateAccountTest = Bool.random
+        let randomOnboardingCommunityTest = Bool.random
+        let randomCategoryRowTest = CategoryRowTestOption.allCases.randomElement() ?? .default
+        
+        let originalTests = ActiveABTests(
+            createAccountTest: randomCreateAccountTest(),
+            onboardingCommunityTest: randomOnboardingCommunityTest(),
+            categoryRowTest: randomCategoryRowTest
+        )
+        
+        // Encode ActiveABTests to JSON
+        let encoder = JSONEncoder()
+        let data = try encoder.encode(originalTests)
+        
+        // Decode JSON back to ActiveABTests
+        let decoder = JSONDecoder()
+        let decodedTests = try decoder.decode(ActiveABTests.self, from: data)
+        
+        // Assert that all properties are equal
+        #expect(decodedTests.createAccountTest == originalTests.createAccountTest)
+        #expect(decodedTests.onboardingCommunityTest == originalTests.onboardingCommunityTest)
+        #expect(decodedTests.categoryRowTest == originalTests.categoryRowTest)
+    }
 }
