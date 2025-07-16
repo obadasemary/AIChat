@@ -99,4 +99,21 @@ struct ActiveABTestsTests {
         #expect(refetched.onboardingCommunityTest == newModel.onboardingCommunityTest)
         #expect(refetched.categoryRowTest == newModel.categoryRowTest)
     }
+    
+    @Test("MockABTestService Fetch Updated Config")
+    func testFetchUpdatedConfig() async throws {
+        let initialData = makeRandomData()
+        let initialModel = makeModel(from: initialData)
+        let service = await MockABTestService(activeTests: initialModel)
+        
+        let fetchedConfig = try await service.fetchUpdatedConfig()
+        
+        #expect(
+            fetchedConfig.createAccountTest == initialData.createAccountTest
+        )
+        #expect(
+            fetchedConfig.onboardingCommunityTest == initialData.onboardingCommunityTest
+        )
+        #expect(fetchedConfig.categoryRowTest == initialData.categoryRowTest)
+    }
 }
