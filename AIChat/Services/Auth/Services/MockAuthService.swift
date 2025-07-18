@@ -45,7 +45,9 @@ extension MockAuthService: AuthServiceProtocol {
         return (user, false)
     }
     
-    func signOut() throws {}
+    func signOut() throws {
+        currentUser = nil
+    }
     
     func deleteAccount() async throws {}
 }
