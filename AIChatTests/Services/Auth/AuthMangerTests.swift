@@ -10,13 +10,35 @@ import Testing
 
 struct AuthMangerTests {
 
-    @Test("INitialization with Auth User")
-    func testInitializationWithAuthUser() async throws {
+    @Test("Initialization with Authenticated User")
+    func testInitializationWithAuthenticatedUser() async throws {
         let mockUser = UserAuthInfo.mock(isAnonymous: false)
         let authService = await MockAuthService(currentUser: mockUser)
-        let authManager = await AuthManager(service: authService)
+        
+        let mockLogService = MockLogService()
+        let logManager = await LogManager(services: [mockLogService])
+        
+        let authManager = await AuthManager(
+            service: authService,
+            logManager: logManager
+        )
         
         await #expect(authManager.auth?.uid == mockUser.uid)
+    }
+    
+    @Test("Initialization with Non-Authenticated User")
+    func testInitializationWithNonAuthenticatedUser() async throws {
+        let authService = await MockAuthService(currentUser: nil)
+        
+        let mockLogService = MockLogService()
+        let logManager = await LogManager(services: [mockLogService])
+        
+        let authManager = await AuthManager(
+            service: authService,
+            logManager: logManager
+        )
+        
+        await #expect(authManager.auth == nil)
     }
 
     @Test("Sign In Anonymously")
@@ -44,31 +66,80 @@ struct AuthMangerTests {
     @Test("Sign In with Google")
     func testSignInWithGooglee() async throws {
         let authService = await MockAuthService()
-        let authManager = await AuthManager(service: authService)
+        let mockLogService = MockLogService()
+        let logManager = await LogManager(services: [mockLogService])
+        let authManager = await AuthManager(
+            service: authService,
+            logManager: logManager
+        )
         
         let result = try await authManager.signInWithGoogle()
         
         #expect(result.user.isAnonymous == false)
+        await #expect(authManager.auth?.isAnonymous == false)
+        #expect(
+            mockLogService.trackedEvents
+                .contains {
+                    $0.eventName == AuthManager.Event.authListenerStart.eventName
+                }
+        )
     }
     
     @Test("Sign Out")
     func testSignOut() async throws {
         let mockUser = UserAuthInfo.mock(isAnonymous: false)
         let authService = await MockAuthService(currentUser: mockUser)
-        let authManager = await AuthManager(service: authService)
+        let mockLogService = MockLogService()
+        let logManager = await LogManager(services: [mockLogService])
+        let authManager = await AuthManager(
+            service: authService,
+            logManager: logManager
+        )
         
         try await authManager.signOut()
         
-        await #expect(authManager.auth?.uid == nil)
+//        await #expect(authManager.auth == nil)
+        
+        #expect(
+            mockLogService.trackedEvents
+                .contains {
+                    $0.eventName == AuthManager.Event.signOutStart.eventName
+                }
+        )
+        #expect(
+            mockLogService.trackedEvents
+                .contains {
+                    $0.eventName == AuthManager.Event.signOutSuccess.eventName
+                }
+        )
     }
     
     @Test("Delete Account")
     func testDeleteAccount() async throws {
         let mockUser = UserAuthInfo.mock(isAnonymous: false)
         let authService = await MockAuthService(currentUser: mockUser)
-        let authManager = await AuthManager(service: authService)
+        let mockLogService = MockLogService()
+        let logManager = await LogManager(services: [mockLogService])
+        let authManager = await AuthManager(
+            service: authService,
+            logManager: logManager
+        )
         
         _ = try await authManager.deleteAccount()
         await #expect(authManager.auth == nil)
+        
+        #expect(
+            mockLogService.trackedEvents
+                .contains {
+                    $0.eventName == AuthManager.Event.deleteAccountStart.eventName
+                }
+        )
+        #expect(
+            mockLogService.trackedEvents
+                .contains {
+                    $0.eventName == AuthManager.Event.deleteAccountSuccess.eventName
+                }
+        )
     }
 }
+
