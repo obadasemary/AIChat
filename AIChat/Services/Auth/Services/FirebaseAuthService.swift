@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import FirebaseAuth
+@preconcurrency import FirebaseAuth
 import SignInAppleAsync
 import SignInGoogleAsync
 import FirebaseCore
@@ -45,7 +45,7 @@ extension FirebaseAuthService: AuthServiceProtocol {
     }
     
     func signInWithApple() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
-        let helper = await SignInWithAppleHelper()
+        let helper = SignInWithAppleHelper()
         let response = try await helper.signIn()
         
         let credential = OAuthProvider.credential(

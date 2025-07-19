@@ -38,7 +38,9 @@ extension AuthManager: AuthManagerProtocol {
     }
     
     func signInAnonymously() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
-        try await service.signInAnonymously()
+        let result = try await service.signInAnonymously()
+        self.auth = result.user
+        return result
     }
     
     func signInWithApple() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
@@ -46,7 +48,9 @@ extension AuthManager: AuthManagerProtocol {
             addAuthListener()
         }
         
-        return try await service.signInWithApple()
+        let result = try await service.signInWithApple()
+        self.auth = result.user
+        return result
     }
     
     func signInWithGoogle() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
@@ -54,7 +58,9 @@ extension AuthManager: AuthManagerProtocol {
             addAuthListener()
         }
         
-        return try await service.signInWithGoogle()
+        let result = try await service.signInWithGoogle()
+        self.auth = result.user
+        return result
     }
     
     func signOut() throws {
@@ -105,7 +111,7 @@ private extension AuthManager {
 }
 
 // MARK: - Event
-private extension AuthManager {
+extension AuthManager {
     
     enum Event: LoggableEvent {
         case authListenerStart
