@@ -23,12 +23,34 @@ final class AIChatUITests: XCTestCase {
     }
 
     @MainActor
-    func testExample() throws {
+    func testOnboardingFlow() throws {
         // UI tests must launch the application that they test.
         let app = XCUIApplication()
+        app.launchArguments = ["UI_TESTING"] // SIGNED_IN
         app.launch()
 
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        // Welcome View
+        app.buttons["StartButton"].tap()
+
+        // Onboarding Intro View
+        app.buttons["ContinueButton"].tap()
+        
+        // Onboarding Color View
+        let colorCircleElementsQuery = app.otherElements.matching(
+            identifier: "ColorCircle"
+        )
+        let randomIndex = Int.random(in: 0..<colorCircleElementsQuery.count)
+        colorCircleElementsQuery.element(boundBy: randomIndex).tap()
+        app.buttons["ContinueButton"].tap()
+        
+        // Onboarding Completed View
+        app.buttons["FinishButton"].tap()
+        
+        // Explore View
+        let exploreExists = app.navigationBars["Explore"].waitForExistence(
+            timeout: 1
+        )
+        XCTAssert(exploreExists)
     }
 
     @MainActor
