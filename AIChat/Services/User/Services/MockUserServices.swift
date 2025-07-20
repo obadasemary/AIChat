@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 struct MockUserServices: UserServicesProtocol {
     
     let remoteService: RemoteUserServiceProtocol

@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 protocol LocalUserServiceProtocol {
     func getCurrentUser() -> UserModel?
     func saveCurrentUser(user: UserModel?) throws
