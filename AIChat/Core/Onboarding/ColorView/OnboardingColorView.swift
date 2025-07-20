@@ -75,6 +75,7 @@ struct OnboardingColorView: View {
                             .onTapGesture {
                                 selectedColor = color
                             }
+                            .accessibilityIdentifier("ColorCircle")
                     }
                 } header: {
                     Text("Select a profile color")
@@ -94,6 +95,7 @@ struct OnboardingColorView: View {
             Text("Continue")
                 .callToActionButton()
         }
+        .accessibilityIdentifier("ContinueButton")
     }
 }
 
