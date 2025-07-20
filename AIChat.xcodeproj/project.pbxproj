@@ -45,6 +45,7 @@
 		AF9034FB2DA3FDB000A35095 /* AIChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AIChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF90350C2DA3FDB100A35095 /* AIChatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AIChatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF9035162DA3FDB100A35095 /* AIChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AIChatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AF93CE4C2E2C158C0058A478 /* AIChat - Mock.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "AIChat - Mock.xctestplan"; sourceTree = "<group>"; };
 		AFD3721C2E23EC190088F3A7 /* AIChat - Development.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "AIChat - Development.xctestplan"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -122,6 +123,7 @@
 		AF9034F22DA3FDB000A35095 = {
 			isa = PBXGroup;
 			children = (
+				AF93CE4C2E2C158C0058A478 /* AIChat - Mock.xctestplan */,
 				AFD3721C2E23EC190088F3A7 /* AIChat - Development.xctestplan */,
 				AF9034FD2DA3FDB000A35095 /* AIChat */,
 				AF90350F2DA3FDB100A35095 /* AIChatTests */,
