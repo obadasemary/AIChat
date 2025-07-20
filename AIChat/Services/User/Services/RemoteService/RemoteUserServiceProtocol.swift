@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 protocol RemoteUserServiceProtocol: Sendable {
     
     func saveUser(user: UserModel) async throws

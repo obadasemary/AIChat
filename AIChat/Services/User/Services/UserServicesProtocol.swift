@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 protocol UserServicesProtocol {
     var remoteService: RemoteUserServiceProtocol { get }
     var localStorage: LocalUserServiceProtocol { get }
