@@ -22,7 +22,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: clientID)
         }
         
-        let config: BuildConfiguration
+        var config: BuildConfiguration
         
         #if MOCK
         config = .mock(isSignedIn: true)
@@ -31,6 +31,15 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         #else
         config = .prod
         #endif
+        
+        if Utilities.isUITesting {
+            let isSignIn = ProcessInfo
+                .processInfo
+                .arguments
+                .contains("SIGNED_IN")
+            UserDefaults.showTabBarView = isSignIn
+            config = .mock(isSignedIn: isSignIn)
+        }
         
         config.configureFirebase()
         dependencies = Dependencies(configuration: config)
