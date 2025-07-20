@@ -23,6 +23,13 @@
         "identifier" : "AF90350B2DA3FDB100A35095",
         "name" : "AIChatTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:AIChat.xcodeproj",
+        "identifier" : "AF9035152DA3FDB100A35095",
+        "name" : "AIChatUITests"
+      }
     }
   ],
   "version" : 1
