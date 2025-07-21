@@ -5,48 +5,41 @@
 //  Created by Abdelrahman Mohamed on 30.06.2025.
 //
 
-
-//
-//  RootView.swift
-//
-//
-//  Created by Nick Sarno on 11/11/23.
-//
-
 import SwiftUI
 
-/// App delegate life cycle actions for SwiftUI.
-///
-/// ### onApplicationDidAppear:
-///  When the app first appears. This is called when the SwiftUI View appears, which is after didFinishLaunchingWithOptions. There is no didFinishLaunchingWithOptions because that is triggered before SwiftUI renders.
-///
-///
-/// ### onApplicationWillEnterForeground:
-///   When the app transitions to active state. When the app will reactivate, this gets called immediately before applicationDidBecomeActive.
-///
-///
-/// ### onApplicationDidBecomeActive:
-///  When the app returns to active state after being in an inactive state.
-///
-///
-/// ### onApplicationWillResignActive:
-/// When the app transitions away from active state. Each time a temporary event, such as a phone call, happens this method gets called.
-///   
-///
-/// ### onApplicationDidEnterBackground:
-///  When the app enters the background but is still running. If the user is terminating the app, this is called immediately before applicationWillTerminate. The app will have approximately five seconds to perform tasks before the application terminates.
-///
-///
-/// ### onApplicationWillTerminate:
-///  When the app terminates. Events such as force quitting the iOS app or shutting down the device.
 public struct RootDelegate {
     
-    var onApplicationDidAppear: (() -> Void)? = nil
-    var onApplicationWillEnterForeground: ((Notification) -> Void)? = nil
-    var onApplicationDidBecomeActive: ((Notification) -> Void)? = nil
-    var onApplicationWillResignActive: ((Notification) -> Void)? = nil
-    var onApplicationDidEnterBackground: ((Notification) -> Void)? = nil
-    var onApplicationWillTerminate: ((Notification) -> Void)? = nil
+    /// App delegate life cycle actions for SwiftUI.
+    ///
+    /// ### onApplicationDidAppear:
+    ///  When the app first appears. This is called when the SwiftUI View appears, which is after didFinishLaunchingWithOptions. There is no didFinishLaunchingWithOptions because that is triggered before SwiftUI renders.
+    ///
+    ///
+    /// ### onApplicationWillEnterForeground:
+    ///   When the app transitions to active state. When the app will reactivate, this gets called immediately before applicationDidBecomeActive.
+    ///
+    ///
+    /// ### onApplicationDidBecomeActive:
+    ///  When the app returns to active state after being in an inactive state.
+    ///
+    ///
+    /// ### onApplicationWillResignActive:
+    /// When the app transitions away from active state. Each time a temporary event, such as a phone call, happens this method gets called.
+    ///
+    ///
+    /// ### onApplicationDidEnterBackground:
+    ///  When the app enters the background but is still running. If the user is terminating the app, this is called immediately before applicationWillTerminate. The app will have approximately five seconds to perform tasks before the application terminates.
+    ///
+    ///
+    /// ### onApplicationWillTerminate:
+    ///  When the app terminates. Events such as force quitting the iOS app or shutting down the device.
+    
+    var onApplicationDidAppear: (() -> Void)?
+    var onApplicationWillEnterForeground: ((Notification) -> Void)?
+    var onApplicationDidBecomeActive: ((Notification) -> Void)?
+    var onApplicationWillResignActive: ((Notification) -> Void)?
+    var onApplicationDidEnterBackground: ((Notification) -> Void)?
+    var onApplicationWillTerminate: ((Notification) -> Void)?
 
     public init(
         onApplicationDidAppear: (() -> Void)? = nil,
@@ -65,8 +58,9 @@ public struct RootDelegate {
     }
 }
 
-/// Make this the Root view of your application to recieve UIApplicationDelegate methods in your SwiftUI View.
 public struct RootView: View {
+    
+    /// Make this the Root view of your application to recieve UIApplicationDelegate methods in your SwiftUI View.
     
     let delegate: RootDelegate?
     let content: () -> any View

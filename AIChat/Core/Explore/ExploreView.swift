@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// swiftlint:disable file_length
 struct ExploreView: View {
     
     @Environment(AvatarManager.self) private var avatarManager
@@ -594,3 +595,4 @@ private extension ExploreView {
         )
         .previewEnvironment()
 }
+// swiftlint:enable file_length

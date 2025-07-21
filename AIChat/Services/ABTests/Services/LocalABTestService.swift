@@ -20,10 +20,12 @@ class LocalABTestService {
         defaultValue: .random()
     ) private var onboardingCommunityTest: Bool
     
+    // swiftlint:disable force_unwrapping
     @UserDefaultEnum(
         key: ActiveABTests.CodingKeys.categoryRowTest.rawValue,
         defaultValue: CategoryRowTestOption.allCases.randomElement()!
     ) private var categoryRowTest: CategoryRowTestOption
+    // swiftlint:enable force_unwrapping
     
     var activeTests: ActiveABTests {
         ActiveABTests(

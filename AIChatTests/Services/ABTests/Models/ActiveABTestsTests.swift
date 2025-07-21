@@ -11,11 +11,13 @@ import Foundation
 
 struct ActiveABTestsTests {
     
+    // swiftlint:disable large_tuple
     private typealias RandomData = (
         createAccountTest: Bool,
         onboardingCommunityTest: Bool,
         categoryRowTest: CategoryRowTestOption
     )
+    // swiftlint:enable large_tuple
     
     private func makeRandomData() -> RandomData {
         let create = Bool.random()

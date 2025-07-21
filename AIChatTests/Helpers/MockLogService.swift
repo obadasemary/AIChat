@@ -10,7 +10,9 @@ import Foundation
 
 final class MockLogService: @unchecked Sendable {
     
+    // swiftlint:disable large_tuple
     var identifiedUsers: [(userId: String, name: String?, email: String?)] = []
+    // swiftlint:enable large_tuple
     var trackedEvents: [AnyLoggableEvent] = []
     var addedUserProperties: [[String : Any]] = []
 }

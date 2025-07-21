@@ -5,7 +5,6 @@
 //  Created by Abdelrahman Mohamed on 07.07.2025.
 //
 
-
 import SwiftUI
 
 struct OnboardingCommunityView: View {

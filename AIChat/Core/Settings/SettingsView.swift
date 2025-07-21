@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftfulUtilities
 
+// swiftlint:disable file_length
 struct SettingsView: View {
     
     @Environment(\.dismiss) private var dismiss
@@ -333,7 +334,6 @@ private extension SettingsView {
         case ratingYesPressed
         case ratingNoPressed
         
-
         var eventName: String {
             switch self {
             case .signOutStart: "SettingsView_SignOut_Start"
@@ -430,3 +430,4 @@ fileprivate extension View {
         )
         .previewEnvironment()
 }
+// swiftlint:enable file_length
