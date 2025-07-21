@@ -155,4 +155,14 @@ final class AIChatUITests: XCTestCase {
         )
         XCTAssert(startButtonExists)
     }
+    
+    @MainActor
+    func testCreateAvatarFlow() throws {
+        let app = XCUIApplication()
+        app.launchArguments = ["UI_TESTING", "SIGNED_IN_TEST", "STARTSCREEN_CREATE_AVATAR_TEST"]
+        app.launch()
+        
+        let screenExists = app.navigationBars["Create Avatar"].firstMatch.exists
+        XCTAssert(screenExists)
+    }
 }
