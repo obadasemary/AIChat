@@ -71,8 +71,18 @@ struct Dependencies {
                 localStorage: MockLocalAvatarServicePersistence()
             )
             chatManager = ChatManager(service: MockChatService())
+            
+            let isInOnboardingCommunityTest = ProcessInfo
+                .processInfo
+                .arguments
+                .contains("ONBOARDING_COMMUNITY_TEST")
+            
+            let abTestService = MockABTestService(
+                onboardingCommunityTest: isInOnboardingCommunityTest
+            )
+            
             abTestManager = ABTestManager(
-                service: MockABTestService(),
+                service: abTestService,
                 logManager: logManager
             )
             purchaseManager = PurchaseManager(
