@@ -26,7 +26,7 @@ final class AIChatUITests: XCTestCase {
     func testOnboardingFlow() throws {
         // UI tests must launch the application that they test.
         let app = XCUIApplication()
-        app.launchArguments = ["UI_TESTING"] // SIGNED_IN
+        app.launchArguments = ["UI_TESTING"]
         app.launch()
 
         // Welcome View
@@ -52,14 +52,38 @@ final class AIChatUITests: XCTestCase {
         )
         XCTAssert(exploreExists)
     }
-
+    
     @MainActor
-    func testLaunchPerformance() throws {
-        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
-            // This measures how long it takes to launch your application.
-            measure(metrics: [XCTApplicationLaunchMetric()]) {
-                XCUIApplication().launch()
-            }
-        }
+    func testOnboardingFlowWithCommunityFlow() throws {
+        // UI tests must launch the application that they test.
+        let app = XCUIApplication()
+        app.launchArguments = ["UI_TESTING", "ONBOARDING_COMMUNITY_TEST"]
+        app.launch()
+
+        // Welcome View
+        app.buttons["StartButton"].tap()
+
+        // Onboarding Intro View
+        app.buttons["ContinueButton"].tap()
+        
+        // Onboarding Community View
+        app.buttons["OnboardingCommunityContinueButton"].tap()
+        
+        // Onboarding Color View
+        let colorCircleElementsQuery = app.otherElements.matching(
+            identifier: "ColorCircle"
+        )
+        let randomIndex = Int.random(in: 0..<colorCircleElementsQuery.count)
+        colorCircleElementsQuery.element(boundBy: randomIndex).tap()
+        app.buttons["ContinueButton"].tap()
+        
+        // Onboarding Completed View
+        app.buttons["FinishButton"].tap()
+        
+        // Explore View
+        let exploreExists = app.navigationBars["Explore"].waitForExistence(
+            timeout: 1
+        )
+        XCTAssert(exploreExists)
     }
 }
