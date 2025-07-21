@@ -8,7 +8,7 @@
 import Foundation
 @testable import AIChat
 
-final class MockLogService {
+final class MockLogService: @unchecked Sendable {
     
     var identifiedUsers: [(userId: String, name: String?, email: String?)] = []
     var trackedEvents: [AnyLoggableEvent] = []
