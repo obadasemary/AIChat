@@ -78,6 +78,7 @@ public struct AnyProduct: Identifiable, Codable, Sendable {
 
 extension Array where Element == AnyProduct {
     
+    // swiftlint:disable trailing_comma
     public var eventParameters: [String: Any] {
         var dict: [String: Any?] = [
             "products_count" : self.count,
@@ -96,6 +97,7 @@ extension Array where Element == AnyProduct {
         }
         return dict.compactMapValues({ $0 })
     }
+    // swiftlint:enable trailing_comma
 }
 
 public enum ProductDurationOption: String, Codable, Sendable {

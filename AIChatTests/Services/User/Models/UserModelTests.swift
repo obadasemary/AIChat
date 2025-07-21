@@ -12,6 +12,7 @@ import SwiftUI
 struct UserModelTests {
     // MARK: - Test Fixtures
     
+    // swiftlint:disable large_tuple
     private typealias RandomData = (
         userId: String,
         email: String?,
@@ -22,6 +23,7 @@ struct UserModelTests {
         didCompleteOnboarding: Bool?,
         profileColorHex: String?
     )
+    // swiftlint:enable large_tuple
     
     private func makeRandomData(includeOptionals: Bool = true) -> RandomData {
         

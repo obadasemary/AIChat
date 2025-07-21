@@ -40,7 +40,6 @@ extension PushManager: PushManagerProtocol {
         LocalNotifications.removeAllPendingNotifications()
         LocalNotifications.removeAllDeliveredNotifications()
         
-        
         Task {
             do {
                 // Tomorrow
