@@ -37,6 +37,7 @@ struct OnboardingCommunityView: View {
                 Text("Continue")
                     .callToActionButton()
             }
+            .accessibilityIdentifier("OnboardingCommunityContinueButton")
         }
         .padding(24)
         .font(.title3)
