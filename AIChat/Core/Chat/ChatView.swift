@@ -229,40 +229,45 @@ private extension ChatView {
     }
     
     var textFieldSection: some View {
-        TextField("Type your message...", text: $textFieldText, axis: .vertical)
-            .keyboardType(.default)
-            .autocorrectionDisabled()
-            .focused($isTextFieldFocused)
-            .onSubmit {
-                isTextFieldFocused = false
-                if !textFieldText.isEmpty {
+        TextField(
+            "Type your message...",
+            text: $textFieldText,
+            axis: .vertical
+        )
+        .keyboardType(.default)
+        .autocorrectionDisabled()
+        .focused($isTextFieldFocused)
+        .onSubmit {
+            isTextFieldFocused = false
+            if !textFieldText.isEmpty {
+                onSendMessageTapped()
+            }
+        }
+        .padding(12)
+        .padding(.trailing, 60)
+        .accessibilityIdentifier("ChatTextField")
+        .overlay(alignment: .trailing) {
+            Image(systemName: "arrow.up.circle.fill")
+                .font(.system(size: 32))
+                .padding(.trailing, 4)
+                .foregroundStyle(.accent)
+                .anyButton(.plain) {
                     onSendMessageTapped()
                 }
+                .disabled(textFieldText.isEmpty)
+        }
+        .background {
+            ZStack {
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(Color(uiColor: .systemBackground))
+                
+                RoundedRectangle(cornerRadius: 4)
+                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
             }
-            .padding(12)
-            .padding(.trailing, 60)
-            .overlay(alignment: .trailing) {
-                Image(systemName: "arrow.up.circle.fill")
-                    .font(.system(size: 32))
-                    .padding(.trailing, 4)
-                    .foregroundStyle(.accent)
-                    .anyButton(.plain) {
-                        onSendMessageTapped()
-                    }
-                    .disabled(textFieldText.isEmpty)
-            }
-            .background {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color(uiColor: .systemBackground))
-                    
-                    RoundedRectangle(cornerRadius: 4)
-                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                }
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(Color(uiColor: .secondarySystemBackground))
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(Color(uiColor: .secondarySystemBackground))
     }
 }
 
