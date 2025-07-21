@@ -24,7 +24,6 @@ final class AIChatUITests: XCTestCase {
 
     @MainActor
     func testOnboardingFlow() throws {
-        // UI tests must launch the application that they test.
         let app = XCUIApplication()
         app.launchArguments = ["UI_TESTING"]
         app.launch()
@@ -55,7 +54,6 @@ final class AIChatUITests: XCTestCase {
     
     @MainActor
     func testOnboardingFlowWithCommunityFlow() throws {
-        // UI tests must launch the application that they test.
         let app = XCUIApplication()
         app.launchArguments = ["UI_TESTING", "ONBOARDING_COMMUNITY_TEST"]
         app.launch()
@@ -84,6 +82,52 @@ final class AIChatUITests: XCTestCase {
         let exploreExists = app.navigationBars["Explore"].waitForExistence(
             timeout: 1
         )
+        XCTAssert(exploreExists)
+    }
+    
+    @MainActor
+    func testTabBarFlow() throws {
+        let app = XCUIApplication()
+        app.launchArguments = ["UI_TESTING", "SIGNED_IN_TEST"]
+        app.launch()
+        
+        let tabBar = app.tabBars["Tab Bar"]
+        
+        let exploreExists = app.navigationBars["Explore"].exists
+        XCTAssert(exploreExists)
+        
+        // Click Hero Cell
+        app.collectionViews.scrollViews.otherElements.buttons.firstMatch.tap()
+        
+        let textFieldExists = app.textFields["ChatTextField"].exists
+        XCTAssert(textFieldExists)
+        
+        app.navigationBars.buttons.firstMatch.tap()
+        XCTAssert(exploreExists)
+        
+        tabBar.buttons["Chats"].tap()
+        let chatsExists = app.navigationBars["Chats"].exists
+        XCTAssert(chatsExists)
+        
+        // Click Hero Cell
+        app.collectionViews.scrollViews.otherElements.buttons.firstMatch.tap()
+        XCTAssert(textFieldExists)
+        
+        app.navigationBars.buttons.firstMatch.tap()
+        XCTAssert(chatsExists)
+        
+        tabBar.buttons["Profile"].tap()
+        let profileExists = app.navigationBars["Profile"].exists
+        XCTAssert(profileExists)
+        
+        // Click Hero Cell
+        app.collectionViews.buttons.element(boundBy: 1).tap()
+        XCTAssert(textFieldExists)
+        
+        app.navigationBars.buttons.firstMatch.tap()
+        XCTAssert(profileExists)
+
+        tabBar.buttons["Explore"].tap()
         XCTAssert(exploreExists)
     }
 }
