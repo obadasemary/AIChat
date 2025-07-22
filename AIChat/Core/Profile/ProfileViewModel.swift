@@ -11,10 +11,11 @@ import Foundation
 @MainActor
 class ProfileViewModel {
     
-    private let authManager: AuthManager
-    private let userManager: UserManager
-    private let avatarManager: AvatarManager
-    private let logManager: LogManager
+    let authManager: AuthManager
+    let userManager: UserManager
+    let avatarManager: AvatarManager
+    let logManager: LogManager
+    let aiManager: AIManager
     
     private(set) var currentUser: UserModel?
     private(set) var myAvatars: [AvatarModel] = []
@@ -29,12 +30,14 @@ class ProfileViewModel {
         authManager: AuthManager,
         userManager: UserManager,
         avatarManager: AvatarManager,
-        logManager: LogManager
+        logManager: LogManager,
+        aiManager: AIManager
     ) {
         self.authManager = authManager
         self.userManager = userManager
         self.avatarManager = avatarManager
         self.logManager = logManager
+        self.aiManager = aiManager
     }
     
     
