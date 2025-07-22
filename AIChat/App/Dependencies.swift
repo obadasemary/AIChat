@@ -34,6 +34,9 @@ enum BuildConfiguration {
 
 @MainActor
 struct Dependencies {
+    
+    let container: DIContainer
+    
     let authManager: AuthManager
     let userManager: UserManager
     let aiManager: AIManager
@@ -157,6 +160,19 @@ struct Dependencies {
         }
         
         pushManager = PushManager(logManager: logManager)
+        
+        let container = DIContainer()
+        container.register(AuthManager.self, authManager)
+        container.register(UserManager.self, userManager)
+        container.register(AIManager.self, aiManager)
+        container.register(AvatarManager.self, avatarManager)
+        container.register(ChatManager.self, chatManager)
+        container.register(LogManager.self, logManager)
+        container.register(PushManager.self, pushManager)
+        container.register(ABTestManager.self, abTestManager)
+        container.register(PurchaseManager.self, purchaseManager)
+        
+        self.container = container
     }
     // swiftlint:enable function_body_length
 }
