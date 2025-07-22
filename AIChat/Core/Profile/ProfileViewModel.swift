@@ -11,11 +11,10 @@ import Foundation
 @MainActor
 class ProfileViewModel {
     
-    let authManager: AuthManager
-    let userManager: UserManager
-    let avatarManager: AvatarManager
-    let logManager: LogManager
-    let aiManager: AIManager
+    private let authManager: AuthManager
+    private let userManager: UserManager
+    private let avatarManager: AvatarManager
+    private let logManager: LogManager
     
     private(set) var currentUser: UserModel?
     private(set) var myAvatars: [AvatarModel] = []
@@ -26,21 +25,12 @@ class ProfileViewModel {
     var showAlert: AnyAppAlert?
     var path: [NavigationPathOption] = []
     
-    init(
-        authManager: AuthManager,
-        userManager: UserManager,
-        avatarManager: AvatarManager,
-        logManager: LogManager,
-        aiManager: AIManager
-    ) {
-        self.authManager = authManager
-        self.userManager = userManager
-        self.avatarManager = avatarManager
-        self.logManager = logManager
-        self.aiManager = aiManager
+    init(container: DIContainer) {
+        self.authManager = container.resolve(AuthManager.self)!
+        self.userManager = container.resolve(UserManager.self)!
+        self.avatarManager = container.resolve(AvatarManager.self)!
+        self.logManager = container.resolve(LogManager.self)!
     }
-    
-    
 }
 
 // MARK: - Load
