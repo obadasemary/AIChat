@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ProfileView: View {
     
+    @Environment(DIContainer.self) private var container
     @State var viewModel: ProfileViewModel
     
     var body: some View {
@@ -36,12 +37,7 @@ struct ProfileView: View {
             }
         } content: {
             CreateAvatarView(
-                viewModel: CreateAvatarViewModel(
-                    authManager: viewModel.authManager,
-                    aiManager: viewModel.aiManager,
-                    avatarManager: viewModel.avatarManager,
-                    logManager: viewModel.logManager
-                )
+                viewModel: CreateAvatarViewModel(container: container)
             )
         }
         .task {
@@ -129,13 +125,7 @@ private extension ProfileView {
 
 #Preview {
     ProfileView(
-        viewModel: ProfileViewModel(
-            authManager: DevPreview.shared.authManager,
-            userManager: DevPreview.shared.userManager,
-            avatarManager: DevPreview.shared.avatarManager,
-            logManager: DevPreview.shared.logManager,
-            aiManager: DevPreview.shared.aiManager
-        )
+        viewModel: ProfileViewModel(container: DevPreview.shared.container)
     )
     .previewEnvironment()
 }
