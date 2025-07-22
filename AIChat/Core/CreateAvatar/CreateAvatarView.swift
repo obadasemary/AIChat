@@ -11,20 +11,7 @@ struct CreateAvatarView: View {
     
     @Environment(\.dismiss) private var dismiss
     
-    @Environment(AIManager.self) private var aiManager
-    @Environment(AuthManager.self) private var authManager
-    @Environment(AvatarManager.self) private var avatarManager
-    @Environment(LogManager.self) private var logManager
-    
-    @State private var avatarName: String = ""
-    @State private var characterOption: CharacterOption = .default
-    @State private var characterAction: CharacterAction = .default
-    @State private var characterLocation: CharacterLocation = .default
-    
-    @State private var isGenerating: Bool = false
-    @State private var generatedImage: UIImage?
-    @State private var showAlert: AnyAppAlert?
-    @State private var isSaving: Bool = false
+    @State var viewModel: CreateAvatarViewModel
     
     var body: some View {
         NavigationStack {
@@ -40,7 +27,7 @@ struct CreateAvatarView: View {
                     dismissButton
                 }
             }
-            .showCustomAlert(alert: $showAlert)
+            .showCustomAlert(alert: $viewModel.showAlert)
             .screenAppearAnalytics(name: "CreateAvatar")
         }
     }
@@ -54,14 +41,16 @@ private extension CreateAvatarView {
             .font(.title2)
             .fontWeight(.semibold)
             .anyButton(.plain) {
-                onDismissButtonTapped()
+                viewModel.onDismissButtonTapped {
+                    dismiss()
+                }
             }
             .foregroundStyle(.accent)
     }
     
     var nameSection: some View {
         Section {
-            TextField("Avatar name", text: $avatarName)
+            TextField("Avatar name", text: $viewModel.avatarName)
         } header: {
             Text("Name your avatar *")
                 .lineLimit(1)
@@ -71,7 +60,7 @@ private extension CreateAvatarView {
     
     var attributesSection: some View {
         Section {
-            Picker(selection: $characterOption) {
+            Picker(selection: $viewModel.characterOption) {
                 ForEach(CharacterOption.allCases, id: \.self) { option in
                     Text(option.rawValue.capitalized)
                         .tag(option)
@@ -80,7 +69,7 @@ private extension CreateAvatarView {
                 Text("is a...")
             }
             
-            Picker(selection: $characterAction) {
+            Picker(selection: $viewModel.characterAction) {
                 ForEach(CharacterAction.allCases, id: \.self) { option in
                     Text(option.rawValue.capitalized)
                         .tag(option)
@@ -89,7 +78,7 @@ private extension CreateAvatarView {
                 Text("that is...")
             }
             
-            Picker(selection: $characterLocation) {
+            Picker(selection: $viewModel.characterLocation) {
                 ForEach(CharacterLocation.allCases, id: \.self) { option in
                     Text(option.rawValue.capitalized)
                         .tag(option)
@@ -114,21 +103,21 @@ private extension CreateAvatarView {
                         .lineLimit(1)
                         .minimumScaleFactor(0.2)
                         .anyButton(.plain) {
-                            onGenerateImageTapped()
+                            viewModel.onGenerateImageTapped()
                         }
-                        .opacity(isGenerating ? 0 : 1)
+                        .opacity(viewModel.isGenerating ? 0 : 1)
                     
                     ProgressView()
                         .tint(.accent)
-                        .opacity(isGenerating ? 1 : 0)
+                        .opacity(viewModel.isGenerating ? 1 : 0)
                 }
-                .disabled(isGenerating || avatarName.isEmpty)
+                .disabled(viewModel.isGenerating || viewModel.avatarName.isEmpty)
                 
                 Circle()
                     .fill(.secondary.opacity(0.3))
                     .overlay {
                         ZStack {
-                            if let generatedImage {
+                            if let generatedImage = viewModel.generatedImage {
                                 Image(uiImage: generatedImage)
                                     .resizable()
                                     .scaledToFill()
@@ -145,13 +134,17 @@ private extension CreateAvatarView {
     var saveSection: some View {
         Section {
             AsyncCallToActionButton(
-                isLoading: isSaving,
+                isLoading: viewModel.isSaving,
                 title: "Save",
-                action: onSaveTapped
+                action: {
+                    viewModel.onSaveTapped {
+                        dismiss()
+                    }
+                }
             )
             .removeListRowFormatting()
-            .opacity(generatedImage == nil ? 0.5 : 1)
-            .disabled(generatedImage == nil)
+            .opacity(viewModel.generatedImage == nil ? 0.5 : 1)
+            .disabled(viewModel.generatedImage == nil)
             .frame(maxWidth: 500)
             .frame(maxWidth: .infinity)
         }
@@ -161,137 +154,17 @@ private extension CreateAvatarView {
 // MARK: - Action
 private extension CreateAvatarView {
     
-    func onDismissButtonTapped() {
-        logManager.trackEvent(event: Event.backButtonPressed)
-        dismiss()
-    }
     
-    // swiftlint:disable force_unwrapping
-    func onGenerateImageTapped() {
-        isGenerating = true
-        logManager.trackEvent(event: Event.generateImageStart)
-        Task {
-            do {
-                let avatarDescriptionBuilder = AvatarDescriptionBuilder(
-                    characterOption: characterOption,
-                    characterAction: characterAction,
-                    characterLocation: characterLocation
-                )
-                
-                let (data, _) = try await URLSession.shared.data(from: URL(string: Constants.randomImage)!)
-                if let image = UIImage(data: data) {
-                    // Use `image` on the main thread
-                    await MainActor.run {
-                        self.generatedImage = image
-                    }
-                }
-//                generatedImage = try await aiManager.generateImage(input: prompt.characterDescription)
-                logManager
-                    .trackEvent(
-                        event: Event.generateImageSuccess(
-                            avatarDescriptionBuilder: avatarDescriptionBuilder
-                        )
-                    )
-            } catch {
-                logManager.trackEvent(event: Event.generateImageFail(error: error))
-            }
-            isGenerating = false
-        }
-    }
-    // swiftlint:enable force_unwrapping
-    
-    func onSaveTapped() {
-        logManager.trackEvent(event: Event.saveAvatarStart)
-        guard let generatedImage else { return }
-        isSaving = true
-        Task {
-            do {
-                try TextValidationHelper.checkIfTextIsValid(text: avatarName)
-                let userId = try authManager.getAuthId()
-                
-                let avatar = AvatarModel.newAvatar(
-                    name: avatarName,
-                    option: characterOption,
-                    action: characterAction,
-                    location: characterLocation,
-                    authorId: userId
-                )
-                
-                try await avatarManager
-                    .createAvatar(avatar: avatar, image: generatedImage)
-                logManager
-                    .trackEvent(
-                        event: Event.saveAvatarSuccess(
-                            avatar: avatar
-                        )
-                    )
-                
-                dismiss()
-                isSaving = false
-            } catch {
-                showAlert = AnyAppAlert(error: error)
-                logManager
-                    .trackEvent(
-                        event: Event.saveAvatarFail(
-                            error: error
-                        )
-                    )
-            }
-        }
-    }
-}
-
-// MARK: - Event
-private extension CreateAvatarView {
-    
-    enum Event: LoggableEvent {
-        case backButtonPressed
-        case generateImageStart
-        case generateImageSuccess(avatarDescriptionBuilder: AvatarDescriptionBuilder)
-        case generateImageFail(error: Error)
-        case saveAvatarStart
-        case saveAvatarSuccess(avatar: AvatarModel)
-        case saveAvatarFail(error: Error)
-
-        var eventName: String {
-            switch self {
-            case .backButtonPressed: "CreateAvatarView_BackButton_Pressed"
-            case .generateImageStart: "CreateAvatarView_GenImage_Start"
-            case .generateImageSuccess: "CreateAvatarView_GenImage_Success"
-            case .generateImageFail: "CreateAvatarView_GenImage_Fail"
-            case .saveAvatarStart: "CreateAvatarView_SaveAvatar_Start"
-            case .saveAvatarSuccess: "CreateAvatarView_SaveAvatar_Success"
-            case .saveAvatarFail: "CreateAvatarView_SaveAvatar_Fail"
-            }
-        }
-        
-        var parameters: [String: Any]? {
-            switch self {
-            case .generateImageSuccess(avatarDescriptionBuilder: let avatarDescriptionBuilder):
-                return avatarDescriptionBuilder.eventParameters
-            case .saveAvatarSuccess(avatar: let avatar):
-                return avatar.eventParameters
-            case .generateImageFail(error: let error), .saveAvatarFail(error: let error):
-                return error.eventParameters
-            default:
-                return nil
-            }
-        }
-        
-        var type: LogType {
-            switch self {
-            case .generateImageFail:
-                return .severe
-            case .saveAvatarFail:
-                return .warning
-            default:
-                return .analytic
-            }
-        }
-    }
 }
 
 #Preview {
-    CreateAvatarView()
-        .previewEnvironment()
+    CreateAvatarView(
+        viewModel: CreateAvatarViewModel(
+            authManager: DevPreview.shared.authManager,
+            aiManager: DevPreview.shared.aiManager,
+            avatarManager: DevPreview.shared.avatarManager,
+            logManager: DevPreview.shared.logManager
+        )
+    )
+    .previewEnvironment()
 }
