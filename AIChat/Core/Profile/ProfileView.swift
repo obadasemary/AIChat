@@ -35,7 +35,14 @@ struct ProfileView: View {
                 await viewModel.loadData()
             }
         } content: {
-            CreateAvatarView()
+            CreateAvatarView(
+                viewModel: CreateAvatarViewModel(
+                    authManager: viewModel.authManager,
+                    aiManager: viewModel.aiManager,
+                    avatarManager: viewModel.avatarManager,
+                    logManager: viewModel.logManager
+                )
+            )
         }
         .task {
             await viewModel.loadData()
@@ -126,7 +133,9 @@ private extension ProfileView {
             authManager: DevPreview.shared.authManager,
             userManager: DevPreview.shared.userManager,
             avatarManager: DevPreview.shared.avatarManager,
-            logManager: DevPreview.shared.logManager
+            logManager: DevPreview.shared.logManager,
+            aiManager: DevPreview.shared.aiManager
         )
     )
+    .previewEnvironment()
 }
