@@ -159,12 +159,7 @@ private extension CreateAvatarView {
 
 #Preview {
     CreateAvatarView(
-        viewModel: CreateAvatarViewModel(
-            authManager: DevPreview.shared.authManager,
-            aiManager: DevPreview.shared.aiManager,
-            avatarManager: DevPreview.shared.avatarManager,
-            logManager: DevPreview.shared.logManager
-        )
+        viewModel: CreateAvatarViewModel(container: DevPreview.shared.container)
     )
     .previewEnvironment()
 }
