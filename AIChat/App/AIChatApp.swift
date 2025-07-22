@@ -21,6 +21,7 @@ struct AIChatApp: App {
                     AppView()
                 }
             }
+            .environment(delegate.dependencies.container)
             .environment(delegate.dependencies.purchaseManager)
             .environment(delegate.dependencies.abTestManager)
             .environment(delegate.dependencies.pushManager)
