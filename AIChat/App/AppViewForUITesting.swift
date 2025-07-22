@@ -18,7 +18,8 @@ struct AppViewForUITesting: View {
     
     var body: some View {
         if startOnCreateAvatar {
-            CreateAvatarView()
+//            CreateAvatarView(viewModel: <#CreateAvatarViewModel#>)
+            Text("Fix me")
         } else {
             AppView()
         }
