@@ -12,15 +12,18 @@ struct MockAvatarService {
     let avatars: [AvatarModel]
     let delay: Double
     let showError: Bool
+    let showErrorForRemoveAuthorIdFromAvatar: Bool
     
     init(
         avatars: [AvatarModel] = AvatarModel.mocks,
         delay: Double = 0.0,
-        showError: Bool = false
+        showError: Bool = false,
+        showErrorForRemoveAuthorIdFromAvatar: Bool = false
     ) {
         self.avatars = avatars
         self.delay = delay
         self.showError = showError
+        self.showErrorForRemoveAuthorIdFromAvatar = showErrorForRemoveAuthorIdFromAvatar
     }
 }
 
@@ -66,7 +69,14 @@ extension MockAvatarService: RemoteAvatarServiceProtocol {
     
     func incrementAvatarClickCount(avatarId: String) async throws {}
     
-    func removeAuthorIdFromAvatar(avatarId: String) async throws {}
+    func removeAuthorIdFromAvatar(avatarId: String) async throws {
+        try await Task.sleep(for: .seconds(delay))
+        try tryShowError()
+        
+        if showErrorForRemoveAuthorIdFromAvatar {
+            throw URLError(.unknown)
+        }
+    }
     
     func removeAuthorIdFromAllUserAvatars(userId: String) async throws {}
 }
