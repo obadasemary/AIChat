@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ProfileView: View {
     
-    @Environment(DIContainer.self) private var container
+    @Environment(DependencyContainer.self) private var container
     @State var viewModel: ProfileViewModel
     
     var body: some View {

@@ -27,7 +27,7 @@ class CreateAvatarViewModel {
     var avatarName: String = ""
     var showAlert: AnyAppAlert?
     
-    init(container: DIContainer) {
+    init(container: DependencyContainer) {
         self.authManager = container.resolve(AuthManager.self)!
         self.aiManager = container.resolve(AIManager.self)!
         self.avatarManager = container.resolve(AvatarManager.self)!

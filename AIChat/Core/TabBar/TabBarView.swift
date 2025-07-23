@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TabBarView: View {
     
-    @Environment(DIContainer.self) private var container
+    @Environment(DependencyContainer.self) private var container
     
     var body: some View {
         TabView {

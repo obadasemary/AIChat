@@ -12,9 +12,9 @@ class DevPreview {
     
     static let shared = DevPreview()
     
-    var container: DIContainer {
+    var container: DependencyContainer {
         
-        let container = DIContainer()
+        let container = DependencyContainer()
         container.register(AuthManager.self, authManager)
         container.register(UserManager.self, userManager)
         container.register(AIManager.self, aiManager)

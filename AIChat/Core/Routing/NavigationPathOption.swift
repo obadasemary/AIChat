@@ -14,7 +14,7 @@ enum NavigationPathOption: Hashable {
 
 struct NavigationDestinationForCoreModuleViewModifier: ViewModifier {
     
-    @Environment(DIContainer.self) private var container
+    @Environment(DependencyContainer.self) private var container
     let path: Binding<[NavigationPathOption]>
     
     func body(content: Content) -> some View {

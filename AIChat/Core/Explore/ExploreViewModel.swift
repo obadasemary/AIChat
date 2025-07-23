@@ -42,7 +42,7 @@ class ExploreViewModel {
     
     var path: [NavigationPathOption] = []
     
-    init(container: DIContainer) {
+    init(container: DependencyContainer) {
         self.authManager = container.resolve(AuthManager.self)!
         self.avatarManager = container.resolve(AvatarManager.self)!
         self.logManager = container.resolve(LogManager.self)!
@@ -235,7 +235,7 @@ extension ExploreViewModel {
 }
 
 // MARK: - Event
-private extension ExploreViewModel {
+extension ExploreViewModel {
     
     enum Event: LoggableEvent {
         case devSettingsPressed
