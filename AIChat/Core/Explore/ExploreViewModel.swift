@@ -28,8 +28,6 @@ class ExploreViewModel {
     var showPushNotificationModal: Bool = false
     var showCreateAccountView: Bool = false
     var showDevSettings: Bool = false
-    var path: [NavigationPathOption] = []
-    
     var showDevSettingsButton: Bool {
         #if DEV || MOCK
             return true
@@ -41,6 +39,8 @@ class ExploreViewModel {
     var categoryRowTest: CategoryRowTestOption {
         abTestManager.activeTests.categoryRowTest
     }
+    
+    var path: [NavigationPathOption] = []
     
     init(container: DIContainer) {
         self.authManager = container.resolve(AuthManager.self)!

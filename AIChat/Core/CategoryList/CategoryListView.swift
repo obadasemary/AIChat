@@ -9,18 +9,12 @@ import SwiftUI
 
 struct CategoryListView: View {
     
-    @Environment(AvatarManager.self) private var avatarManager
-    @Environment(LogManager.self) private var logManager
-    
-    @Binding var path: [NavigationPathOption]
+    @State var viewModel: CategoryListViewModel
     
     var category: CharacterOption = .alien
     var imageName: String = Constants.randomImage
     
-    @State private var avatars: [AvatarModel] = []
-    @State private var isLoading: Bool = true
-    
-    @State private var showAlert: AnyAppAlert?
+    @Binding var path: [NavigationPathOption]
     
     var body: some View {
         List {
@@ -32,51 +26,32 @@ struct CategoryListView: View {
             )
             .removeListRowFormatting()
             
-            if isLoading {
+            if viewModel.isLoading {
                 loadingIndicator
-            } else if avatars.isEmpty {
+            } else if viewModel.avatars.isEmpty {
                 contentUnavailableView
             } else {
-                ForEach(avatars, id: \.self) { avatar in
+                ForEach(viewModel.avatars, id: \.self) { avatar in
                     CustomListCellView(
                         imageName: avatar.profileImageName,
                         title: avatar.name,
                         subtitle: avatar.characterDescription
                     )
                     .anyButton(.highlight) {
-                        onAvatarTapped(avatar: avatar)
+                        viewModel.onAvatarTapped(avatar: avatar, path: $path)
                     }
                     .removeListRowFormatting()
                 }
             }
         }
         .scrollBounceBehavior(.basedOnSize)
-        .showCustomAlert(alert: $showAlert)
+        .showCustomAlert(alert: $viewModel.showAlert)
         .screenAppearAnalytics(name: Self.screenName)
         .ignoresSafeArea(edges: .top)
         .listStyle(.plain)
         .task {
-            await loadAvatars()
+            await viewModel.loadAvatars(category: category)
         }
-    }
-}
-
-// MARK: - Load
-private extension CategoryListView {
-    
-    func loadAvatars() async {
-        logManager.trackEvent(event: Event.loadAvatarsStart)
-        do {
-            avatars = try await avatarManager
-                .getAvatarsForCategory(category: category)
-            logManager
-                .trackEvent(event: Event.loadAvatarsSuccess)
-        } catch {
-            showAlert = AnyAppAlert(error: error)
-            logManager
-                .trackEvent(event: Event.loadAvatarsFail(error: error))
-        }
-        isLoading = false
     }
 }
 
@@ -103,103 +78,66 @@ private extension CategoryListView {
     }
 }
 
-// MARK: - Action
-private extension CategoryListView {
-    
-    func onAvatarTapped(avatar: AvatarModel) {
-        path.append(.chat(avatarId: avatar.avatarId, chat: nil))
-        logManager.trackEvent(event: Event.avatarTapped(avatar: avatar))
-    }
-}
-
-// MARK: - Event
-private extension CategoryListView {
-    
-    enum Event: LoggableEvent {
-        case loadAvatarsStart
-        case loadAvatarsSuccess
-        case loadAvatarsFail(error: Error)
-        case avatarTapped(avatar: AvatarModel)
-        
-        var eventName: String {
-            switch self {
-            case .loadAvatarsSuccess: "CategoryList_LoadAvatars_Start"
-            case .loadAvatarsStart: "CategoryList_LoadAvatars_Success"
-            case .loadAvatarsFail: "CategoryList_LoadAvatars_Fail"
-            case .avatarTapped: "CategoryList_Avatar_Tapped"
-            }
-        }
-        
-        var parameters: [String : Any]? {
-            switch self {
-            case .loadAvatarsFail(error: let error):
-                error.eventParameters
-            case .avatarTapped(avatar: let avatar):
-                avatar.eventParameters
-            default:
-                nil
-            }
-        }
-        
-        var type: LogType {
-            switch self {
-            case .loadAvatarsFail:
-                    .severe
-            default:
-                    .analytic
-            }
-        }
-    }
-}
-
-#Preview("Remote Service") {
-    CategoryListView(path: .constant([]))
-        .environment(
-            AvatarManager(
-                remoteService: FirebaseAvatarService(
-                    firebaseImageUploadServiceProtocol: FirebaseImageUploadService()
-                )
-            )
-        )
-        .previewEnvironment()
-}
-
 #Preview("Mock Has Data") {
-    CategoryListView(path: .constant([]))
-        .environment(
-            AvatarManager(
-                remoteService: MockAvatarService()
-            )
+    let container = DevPreview.shared.container
+    container.register(
+        AvatarManager.self,
+        AvatarManager(
+            remoteService: MockAvatarService()
         )
-        .previewEnvironment()
+    )
+    
+    return CategoryListView(
+        viewModel: CategoryListViewModel(container: container),
+        path: .constant([])
+    )
+    .previewEnvironment()
 }
 
 #Preview("Mock No Data") {
-    CategoryListView(path: .constant([]))
-        .environment(
-            AvatarManager(
-                remoteService: MockAvatarService(avatars: [])
-            )
+    let container = DevPreview.shared.container
+    container.register(
+        AvatarManager.self,
+        AvatarManager(
+            remoteService: MockAvatarService(avatars: [])
         )
-        .previewEnvironment()
+    )
+    
+    return CategoryListView(
+        viewModel: CategoryListViewModel(container: container),
+        path: .constant([])
+    )
+    .previewEnvironment()
 }
 
 #Preview("Mock Slow Loading") {
-    CategoryListView(path: .constant([]))
-        .environment(
-            AvatarManager(
-                remoteService: MockAvatarService(delay: 2)
-            )
+    let container = DevPreview.shared.container
+    container.register(
+        AvatarManager.self,
+        AvatarManager(
+            remoteService: MockAvatarService(delay: 2)
         )
-        .previewEnvironment()
+    )
+    
+    return CategoryListView(
+        viewModel: CategoryListViewModel(container: container),
+        path: .constant([])
+    )
+    .previewEnvironment()
 }
 
 #Preview("Error Loading") {
-    CategoryListView(path: .constant([]))
-        .environment(
-            AvatarManager(
-                remoteService: MockAvatarService(delay: 5, showError: true)
-            )
+    let container = DevPreview.shared.container
+    container.register(
+        AvatarManager.self,
+        AvatarManager(
+            remoteService: MockAvatarService(delay: 5, showError: true)
         )
-        .previewEnvironment()
+    )
+    
+    return CategoryListView(
+        viewModel: CategoryListViewModel(container: container),
+        path: .constant([])
+    )
+    .previewEnvironment()
 }
