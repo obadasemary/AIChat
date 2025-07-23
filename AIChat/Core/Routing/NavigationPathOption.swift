@@ -12,21 +12,32 @@ enum NavigationPathOption: Hashable {
     case character(category: CharacterOption, imageName: String)
 }
 
-extension View {
+struct NavigationDestinationForCoreModuleViewModifier: ViewModifier {
     
-    func navigationDestinationForCoreModule(path: Binding<[NavigationPathOption]>) -> some View {
-        self
+    @Environment(DIContainer.self) private var container
+    let path: Binding<[NavigationPathOption]>
+    
+    func body(content: Content) -> some View {
+        content
             .navigationDestination(for: NavigationPathOption.self) { newValue in
                 switch newValue {
                 case .chat(avatarId: let avatarId, chat: let chat):
                     ChatView(avatarId: avatarId, chat: chat)
                 case .character(category: let category, imageName: let imageName):
                     CategoryListView(
-                        path: path,
+                        viewModel: CategoryListViewModel(container: container),
                         category: category,
-                        imageName: imageName
+                        imageName: imageName,
+                        path: path
                     )
                 }
             }
+    }
+}
+
+extension View {
+    
+    func navigationDestinationForCoreModule(path: Binding<[NavigationPathOption]>) -> some View {
+        modifier(NavigationDestinationForCoreModuleViewModifier(path: path))
     }
 }
