@@ -12,17 +12,31 @@ class DevPreview {
     
     static let shared = DevPreview()
     
-    let container: DIContainer
+    var container: DIContainer {
+        
+        let container = DIContainer()
+        container.register(AuthManager.self, authManager)
+        container.register(UserManager.self, userManager)
+        container.register(AIManager.self, aiManager)
+        container.register(AvatarManager.self, avatarManager)
+        container.register(ChatManager.self, chatManager)
+        container.register(LogManager.self, logManager)
+        container.register(PushManager.self, pushManager)
+        container.register(ABTestManager.self, abTestManager)
+        container.register(PurchaseManager.self, purchaseManager)
+        
+        return container
+    }
     
-    let authManager: AuthManager
-    let userManager: UserManager
-    let aiManager: AIManager
-    let avatarManager: AvatarManager
-    let chatManager: ChatManager
-    let logManager: LogManager
-    let pushManager: PushManager
-    let abTestManager: ABTestManager
-    let purchaseManager: PurchaseManager
+    private let authManager: AuthManager
+    private let userManager: UserManager
+    private let aiManager: AIManager
+    private let avatarManager: AvatarManager
+    private let chatManager: ChatManager
+    private let logManager: LogManager
+    private let pushManager: PushManager
+    private let abTestManager: ABTestManager
+    private let purchaseManager: PurchaseManager
     
     init(isSignedIn: Bool = true) {
         self.authManager = AuthManager(
@@ -38,18 +52,5 @@ class DevPreview {
         self.pushManager = PushManager()
         self.abTestManager = ABTestManager(service: MockABTestService())
         self.purchaseManager = PurchaseManager(service: MockPurchaseService())
-        
-        let container = DIContainer()
-        container.register(AuthManager.self, authManager)
-        container.register(UserManager.self, userManager)
-        container.register(AIManager.self, aiManager)
-        container.register(AvatarManager.self, avatarManager)
-        container.register(ChatManager.self, chatManager)
-        container.register(LogManager.self, logManager)
-        container.register(PushManager.self, pushManager)
-        container.register(ABTestManager.self, abTestManager)
-        container.register(PurchaseManager.self, purchaseManager)
-        
-        self.container = container
     }
 }
