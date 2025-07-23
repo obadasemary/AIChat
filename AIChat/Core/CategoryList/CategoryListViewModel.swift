@@ -19,7 +19,7 @@ class CategoryListViewModel {
     
     var showAlert: AnyAppAlert?
     
-    init(container: DIContainer) {
+    init(container: DependencyContainer) {
         self.avatarManager = container.resolve(AvatarManager.self)!
         self.logManager = container.resolve(LogManager.self)!
     }

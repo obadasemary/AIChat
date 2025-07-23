@@ -35,7 +35,7 @@ enum BuildConfiguration {
 @MainActor
 struct Dependencies {
     
-    let container: DIContainer
+    let container: DependencyContainer
     
     let authManager: AuthManager
     let userManager: UserManager
@@ -161,7 +161,7 @@ struct Dependencies {
         
         pushManager = PushManager(logManager: logManager)
         
-        let container = DIContainer()
+        let container = DependencyContainer()
         container.register(AuthManager.self, authManager)
         container.register(UserManager.self, userManager)
         container.register(AIManager.self, aiManager)

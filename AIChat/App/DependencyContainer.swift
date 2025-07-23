@@ -9,7 +9,7 @@ import Foundation
 
 @Observable
 @MainActor
-class DIContainer {
+class DependencyContainer {
     
     private var services: [String: Any] = [:]
     

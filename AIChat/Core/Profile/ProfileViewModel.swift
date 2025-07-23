@@ -25,7 +25,7 @@ class ProfileViewModel {
     var showAlert: AnyAppAlert?
     var path: [NavigationPathOption] = []
     
-    init(container: DIContainer) {
+    init(container: DependencyContainer) {
         self.authManager = container.resolve(AuthManager.self)!
         self.userManager = container.resolve(UserManager.self)!
         self.avatarManager = container.resolve(AvatarManager.self)!
