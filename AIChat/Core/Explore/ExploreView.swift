@@ -7,59 +7,33 @@
 
 import SwiftUI
 
-// swiftlint:disable file_length
 struct ExploreView: View {
     
-    @Environment(AvatarManager.self) private var avatarManager
-    @Environment(LogManager.self) private var logManager
-    @Environment(PushManager.self) private var pushManager
-    @Environment(AuthManager.self) private var authManager
-    @Environment(ABTestManager.self) private var abTestManager
-    
-    @State private var categories: [CharacterOption] = CharacterOption.allCases
-    
-    @State private var featuredAvatars: [AvatarModel] = []
-    @State private var popularAvatars: [AvatarModel] = []
-    @State private var isLoadingFeatured: Bool = true
-    @State private var isLoadingPopular: Bool = true
-    
-    @State private var path: [NavigationPathOption] = []
-    @State private var showDevSettings: Bool = false
-    @State private var showNotificationButton: Bool = false
-    @State private var showPushNotificationModal: Bool = false
-    @State private var showCreateAccountView: Bool = false
-    
-    private var showDevSettingsButton: Bool {
-        #if DEV || MOCK
-            return true
-        #else
-            return false
-        #endif
-    }
+    @State var viewModel: ExploreViewModel
     
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack(path: $viewModel.path) {
             List {
-                if featuredAvatars.isEmpty && popularAvatars.isEmpty {
-                    if isLoadingFeatured || isLoadingPopular {
+                if viewModel.featuredAvatars.isEmpty && viewModel.popularAvatars.isEmpty {
+                    if viewModel.isLoadingFeatured || viewModel.isLoadingPopular {
                         loadingIndicator
                     } else {
                         contentUnavailableView
                     }
                 }
                 
-                if !popularAvatars.isEmpty {
-                    if abTestManager.activeTests.categoryRowTest == .top {
+                if !viewModel.popularAvatars.isEmpty {
+                    if viewModel.categoryRowTest == .top {
                         categoriesSection
                     }
                 }
                 
-                if !featuredAvatars.isEmpty {
+                if !viewModel.featuredAvatars.isEmpty {
                     featuredSection
                 }
                 
-                if !popularAvatars.isEmpty {
-                    if abTestManager.activeTests.categoryRowTest == .original {
+                if !viewModel.popularAvatars.isEmpty {
+                    if viewModel.categoryRowTest == .original {
                         categoriesSection
                     }
                     popularSection
@@ -69,157 +43,46 @@ struct ExploreView: View {
             .screenAppearAnalytics(name: "ExploreView")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    if showDevSettingsButton {
+                    if viewModel.showDevSettingsButton {
                         devSettingsButton
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    if showNotificationButton {
+                    if viewModel.showNotificationButton {
                         pushNotificationButton
                     }
                 }
             }
-            .sheet(isPresented: $showDevSettings) {
+            .sheet(isPresented: $viewModel.showDevSettings) {
                 DevSettingsView()
             }
-            .sheet(isPresented: $showCreateAccountView) {
+            .sheet(isPresented: $viewModel.showCreateAccountView) {
                 CreateAccountView()
                     .presentationDetents([.medium])
             }
-            .navigationDestinationForCoreModule(path: $path)
-            .showModal(showModal: $showPushNotificationModal) {
+            .navigationDestinationForCoreModule(path: $viewModel.path)
+            .showModal(showModal: $viewModel.showPushNotificationModal) {
                 pushNotificationModal
             }
             .task {
-                await loadFeaturedAvatars()
+                await viewModel.loadFeaturedAvatars()
             }
             .task {
-                await loadPopularAvatars()
+                await viewModel.loadPopularAvatars()
             }
             .refreshable {
-                await refreshAvatars()
+                await viewModel.refreshAvatars()
             }
             .task {
-                await handleShowPushNotificationButton()
+                await viewModel.handleShowPushNotificationButton()
             }
             .onFirstAppear {
-                schedulePushNotifications()
-                showCreateAccountScreenIfNeeded()
+                viewModel.schedulePushNotifications()
+                viewModel.showCreateAccountScreenIfNeeded()
             }
             .onOpenURL { url in
-                handleDeepLink(url)
+                viewModel.handleDeepLink(url)
             }
-        }
-    }
-}
-
-// MARK: - Load
-private extension ExploreView {
-    
-    func loadFeaturedAvatars(force: Bool = false) async {
-        guard featuredAvatars.isEmpty || force else { return }
-        logManager.trackEvent(event: Event.loadFeaturedAvatarsStart)
-        do {
-            featuredAvatars = try await avatarManager.getFeaturedAvatars()
-            logManager
-                .trackEvent(
-                    event: Event.loadFeaturedAvatarsSuccess(
-                        count: featuredAvatars.count
-                    )
-                )
-        } catch {
-            logManager
-                .trackEvent(
-                    event: Event.loadFeaturedAvatarsFail(
-                        error: error
-                    )
-                )
-        }
-        
-        isLoadingFeatured = false
-    }
-    
-    func loadPopularAvatars(force: Bool = false) async {
-        guard popularAvatars.isEmpty || force else {
-            return
-        }
-        logManager.trackEvent(event: Event.loadPopularAvatarsStart)
-        
-        do {
-            popularAvatars = try await avatarManager.getPopularAvatars()
-            logManager
-                .trackEvent(
-                    event: Event.loadPopularAvatarsSuccess(
-                        count: popularAvatars.count
-                    )
-                )
-        } catch {
-            logManager
-                .trackEvent(
-                    event: Event.loadPopularAvatarsFail(
-                        error: error
-                    )
-                )
-        }
-        
-        isLoadingPopular = false
-    }
-    
-    func refreshAvatars() async {
-        async let featuredAvatars: () = loadFeaturedAvatars(force: true)
-        async let popularAvatars: () = loadPopularAvatars(force: true)
-        _ = await (featuredAvatars, popularAvatars)
-    }
-    
-    func handleShowPushNotificationButton() async {
-        showNotificationButton = await pushManager.canRequestAuthorization()
-    }
-    
-    func schedulePushNotifications() {
-        pushManager.schedulePushNotificationForTheNextWeek()
-    }
-    
-    func handleDeepLink(_ url: URL) {
-        logManager.trackEvent(event: Event.deepLinkStart)
-        
-        guard
-            let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-            let queryItems = components.queryItems
-        else {
-            logManager.trackEvent(event: Event.deepLinkNoQueryItems)
-            return
-        }
-        
-        for queryItem in queryItems {
-            if queryItem.name == "category", let value = queryItem.value, let category = CharacterOption(rawValue: value) {
-                let imageName = popularAvatars.first(where: { $0.characterOption == category })?.profileImageName ?? Constants.randomImage
-                path
-                    .append(
-                        .character(
-                            category: category,
-                            imageName: imageName
-                        )
-                    )
-                logManager.trackEvent(event: Event.deepLinkCategory(category: category))
-            }
-            return
-        }
-        
-        logManager.trackEvent(event: Event.deepLinkUnknown)
-    }
-    
-    private func showCreateAccountScreenIfNeeded() {
-        Task {
-            try? await Task.sleep(for: .seconds(1))
-            
-            guard
-                authManager.auth?.isAnonymous == true &&
-                abTestManager.activeTests.createAccountTest == true
-            else {
-                return
-            }
-            
-            showCreateAccountView = true
         }
     }
 }
@@ -247,14 +110,14 @@ private extension ExploreView {
     var featuredSection: some View {
         Section {
             ZStack {
-                CarouselView(items: featuredAvatars) { avatar in
+                CarouselView(items: viewModel.featuredAvatars) { avatar in
                     HeroCellView(
                         title: avatar.name,
                         subtitle: avatar.characterDescription,
                         imageName: avatar.profileImageName
                     )
                     .anyButton {
-                        onAvaterSelected(avatar: avatar)
+                        viewModel.onAvaterSelected(avatar: avatar)
                     }
                 }
             }
@@ -269,8 +132,8 @@ private extension ExploreView {
             ZStack {
                 ScrollView(.horizontal) {
                     HStack(spacing: 12) {
-                        ForEach(categories, id: \.self) { category in
-                            let imageName = popularAvatars
+                        ForEach(viewModel.categories, id: \.self) { category in
+                            let imageName = viewModel.popularAvatars
                                 .last(where: { $0.characterOption == category })?
                                 .profileImageName
                             if let imageName {
@@ -279,7 +142,7 @@ private extension ExploreView {
                                     imageName: imageName
                                 )
                                 .anyButton {
-                                    onCategorySelected(
+                                    viewModel.onCategorySelected(
                                         category: category,
                                         imageName: imageName
                                     )
@@ -301,14 +164,14 @@ private extension ExploreView {
     
     var popularSection: some View {
         Section {
-            ForEach(popularAvatars, id: \.self) { avatar in
+            ForEach(viewModel.popularAvatars, id: \.self) { avatar in
                 CustomListCellView(
                     imageName: avatar.profileImageName,
                     title: avatar.name,
                     subtitle: avatar.characterDescription
                 )
                 .anyButton(.highlight) {
-                    onAvaterSelected(avatar: avatar)
+                    viewModel.onAvaterSelected(avatar: avatar)
                 }
                 .removeListRowFormatting()
             }
@@ -324,7 +187,7 @@ private extension ExploreView {
         }
         .badgeButton()
         .anyButton(.press) {
-            onDevSettingsButtonTapped()
+            viewModel.onDevSettingsButtonTapped()
         }
     }
     
@@ -335,7 +198,7 @@ private extension ExploreView {
             .tappableBackground()
             .foregroundStyle(.accent)
             .anyButton {
-                onPushNotificationButtonTapped()
+                viewModel.onPushNotificationButtonTapped()
             }
     }
     
@@ -345,254 +208,128 @@ private extension ExploreView {
             subtitle: "We'll send you updates about new features and improvements",
             primaryButtonTitle: "Enable",
             primaryButtonAction: {
-                onEnablePushNotificationTapped()
+                viewModel.onEnablePushNotificationTapped()
             },
             secondaryButtonTitle: "Cancel",
             secondaryButtonAction: {
-                onCancelPushNotificationTapped()
+                viewModel.onCancelPushNotificationTapped()
             }
         )
-    }
-}
-
-// MARK: - Action
-private extension ExploreView {
-    
-    func onDevSettingsButtonTapped() {
-        showDevSettings = true
-        logManager
-            .trackEvent(
-                event: Event.devSettingsPressed
-            )
-    }
-    
-    func onPushNotificationButtonTapped() {
-        showPushNotificationModal = true
-        logManager
-            .trackEvent(
-                event: Event.pushNotificationStart
-            )
-    }
-    
-    func onEnablePushNotificationTapped() {
-        showPushNotificationModal = false
-        
-        Task {
-            let isAuthorized = try await pushManager.reuestAuthorization()
-            logManager
-                .trackEvent(
-                    event: Event
-                        .pushNotificationEnabled(isAuthorized: isAuthorized)
-                )
-            await handleShowPushNotificationButton()
-        }
-    }
-    
-    func onCancelPushNotificationTapped() {
-        showPushNotificationModal = false
-        logManager
-            .trackEvent(
-                event: Event.pushNotificationCancel
-            )
-    }
-    
-    func onAvaterSelected(avatar: AvatarModel) {
-        path.append(.chat(avatarId: avatar.avatarId, chat: nil))
-        logManager
-            .trackEvent(
-                event: Event.avatarPressed(
-                    avatar: avatar
-                )
-            )
-    }
-    
-    func onCategorySelected(
-        category: CharacterOption,
-        imageName: String
-    ) {
-        path
-            .append(
-                .character(
-                    category: category,
-                    imageName: imageName
-                )
-            )
-        logManager
-            .trackEvent(
-                event: Event.categoryPressed(
-                    category: category
-                )
-            )
-    }
-}
-
-// MARK: - Event
-private extension ExploreView {
-    
-    enum Event: LoggableEvent {
-        case devSettingsPressed
-        case tryAgainPressed
-        case loadFeaturedAvatarsStart
-        case loadFeaturedAvatarsSuccess(count: Int)
-        case loadFeaturedAvatarsFail(error: Error)
-        case loadPopularAvatarsStart
-        case loadPopularAvatarsSuccess(count: Int)
-        case loadPopularAvatarsFail(error: Error)
-        case avatarPressed(avatar: AvatarModel)
-        case categoryPressed(category: CharacterOption)
-        case pushNotificationStart
-        case pushNotificationEnabled(isAuthorized: Bool)
-        case pushNotificationCancel
-        case deepLinkStart
-        case deepLinkNoQueryItems
-        case deepLinkCategory(category: CharacterOption)
-//        case deepLinkAvatar(avatarId: String)
-        case deepLinkUnknown
-
-        var eventName: String {
-            switch self {
-            case .devSettingsPressed: "ExploreView_DevSettings_Pressed"
-            case .tryAgainPressed: "ExploreView_TryAgain_Pressed"
-            case .loadFeaturedAvatarsStart: "ExploreView_LoadFeaturedAvatars_Start"
-            case .loadFeaturedAvatarsSuccess: "ExploreView_LoadFeaturedAvatars_Success"
-            case .loadFeaturedAvatarsFail: "ExploreView_LoadFeaturedAvatars_Fail"
-            case .loadPopularAvatarsStart: "ExploreView_LoadPopularAvatars_Start"
-            case .loadPopularAvatarsSuccess: "ExploreView_LoadPopularAvatars_Success"
-            case .loadPopularAvatarsFail: "ExploreView_LoadPopularAvatars_Fail"
-            case .avatarPressed: "ExploreView_Avatar_Pressed"
-            case .categoryPressed: "ExploreView_Category_Pressed"
-            case .pushNotificationStart: "ExploreView_PushNotification_Start"
-            case .pushNotificationEnabled: "ExploreView_PushNotification_Enabled"
-            case .pushNotificationCancel: "ExploreView_PushNotification_Cancel"
-            case .deepLinkStart: "ExploreView_DeepLink_Start"
-            case .deepLinkNoQueryItems: "ExploreView_DeepLink_NoQueryItems"
-            case .deepLinkCategory: "ExploreView_DeepLink_Category"
-            case .deepLinkUnknown: "ExploreView_DeepLink_Unknown"
-            }
-        }
-        
-        var parameters: [String: Any]? {
-            switch self {
-            case .loadPopularAvatarsSuccess(count: let count), .loadFeaturedAvatarsSuccess(count: let count):
-                [
-                    "avatars_count": count
-                ]
-            case .loadPopularAvatarsFail(error: let error), .loadFeaturedAvatarsFail(error: let error):
-                error.eventParameters
-            case .avatarPressed(avatar: let avatar):
-                avatar.eventParameters
-            case .categoryPressed(category: let category),
-                    .deepLinkCategory(category: let category):
-                [
-                    "category": category.rawValue
-                ]
-            case .pushNotificationEnabled(isAuthorized: let isAuthorized):
-                [
-                    "is_authorized": isAuthorized
-                ]
-            default:
-                nil
-            }
-        }
-        
-        var type: LogType {
-            switch self {
-            case .loadPopularAvatarsFail, .loadFeaturedAvatarsFail, .deepLinkUnknown:
-                    .severe
-            default:
-                    .analytic
-            }
-        }
     }
 }
 
 #Preview("Mock Has Data") {
-    ExploreView()
-        .environment(
+    let container = DevPreview.shared.container
+    container
+        .register(
+            AvatarManager.self,
             AvatarManager(
                 remoteService: MockAvatarService()
             )
         )
+    return ExploreView(viewModel: ExploreViewModel(container: container))
         .previewEnvironment()
 }
 
 #Preview("Mock Has Data w/ create Acct Test") {
-    ExploreView()
-        .environment(
+    let container = DevPreview.shared.container
+    container
+        .register(
+            AvatarManager.self,
             AvatarManager(
                 remoteService: MockAvatarService()
             )
         )
-        .environment(
+    container
+        .register(
+            AuthManager.self,
             AuthManager(
                 service: MockAuthService(currentUser: .mock(isAnonymous: true))
             )
         )
-        .environment(
+    container
+        .register(
+            ABTestManager.self,
             ABTestManager(service: MockABTestService(createAccountTest: true))
         )
+    
+    return ExploreView(viewModel: ExploreViewModel(container: container))
         .previewEnvironment()
 }
 
 #Preview("CategoryRowTest: Original") {
-    ExploreView()
-        .environment(
-            ABTestManager(
-                service: MockABTestService(categoryRowTest: .original)
-            )
+    let container = DevPreview.shared.container
+    container
+        .register(
+            ABTestManager.self,
+            ABTestManager(service: MockABTestService(categoryRowTest: .original))
         )
+    
+    return ExploreView(viewModel: ExploreViewModel(container: container))
         .previewEnvironment()
 }
 
-#Preview("CategoryRowTest: top") {
-    ExploreView()
-        .environment(
-            ABTestManager(
-                service: MockABTestService(categoryRowTest: .top)
-            )
+#Preview("CategoryRowTest: Top") {
+    let container = DevPreview.shared.container
+    container
+        .register(
+            ABTestManager.self,
+            ABTestManager(service: MockABTestService(categoryRowTest: .top))
         )
+    
+    return ExploreView(viewModel: ExploreViewModel(container: container))
         .previewEnvironment()
 }
 
-#Preview("CategoryRowTest: hidden") {
-    ExploreView()
-        .environment(
-            ABTestManager(
-                service: MockABTestService(categoryRowTest: .hidden)
-            )
+#Preview("CategoryRowTest: Hidden") {
+    let container = DevPreview.shared.container
+    container
+        .register(
+            ABTestManager.self,
+            ABTestManager(service: MockABTestService(categoryRowTest: .hidden))
         )
+    
+    return ExploreView(viewModel: ExploreViewModel(container: container))
         .previewEnvironment()
 }
 
 #Preview("Mock No Data") {
-    ExploreView()
-        .environment(
+    let container = DevPreview.shared.container
+    container
+        .register(
+            AvatarManager.self,
             AvatarManager(
                 remoteService: MockAvatarService(avatars: [])
             )
         )
+    return ExploreView(viewModel: ExploreViewModel(container: container))
         .previewEnvironment()
 }
 
 #Preview("Mock Slow Loading") {
-    ExploreView()
-        .environment(
+    let container = DevPreview.shared.container
+    container
+        .register(
+            AvatarManager.self,
             AvatarManager(
                 remoteService: MockAvatarService(delay: 2)
             )
         )
+    return ExploreView(viewModel: ExploreViewModel(container: container))
         .previewEnvironment()
 }
 
 #Preview("Remote Service") {
-    ExploreView()
-        .environment(
+    let container = DevPreview.shared.container
+    container
+        .register(
+            AvatarManager.self,
             AvatarManager(
                 remoteService: FirebaseAvatarService(
                     firebaseImageUploadServiceProtocol: FirebaseImageUploadService()
                 )
             )
         )
+    return ExploreView(viewModel: ExploreViewModel(container: container))
         .previewEnvironment()
 }
-// swiftlint:enable file_length
