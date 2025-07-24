@@ -30,6 +30,7 @@ final class AuthManager {
 }
 
 extension AuthManager: AuthManagerProtocol {
+    
     func getAuthId() throws -> String {
         guard let uid = auth?.uid else {
             throw AuthError.notSignedIn
