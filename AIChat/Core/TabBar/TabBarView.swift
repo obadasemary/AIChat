@@ -24,10 +24,14 @@ struct TabBarView: View {
                         systemImage: "bubble.left.and.bubble.right"
                     )
                 }
-            ProfileView(viewModel: ProfileViewModel(container: container))
-                .tabItem {
-                    Label("Profile", systemImage: "person.fill")
-                }
+            ProfileView(
+                viewModel: ProfileViewModel(
+                    interactor: ProdProfileInteractor(container: container)
+                )
+            )
+            .tabItem {
+                Label("Profile", systemImage: "person.fill")
+            }
         }
     }
 }
