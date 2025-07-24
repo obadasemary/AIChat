@@ -11,10 +11,7 @@ import Foundation
 @MainActor
 class ProfileViewModel {
     
-    private let authManager: AuthManager
-    private let userManager: UserManager
-    private let avatarManager: AvatarManager
-    private let logManager: LogManager
+    private let interactor: ProfileInteractor
     
     private(set) var currentUser: UserModel?
     private(set) var myAvatars: [AvatarModel] = []
@@ -25,11 +22,8 @@ class ProfileViewModel {
     var showAlert: AnyAppAlert?
     var path: [NavigationPathOption] = []
     
-    init(container: DependencyContainer) {
-        self.authManager = container.resolve(AuthManager.self)!
-        self.userManager = container.resolve(UserManager.self)!
-        self.avatarManager = container.resolve(AvatarManager.self)!
-        self.logManager = container.resolve(LogManager.self)!
+    init(interactor: ProfileInteractor) {
+        self.interactor = interactor
     }
 }
 
@@ -37,20 +31,20 @@ class ProfileViewModel {
 extension ProfileViewModel {
     
     func loadData() async {
-        currentUser = userManager.currentUser
-        logManager.trackEvent(event: Event.loadAvatarsStart)
+        currentUser = interactor.currentUser
+        interactor.trackEvent(event: Event.loadAvatarsStart)
         
         do {
-            let userId = try authManager.getAuthId()
-            myAvatars = try await avatarManager
+            let userId = try interactor.getAuthId()
+            myAvatars = try await interactor
                 .getAvatarsForAuthor(userId: userId)
-            logManager.trackEvent(
+            interactor.trackEvent(
                 event: Event.loadAvatarsSuccess(
                     count: myAvatars.count
                 )
             )
         } catch {
-            logManager
+            interactor
                 .trackEvent(
                     event: Event.loadAvatarsFail(
                         error: error
@@ -67,17 +61,17 @@ extension ProfileViewModel {
     
     func onSettingsButtonPressed() {
         showSettingsView = true
-        logManager.trackEvent(event: Event.settingsPressed)
+        interactor.trackEvent(event: Event.settingsPressed)
     }
     
     func onNewAvatarButtonPressed() {
         showCreateAvatarView = true
-        logManager.trackEvent(event: Event.newAvatarPressed)
+        interactor.trackEvent(event: Event.newAvatarPressed)
     }
     
     func onAvatarSelected(avatar: AvatarModel) {
         path.append(.chat(avatarId: avatar.avatarId, chat: nil))
-        logManager
+        interactor
             .trackEvent(
                 event: Event.avatarPressed(
                     avatar: avatar
@@ -88,7 +82,7 @@ extension ProfileViewModel {
     func onDeleteAvatar(indexSet: IndexSet) {
         guard let index = indexSet.first else { return }
         let avatar = myAvatars[index]
-        logManager
+        interactor
             .trackEvent(
                 event: Event.deleteAvatarStart(
                     avatar: avatar
@@ -97,10 +91,10 @@ extension ProfileViewModel {
         
         Task {
             do {
-                try await avatarManager
+                try await interactor
                     .removeAuthorIdFromAvatar(avatarId: avatar.id)
                 myAvatars.remove(at: index)
-                logManager
+                interactor
                     .trackEvent(
                         event: Event.deleteAvatarSuccess(
                             avatar: avatar
@@ -111,7 +105,7 @@ extension ProfileViewModel {
                     title: "Unable to delete avatar",
                     subtitle: "Please try again later."
                 )
-                logManager
+                interactor
                     .trackEvent(
                         event: Event.deleteAvatarFail(
                             error: error
