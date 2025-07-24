@@ -15,34 +15,38 @@ struct ProfileViewTests {
     @Test("LoadData does set current user")
     func testLoadDataDoesSetCurrentUser() async throws {
 
-        let container = DependencyContainer()
-        
-        let authManager = AuthManager(service: MockAuthService())
-        
-        let mockUser = UserModel.mock
-        let userManager = UserManager(
-            services: MockUserServices(currentUser: mockUser)
-        )
-        
-        let avatarManager = AvatarManager(remoteService: MockAvatarService())
-        let mockLogService = MockLogService()
-        let logManager = LogManager(services: [mockLogService])
-        
-        container.register(AuthManager.self) {  authManager }
-        container.register(UserManager.self) {  userManager }
-        container.register(AvatarManager.self) {  avatarManager }
-        container.register(LogManager.self) {  logManager }
+//        let container = DependencyContainer()
+//        
+//        let authManager = AuthManager(service: MockAuthService())
+//        
+//        let mockUser = UserModel.mock
+//        let userManager = UserManager(
+//            services: MockUserServices(currentUser: mockUser)
+//        )
+//        
+//        let avatarManager = AvatarManager(remoteService: MockAvatarService())
+//        
+//        let mockLogService = MockLogService()
+//        let logManager = LogManager(services: [mockLogService])
+//        
+//        container.register(AuthManager.self) {  authManager }
+//        container.register(UserManager.self) {  userManager }
+//        container.register(AvatarManager.self) {  avatarManager }
+//        container.register(LogManager.self) {  logManager }
         
         // Given
-        let viewModel = ProfileViewModel(container: container)
+        let interactore = MockProfileInteractor()
+        let viewModel = ProfileViewModel(
+            interactor: interactore
+        )
         
         // When
         await viewModel.loadData()
         
         // Then
-        #expect(viewModel.currentUser?.userId == mockUser.userId)
+        #expect(viewModel.currentUser?.userId == interactore.user.userId)
         #expect(
-            mockLogService.trackedEvents
+            interactore.logger.trackedEvents
                 .contains {
                     $0.eventName == ProfileViewModel
                         .Event
@@ -55,46 +59,71 @@ struct ProfileViewTests {
     @Test("LoadData does succeed and user avatars are loaded")
     func testLoadDataDoesSucceedAndAvatarsAreSet() async throws {
 
-        let container = DependencyContainer()
-        
-        let mockAuthUser = UserAuthInfo.mock()
-        let authManager = AuthManager(
-            service: MockAuthService(currentUser: mockAuthUser)
-        )
-        
-        let mockUser = UserModel.mock
-        let userManager = UserManager(
-            services: MockUserServices(currentUser: mockUser)
-        )
-        
-        let mockAvatars = AvatarModel.mocks
-        let avatarManager = AvatarManager(
-            remoteService: MockAvatarService(avatars: mockAvatars)
-        )
-        
-        let mockLogService = MockLogService()
-        let logManager = LogManager(services: [mockLogService])
-        
-        container.register(AuthManager.self) {  authManager }
-        container.register(UserManager.self) {  userManager }
-        container.register(AvatarManager.self) {  avatarManager }
-        container.register(LogManager.self) {  logManager }
+//        let container = DependencyContainer()
+//        
+//        let mockAuthUser = UserAuthInfo.mock()
+//        let authManager = AuthManager(
+//            service: MockAuthService(currentUser: mockAuthUser)
+//        )
+//        
+//        let mockUser = UserModel.mock
+//        let userManager = UserManager(
+//            services: MockUserServices(currentUser: mockUser)
+//        )
+//        
+//        let mockAvatars = AvatarModel.mocks
+//        let avatarManager = AvatarManager(
+//            remoteService: MockAvatarService(avatars: mockAvatars)
+//        )
+//        
+//        let mockLogService = MockLogService()
+//        let logManager = LogManager(services: [mockLogService])
+//        
+//        container.register(AuthManager.self) {  authManager }
+//        container.register(UserManager.self) {  userManager }
+//        container.register(AvatarManager.self) {  avatarManager }
+//        container.register(LogManager.self) {  logManager }
         
         // Given
-        let viewModel = ProfileViewModel(container: container)
+//        let viewModel = ProfileViewModel(
+//            interactor: ProdProfileInteractor(container: container)
+//        )
+//        let interactore = MockProfileInteractor()
+        let user = UserModel.mock
+        let avatars = AvatarModel.mocks
+        var events: [LoggableEvent] = []
+        
+        let interactore = AnyProfileInteractor(
+            currentUser: user,
+            getAuthId: {
+                user.userId
+            },
+            getAvatarsForAuthor: { _ in
+                avatars
+            },
+            removeAuthorIdFromAvatar: { _ in
+                
+            },
+            trackEvent: { event in
+                events.append(event)
+            }
+        )
+        let viewModel = ProfileViewModel(
+            interactor: interactore
+        )
         
         // When
         await viewModel.loadData()
         
         // Then
-        #expect(viewModel.myAvatars.count == mockAvatars.count)
+        #expect(viewModel.myAvatars.count == avatars.count)
         #expect(viewModel.isLoading == false)
         #expect(
-            mockLogService.trackedEvents
+            events
                 .contains {
                     $0.eventName == ProfileViewModel
                         .Event
-                        .loadAvatarsSuccess(count: mockAvatars.count)
+                        .loadAvatarsSuccess(count: 0)
                         .eventName
                 }
         )
@@ -128,7 +157,9 @@ struct ProfileViewTests {
         container.register(LogManager.self) {  logManager }
         
         // Given
-        let viewModel = ProfileViewModel(container: container)
+        let viewModel = ProfileViewModel(
+            interactor: ProdProfileInteractor(container: container)
+        )
         
         // When
         await viewModel.loadData()
@@ -164,7 +195,9 @@ struct ProfileViewTests {
         container.register(LogManager.self) {  logManager }
         
         // Given
-        let viewModel = ProfileViewModel(container: container)
+        let viewModel = ProfileViewModel(
+            interactor: ProdProfileInteractor(container: container)
+        )
         
         // When
         viewModel.onSettingsButtonPressed()
@@ -201,7 +234,9 @@ struct ProfileViewTests {
         container.register(LogManager.self) {  logManager }
         
         // Given
-        let viewModel = ProfileViewModel(container: container)
+        let viewModel = ProfileViewModel(
+            interactor: ProdProfileInteractor(container: container)
+        )
         
         // When
         viewModel.onNewAvatarButtonPressed()
@@ -237,7 +272,9 @@ struct ProfileViewTests {
         container.register(LogManager.self) {  logManager }
         
         // Given
-        let viewModel = ProfileViewModel(container: container)
+        let viewModel = ProfileViewModel(
+            interactor: ProdProfileInteractor(container: container)
+        )
         
         // When
         let avatar = AvatarModel.mock
@@ -285,7 +322,9 @@ struct ProfileViewTests {
         container.register(LogManager.self) {  logManager }
         
         // Given
-        let viewModel = ProfileViewModel(container: container)
+        let viewModel = ProfileViewModel(
+            interactor: ProdProfileInteractor(container: container)
+        )
         
         // When
         await viewModel.loadData()
@@ -337,7 +376,9 @@ struct ProfileViewTests {
         container.register(LogManager.self) {  logManager }
         
         // Given
-        let viewModel = ProfileViewModel(container: container)
+        let viewModel = ProfileViewModel(
+            interactor: ProdProfileInteractor(container: container)
+        )
         
         // When
         await viewModel.loadData()
