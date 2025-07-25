@@ -18,6 +18,14 @@ struct TabBarView: View {
                     Label("Explore", systemImage: "eyes")
                 }
             ChatsView()
+            ExploreView(
+                viewModel: ExploreViewModel(
+                    interactor: CoreInteractor(container: container)
+                )
+            )
+            .tabItem {
+                Label("Explore", systemImage: "eyes")
+            }
                 .tabItem {
                     Label(
                         "Chats",
@@ -26,7 +34,7 @@ struct TabBarView: View {
                 }
             ProfileView(
                 viewModel: ProfileViewModel(
-                    interactor: ProdProfileInteractor(container: container)
+                    interactor: CoreInteractor(container: container)
                 )
             )
             .tabItem {
