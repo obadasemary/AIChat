@@ -17,3 +17,5 @@ protocol ProfileInteractor {
     
     func trackEvent(event: any LoggableEvent)
 }
+
+extension CoreInteractor: ProfileInteractor {}
