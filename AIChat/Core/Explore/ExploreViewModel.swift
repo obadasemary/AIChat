@@ -7,15 +7,29 @@
 
 import Foundation
 
+@MainActor
+protocol ExploreInteractor {
+    var categoryRowTest: CategoryRowTestOption { get }
+    var createAccountTest: Bool { get }
+    
+    var auth: UserAuthInfo? { get }
+    
+    func getFeaturedAvatars() async throws -> [AvatarModel]
+    func getPopularAvatars() async throws -> [AvatarModel]
+    
+    func trackEvent(event: LoggableEvent)
+    func schedulePushNotificationForTheNextWeek()
+    func canRequestAuthorization() async -> Bool
+    func reuestAuthorization() async throws -> Bool
+}
+
+extension CoreInteractor: ExploreInteractor {}
+
 @Observable
 @MainActor
 class ExploreViewModel {
     
-    private let authManager: AuthManager
-    private let avatarManager: AvatarManager
-    private let logManager: LogManager
-    private let pushManager: PushManager
-    private let abTestManager: ABTestManager
+    private let interactor: ExploreInteractor
     
     private(set) var categories: [CharacterOption] = CharacterOption.allCases
     private(set) var featuredAvatars: [AvatarModel] = []
@@ -37,17 +51,13 @@ class ExploreViewModel {
     }
     
     var categoryRowTest: CategoryRowTestOption {
-        abTestManager.activeTests.categoryRowTest
+        interactor.categoryRowTest
     }
     
     var path: [NavigationPathOption] = []
     
-    init(container: DependencyContainer) {
-        self.authManager = container.resolve(AuthManager.self)!
-        self.avatarManager = container.resolve(AvatarManager.self)!
-        self.logManager = container.resolve(LogManager.self)!
-        self.pushManager = container.resolve(PushManager.self)!
-        self.abTestManager = container.resolve(ABTestManager.self)!
+    init(interactor: ExploreInteractor) {
+        self.interactor = interactor
     }
 }
 
@@ -57,17 +67,17 @@ extension ExploreViewModel {
     
     func loadFeaturedAvatars(force: Bool = false) async {
         guard featuredAvatars.isEmpty || force else { return }
-        logManager.trackEvent(event: Event.loadFeaturedAvatarsStart)
+        interactor.trackEvent(event: Event.loadFeaturedAvatarsStart)
         do {
-            featuredAvatars = try await avatarManager.getFeaturedAvatars()
-            logManager
+            featuredAvatars = try await interactor.getFeaturedAvatars()
+            interactor
                 .trackEvent(
                     event: Event.loadFeaturedAvatarsSuccess(
                         count: featuredAvatars.count
                     )
                 )
         } catch {
-            logManager
+            interactor
                 .trackEvent(
                     event: Event.loadFeaturedAvatarsFail(
                         error: error
@@ -82,18 +92,18 @@ extension ExploreViewModel {
         guard popularAvatars.isEmpty || force else {
             return
         }
-        logManager.trackEvent(event: Event.loadPopularAvatarsStart)
+        interactor.trackEvent(event: Event.loadPopularAvatarsStart)
         
         do {
-            popularAvatars = try await avatarManager.getPopularAvatars()
-            logManager
+            popularAvatars = try await interactor.getPopularAvatars()
+            interactor
                 .trackEvent(
                     event: Event.loadPopularAvatarsSuccess(
                         count: popularAvatars.count
                     )
                 )
         } catch {
-            logManager
+            interactor
                 .trackEvent(
                     event: Event.loadPopularAvatarsFail(
                         error: error
@@ -111,21 +121,21 @@ extension ExploreViewModel {
     }
     
     func handleShowPushNotificationButton() async {
-        showNotificationButton = await pushManager.canRequestAuthorization()
+        showNotificationButton = await interactor.canRequestAuthorization()
     }
     
     func schedulePushNotifications() {
-        pushManager.schedulePushNotificationForTheNextWeek()
+        interactor.schedulePushNotificationForTheNextWeek()
     }
     
     func handleDeepLink(_ url: URL) {
-        logManager.trackEvent(event: Event.deepLinkStart)
+        interactor.trackEvent(event: Event.deepLinkStart)
         
         guard
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
             let queryItems = components.queryItems
         else {
-            logManager.trackEvent(event: Event.deepLinkNoQueryItems)
+            interactor.trackEvent(event: Event.deepLinkNoQueryItems)
             return
         }
         
@@ -139,12 +149,12 @@ extension ExploreViewModel {
                             imageName: imageName
                         )
                     )
-                logManager.trackEvent(event: Event.deepLinkCategory(category: category))
+                interactor.trackEvent(event: Event.deepLinkCategory(category: category))
             }
             return
         }
         
-        logManager.trackEvent(event: Event.deepLinkUnknown)
+        interactor.trackEvent(event: Event.deepLinkUnknown)
     }
     
     func showCreateAccountScreenIfNeeded() {
@@ -152,8 +162,8 @@ extension ExploreViewModel {
             try? await Task.sleep(for: .seconds(1))
             
             guard
-                authManager.auth?.isAnonymous == true &&
-                abTestManager.activeTests.createAccountTest == true
+                interactor.auth?.isAnonymous == true &&
+                    interactor.createAccountTest == true
             else {
                 return
             }
@@ -168,7 +178,7 @@ extension ExploreViewModel {
     
     func onDevSettingsButtonTapped() {
         showDevSettings = true
-        logManager
+        interactor
             .trackEvent(
                 event: Event.devSettingsPressed
             )
@@ -176,7 +186,7 @@ extension ExploreViewModel {
     
     func onPushNotificationButtonTapped() {
         showPushNotificationModal = true
-        logManager
+        interactor
             .trackEvent(
                 event: Event.pushNotificationStart
             )
@@ -186,8 +196,8 @@ extension ExploreViewModel {
         showPushNotificationModal = false
         
         Task {
-            let isAuthorized = try await pushManager.reuestAuthorization()
-            logManager
+            let isAuthorized = try await interactor.reuestAuthorization()
+            interactor
                 .trackEvent(
                     event: Event
                         .pushNotificationEnabled(isAuthorized: isAuthorized)
@@ -198,7 +208,7 @@ extension ExploreViewModel {
     
     func onCancelPushNotificationTapped() {
         showPushNotificationModal = false
-        logManager
+        interactor
             .trackEvent(
                 event: Event.pushNotificationCancel
             )
@@ -206,7 +216,7 @@ extension ExploreViewModel {
     
     func onAvaterSelected(avatar: AvatarModel) {
         path.append(.chat(avatarId: avatar.avatarId, chat: nil))
-        logManager
+        interactor
             .trackEvent(
                 event: Event.avatarPressed(
                     avatar: avatar
@@ -225,7 +235,7 @@ extension ExploreViewModel {
                     imageName: imageName
                 )
             )
-        logManager
+        interactor
             .trackEvent(
                 event: Event.categoryPressed(
                     category: category
@@ -254,7 +264,6 @@ extension ExploreViewModel {
         case deepLinkStart
         case deepLinkNoQueryItems
         case deepLinkCategory(category: CharacterOption)
-//        case deepLinkAvatar(avatarId: String)
         case deepLinkUnknown
 
         var eventName: String {
