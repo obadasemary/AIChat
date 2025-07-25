@@ -45,5 +45,3 @@ extension ProdProfileInteractor: ProfileInteractor {
         logManager.trackEvent(event: event)
     }
 }
-
-extension CoreInteractor: ProfileInteractor {}

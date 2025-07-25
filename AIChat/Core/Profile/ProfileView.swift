@@ -126,7 +126,7 @@ private extension ProfileView {
 #Preview {
     ProfileView(
         viewModel: ProfileViewModel(
-            interactor: ProdProfileInteractor(container: DevPreview.shared.container)
+            interactor: CoreInteractor(container: DevPreview.shared.container)
         )
     )
     .previewEnvironment()
