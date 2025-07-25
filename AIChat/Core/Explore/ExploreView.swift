@@ -227,8 +227,12 @@ private extension ExploreView {
                 remoteService: MockAvatarService()
             )
         )
-    return ExploreView(viewModel: ExploreViewModel(container: container))
-        .previewEnvironment()
+    return ExploreView(
+        viewModel: ExploreViewModel(
+            interactor: CoreInteractor(container: container)
+        )
+    )
+    .previewEnvironment()
 }
 
 #Preview("Mock Has Data w/ create Acct Test") {
@@ -253,8 +257,12 @@ private extension ExploreView {
             ABTestManager(service: MockABTestService(createAccountTest: true))
         )
     
-    return ExploreView(viewModel: ExploreViewModel(container: container))
-        .previewEnvironment()
+    return ExploreView(
+        viewModel: ExploreViewModel(
+            interactor: CoreInteractor(container: container)
+        )
+    )
+    .previewEnvironment()
 }
 
 #Preview("CategoryRowTest: Original") {
@@ -265,8 +273,12 @@ private extension ExploreView {
             ABTestManager(service: MockABTestService(categoryRowTest: .original))
         )
     
-    return ExploreView(viewModel: ExploreViewModel(container: container))
-        .previewEnvironment()
+    return ExploreView(
+        viewModel: ExploreViewModel(
+            interactor: CoreInteractor(container: container)
+        )
+    )
+    .previewEnvironment()
 }
 
 #Preview("CategoryRowTest: Top") {
@@ -277,8 +289,12 @@ private extension ExploreView {
             ABTestManager(service: MockABTestService(categoryRowTest: .top))
         )
     
-    return ExploreView(viewModel: ExploreViewModel(container: container))
-        .previewEnvironment()
+    return ExploreView(
+        viewModel: ExploreViewModel(
+            interactor: CoreInteractor(container: container)
+        )
+    )
+    .previewEnvironment()
 }
 
 #Preview("CategoryRowTest: Hidden") {
@@ -289,8 +305,12 @@ private extension ExploreView {
             ABTestManager(service: MockABTestService(categoryRowTest: .hidden))
         )
     
-    return ExploreView(viewModel: ExploreViewModel(container: container))
-        .previewEnvironment()
+    return ExploreView(
+        viewModel: ExploreViewModel(
+            interactor: CoreInteractor(container: container)
+        )
+    )
+    .previewEnvironment()
 }
 
 #Preview("Mock No Data") {
@@ -302,8 +322,12 @@ private extension ExploreView {
                 remoteService: MockAvatarService(avatars: [])
             )
         )
-    return ExploreView(viewModel: ExploreViewModel(container: container))
-        .previewEnvironment()
+    return ExploreView(
+        viewModel: ExploreViewModel(
+            interactor: CoreInteractor(container: container)
+        )
+    )
+    .previewEnvironment()
 }
 
 #Preview("Mock Slow Loading") {
@@ -315,8 +339,12 @@ private extension ExploreView {
                 remoteService: MockAvatarService(delay: 2)
             )
         )
-    return ExploreView(viewModel: ExploreViewModel(container: container))
-        .previewEnvironment()
+    return ExploreView(
+        viewModel: ExploreViewModel(
+            interactor: CoreInteractor(container: container)
+        )
+    )
+    .previewEnvironment()
 }
 
 #Preview("Remote Service") {
@@ -330,6 +358,10 @@ private extension ExploreView {
                 )
             )
         )
-    return ExploreView(viewModel: ExploreViewModel(container: container))
-        .previewEnvironment()
+    return ExploreView(
+        viewModel: ExploreViewModel(
+            interactor: CoreInteractor(container: container)
+        )
+    )
+    .previewEnvironment()
 }
