@@ -11,10 +11,7 @@ import Foundation
 @MainActor
 class ChatsViewModel {
     
-    private let authManager: AuthManager
-    private let avatarManager: AvatarManager
-    private let chatManager: ChatManager
-    private let logManager: LogManager
+    private let chatsUseCase: ChatsUseCaseProtocol
     
     private(set) var currentUserId: String?
     private(set) var chats: [ChatModel] = []
@@ -23,11 +20,8 @@ class ChatsViewModel {
     
     var path: [NavigationPathOption] = []
     
-    init(container: DependencyContainer) {
-        self.authManager = container.resolve(AuthManager.self)!
-        self.avatarManager = container.resolve(AvatarManager.self)!
-        self.chatManager = container.resolve(ChatManager.self)!
-        self.logManager = container.resolve(LogManager.self)!
+    init(chatsUseCase: ChatsUseCaseProtocol) {
+        self.chatsUseCase = chatsUseCase
     }
 }
 
@@ -35,42 +29,52 @@ class ChatsViewModel {
 extension ChatsViewModel {
     
     func getAuthId() async throws -> String {
-        try authManager.getAuthId()
+        try await chatsUseCase.getAuthId()
     }
     
     func loadRecentAvatars() {
-        logManager.trackEvent(event: Event.loadAvatarsStart)
+        chatsUseCase.trackEvent(event: Event.loadAvatarsStart)
         
         do {
-            recentAvatars = try avatarManager.getRecentAvatars()
-            logManager.trackEvent(event: Event.loadAvatarsSuccess(avatarCount: recentAvatars.count))
+            recentAvatars = try chatsUseCase.getRecentAvatars()
+            chatsUseCase
+                .trackEvent(
+                    event: Event.loadAvatarsSuccess(
+                        avatarCount: recentAvatars.count
+                    )
+                )
         } catch {
             print("Faild to load recents avatars: \(error)")
-            logManager.trackEvent(event: Event.loadAvatarsFail(error: error))
+            chatsUseCase.trackEvent(event: Event.loadAvatarsFail(error: error))
         }
     }
     
     func loadChats() async {
-        logManager.trackEvent(event: Event.loadChatsStart)
+        chatsUseCase.trackEvent(event: Event.loadChatsStart)
         do {
-            let uesrId = try authManager.getAuthId()
+            let uesrId = try await chatsUseCase.getAuthId()
             currentUserId = uesrId
-            chats = try await chatManager
+            chats = try await chatsUseCase
                 .getAllChats(userId: uesrId)
                 .sortedByKeyPath(keyPath: \.dateModified, ascending: false)
-            logManager.trackEvent(event: Event.loadChatsSuccess(chatsCount: chats.count))
+            chatsUseCase
+                .trackEvent(
+                    event: Event.loadChatsSuccess(
+                        chatsCount: chats.count
+                    )
+                )
         } catch {
-            logManager.trackEvent(event: Event.loadChatsFail(error: error))
+            chatsUseCase.trackEvent(event: Event.loadChatsFail(error: error))
         }
         isLoadingChats = false
     }
     
     func getAvatar(id: String) async throws -> AvatarModel? {
-        try? await avatarManager.getAvatar(id: id)
+        try? await chatsUseCase.getAvatar(id: id)
     }
     
     func getLastChatMessage(chatId: String) async throws -> ChatMessageModel? {
-        try? await chatManager.getLastChatMessage(chatId: chatId)
+        try? await chatsUseCase.getLastChatMessage(chatId: chatId)
     }
 }
 
@@ -79,12 +83,12 @@ extension ChatsViewModel {
     
     func onChatSelected(chat: ChatModel) {
         path.append(.chat(avatarId: chat.avatarId, chat: chat))
-        logManager.trackEvent(event: Event.chatPressed(chat: chat))
+        chatsUseCase.trackEvent(event: Event.chatPressed(chat: chat))
     }
     
     func onRecentsAvatarsTapped(avatar: AvatarModel) {
         path.append(.chat(avatarId: avatar.avatarId, chat: nil))
-        logManager.trackEvent(event: Event.avatarPressed(avatar: avatar))
+        chatsUseCase.trackEvent(event: Event.avatarPressed(avatar: avatar))
     }
 }
 
