@@ -27,7 +27,7 @@ extension CoreInteractor: ExploreInteractor {}
 
 @Observable
 @MainActor
-class ExploreViewModel {
+final class ExploreViewModel {
     
     private let interactor: ExploreInteractor
     
@@ -245,7 +245,7 @@ extension ExploreViewModel {
 }
 
 // MARK: - Event
-extension ExploreViewModel {
+private extension ExploreViewModel {
     
     enum Event: LoggableEvent {
         case devSettingsPressed

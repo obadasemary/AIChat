@@ -9,7 +9,7 @@ import Foundation
 
 @Observable
 @MainActor
-class ProfileViewModel {
+final class ProfileViewModel {
     
     private let interactor: ProfileInteractor
     
