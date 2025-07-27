@@ -9,9 +9,9 @@ import SwiftUI
 
 struct CreateAvatarView: View {
     
-    @Environment(\.dismiss) private var dismiss
-    
     @State var viewModel: CreateAvatarViewModel
+    
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {
@@ -151,15 +151,13 @@ private extension CreateAvatarView {
     }
 }
 
-// MARK: - Action
-private extension CreateAvatarView {
-    
-    
-}
-
 #Preview {
     CreateAvatarView(
-        viewModel: CreateAvatarViewModel(container: DevPreview.shared.container)
+        viewModel: CreateAvatarViewModel(
+            createAvatarUseCase: CreateAvatarUseCase(
+                container: DevPreview.shared.container
+            )
+        )
     )
     .previewEnvironment()
 }
