@@ -25,7 +25,11 @@ struct NavigationDestinationForCoreModuleViewModifier: ViewModifier {
                     ChatView(avatarId: avatarId, chat: chat)
                 case .character(category: let category, imageName: let imageName):
                     CategoryListView(
-                        viewModel: CategoryListViewModel(container: container),
+                        viewModel: CategoryListViewModel(
+                            categoryListUseCase: CategoryListUseCase(
+                                container: container
+                            )
+                        ),
                         category: category,
                         imageName: imageName,
                         path: path
