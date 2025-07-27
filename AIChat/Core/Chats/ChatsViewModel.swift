@@ -28,10 +28,6 @@ class ChatsViewModel {
 // MARK: - Load
 extension ChatsViewModel {
     
-    func getAuthId() async throws -> String {
-        try await chatsUseCase.getAuthId()
-    }
-    
     func loadRecentAvatars() {
         chatsUseCase.trackEvent(event: Event.loadAvatarsStart)
         
@@ -67,14 +63,6 @@ extension ChatsViewModel {
             chatsUseCase.trackEvent(event: Event.loadChatsFail(error: error))
         }
         isLoadingChats = false
-    }
-    
-    func getAvatar(id: String) async throws -> AvatarModel? {
-        try? await chatsUseCase.getAvatar(id: id)
-    }
-    
-    func getLastChatMessage(chatId: String) async throws -> ChatMessageModel? {
-        try? await chatsUseCase.getLastChatMessage(chatId: chatId)
     }
 }
 
