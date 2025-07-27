@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ExploreView: View {
     
+    @Environment(DependencyContainer.self) private var container
     @State var viewModel: ExploreViewModel
     
     var body: some View {
@@ -57,8 +58,12 @@ struct ExploreView: View {
                 DevSettingsView()
             }
             .sheet(isPresented: $viewModel.showCreateAccountView) {
-                CreateAccountView()
-                    .presentationDetents([.medium])
+                CreateAccountView(
+                    viewModel: CreateAccountViewModel(
+                        createAccountUseCase: CreateAccountUseCase(container: container)
+                    )
+                )
+                .presentationDetents([.medium])
             }
             .navigationDestinationForCoreModule(path: $viewModel.path)
             .showModal(showModal: $viewModel.showPushNotificationModal) {
