@@ -37,7 +37,11 @@ struct ProfileView: View {
             }
         } content: {
             CreateAvatarView(
-                viewModel: CreateAvatarViewModel(container: container)
+                viewModel: CreateAvatarViewModel(
+                    createAvatarUseCase: CreateAvatarUseCase(
+                        container: container
+                    )
+                )
             )
         }
         .task {
