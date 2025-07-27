@@ -11,6 +11,7 @@ struct WelcomeView: View {
     
     @Environment(AppState.self) private var root
     @Environment(LogManager.self) private var logManager
+    @Environment(DependencyContainer.self) private var container
     
     @State var imageName: String = Constants.randomImage
     @State private var showSignInView: Bool = false
@@ -33,6 +34,11 @@ struct WelcomeView: View {
         .screenAppearAnalytics(name: "WelcomeView")
         .sheet(isPresented: $showSignInView) {
             CreateAccountView(
+                viewModel: CreateAccountViewModel(
+                    createAccountUseCase: CreateAccountUseCase(
+                        container: container
+                    )
+                ),
                 title: "Sign In",
                 subtitle: "Connect to an existing account",
                 onDidSignIn: { isNewUser in
