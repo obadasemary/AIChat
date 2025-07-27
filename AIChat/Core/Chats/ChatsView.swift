@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ChatsView: View {
-    
+    @Environment(DependencyContainer.self) private var container
     @State var viewModel: ChatsViewModel
     
     @Environment(\.colorScheme) var colorScheme
@@ -98,20 +98,18 @@ private extension ChatsView {
                 contentUnavailableView
             } else {
                 ForEach(viewModel.chats) { chat in
-                    if let userId = viewModel.currentUserId {
-                        ChatRowCellViewBuilder(
-                            currentUserId: userId,
-                            chat: chat
-                        ) {
-                            try? await viewModel.getAvatar(id: chat.avatarId)
-                        } getLastChatMessage: {
-                            try? await viewModel.getLastChatMessage(chatId: chat.id)
-                        }
-                        .anyButton(.highlight) {
-                            viewModel.onChatSelected(chat: chat)
-                        }
-                        .removeListRowFormatting()
+                    ChatRowCellViewBuilder(
+                        viewModel: ChatRowCellViewModel(
+                            chatRowCellUseCase: ChatRowCellUseCase(
+                                container: container
+                            )
+                        ),
+                        chat: chat
+                    )
+                    .anyButton(.highlight) {
+                        viewModel.onChatSelected(chat: chat)
                     }
+                    .removeListRowFormatting()
                 }
             }
         } header: {
@@ -122,35 +120,6 @@ private extension ChatsView {
 
 #Preview("Has Data") {
     let container = DevPreview.shared.container
-    
-    container
-        .register(
-            AuthManager.self,
-            AuthManager(
-                service: MockAuthService()
-            )
-        )
-    container
-        .register(
-            AvatarManager.self,
-            AvatarManager(
-                remoteService: MockAvatarService()
-            )
-        )
-    container
-        .register(
-            ChatManager.self,
-            ChatManager(
-                service: MockChatService(
-                    chats: [.mock],
-                    messages: [ChatMessageModel.mock],
-                    delay: 0.5,
-                    showError: false
-                )
-            )
-        )
-    container
-        .register(LogManager.self, LogManager(services: []))
     
     return ChatsView(
         viewModel: ChatsViewModel(
@@ -190,19 +159,8 @@ private extension ChatsView {
 #Preview("Slow loading chats") {
     let container = DevPreview.shared.container
     
-    container.register(AuthManager.self) {
-        AuthManager(service: MockAuthService())
-    }
-    container.register(AvatarManager.self) {
-        AvatarManager(
-            remoteService: MockAvatarService()
-        )
-    }
     container.register(ChatManager.self) {
-        ChatManager(service: MockChatService(delay: 5.0))
-    }
-    container.register(LogManager.self) {
-        LogManager(services: [])
+        ChatManager(service: MockChatService(delay: 5))
     }
     
     return ChatsView(
