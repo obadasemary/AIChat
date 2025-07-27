@@ -88,7 +88,11 @@ private extension CategoryListView {
     )
     
     return CategoryListView(
-        viewModel: CategoryListViewModel(container: container),
+        viewModel: CategoryListViewModel(
+            categoryListUseCase: CategoryListUseCase(
+                container: container
+            )
+        ),
         path: .constant([])
     )
     .previewEnvironment()
@@ -104,7 +108,11 @@ private extension CategoryListView {
     )
     
     return CategoryListView(
-        viewModel: CategoryListViewModel(container: container),
+        viewModel: CategoryListViewModel(
+            categoryListUseCase: CategoryListUseCase(
+                container: container
+            )
+        ),
         path: .constant([])
     )
     .previewEnvironment()
@@ -120,7 +128,11 @@ private extension CategoryListView {
     )
     
     return CategoryListView(
-        viewModel: CategoryListViewModel(container: container),
+        viewModel: CategoryListViewModel(
+            categoryListUseCase: CategoryListUseCase(
+                container: container
+            )
+        ),
         path: .constant([])
     )
     .previewEnvironment()
@@ -136,7 +148,11 @@ private extension CategoryListView {
     )
     
     return CategoryListView(
-        viewModel: CategoryListViewModel(container: container),
+        viewModel: CategoryListViewModel(
+            categoryListUseCase: CategoryListUseCase(
+                container: container
+            )
+        ),
         path: .constant([])
     )
     .previewEnvironment()
