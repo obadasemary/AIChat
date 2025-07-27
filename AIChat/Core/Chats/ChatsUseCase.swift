@@ -37,14 +37,6 @@ extension ChatsUseCase: ChatsUseCaseProtocol {
         try await chatManager.getAllChats(userId: userId)
     }
 
-    func getAvatar(id: String) async throws -> AvatarModel? {
-        try await avatarManager.getAvatar(id: id)
-    }
-
-    func getLastChatMessage(chatId: String) async throws -> ChatMessageModel? {
-        try await chatManager.getLastChatMessage(chatId: chatId)
-    }
-
     func trackEvent(event: any LoggableEvent) {
         logManager.trackEvent(event: event)
     }
