@@ -21,13 +21,17 @@ struct TabBarView: View {
             .tabItem {
                 Label("Explore", systemImage: "eyes")
             }
-            ChatsView(viewModel: ChatsViewModel(container: container))
-                .tabItem {
-                    Label(
-                        "Chats",
-                        systemImage: "bubble.left.and.bubble.right"
-                    )
-                }
+            ChatsView(
+                viewModel: ChatsViewModel(
+                    chatsUseCase: ChatsUseCase(container: container)
+                )
+            )
+            .tabItem {
+                Label(
+                    "Chats",
+                    systemImage: "bubble.left.and.bubble.right"
+                )
+            }
             ProfileView(
                 viewModel: ProfileViewModel(
                     interactor: CoreInteractor(container: container)
