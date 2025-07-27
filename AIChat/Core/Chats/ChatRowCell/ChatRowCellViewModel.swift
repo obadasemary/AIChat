@@ -9,7 +9,7 @@ import Foundation
 
 @Observable
 @MainActor
-class ChatRowCellViewModel {
+final class ChatRowCellViewModel {
     
     private let chatRowCellUseCase: ChatRowCellUseCaseProtocol
     

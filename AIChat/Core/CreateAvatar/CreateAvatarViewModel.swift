@@ -9,7 +9,7 @@ import SwiftUI
 
 @Observable
 @MainActor
-class CreateAvatarViewModel {
+final class CreateAvatarViewModel {
     
     private let createAvatarUseCase: CreateAvatarUseCaseProtocol
     
@@ -109,7 +109,7 @@ extension CreateAvatarViewModel {
 }
 
 // MARK: - Event
-extension CreateAvatarViewModel {
+private extension CreateAvatarViewModel {
     
     enum Event: LoggableEvent {
         case backButtonPressed

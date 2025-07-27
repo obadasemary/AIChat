@@ -9,7 +9,7 @@ import SwiftUI
 
 @Observable
 @MainActor
-class CategoryListViewModel {
+final class CategoryListViewModel {
     
     private let categoryListUseCase: CategoryListUseCaseProtocol
     
@@ -52,7 +52,7 @@ extension CategoryListViewModel {
 }
 
 // MARK: - Event
-extension CategoryListViewModel {
+private extension CategoryListViewModel {
     
     enum Event: LoggableEvent {
         case loadAvatarsStart

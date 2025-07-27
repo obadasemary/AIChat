@@ -9,7 +9,7 @@ import Foundation
 
 @Observable
 @MainActor
-class ChatsViewModel {
+final class ChatsViewModel {
     
     private let chatsUseCase: ChatsUseCaseProtocol
     
@@ -40,7 +40,6 @@ extension ChatsViewModel {
                     )
                 )
         } catch {
-            print("Faild to load recents avatars: \(error)")
             chatsUseCase.trackEvent(event: Event.loadAvatarsFail(error: error))
         }
     }
