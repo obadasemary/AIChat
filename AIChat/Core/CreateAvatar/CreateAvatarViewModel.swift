@@ -11,10 +11,7 @@ import SwiftUI
 @MainActor
 class CreateAvatarViewModel {
     
-    private let authManager: AuthManager
-    private let aiManager: AIManager
-    private let avatarManager: AvatarManager
-    private let logManager: LogManager
+    private let createAvatarUseCase: CreateAvatarUseCaseProtocol
     
     private(set) var isGenerating: Bool = false
     private(set) var generatedImage: UIImage?
@@ -27,11 +24,8 @@ class CreateAvatarViewModel {
     var avatarName: String = ""
     var showAlert: AnyAppAlert?
     
-    init(container: DependencyContainer) {
-        self.authManager = container.resolve(AuthManager.self)!
-        self.aiManager = container.resolve(AIManager.self)!
-        self.avatarManager = container.resolve(AvatarManager.self)!
-        self.logManager = container.resolve(LogManager.self)!
+    init(createAvatarUseCase: CreateAvatarUseCaseProtocol) {
+        self.createAvatarUseCase = createAvatarUseCase
     }
 }
 
@@ -39,14 +33,14 @@ class CreateAvatarViewModel {
 extension CreateAvatarViewModel {
     
     func onDismissButtonTapped(onDismiss: @escaping () -> Void) {
-        logManager.trackEvent(event: Event.backButtonPressed)
+        createAvatarUseCase.trackEvent(event: Event.backButtonPressed)
         onDismiss()
     }
     
     // swiftlint:disable force_unwrapping
     func onGenerateImageTapped() {
         isGenerating = true
-        logManager.trackEvent(event: Event.generateImageStart)
+        createAvatarUseCase.trackEvent(event: Event.generateImageStart)
         Task {
             do {
                 let avatarDescriptionBuilder = AvatarDescriptionBuilder(
@@ -55,22 +49,18 @@ extension CreateAvatarViewModel {
                     characterLocation: characterLocation
                 )
                 
-                let (data, _) = try await URLSession.shared.data(from: URL(string: Constants.randomImage)!)
-                if let image = UIImage(data: data) {
-                    // Use `image` on the main thread
-                    await MainActor.run {
-                        self.generatedImage = image
-                    }
-                }
-//                generatedImage = try await aiManager.generateImage(input: prompt.characterDescription)
-                logManager
+                generatedImage = try await createAvatarUseCase.generateImage()
+//                let prompt = avatarDescriptionBuilder.characterDescription
+//                generatedImage = try await createAvatarUseCase.generateImage(input: prompt)
+                createAvatarUseCase
                     .trackEvent(
                         event: Event.generateImageSuccess(
                             avatarDescriptionBuilder: avatarDescriptionBuilder
                         )
                     )
             } catch {
-                logManager.trackEvent(event: Event.generateImageFail(error: error))
+                createAvatarUseCase
+                    .trackEvent(event: Event.generateImageFail(error: error))
             }
             isGenerating = false
         }
@@ -78,13 +68,13 @@ extension CreateAvatarViewModel {
     // swiftlint:enable force_unwrapping
     
     func onSaveTapped(onDismiss: @escaping () -> Void) {
-        logManager.trackEvent(event: Event.saveAvatarStart)
+        createAvatarUseCase.trackEvent(event: Event.saveAvatarStart)
         guard let generatedImage else { return }
         isSaving = true
         Task {
             do {
                 try TextValidationHelper.checkIfTextIsValid(text: avatarName)
-                let userId = try authManager.getAuthId()
+                let userId = try createAvatarUseCase.getAuthId()
                 
                 let avatar = AvatarModel.newAvatar(
                     name: avatarName,
@@ -94,9 +84,9 @@ extension CreateAvatarViewModel {
                     authorId: userId
                 )
                 
-                try await avatarManager
+                try await createAvatarUseCase
                     .createAvatar(avatar: avatar, image: generatedImage)
-                logManager
+                createAvatarUseCase
                     .trackEvent(
                         event: Event.saveAvatarSuccess(
                             avatar: avatar
@@ -107,7 +97,7 @@ extension CreateAvatarViewModel {
                 isSaving = false
             } catch {
                 showAlert = AnyAppAlert(error: error)
-                logManager
+                createAvatarUseCase
                     .trackEvent(
                         event: Event.saveAvatarFail(
                             error: error
