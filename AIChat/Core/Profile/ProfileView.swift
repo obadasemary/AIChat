@@ -123,10 +123,21 @@ private extension ProfileView {
     }
 }
 
-#Preview {
+#Preview("CoreInteractor") {
     ProfileView(
         viewModel: ProfileViewModel(
             interactor: CoreInteractor(container: DevPreview.shared.container)
+        )
+    )
+    .previewEnvironment()
+}
+
+#Preview("ProdProfileInteractor") {
+    ProfileView(
+        viewModel: ProfileViewModel(
+            interactor: ProdProfileInteractor(
+                container: DevPreview.shared.container
+            )
         )
     )
     .previewEnvironment()
