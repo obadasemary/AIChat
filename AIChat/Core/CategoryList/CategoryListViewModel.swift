@@ -11,17 +11,15 @@ import SwiftUI
 @MainActor
 class CategoryListViewModel {
     
-    private let avatarManager: AvatarManager
-    private let logManager: LogManager
+    private let categoryListUseCase: CategoryListUseCaseProtocol
     
     private(set) var avatars: [AvatarModel] = []
     private(set) var isLoading: Bool = true
     
     var showAlert: AnyAppAlert?
     
-    init(container: DependencyContainer) {
-        self.avatarManager = container.resolve(AvatarManager.self)!
-        self.logManager = container.resolve(LogManager.self)!
+    init(categoryListUseCase: CategoryListUseCaseProtocol) {
+        self.categoryListUseCase = categoryListUseCase
     }
 }
 
@@ -29,15 +27,15 @@ class CategoryListViewModel {
 extension CategoryListViewModel {
     
     func loadAvatars(category: CharacterOption) async {
-        logManager.trackEvent(event: Event.loadAvatarsStart)
+        categoryListUseCase.trackEvent(event: Event.loadAvatarsStart)
         do {
-            avatars = try await avatarManager
+            avatars = try await categoryListUseCase
                 .getAvatarsForCategory(category: category)
-            logManager
+            categoryListUseCase
                 .trackEvent(event: Event.loadAvatarsSuccess)
         } catch {
             showAlert = AnyAppAlert(error: error)
-            logManager
+            categoryListUseCase
                 .trackEvent(event: Event.loadAvatarsFail(error: error))
         }
         isLoading = false
@@ -49,7 +47,7 @@ extension CategoryListViewModel {
     
     func onAvatarTapped(avatar: AvatarModel, path: Binding<[NavigationPathOption]>) {
         path.wrappedValue.append(.chat(avatarId: avatar.avatarId, chat: nil))
-        logManager.trackEvent(event: Event.avatarTapped(avatar: avatar))
+        categoryListUseCase.trackEvent(event: Event.avatarTapped(avatar: avatar))
     }
 }
 
