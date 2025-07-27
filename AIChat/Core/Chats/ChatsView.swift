@@ -152,8 +152,12 @@ private extension ChatsView {
     container
         .register(LogManager.self, LogManager(services: []))
     
-    return ChatsView(viewModel: ChatsViewModel(container: container))
-        .previewEnvironment()
+    return ChatsView(
+        viewModel: ChatsViewModel(
+            chatsUseCase: ChatsUseCase(container: container)
+        )
+    )
+    .previewEnvironment()
 }
 
 #Preview("No Data") {
@@ -175,8 +179,12 @@ private extension ChatsView {
         LogManager(services: [])
     }
     
-    return ChatsView(viewModel: ChatsViewModel(container: container))
-        .previewEnvironment()
+    return ChatsView(
+        viewModel: ChatsViewModel(
+            chatsUseCase: ChatsUseCase(container: container)
+        )
+    )
+    .previewEnvironment()
 }
 
 #Preview("Slow loading chats") {
@@ -197,6 +205,10 @@ private extension ChatsView {
         LogManager(services: [])
     }
     
-    return ChatsView(viewModel: ChatsViewModel(container: container))
-        .previewEnvironment()
+    return ChatsView(
+        viewModel: ChatsViewModel(
+            chatsUseCase: ChatsUseCase(container: container)
+        )
+    )
+    .previewEnvironment()
 }
