@@ -29,6 +29,8 @@ class OnboardingColorViewModel {
         .brown
     ]
     
+    var path: [OnboardingPathOption] = []
+    
     init(onboardingColorUseCase: OnboardingColorUseCaseProtocol) {
         self.onboardingColorUseCase = onboardingColorUseCase
     }
@@ -40,6 +42,11 @@ extension OnboardingColorViewModel {
         selectedColor = color
         onboardingColorUseCase
             .trackEvent(event: Event.onboardingColorSelected)
+    }
+    
+    func onContinuePress(path: Binding<[OnboardingPathOption]>) {
+        guard let selectedColor else { return }
+        path.wrappedValue.append(.onboardingComplete(selectedColor: selectedColor))
     }
 }
 

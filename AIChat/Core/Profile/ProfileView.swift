@@ -19,7 +19,7 @@ struct ProfileView: View {
                 myAvatarsSection
             }
             .navigationTitle("Profile")
-            .navigationDestinationForCoreModule(path: $viewModel.path)
+            .navigationDestinationForTabbarModule(path: $viewModel.path)
             .showCustomAlert(alert: $viewModel.showAlert)
             .screenAppearAnalytics(name: "ProfileView")
             .toolbar {

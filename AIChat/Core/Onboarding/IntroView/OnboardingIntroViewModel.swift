@@ -6,10 +6,11 @@
 //
 
 import Foundation
+import SwiftUI
 
 @Observable
 @MainActor
-class OnboardingIntroViewModel {
+final class OnboardingIntroViewModel {
     
     private let OnboardingIntroUseCase: OnboardingIntroUseCaseProtocol
     
@@ -17,7 +18,20 @@ class OnboardingIntroViewModel {
         OnboardingIntroUseCase.onboardingCommunityTest
     }
     
+    var path: [OnboardingPathOption] = []
+    
     init(OnboardingIntroUseCase: OnboardingIntroUseCaseProtocol) {
         self.OnboardingIntroUseCase = OnboardingIntroUseCase
+    }
+}
+
+extension OnboardingIntroViewModel {
+    
+    func onContinuePress(path: Binding<[OnboardingPathOption]>) {
+        if onboardingCommunityTest {
+            path.wrappedValue.append(.onboardingCommunity)
+        } else {
+            path.wrappedValue.append(.onboardingColor)
+        }
     }
 }

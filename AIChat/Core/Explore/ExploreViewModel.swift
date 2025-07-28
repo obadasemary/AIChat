@@ -36,7 +36,7 @@ final class ExploreViewModel {
         interactor.categoryRowTest
     }
     
-    var path: [NavigationPathOption] = []
+    var path: [TabbarPathOption] = []
     
     init(interactor: ExploreInteractor) {
         self.interactor = interactor

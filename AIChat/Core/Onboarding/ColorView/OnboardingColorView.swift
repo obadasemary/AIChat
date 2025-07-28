@@ -11,6 +11,7 @@ struct OnboardingColorView: View {
     
     @Environment(DependencyContainer.self) private var container
     @State var viewModel: OnboardingColorViewModel
+    @Binding var path: [OnboardingPathOption]
     
     var body: some View {
         ScrollView {
@@ -79,20 +80,12 @@ private extension OnboardingColorView {
     }
     
     func ctaButton(selectedColor: Color) -> some View {
-        NavigationLink {
-            OnboardingCompletedView(
-                viewModel: OnboardingCompletedViewModel(
-                    onboardingCompletedUseCase: OnboardingCompletedUseCase(
-                        container: container
-                    )
-                ),
-                selectedColor: selectedColor
-            )
-        } label: {
-            Text("Continue")
-                .callToActionButton()
-        }
-        .accessibilityIdentifier("ContinueButton")
+        Text("Continue")
+            .callToActionButton()
+            .anyButton(.press) {
+                viewModel.onContinuePress(path: $path)
+            }
+            .accessibilityIdentifier("ContinueButton")
     }
 }
 
@@ -104,7 +97,8 @@ private extension OnboardingColorView {
                     container: DevPreview
                         .shared.container
                 )
-            )
+            ),
+            path: .constant([])
         )
     }
     .previewEnvironment()

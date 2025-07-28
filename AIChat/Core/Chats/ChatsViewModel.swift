@@ -18,7 +18,7 @@ final class ChatsViewModel {
     private(set) var recentAvatars: [AvatarModel] = []
     private(set) var isLoadingChats: Bool = true
     
-    var path: [NavigationPathOption] = []
+    var path: [TabbarPathOption] = []
     
     init(chatsUseCase: ChatsUseCaseProtocol) {
         self.chatsUseCase = chatsUseCase

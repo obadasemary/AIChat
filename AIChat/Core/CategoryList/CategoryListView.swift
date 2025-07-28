@@ -14,7 +14,7 @@ struct CategoryListView: View {
     var category: CharacterOption = .alien
     var imageName: String = Constants.randomImage
     
-    @Binding var path: [NavigationPathOption]
+    @Binding var path: [TabbarPathOption]
     
     var body: some View {
         List {
