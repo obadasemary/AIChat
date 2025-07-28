@@ -36,7 +36,13 @@ struct OnboardingIntroView: View {
             
             NavigationLink {
                 if abTestManager.activeTests.onboardingCommunityTest {
-                    OnboardingCommunityView()
+                    OnboardingCommunityView(
+                        viewModel: OnboardingCommunityViewModel(
+                            onboardingCommunityUseCase: OnboardingCommunityUseCase(
+                                container: container
+                            )
+                        )
+                    )
                 } else {
                     OnboardingColorView(
                         viewModel: OnboardingColorViewModel(
