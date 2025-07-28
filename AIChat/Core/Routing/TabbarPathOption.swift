@@ -1,5 +1,5 @@
 //
-//  NavigationPathOption.swift
+//  TabbarPathOption.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 05.06.2025.
@@ -7,19 +7,19 @@
 
 import SwiftUI
 
-enum NavigationPathOption: Hashable {
+enum TabbarPathOption: Hashable {
     case chat(avatarId: String, chat: ChatModel?)
     case character(category: CharacterOption, imageName: String)
 }
 
-struct NavigationDestinationForCoreModuleViewModifier: ViewModifier {
+struct NavigationDestinationForTabbarModuleViewModifier: ViewModifier {
     
     @Environment(DependencyContainer.self) private var container
-    let path: Binding<[NavigationPathOption]>
+    let path: Binding<[TabbarPathOption]>
     
     func body(content: Content) -> some View {
         content
-            .navigationDestination(for: NavigationPathOption.self) { newValue in
+            .navigationDestination(for: TabbarPathOption.self) { newValue in
                 switch newValue {
                 case .chat(avatarId: let avatarId, chat: let chat):
                     ChatView(
@@ -47,7 +47,7 @@ struct NavigationDestinationForCoreModuleViewModifier: ViewModifier {
 
 extension View {
     
-    func navigationDestinationForCoreModule(path: Binding<[NavigationPathOption]>) -> some View {
-        modifier(NavigationDestinationForCoreModuleViewModifier(path: path))
+    func navigationDestinationForTabbarModule(path: Binding<[TabbarPathOption]>) -> some View {
+        modifier(NavigationDestinationForTabbarModuleViewModifier(path: path))
     }
 }
