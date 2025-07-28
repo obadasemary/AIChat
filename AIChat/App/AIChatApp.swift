@@ -18,7 +18,15 @@ struct AIChatApp: App {
                 if Utilities.isUITesting {
                     AppViewForUITesting()
                 } else {
-                    AppView()
+                    AppView(
+                        viewModel: AppViewModel(
+                            appViewUseCase: AppViewUseCase(
+                                container: delegate
+                                    .dependencies
+                                    .container
+                            )
+                        )
+                    )
                 }
             }
             .environment(delegate.dependencies.container)
