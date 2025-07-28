@@ -109,7 +109,6 @@ public struct RootView: View {
             }
         )
     }
-    
 }
 
 #Preview("RootView") {
