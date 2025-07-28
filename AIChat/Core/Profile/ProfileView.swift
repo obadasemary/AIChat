@@ -29,7 +29,11 @@ struct ProfileView: View {
             }
         }
         .sheet(isPresented: $viewModel.showSettingsView) {
-            SettingsView()
+            SettingsView(
+                viewModel: SettingsViewModel(
+                    settingsUseCase: SettingsUseCase(container: container)
+                )
+            )
         }
         .fullScreenCover(isPresented: $viewModel.showCreateAvatarView) {
             Task {
