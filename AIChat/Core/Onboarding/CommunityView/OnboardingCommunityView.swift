@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct OnboardingCommunityView: View {
+    
+    @Environment(DependencyContainer.self) private var container
+    
     var body: some View {
         VStack {
             VStack(spacing: 40) {
@@ -31,7 +34,13 @@ struct OnboardingCommunityView: View {
             .frame(maxHeight: .infinity)
             
             NavigationLink {
-                OnboardingColorView()
+                OnboardingColorView(
+                    viewModel: OnboardingColorViewModel(
+                        onboardingColorUseCase: OnboardingColorUseCase(
+                            container: container
+                        )
+                    )
+                )
             } label: {
                 Text("Continue")
                     .callToActionButton()
