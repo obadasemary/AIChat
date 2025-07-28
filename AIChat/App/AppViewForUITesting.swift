@@ -9,6 +9,8 @@ import SwiftUI
 
 struct AppViewForUITesting: View {
     
+    @Environment(DependencyContainer.self) private var container
+    
     private var startOnCreateAvatar: Bool {
         ProcessInfo
             .processInfo
@@ -23,9 +25,12 @@ struct AppViewForUITesting: View {
                     createAvatarUseCase: CreateAvatarUseCase(container: DevPreview.shared.container)
                 )
             )
-            Text("Fix me")
         } else {
-            AppView()
+            AppView(
+                viewModel: AppViewModel(
+                    appViewUseCase: AppViewUseCase(container: container)
+                )
+            )
         }
     }
 }
