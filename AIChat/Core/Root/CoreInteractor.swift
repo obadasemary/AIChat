@@ -56,9 +56,9 @@ extension CoreInteractor {
         try await authManager.signInWithGoogle()
     }
     
-    func deleteAccount() async throws {
-        try await authManager.deleteAccount()
-    }
+//    func deleteAccount() async throws {
+//        try await authManager.deleteAccount()
+//    }
 }
 
 // MARK: UserManager
@@ -79,9 +79,9 @@ extension CoreInteractor {
             )
     }
     
-    func deleteCurrentUser() async throws {
-        try await userManager.deleteCurrentUser()
-    }
+//    func deleteCurrentUser() async throws {
+//        try await userManager.deleteCurrentUser()
+//    }
 }
 
 // MARK: AIManager
@@ -135,9 +135,9 @@ extension CoreInteractor {
         try await avatarManager.removeAuthorIdFromAvatar(avatarId: avatarId)
     }
     
-    func removeAuthorIdFromAllUserAvatars(userId: String) async throws {
-        try await avatarManager.removeAuthorIdFromAllUserAvatars(userId: userId)
-    }
+//    func removeAuthorIdFromAllUserAvatars(userId: String) async throws {
+//        try await avatarManager.removeAuthorIdFromAllUserAvatars(userId: userId)
+//    }
 }
 
 // MARK: ChatManager
@@ -186,9 +186,9 @@ extension CoreInteractor {
         try await chatManager.deleteChat(chatId: chatId)
     }
     
-    func deleteAllChatsForUser(userId: String) async throws {
-        try await chatManager.deleteAllChatsForUser(userId: userId)
-    }
+//    func deleteAllChatsForUser(userId: String) async throws {
+//        try await chatManager.deleteAllChatsForUser(userId: userId)
+//    }
     
     func reportChat(chatId: String, userId: String) async throws {
         try await chatManager.reportChat(chatId: chatId, userId: userId)
@@ -298,5 +298,37 @@ extension CoreInteractor {
     func signOut() throws {
         try authManager.signOut()
         userManager.signOut()
+    }
+    
+    func deleteAccount() async throws {
+        
+        let userId = try authManager.getAuthId()
+        
+//                async let deleteAuth: () = authManager.deleteAccount()
+//                async let deleteUser: () = userManager.deleteCurrentUser()
+//                async let deleteAvatar: () = avatarManager
+//                    .removeAuthorIdFromAllUserAvatars(userId: userId)
+//                async let deleteChats: () = chatManager.deleteAllChatsForUser(
+//                    userId: userId
+//                )
+//
+//                let (_, _, _, _) = await (
+//                    try deleteAuth,
+//                    try deleteUser,
+//                    try deleteAvatar,
+//                    try deleteChats
+//                )
+        
+        try await chatManager.deleteAllChatsForUser(userId: userId)
+        
+        try await avatarManager
+            .removeAuthorIdFromAllUserAvatars(userId: userId)
+        
+        try await userManager.deleteCurrentUser()
+        
+        try await authManager.deleteAccount()
+        
+        // FIXME: implement
+        // try await purchaseManager.logOut()
     }
 }
