@@ -11,6 +11,7 @@ struct OnboardingIntroView: View {
     
     @Environment(DependencyContainer.self) private var container
     @State var viewModel: OnboardingIntroViewModel
+    @Binding var path: [OnboardingPathOption]
     
     var body: some View {
         VStack {
@@ -34,29 +35,12 @@ struct OnboardingIntroView: View {
             .frame(maxHeight: .infinity)
             .padding(24)
             
-            NavigationLink {
-                if viewModel.onboardingCommunityTest {
-                    OnboardingCommunityView(
-                        viewModel: OnboardingCommunityViewModel(
-                            onboardingCommunityUseCase: OnboardingCommunityUseCase(
-                                container: container
-                            )
-                        )
-                    )
-                } else {
-                    OnboardingColorView(
-                        viewModel: OnboardingColorViewModel(
-                            onboardingColorUseCase: OnboardingColorUseCase(
-                                container: container
-                            )
-                        )
-                    )
+            Text("Continue")
+                .callToActionButton()
+                .anyButton(.press) {
+                    viewModel.onContinuePress(path: $path)
                 }
-            } label: {
-                Text("Continue")
-                    .callToActionButton()
-            }
-            .accessibilityIdentifier("ContinueButton")
+                .accessibilityIdentifier("ContinueButton")
         }
         .padding(24)
         .font(.title3)
@@ -72,7 +56,8 @@ struct OnboardingIntroView: View {
                 OnboardingIntroUseCase: OnboardingIntroUseCase(
                     container: DevPreview.shared.container
                 )
-            )
+            ),
+            path: .constant([])
         )
     }
     .previewEnvironment()
@@ -95,7 +80,8 @@ struct OnboardingIntroView: View {
                 OnboardingIntroUseCase: OnboardingIntroUseCase(
                     container: contaner
                 )
-            )
+            ),
+            path: .constant([])
         )
     }
     .previewEnvironment()

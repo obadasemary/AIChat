@@ -16,6 +16,8 @@ class WelcomeViewModel {
     private(set) var imageName: String = Constants.randomImage
     var showSignInView: Bool = false
     
+    var path: [OnboardingPathOption] = []
+    
     init(welcomeUseCase: WelcomeUseCaseProtocol) {
         self.welcomeUseCase = welcomeUseCase
     }
@@ -23,6 +25,11 @@ class WelcomeViewModel {
 
 // MARK: - Action
 extension WelcomeViewModel {
+    
+    func onGetStartedPressed() {
+        path.append(.onboardingIntro)
+        welcomeUseCase.trackEvent(event: Event.getStartedPressed)
+    }
     
     func handleDidSignIn(isNewUser: Bool, onShowTabBarView: () -> Void) {
         welcomeUseCase
@@ -49,11 +56,13 @@ extension WelcomeViewModel {
 private extension WelcomeViewModel {
     
     enum Event: LoggableEvent {
+        case getStartedPressed
         case didSignIn(isNewUser: Bool)
         case signInPressed
         
         var eventName: String {
             switch self {
+            case .getStartedPressed: "WelcomeView_GetStarted_Pressed"
             case .didSignIn: "WelcomeView_DidSignIn"
             case .signInPressed: "WelcomeView_SignIn_Pressed"
             }

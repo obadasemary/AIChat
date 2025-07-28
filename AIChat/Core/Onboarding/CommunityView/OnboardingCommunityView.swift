@@ -11,6 +11,7 @@ struct OnboardingCommunityView: View {
     
     @Environment(DependencyContainer.self) private var container
     @State var viewModel: OnboardingCommunityViewModel
+    @Binding var path: [OnboardingPathOption]
     
     var body: some View {
         VStack {
@@ -34,19 +35,12 @@ struct OnboardingCommunityView: View {
             }
             .frame(maxHeight: .infinity)
             
-            NavigationLink {
-                OnboardingColorView(
-                    viewModel: OnboardingColorViewModel(
-                        onboardingColorUseCase: OnboardingColorUseCase(
-                            container: container
-                        )
-                    )
-                )
-            } label: {
-                Text("Continue")
-                    .callToActionButton()
-            }
-            .accessibilityIdentifier("OnboardingCommunityContinueButton")
+            Text("Continue")
+                .callToActionButton()
+                .anyButton(.press) {
+                    viewModel.onContinuePress(path: $path)
+                }
+                .accessibilityIdentifier("OnboardingCommunityContinueButton")
         }
         .padding(24)
         .font(.title3)
@@ -62,7 +56,8 @@ struct OnboardingCommunityView: View {
                 onboardingCommunityUseCase: OnboardingCommunityUseCase(
                     container: DevPreview.shared.container
                 )
-            )
+            ),
+            path: .constant([])
         )
     }
     .previewEnvironment()

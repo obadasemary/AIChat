@@ -23,7 +23,7 @@ struct ChatsView: View {
                 chatsSection
             }
             .navigationTitle("Chats")
-            .navigationDestinationForCoreModule(path: $viewModel.path)
+            .navigationDestinationForTabbarModule(path: $viewModel.path)
             .screenAppearAnalytics(name: "ChatsView")
             .onAppear {
                 viewModel.loadRecentAvatars()

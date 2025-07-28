@@ -17,6 +17,8 @@ class OnboardingCompletedViewModel {
     
     var showAlert: AnyAppAlert?
     
+    var path: [OnboardingPathOption] = []
+    
     init(onboardingCompletedUseCase: OnboardingCompletedUseCaseProtocol) {
         self.onboardingCompletedUseCase = onboardingCompletedUseCase
     }

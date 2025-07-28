@@ -45,7 +45,7 @@ extension CategoryListViewModel {
 // MARK: - Action
 extension CategoryListViewModel {
     
-    func onAvatarTapped(avatar: AvatarModel, path: Binding<[NavigationPathOption]>) {
+    func onAvatarTapped(avatar: AvatarModel, path: Binding<[TabbarPathOption]>) {
         path.wrappedValue.append(.chat(avatarId: avatar.avatarId, chat: nil))
         categoryListUseCase.trackEvent(event: Event.avatarTapped(avatar: avatar))
     }
