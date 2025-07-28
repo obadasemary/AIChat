@@ -80,9 +80,8 @@ private extension ChatView {
                         timestampView(date: message.dateCreatedCalculated)
                     }
                     
-                    let isCurrentUser = (try? viewModel.messageIsCurrentUser(
-                        message: message
-                    )) ?? false
+                    let isCurrentUser = viewModel
+                        .messageIsCurrentUser(message: message)
                     ChatBubbleViewBuilder(
                         message: message,
                         isCurrentUser: isCurrentUser,
