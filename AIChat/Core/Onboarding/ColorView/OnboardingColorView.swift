@@ -9,6 +9,7 @@ import SwiftUI
 
 struct OnboardingColorView: View {
     
+    @Environment(DependencyContainer.self) private var container
     @State var viewModel: OnboardingColorViewModel
     
     var body: some View {
@@ -79,7 +80,14 @@ private extension OnboardingColorView {
     
     func ctaButton(selectedColor: Color) -> some View {
         NavigationLink {
-            OnboardingCompletedView(selectedColor: selectedColor)
+            OnboardingCompletedView(
+                viewModel: OnboardingCompletedViewModel(
+                    onboardingCompletedUseCase: OnboardingCompletedUseCase(
+                        container: container
+                    )
+                ),
+                selectedColor: selectedColor
+            )
         } label: {
             Text("Continue")
                 .callToActionButton()
