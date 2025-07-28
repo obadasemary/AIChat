@@ -55,8 +55,8 @@ extension DevSettingsViewModel {
 // MARK: - Action
 extension DevSettingsViewModel {
     
-    func onBackButtonTap(onDissmiss: () -> Void) {
-        onDissmiss()
+    func onBackButtonTap(onDismiss: () -> Void) {
+        onDismiss()
     }
     
     func handleCreateAccountChange(oldValue: Bool, newValue: Bool) {
