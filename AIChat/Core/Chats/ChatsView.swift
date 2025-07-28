@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ChatsView: View {
+    
     @Environment(DependencyContainer.self) private var container
     @State var viewModel: ChatsViewModel
     

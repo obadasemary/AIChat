@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ChatView: View {
     
+    @Environment(DependencyContainer.self) private var container
     @State var viewModel: ChatViewModel
     
     @Environment(\.dismiss) private var dismiss
@@ -51,7 +52,11 @@ struct ChatView: View {
             }
         }
         .sheet(isPresented: $viewModel.showPaywall) {
-            PaywallView()
+            PaywallView(
+                viewModel: PaywallViewModel(
+                    paywallUseCase: PaywallUseCase(container: container)
+                )
+            )
         }
         .task {
             await viewModel.loadAvatar(avatarId: avatarId)
