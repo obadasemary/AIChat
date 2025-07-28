@@ -10,6 +10,7 @@ import SwiftUI
 struct OnboardingCommunityView: View {
     
     @Environment(DependencyContainer.self) private var container
+    @State var viewModel: OnboardingCommunityViewModel
     
     var body: some View {
         VStack {
@@ -56,8 +57,13 @@ struct OnboardingCommunityView: View {
 
 #Preview {
     NavigationStack {
-        OnboardingCommunityView()
+        OnboardingCommunityView(
+            viewModel: OnboardingCommunityViewModel(
+                onboardingCommunityUseCase: OnboardingCommunityUseCase(
+                    container: DevPreview.shared.container
+                )
+            )
+        )
     }
-    .environment(AppState())
     .previewEnvironment()
 }

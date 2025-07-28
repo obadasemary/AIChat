@@ -98,6 +98,6 @@ private extension OnboardingColorView {
                 )
             )
         )
-        .previewEnvironment()
     }
+    .previewEnvironment()
 }
