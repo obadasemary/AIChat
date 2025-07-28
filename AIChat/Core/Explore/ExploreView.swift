@@ -55,7 +55,13 @@ struct ExploreView: View {
                 }
             }
             .sheet(isPresented: $viewModel.showDevSettings) {
-                DevSettingsView()
+                DevSettingsView(
+                    viewModel: DevSettingsViewModel(
+                        devSettingsUseCase: DevSettingsUseCase(
+                            container: container
+                        )
+                    )
+                )
             }
             .sheet(isPresented: $viewModel.showCreateAccountView) {
                 CreateAccountView(
