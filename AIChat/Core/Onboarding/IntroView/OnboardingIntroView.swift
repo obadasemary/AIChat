@@ -9,6 +9,7 @@ import SwiftUI
 
 struct OnboardingIntroView: View {
     
+    @Environment(DependencyContainer.self) private var container
     @Environment(ABTestManager.self) private var abTestManager
     
     var body: some View {
@@ -37,7 +38,13 @@ struct OnboardingIntroView: View {
                 if abTestManager.activeTests.onboardingCommunityTest {
                     OnboardingCommunityView()
                 } else {
-                    OnboardingColorView()
+                    OnboardingColorView(
+                        viewModel: OnboardingColorViewModel(
+                            onboardingColorUseCase: OnboardingColorUseCase(
+                                container: container
+                            )
+                        )
+                    )
                 }
             } label: {
                 Text("Continue")
