@@ -10,15 +10,9 @@ import SwiftfulUtilities
 
 struct DevSettingsView: View {
     
-    @Environment(AuthManager.self) private var authManager
-    @Environment(UserManager.self) private var userManager
-    @Environment(ABTestManager.self) private var abTestManager
+    @State var viewModel: DevSettingsViewModel
     
     @Environment(\.dismiss) private var dismiss
-    
-    @State private var createAccountTest: Bool = false
-    @State private var onboardingCommunityTest: Bool = false
-    @State private var categoryRowTest: CategoryRowTestOption = .default
     
     var body: some View {
         NavigationStack {
@@ -36,19 +30,9 @@ struct DevSettingsView: View {
             }
             .screenAppearAnalytics(name: "DevSettings")
             .onFirstAppear {
-                loadABTest()
+                viewModel.loadABTest()
             }
         }
-    }
-}
-
-// MARK: - Load
-private extension DevSettingsView {
-    
-    func loadABTest() {
-        createAccountTest = abTestManager.activeTests.createAccountTest
-        onboardingCommunityTest = abTestManager.activeTests.onboardingCommunityTest
-        categoryRowTest = abTestManager.activeTests.categoryRowTest
     }
 }
 
@@ -60,31 +44,36 @@ private extension DevSettingsView {
             .font(.title2)
             .fontWeight(.black)
             .anyButton {
-                onBackButtonTap()
+                viewModel.onBackButtonTap {
+                    dismiss()
+                }
             }
     }
     
     var abTestSection: some View {
         Section {
-            Toggle("Create Account Test", isOn: $createAccountTest)
+            Toggle("Create Account Test", isOn: $viewModel.createAccountTest)
                 .onChange(
-                    of: createAccountTest,
-                    handleCreateAccountChange
+                    of: viewModel.createAccountTest,
+                    viewModel.handleCreateAccountChange
                 )
             
-            Toggle("Onboarding Community Test", isOn: $onboardingCommunityTest)
+            Toggle("Onboarding Community Test", isOn: $viewModel.onboardingCommunityTest)
                 .onChange(
-                    of: onboardingCommunityTest,
-                    handleOnboardingCommunityChange
+                    of: viewModel.onboardingCommunityTest,
+                    viewModel.handleOnboardingCommunityChange
                 )
 
-            Picker("Category Row Test", selection: $categoryRowTest) {
+            Picker("Category Row Test", selection: $viewModel.categoryRowTest) {
                 ForEach(CategoryRowTestOption.allCases, id: \.self) { option in
                     Text(option.rawValue)
                         .id(option)
                 }
             }
-            .onChange(of: categoryRowTest, handleOnCategoryRowOptionChange)
+            .onChange(
+                of: viewModel.categoryRowTest,
+                viewModel.handleOnCategoryRowOptionChange
+            )
 
         } header: {
             Text("AB Tests")
@@ -94,12 +83,7 @@ private extension DevSettingsView {
     
     var authInfoSection: some View {
         Section {
-            let array = authManager
-                .auth?
-                .eventParameters
-                .asAlphabeticalArray ?? []
-            
-            ForEach(array, id: \.key) { item in
+            ForEach(viewModel.authData, id: \.key) { item in
                 itemRow(item: item)
             }
         } header: {
@@ -109,12 +93,7 @@ private extension DevSettingsView {
     
     var userInfoSection: some View {
         Section {
-            let array = userManager
-                .currentUser?
-                .eventParameters
-                .asAlphabeticalArray ?? []
-            
-            ForEach(array, id: \.key) { item in
+            ForEach(viewModel.userData, id: \.key) { item in
                 itemRow(item: item)
             }
         } header: {
@@ -124,11 +103,7 @@ private extension DevSettingsView {
     
     var deviceInfoSection: some View {
         Section {
-            let array = Utilities
-                .eventParameters
-                .asAlphabeticalArray
-            
-            ForEach(array, id: \.key) { item in
+            ForEach(viewModel.utilities, id: \.key) { item in
                 itemRow(item: item)
             }
         } header: {
@@ -153,65 +128,13 @@ private extension DevSettingsView {
     }
 }
 
-// MARK: - Action
-private extension DevSettingsView {
-    
-    func onBackButtonTap() {
-        dismiss()
-    }
-    
-    func handleCreateAccountChange(oldValue: Bool, newValue: Bool) {
-        updateTest(
-            property: &createAccountTest,
-            newValue: newValue,
-            savedValue: abTestManager.activeTests.createAccountTest
-        ) { tests in
-            tests.update(createAccountTest: newValue)
-        }
-    }
-    
-    func handleOnboardingCommunityChange(oldValue: Bool, newValue: Bool) {
-        updateTest(
-            property: &onboardingCommunityTest,
-            newValue: newValue,
-            savedValue: abTestManager.activeTests.onboardingCommunityTest
-        ) { tests in
-            tests.update(onboardingCommunityTest: newValue)
-        }
-    }
-    
-    func handleOnCategoryRowOptionChange(
-        oldValue: CategoryRowTestOption,
-        newValue: CategoryRowTestOption
-    ) {
-        updateTest(
-            property: &categoryRowTest,
-            newValue: newValue,
-            savedValue: abTestManager.activeTests.categoryRowTest
-        ) { tests in
-            tests.update(categoryRowTest: newValue)
-        }
-    }
-    
-    func updateTest<T: Equatable>(
-        property: inout T,
-        newValue: T,
-        savedValue: T,
-        updateAction: (inout ActiveABTests) -> Void
-    ) {
-        if newValue != savedValue {
-            do {
-                var tests = abTestManager.activeTests
-                updateAction(&tests)
-                try abTestManager.override(updateTests: tests)
-            } catch {
-                property = savedValue
-            }
-        }
-    }
-}
-
 #Preview {
-    DevSettingsView()
-        .previewEnvironment()
+    DevSettingsView(
+        viewModel: DevSettingsViewModel(
+            devSettingsUseCase: DevSettingsUseCase(
+                container: DevPreview.shared.container
+            )
+        )
+    )
+    .previewEnvironment()
 }
