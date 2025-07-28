@@ -10,6 +10,8 @@ import SwiftfulUtilities
 
 struct AppView: View {
     
+    @Environment(DependencyContainer.self) private var container
+    
     @Environment(AuthManager.self) private var authManager
     @Environment(UserManager.self) private var userManager
     @Environment(LogManager.self) private var logManager
@@ -37,7 +39,11 @@ struct AppView: View {
                     TabBarView()
                 },
                 onboardingView: {
-                    WelcomeView()
+                    WelcomeView(
+                        viewModel: WelcomeViewModel(
+                            welcomeUseCase: WelcomeUseCase(container: container)
+                        )
+                    )
                 }
             )
             .environment(appState)
