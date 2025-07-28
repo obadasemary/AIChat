@@ -10,7 +10,7 @@ import SwiftUI
 struct OnboardingIntroView: View {
     
     @Environment(DependencyContainer.self) private var container
-    @Environment(ABTestManager.self) private var abTestManager
+    @State var viewModel: OnboardingIntroViewModel
     
     var body: some View {
         VStack {
@@ -35,7 +35,7 @@ struct OnboardingIntroView: View {
             .padding(24)
             
             NavigationLink {
-                if abTestManager.activeTests.onboardingCommunityTest {
+                if viewModel.onboardingCommunityTest {
                     OnboardingCommunityView(
                         viewModel: OnboardingCommunityViewModel(
                             onboardingCommunityUseCase: OnboardingCommunityUseCase(
@@ -67,21 +67,36 @@ struct OnboardingIntroView: View {
 
 #Preview("Original") {
     NavigationStack {
-        OnboardingIntroView()
+        OnboardingIntroView(
+            viewModel: OnboardingIntroViewModel(
+                OnboardingIntroUseCase: OnboardingIntroUseCase(
+                    container: DevPreview.shared.container
+                )
+            )
+        )
     }
     .previewEnvironment()
 }
 
 #Preview("Onb Comm Test") {
-    NavigationStack {
-        OnboardingIntroView()
-    }
-    .environment(
+    let contaner = DevPreview.shared.container
+    
+    contaner.register(ABTestManager.self) {
         ABTestManager(
             service: MockABTestService(
                 onboardingCommunityTest: true
             )
         )
-    )
+    }
+    
+    return NavigationStack {
+        OnboardingIntroView(
+            viewModel: OnboardingIntroViewModel(
+                OnboardingIntroUseCase: OnboardingIntroUseCase(
+                    container: contaner
+                )
+            )
+        )
+    }
     .previewEnvironment()
 }
