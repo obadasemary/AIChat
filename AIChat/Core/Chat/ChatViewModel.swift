@@ -371,9 +371,8 @@ extension ChatViewModel {
         return timeDiff > threshold
     }
     
-    func messageIsCurrentUser(message: ChatMessageModel) throws -> Bool {
-        let authId = try chatUseCase.getAuthId()
-        return message.authorId == authId
+    func messageIsCurrentUser(message: ChatMessageModel) -> Bool {
+        message.authorId == chatUseCase.auth?.uid
     }
 }
 
