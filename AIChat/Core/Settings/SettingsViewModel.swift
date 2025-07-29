@@ -49,6 +49,7 @@ extension SettingsViewModel {
                     )
                 
                 await onDismiss()
+                settingsUseCase.updateAppState(showTabBarView: false)
             } catch {
                 showAlert = AnyAppAlert(error: error)
                 settingsUseCase
@@ -91,6 +92,7 @@ extension SettingsViewModel {
                     )
                 
                 await onDismiss()
+                settingsUseCase.updateAppState(showTabBarView: false)
             } catch {
                 showAlert = AnyAppAlert(error: error)
                 settingsUseCase

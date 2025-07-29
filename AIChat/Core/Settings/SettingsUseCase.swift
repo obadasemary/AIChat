@@ -14,6 +14,7 @@ final class SettingsUseCase {
     private let userManager: UserManager
     private let avatarManager: AvatarManager
     private let chatManager: ChatManager
+    private let appState: AppState
     private let logManager: LogManager
     
     init(container: DependencyContainer) {
@@ -21,6 +22,7 @@ final class SettingsUseCase {
         self.userManager = container.resolve(UserManager.self)!
         self.avatarManager = container.resolve(AvatarManager.self)!
         self.chatManager = container.resolve(ChatManager.self)!
+        self.appState = container.resolve(AppState.self)!
         self.logManager = container.resolve(LogManager.self)!
     }
 }
@@ -66,6 +68,10 @@ extension SettingsUseCase: SettingsUseCaseProtocol {
         // FIXME: implement
         // try await purchaseManager.logOut()
         logManager.deleteUserProfile()
+    }
+    
+    func updateAppState(showTabBarView: Bool) {
+        appState.updateViewState(showTabBarView: showTabBarView)
     }
     
     func trackEvent(event: any LoggableEvent) {
