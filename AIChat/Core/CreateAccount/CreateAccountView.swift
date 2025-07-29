@@ -72,12 +72,8 @@ struct CreateAccountView: View {
 }
 
 #Preview {
-    CreateAccountView(
-        viewModel: CreateAccountViewModel(
-            createAccountUseCase: CreateAccountUseCase(
-                container: DevPreview.shared.container
-            )
-        )
-    )
-    .previewEnvironment()
+    let builder = CoreBuilder(container: DevPreview.shared.container)
+    
+    return builder.createAccountView()
+        .previewEnvironment()
 }
