@@ -9,5 +9,6 @@ import Foundation
 
 @MainActor
 protocol WelcomeUseCaseProtocol {
+    func updateAppState(showTabBarView: Bool)
     func trackEvent(event: any LoggableEvent)
 }
