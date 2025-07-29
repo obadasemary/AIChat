@@ -37,7 +37,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                 .processInfo
                 .arguments
                 .contains("SIGNED_IN_TEST")
-            UserDefaults.showTabBarView = isSignIn
             config = .mock(isSignedIn: isSignIn)
         }
         
