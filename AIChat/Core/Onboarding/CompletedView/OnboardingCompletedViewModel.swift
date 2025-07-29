@@ -27,7 +27,7 @@ class OnboardingCompletedViewModel {
 // MARK: - Action
 extension OnboardingCompletedViewModel {
     
-    func onFinishButtonPressed(selectedColor: Color, onShowTabBarView: @escaping () -> Void) {
+    func onFinishButtonPressed(selectedColor: Color) {
         isCompletingProfileSetup = true
         onboardingCompletedUseCase.trackEvent(event: Event.finishStart)
         Task {
@@ -45,7 +45,8 @@ extension OnboardingCompletedViewModel {
                     )
                 
                 isCompletingProfileSetup = false
-                onShowTabBarView()
+                
+                onboardingCompletedUseCase.updateAppState(showTabBarView: true)
             } catch {
                 showAlert = AnyAppAlert(error: error)
                 onboardingCompletedUseCase
