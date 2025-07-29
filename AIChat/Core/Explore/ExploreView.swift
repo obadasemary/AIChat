@@ -7,42 +7,6 @@
 
 import SwiftUI
 
-@Observable
-@MainActor
-class CoreBuilder {
-    
-    let container: DependencyContainer
-    
-    init(container: DependencyContainer) {
-        self.container = container
-    }
-    
-    func exploreView() -> some View {
-        ExploreView(
-            viewModel: ExploreViewModel(
-                interactor: CoreInteractor(container: container)
-            )
-        )
-    }
-    
-    func createAccountView() -> some View {
-        
-        CreateAccountView(
-            viewModel: CreateAccountViewModel(
-                createAccountUseCase: CreateAccountUseCase(container: container)
-            )
-        )
-    }
-    
-    func devSettingsView() -> some View {
-        DevSettingsView(
-            viewModel: DevSettingsViewModel(
-                devSettingsUseCase: DevSettingsUseCase(container: container)
-            )
-        )
-    }
-}
-
 struct ExploreView: View {
     
     @Environment(CoreBuilder.self) private var builder
@@ -91,11 +55,9 @@ struct ExploreView: View {
                 }
             }
             .sheet(isPresented: $viewModel.showDevSettings) {
-//                CoreBuilder(container: container).devSettingsView()
                 builder.devSettingsView()
             }
             .sheet(isPresented: $viewModel.showCreateAccountView) {
-//                CoreBuilder(container: container).createAccountView()
                 builder.createAccountView()
                     .presentationDetents([.medium])
             }
