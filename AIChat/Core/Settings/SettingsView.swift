@@ -10,6 +10,7 @@ import SwiftUI
 struct SettingsView: View {
     
     @Environment(DependencyContainer.self) private var container
+    @Environment(CoreBuilder.self) private var builder
     @State var viewModel: SettingsViewModel
     
     @Environment(\.dismiss) private var dismiss
@@ -30,13 +31,10 @@ struct SettingsView: View {
                     viewModel.setAnonymousAccountStatus()
                 },
                 content: {
-                    CreateAccountView(
-                        viewModel: CreateAccountViewModel(
-                            createAccountUseCase: CreateAccountUseCase(container: container)
-                        )
-                    )
-                    .presentationDetents([.medium])
-                })
+                    builder.createAccountView()
+                        .presentationDetents([.medium])
+                }
+            )
             .onAppear {
                 viewModel.setAnonymousAccountStatus()
             }
