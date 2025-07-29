@@ -12,8 +12,6 @@ struct AppView: View {
     @Environment(DependencyContainer.self) private var container
     @State var viewModel: AppViewModel
     
-    @State var appState: AppState = .init()
-    
     var body: some View {
         RootView(
             delegate: RootDelegate(
@@ -30,7 +28,7 @@ struct AppView: View {
             )
         ) {
             AppViewBuilder(
-                showTabBar: appState.showTabBar,
+                showTabBar: viewModel.showTabBar,
                 tabBarView: {
                     TabBarView()
                 },
@@ -42,7 +40,6 @@ struct AppView: View {
                     )
                 }
             )
-            .environment(appState)
             .screenAppearAnalytics(name: Self.screenName)
             .task {
                 await viewModel.checkUserStatus()
@@ -51,7 +48,7 @@ struct AppView: View {
                 try? await Task.sleep(for: .seconds(2))
                 await viewModel.showATTPromptIfNeeded()
             }
-            .onChange(of: appState.showTabBar) { _, showTabBar in
+            .onChange(of: viewModel.showTabBar) { _, showTabBar in
                 if !showTabBar {
                     Task {
                         await viewModel.checkUserStatus()
@@ -65,11 +62,16 @@ struct AppView: View {
 
 
 #Preview("AppView - TabBar") {
-    AppView(
+    let container = DevPreview.shared.container
+    
+    container.register(AppState.self) {
+        AppState(showTabBar: true)
+    }
+    
+    return AppView(
         viewModel: AppViewModel(
-            appViewUseCase: AppViewUseCase(container: DevPreview.shared.container)
-        ),
-        appState: AppState(showTabBar: true)
+            appViewUseCase: AppViewUseCase(container: container)
+        )
     )
     .previewEnvironment()
 }
@@ -85,14 +87,17 @@ struct AppView: View {
         AuthManager(service: MockAuthService(currentUser: nil))
     }
     
+    container.register(AppState.self) {
+        AppState(showTabBar: false)
+    }
+    
     return AppView(
         viewModel: AppViewModel(
             appViewUseCase: AppViewUseCase(
                 container: container
             )
-        ),
-        appState: AppState(showTabBar: false)
+        )
     )
-    .previewEnvironment(isSignedIn: false)
+    .previewEnvironment()
 }
 

@@ -9,6 +9,7 @@ import Foundation
 
 @MainActor
 protocol AppViewUseCaseProtocol {
+    var showTabBar: Bool { get }
     var auth: UserAuthInfo? { get }
     func logIn(auth: UserAuthInfo, isNewUser: Bool) async throws
     func signInAnonymously() async throws -> (user: UserAuthInfo, isNewUser: Bool)

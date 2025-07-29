@@ -14,6 +14,10 @@ class AppViewModel {
     
     private let appViewUseCase: AppViewUseCaseProtocol
     
+    var showTabBar: Bool {
+        appViewUseCase.showTabBar
+    }
+    
     init(appViewUseCase: AppViewUseCaseProtocol) {
         self.appViewUseCase = appViewUseCase
     }
