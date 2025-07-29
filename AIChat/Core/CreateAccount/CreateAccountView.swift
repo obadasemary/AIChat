@@ -11,22 +11,18 @@ import GoogleSignInSwift
 struct CreateAccountView: View {
     
     @State var viewModel: CreateAccountViewModel
-    
     @Environment(\.dismiss) private var dismiss
-    
-    var title: String = "Create Account"
-    var subtitle: String = "Don't lose your data! Connect to an SSO provider to save your account."
-    var onDidSignIn: ((_ isNewUser: Bool) -> Void)?
+    var delegate: CreateAccountDelegate = CreateAccountDelegate()
     
     var body: some View {
         VStack(spacing: 24) {
             VStack(alignment: .leading, spacing: 8) {
-                Text(title)
+                Text(delegate.title)
                     .font(.largeTitle)
                     .fontWeight(.semibold)
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
-                Text(subtitle)
+                Text(delegate.subtitle)
                     .font(.body)
                     .lineLimit(4)
                     .minimumScaleFactor(0.5)
@@ -42,7 +38,7 @@ struct CreateAccountView: View {
             .frame(height: 55)
             .anyButton(.press) {
                 viewModel.onSignInWithAppleTapped { isNewUser in
-                    onDidSignIn?(isNewUser)
+                    delegate.onDidSignIn?(isNewUser)
                     dismiss()
                 }
             }
@@ -56,7 +52,7 @@ struct CreateAccountView: View {
                 )
             ) {
                 viewModel.onSignInWithGoogleTapped { isNewUser in
-                    onDidSignIn?(isNewUser)
+                    delegate.onDidSignIn?(isNewUser)
                     dismiss()
                 }
             }
