@@ -24,6 +24,7 @@ class DevPreview {
         container.register(PushManager.self, pushManager)
         container.register(ABTestManager.self, abTestManager)
         container.register(PurchaseManager.self, purchaseManager)
+        container.register(AppState.self, AppState())
         
         return container
     }
@@ -37,6 +38,7 @@ class DevPreview {
     private let pushManager: PushManager
     private let abTestManager: ABTestManager
     private let purchaseManager: PurchaseManager
+    private let appState: AppState
     
     init(isSignedIn: Bool = true) {
         self.authManager = AuthManager(
@@ -52,5 +54,6 @@ class DevPreview {
         self.pushManager = PushManager()
         self.abTestManager = ABTestManager(service: MockABTestService())
         self.purchaseManager = PurchaseManager(service: MockPurchaseService())
+        self.appState = AppState()
     }
 }
