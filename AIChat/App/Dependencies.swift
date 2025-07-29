@@ -186,23 +186,6 @@ extension View {
     func previewEnvironment(isSignedIn: Bool = true) -> some View {
         self
             .environment(DevPreview.shared.container)
-            .environment(PurchaseManager(service: MockPurchaseService()))
-            .environment(ABTestManager(service: MockABTestService()))
-            .environment(PushManager())
-            .environment(ChatManager(service: MockChatService()))
-            .environment(AIManager(service: MockAIServer()))
-            .environment(AvatarManager(remoteService: MockAvatarService()))
-            .environment(
-                UserManager(
-                    services: MockUserServices(currentUser: isSignedIn ? .mock : nil)
-                )
-            )
-            .environment(
-                AuthManager(
-                    service: MockAuthService(currentUser: isSignedIn ? .mock() : nil)
-                )
-            )
-            .environment(AppState())
             .environment(LogManager(services: []))
     }
 }
