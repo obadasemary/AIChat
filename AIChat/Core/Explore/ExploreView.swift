@@ -7,9 +7,45 @@
 
 import SwiftUI
 
+@Observable
+@MainActor
+class CoreBuilder {
+    
+    let container: DependencyContainer
+    
+    init(container: DependencyContainer) {
+        self.container = container
+    }
+    
+    func exploreView() -> some View {
+        ExploreView(
+            viewModel: ExploreViewModel(
+                interactor: CoreInteractor(container: container)
+            )
+        )
+    }
+    
+    func createAccountView() -> some View {
+        
+        CreateAccountView(
+            viewModel: CreateAccountViewModel(
+                createAccountUseCase: CreateAccountUseCase(container: container)
+            )
+        )
+    }
+    
+    func devSettingsView() -> some View {
+        DevSettingsView(
+            viewModel: DevSettingsViewModel(
+                devSettingsUseCase: DevSettingsUseCase(container: container)
+            )
+        )
+    }
+}
+
 struct ExploreView: View {
     
-    @Environment(DependencyContainer.self) private var container
+    @Environment(CoreBuilder.self) private var builder
     @State var viewModel: ExploreViewModel
     
     var body: some View {
@@ -55,21 +91,13 @@ struct ExploreView: View {
                 }
             }
             .sheet(isPresented: $viewModel.showDevSettings) {
-                DevSettingsView(
-                    viewModel: DevSettingsViewModel(
-                        devSettingsUseCase: DevSettingsUseCase(
-                            container: container
-                        )
-                    )
-                )
+//                CoreBuilder(container: container).devSettingsView()
+                builder.devSettingsView()
             }
             .sheet(isPresented: $viewModel.showCreateAccountView) {
-                CreateAccountView(
-                    viewModel: CreateAccountViewModel(
-                        createAccountUseCase: CreateAccountUseCase(container: container)
-                    )
-                )
-                .presentationDetents([.medium])
+//                CoreBuilder(container: container).createAccountView()
+                builder.createAccountView()
+                    .presentationDetents([.medium])
             }
             .navigationDestinationForTabbarModule(path: $viewModel.path)
             .showModal(showModal: $viewModel.showPushNotificationModal) {
@@ -238,12 +266,11 @@ private extension ExploreView {
                 remoteService: MockAvatarService()
             )
         )
-    return ExploreView(
-        viewModel: ExploreViewModel(
-            interactor: CoreInteractor(container: container)
-        )
-    )
-    .previewEnvironment()
+    
+    let builder = CoreBuilder(container: container)
+    
+    return builder.exploreView()
+        .previewEnvironment()
 }
 
 #Preview("Mock Has Data w/ create Acct Test") {
@@ -268,12 +295,10 @@ private extension ExploreView {
             ABTestManager(service: MockABTestService(createAccountTest: true))
         )
     
-    return ExploreView(
-        viewModel: ExploreViewModel(
-            interactor: CoreInteractor(container: container)
-        )
-    )
-    .previewEnvironment()
+    let builder = CoreBuilder(container: container)
+    
+    return builder.exploreView()
+        .previewEnvironment()
 }
 
 #Preview("CategoryRowTest: Original") {
@@ -284,12 +309,10 @@ private extension ExploreView {
             ABTestManager(service: MockABTestService(categoryRowTest: .original))
         )
     
-    return ExploreView(
-        viewModel: ExploreViewModel(
-            interactor: CoreInteractor(container: container)
-        )
-    )
-    .previewEnvironment()
+    let builder = CoreBuilder(container: container)
+    
+    return builder.exploreView()
+        .previewEnvironment()
 }
 
 #Preview("CategoryRowTest: Top") {
@@ -300,12 +323,10 @@ private extension ExploreView {
             ABTestManager(service: MockABTestService(categoryRowTest: .top))
         )
     
-    return ExploreView(
-        viewModel: ExploreViewModel(
-            interactor: CoreInteractor(container: container)
-        )
-    )
-    .previewEnvironment()
+    let builder = CoreBuilder(container: container)
+    
+    return builder.exploreView()
+        .previewEnvironment()
 }
 
 #Preview("CategoryRowTest: Hidden") {
@@ -316,12 +337,10 @@ private extension ExploreView {
             ABTestManager(service: MockABTestService(categoryRowTest: .hidden))
         )
     
-    return ExploreView(
-        viewModel: ExploreViewModel(
-            interactor: CoreInteractor(container: container)
-        )
-    )
-    .previewEnvironment()
+    let builder = CoreBuilder(container: container)
+    
+    return builder.exploreView()
+        .previewEnvironment()
 }
 
 #Preview("Mock No Data") {
@@ -333,12 +352,10 @@ private extension ExploreView {
                 remoteService: MockAvatarService(avatars: [])
             )
         )
-    return ExploreView(
-        viewModel: ExploreViewModel(
-            interactor: CoreInteractor(container: container)
-        )
-    )
-    .previewEnvironment()
+    let builder = CoreBuilder(container: container)
+    
+    return builder.exploreView()
+        .previewEnvironment()
 }
 
 #Preview("Mock Slow Loading") {
@@ -350,12 +367,10 @@ private extension ExploreView {
                 remoteService: MockAvatarService(delay: 2)
             )
         )
-    return ExploreView(
-        viewModel: ExploreViewModel(
-            interactor: CoreInteractor(container: container)
-        )
-    )
-    .previewEnvironment()
+    let builder = CoreBuilder(container: container)
+    
+    return builder.exploreView()
+        .previewEnvironment()
 }
 
 #Preview("Remote Service") {
@@ -369,10 +384,8 @@ private extension ExploreView {
                 )
             )
         )
-    return ExploreView(
-        viewModel: ExploreViewModel(
-            interactor: CoreInteractor(container: container)
-        )
-    )
-    .previewEnvironment()
+    let builder = CoreBuilder(container: container)
+    
+    return builder.exploreView()
+        .previewEnvironment()
 }
