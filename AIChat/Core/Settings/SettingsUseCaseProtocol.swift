@@ -12,5 +12,6 @@ protocol SettingsUseCaseProtocol {
     var auth: UserAuthInfo? { get }
     func signOut() throws
     func deleteAccount() async throws
+    func updateAppState(showTabBarView: Bool)
     func trackEvent(event: any LoggableEvent)
 }
