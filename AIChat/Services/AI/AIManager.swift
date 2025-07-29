@@ -28,4 +28,3 @@ extension AIManager: AIManagerProtocol {
     }
 }
 
-private extension AIManager {}
