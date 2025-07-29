@@ -10,14 +10,20 @@ import Foundation
 @MainActor
 final class WelcomeUseCase {
     
+    private let appState: AppState
     private let logManager: LogManager
     
     init(container: DependencyContainer) {
+        self.appState = container.resolve(AppState.self)!
         self.logManager = container.resolve(LogManager.self)!
     }
 }
 
 extension WelcomeUseCase: WelcomeUseCaseProtocol {
+    
+    func updateAppState(showTabBarView: Bool) {
+        appState.updateViewState(showTabBarView: showTabBarView)
+    }
     
     func trackEvent(event: any LoggableEvent) {
         logManager.trackEvent(event: event)

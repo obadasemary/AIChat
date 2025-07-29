@@ -31,7 +31,7 @@ extension WelcomeViewModel {
         welcomeUseCase.trackEvent(event: Event.getStartedPressed)
     }
     
-    func handleDidSignIn(isNewUser: Bool, onShowTabBarView: () -> Void) {
+    func handleDidSignIn(isNewUser: Bool) {
         welcomeUseCase
             .trackEvent(
                 event: Event.didSignIn(
@@ -42,7 +42,7 @@ extension WelcomeViewModel {
         if isNewUser {
             
         } else {
-            onShowTabBarView()
+            welcomeUseCase.updateAppState(showTabBarView: true)
         }
     }
     
