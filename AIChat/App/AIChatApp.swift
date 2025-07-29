@@ -29,6 +29,9 @@ struct AIChatApp: App {
                     )
                 }
             }
+            .environment(
+                CoreBuilder(container: delegate.dependencies.container)
+            )
             .environment(delegate.dependencies.container)
             .environment(delegate.dependencies.logManager)
         }
