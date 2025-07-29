@@ -46,6 +46,7 @@ struct Dependencies {
     let pushManager: PushManager
     let abTestManager: ABTestManager
     let purchaseManager: PurchaseManager
+    let appState: AppState
     
     // swiftlint:disable function_body_length
     init(configuration: BuildConfiguration) {
@@ -92,6 +93,7 @@ struct Dependencies {
                 service: MockPurchaseService(),
                 logManager: logManager
             )
+            appState = AppState(showTabBar: isSignedIn)
         case .dev:
             logManager = LogManager(
                 services: [
@@ -125,6 +127,7 @@ struct Dependencies {
                 service: StoreKitPurchaseService(),
                 logManager: logManager
             )
+            appState = AppState()
         case .prod:
             logManager = LogManager(
                 services: [
@@ -157,6 +160,7 @@ struct Dependencies {
                 service: StoreKitPurchaseService(),
                 logManager: logManager
             )
+            appState = AppState()
         }
         
         pushManager = PushManager(logManager: logManager)
@@ -171,6 +175,7 @@ struct Dependencies {
         container.register(PushManager.self, pushManager)
         container.register(ABTestManager.self, abTestManager)
         container.register(PurchaseManager.self, purchaseManager)
+        container.register(AppState.self, appState)
         
         self.container = container
     }
