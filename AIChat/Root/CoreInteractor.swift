@@ -19,6 +19,7 @@ struct CoreInteractor {
     private let pushManager: PushManager
     private let abTestManager: ABTestManager
     private let purchaseManager: PurchaseManager
+    private let appState: AppState
     
     init(container: DependencyContainer) {
         self.authManager = container.resolve(AuthManager.self)!
@@ -30,6 +31,20 @@ struct CoreInteractor {
         self.pushManager = container.resolve(PushManager.self)!
         self.abTestManager = container.resolve(ABTestManager.self)!
         self.purchaseManager = container.resolve(PurchaseManager.self)!
+        self.appState = container.resolve(AppState.self)!
+    }
+}
+
+
+// MARK: AppState
+extension CoreInteractor {
+    
+    var showTabBar: Bool {
+        appState.showTabBar
+    }
+    
+    func updateAppState(showTabBarView: Bool) {
+        appState.updateViewState(showTabBarView: showTabBarView)
     }
 }
 
