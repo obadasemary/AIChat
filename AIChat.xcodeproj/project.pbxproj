@@ -956,10 +956,10 @@
 		};
 		AFAA66B42DF4E4960013F8DC /* XCRemoteSwiftPackageReference "SignInAppleAsync" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "git@github.com:SwiftfulThinking/SignInAppleAsync.git";
+			repositoryURL = "https://github.com/SwiftfulThinking/SignInAppleAsync.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.1;
+				minimumVersion = 1.0.2;
 			};
 		};
 		AFCB2B9E2DFDC20B00694E6E /* XCRemoteSwiftPackageReference "SwiftfulFirestore" */ = {
