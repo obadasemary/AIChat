@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ExploreView: View {
     
-//    @Environment(CoreBuilder.self) private var builder
+    @Environment(CoreBuilder.self) private var builder
     @Environment(ExploreBuilder.self) private var exploreBuilder
     @State var viewModel: ExploreViewModel
     
