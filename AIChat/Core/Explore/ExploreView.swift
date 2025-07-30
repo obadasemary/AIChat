@@ -9,7 +9,8 @@ import SwiftUI
 
 struct ExploreView: View {
     
-    @Environment(CoreBuilder.self) private var builder
+//    @Environment(CoreBuilder.self) private var builder
+    @Environment(ExploreBuilder.self) private var exploreBuilder
     @State var viewModel: ExploreViewModel
     
     var body: some View {
@@ -229,9 +230,11 @@ private extension ExploreView {
             )
         )
     
-    let builder = CoreBuilder(container: container)
+//    let builder = CoreBuilder(container: container)
+    let exploreBuilder = ExploreBuilder(container: container)
     
-    return builder.exploreView()
+//    return builder.exploreView()
+    return exploreBuilder.buildExploreView()
         .previewEnvironment()
 }
 
