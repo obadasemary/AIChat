@@ -12,7 +12,8 @@ jobs:
     timeout-minutes: 15
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout project
+        uses: actions/checkout@v4
 
       - name: Select Xcode 16.2
         run: sudo xcode-select -switch /Applications/Xcode_16.2.app
@@ -23,20 +24,32 @@ jobs:
           xcodebuild -version
           xcrun simctl list devices
 
+      - name: List available Xcode schemes (debugging)
+        run: xcodebuild -list
+
       - name: Build app
         run: |
           echo "🚀 Starting xcodebuild"
           set -o pipefail && xcodebuild \
-            -scheme AIChat \
+            -scheme "AIChat - Development" \
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.5' \
             build | tee xcodebuild.log | xcpretty
 
-      - name: Run tests
+      - name: Run unit tests
         run: |
           echo "🧪 Running tests"
           set -o pipefail && xcodebuild \
-            -scheme AIChatTests \
+            -scheme "AIChat - Development" \
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.5' \
             test | tee xctest.log | xcpretty
+
+      - name: Upload raw logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcode-logs
+          path: |
+            xcodebuild.log
+            xctest.log
