@@ -8,7 +8,8 @@ on:
 
 jobs:
   build:
-    runs-on: macOS 14
+    runs-on: macos-14
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v4
@@ -24,8 +25,18 @@ jobs:
 
       - name: Build app
         run: |
-          set -o pipefail && xcodebuild -scheme AIChat -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.5' build | xcpretty
+          echo "🚀 Starting xcodebuild"
+          set -o pipefail && xcodebuild \
+            -scheme AIChat \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.5' \
+            build | tee xcodebuild.log | xcpretty
 
       - name: Run tests
         run: |
-          set -o pipefail && xcodebuild -scheme AIChatTests -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.5' test | xcpretty
+          echo "🧪 Running tests"
+          set -o pipefail && xcodebuild \
+            -scheme AIChatTests \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.5' \
+            test | tee xctest.log | xcpretty
