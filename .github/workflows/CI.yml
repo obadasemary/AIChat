@@ -33,7 +33,7 @@ jobs:
           set -o pipefail && xcodebuild \
             -scheme "AIChat - Development" \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.1' \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' \
             build | tee xcodebuild.log | xcpretty
 
       - name: Run unit tests
@@ -42,7 +42,7 @@ jobs:
           set -o pipefail && xcodebuild \
             -scheme "AIChat - Development" \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.1' \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' \
             test | tee xctest.log | xcpretty
 
       - name: Upload raw logs on failure
