@@ -12,10 +12,10 @@ import SwiftfulUtilities
 struct AppEntryPoint {
     
     static func main() {
-        if Utilities.isUnitTesting {
-            TestingApp.main()
-        } else {
-            AIChatApp.main()
-        }
+//        if Utilities.isUnitTesting {
+//            TestingApp.main()
+//        } else {
+//        }
+        AIChatApp.main()
     }
 }
