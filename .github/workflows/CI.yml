@@ -44,7 +44,7 @@ jobs:
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' \
             -only-testing:AIChatTests \
-            test | tee unit_tests.log | xcpretty
+            test | tee swift_unit_tests.log | xcpretty
 
       - name: Run UI Tests
         run: |
