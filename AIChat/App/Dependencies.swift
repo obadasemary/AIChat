@@ -187,6 +187,7 @@ extension View {
         self
             .environment(DevPreview.shared.container)
             .environment(LogManager(services: []))
+            .environment(ExploreBuilder(container: DevPreview.shared.container))
             .environment(CoreBuilder(container: DevPreview.shared.container))
     }
 }
