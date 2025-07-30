@@ -9,7 +9,15 @@
     }
   ],
   "defaultOptions" : {
-    "codeCoverage" : false,
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:AIChat.xcodeproj",
+          "identifier" : "AF9034FA2DA3FDB000A35095",
+          "name" : "AIChat"
+        }
+      ]
+    },
     "targetForVariableExpansion" : {
       "containerPath" : "container:AIChat.xcodeproj",
       "identifier" : "AF9034FA2DA3FDB000A35095",
