@@ -21,6 +21,9 @@ protocol ExploreInteractor {
     func schedulePushNotificationForTheNextWeek()
     func canRequestAuthorization() async -> Bool
     func reuestAuthorization() async throws -> Bool
+    
+    func signOut() throws
+    func updateAppState(showTabBarView: Bool)
 }
 
 extension CoreInteractor: ExploreInteractor {}
