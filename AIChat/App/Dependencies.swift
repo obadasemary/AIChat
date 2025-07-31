@@ -200,6 +200,12 @@ extension View {
             .environment(
                 CategoryListBuilder(container: DevPreview.shared.container)
             )
+            .environment(
+                ChatBuilder(container: DevPreview.shared.container)
+            )
+            .environment(
+                PaywallBuilder(container: DevPreview.shared.container)
+            )
             .environment(CoreBuilder(container: DevPreview.shared.container))
     }
 }
