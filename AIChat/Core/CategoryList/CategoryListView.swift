@@ -10,17 +10,13 @@ import SwiftUI
 struct CategoryListView: View {
     
     @State var viewModel: CategoryListViewModel
-    
-    var category: CharacterOption = .alien
-    var imageName: String = Constants.randomImage
-    
-    @Binding var path: [TabbarPathOption]
+    let delegate: CategoryListDelegate
     
     var body: some View {
         List {
             CategoryCellView(
-                title: category.plural.capitalized,
-                imageName: imageName,
+                title: delegate.category.plural.capitalized,
+                imageName: delegate.imageName,
                 font: .largeTitle,
                 cornerRadius: 0
             )
@@ -38,7 +34,10 @@ struct CategoryListView: View {
                         subtitle: avatar.characterDescription
                     )
                     .anyButton(.highlight) {
-                        viewModel.onAvatarTapped(avatar: avatar, path: $path)
+                        viewModel.onAvatarTapped(
+                            avatar: avatar,
+                            path: delegate.path
+                        )
                     }
                     .removeListRowFormatting()
                 }
@@ -50,7 +49,7 @@ struct CategoryListView: View {
         .ignoresSafeArea(edges: .top)
         .listStyle(.plain)
         .task {
-            await viewModel.loadAvatars(category: category)
+            await viewModel.loadAvatars(category: delegate.category)
         }
     }
 }
@@ -87,15 +86,11 @@ private extension CategoryListView {
         )
     )
     
-    return CategoryListView(
-        viewModel: CategoryListViewModel(
-            categoryListUseCase: CategoryListUseCase(
-                container: container
-            )
-        ),
-        path: .constant([])
-    )
-    .previewEnvironment()
+    let categoryListBuilder = CategoryListBuilder(container: container)
+    let delegate = CategoryListDelegate(path: .constant([]))
+    
+    return categoryListBuilder.buildCategoryListView(delegate: delegate)
+        .previewEnvironment()
 }
 
 #Preview("Mock No Data") {
@@ -107,15 +102,11 @@ private extension CategoryListView {
         )
     )
     
-    return CategoryListView(
-        viewModel: CategoryListViewModel(
-            categoryListUseCase: CategoryListUseCase(
-                container: container
-            )
-        ),
-        path: .constant([])
-    )
-    .previewEnvironment()
+    let categoryListBuilder = CategoryListBuilder(container: container)
+    let delegate = CategoryListDelegate(path: .constant([]))
+    
+    return categoryListBuilder.buildCategoryListView(delegate: delegate)
+        .previewEnvironment()
 }
 
 #Preview("Mock Slow Loading") {
@@ -127,15 +118,11 @@ private extension CategoryListView {
         )
     )
     
-    return CategoryListView(
-        viewModel: CategoryListViewModel(
-            categoryListUseCase: CategoryListUseCase(
-                container: container
-            )
-        ),
-        path: .constant([])
-    )
-    .previewEnvironment()
+    let categoryListBuilder = CategoryListBuilder(container: container)
+    let delegate = CategoryListDelegate(path: .constant([]))
+    
+    return categoryListBuilder.buildCategoryListView(delegate: delegate)
+        .previewEnvironment()
 }
 
 #Preview("Error Loading") {
@@ -147,13 +134,9 @@ private extension CategoryListView {
         )
     )
     
-    return CategoryListView(
-        viewModel: CategoryListViewModel(
-            categoryListUseCase: CategoryListUseCase(
-                container: container
-            )
-        ),
-        path: .constant([])
-    )
-    .previewEnvironment()
+    let categoryListBuilder = CategoryListBuilder(container: container)
+    let delegate = CategoryListDelegate(path: .constant([]))
+    
+    return categoryListBuilder.buildCategoryListView(delegate: delegate)
+        .previewEnvironment()
 }
