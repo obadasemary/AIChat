@@ -50,8 +50,11 @@ struct ExploreView: View {
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    if viewModel.showNotificationButton {
-                        pushNotificationButton
+                    HStack(spacing: 16) {
+                        if viewModel.showNotificationButton {
+                            pushNotificationButton
+                        }
+                        logoutButton
                     }
                 }
             }
@@ -218,6 +221,15 @@ private extension ExploreView {
             }
         )
     }
+    
+    var logoutButton: some View {
+        Image(systemName: "gear")
+            .font(.headline)
+            .foregroundStyle(.accent)
+            .anyButton {
+                viewModel.onLogoutButtonPressed()
+            }
+    }
 }
 
 #Preview("Mock Has Data") {
@@ -230,10 +242,8 @@ private extension ExploreView {
             )
         )
     
-//    let builder = CoreBuilder(container: container)
     let exploreBuilder = ExploreBuilder(container: container)
     
-//    return builder.exploreView()
     return exploreBuilder.buildExploreView()
         .previewEnvironment()
 }
