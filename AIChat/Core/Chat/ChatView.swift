@@ -9,14 +9,13 @@ import SwiftUI
 
 struct ChatView: View {
     
-    @Environment(DependencyContainer.self) private var container
+    @Environment(PaywallBuilder.self) private var paywallBuilder
     @State var viewModel: ChatViewModel
     
     @Environment(\.dismiss) private var dismiss
     @FocusState private var isTextFieldFocused: Bool
     
-    var avatarId: String
-    var chat: ChatModel?
+    let delegate: ChatDelegate
     
     var body: some View {
         VStack(spacing: .zero) {
@@ -52,21 +51,17 @@ struct ChatView: View {
             }
         }
         .sheet(isPresented: $viewModel.showPaywall) {
-            PaywallView(
-                viewModel: PaywallViewModel(
-                    paywallUseCase: PaywallUseCase(container: container)
-                )
-            )
+            paywallBuilder.buildPaywallView()
         }
         .task {
-            await viewModel.loadAvatar(avatarId: avatarId)
+            await viewModel.loadAvatar(avatarId: delegate.avatarId)
         }
         .task {
-            await viewModel.loadChat(avatarId: avatarId)
+            await viewModel.loadChat(avatarId: delegate.avatarId)
             await viewModel.listenToChatMessages()
         }
         .onFirstAppear {
-            viewModel.onViewFirstAppear(chat: chat)
+            viewModel.onViewFirstAppear(chat: delegate.chat)
         }
         .onDisappear {
             viewModel.onDisappear()
@@ -152,7 +147,7 @@ private extension ChatView {
         .onSubmit {
             isTextFieldFocused = false
             if !viewModel.textFieldText.isEmpty {
-                viewModel.onSendMessageTapped(avatarId: avatarId)
+                viewModel.onSendMessageTapped(avatarId: delegate.avatarId)
             }
         }
         .padding(12)
@@ -164,7 +159,7 @@ private extension ChatView {
                 .padding(.trailing, 4)
                 .foregroundStyle(.accent)
                 .anyButton(.plain) {
-                    viewModel.onSendMessageTapped(avatarId: avatarId)
+                    viewModel.onSendMessageTapped(avatarId: delegate.avatarId)
                 }
                 .disabled(viewModel.textFieldText.isEmpty)
         }
@@ -185,14 +180,13 @@ private extension ChatView {
 
 // MARK: - Preview Working Chat Not Premium
 #Preview("Working Chat - Not Premium") {
-    NavigationStack {
-        ChatView(
-            viewModel: ChatViewModel(
-                chatUseCase: ChatUseCase(container: DevPreview.shared.container)
-            ),
-            avatarId: AvatarModel.mock.avatarId
-        )
-        .previewEnvironment()
+    let container = DevPreview.shared.container
+    let chatBuilder = ChatBuilder(container: container)
+    let delegate = ChatDelegate(avatarId: AvatarModel.mock.avatarId)
+    
+    return NavigationStack {
+        chatBuilder.buildChatView(delegate: delegate)
+            .previewEnvironment()
     }
 }
 
@@ -204,14 +198,12 @@ private extension ChatView {
         PurchaseManager(service: MockPurchaseService(activeEntitlements: [.mock]))
     }
     
+    let chatBuilder = ChatBuilder(container: container)
+    let delegate = ChatDelegate(avatarId: AvatarModel.mock.avatarId)
+    
     return NavigationStack {
-        ChatView(
-            viewModel: ChatViewModel(
-                chatUseCase: ChatUseCase(container: container)
-            ),
-            avatarId: AvatarModel.mock.avatarId
-        )
-        .previewEnvironment()
+        chatBuilder.buildChatView(delegate: delegate)
+            .previewEnvironment()
     }
 }
 
@@ -223,14 +215,12 @@ private extension ChatView {
         AIManager(service: MockAIServer(delay: 10))
     }
     
+    let chatBuilder = ChatBuilder(container: container)
+    let delegate = ChatDelegate(avatarId: AvatarModel.mock.avatarId)
+    
     return NavigationStack {
-        ChatView(
-            viewModel: ChatViewModel(
-                chatUseCase: ChatUseCase(container: container)
-            ),
-            avatarId: AvatarModel.mock.avatarId
-        )
-        .previewEnvironment()
+        chatBuilder.buildChatView(delegate: delegate)
+            .previewEnvironment()
     }
 }
 
@@ -246,13 +236,11 @@ private extension ChatView {
         AIManager(service: MockAIServer(delay: 2, showError: true))
     }
     
+    let chatBuilder = ChatBuilder(container: container)
+    let delegate = ChatDelegate(avatarId: AvatarModel.mock.avatarId)
+    
     return NavigationStack {
-        ChatView(
-            viewModel: ChatViewModel(
-                chatUseCase: ChatUseCase(container: container)
-            ),
-            avatarId: AvatarModel.mock.avatarId
-        )
-        .previewEnvironment()
+        chatBuilder.buildChatView(delegate: delegate)
+            .previewEnvironment()
     }
 }
