@@ -187,7 +187,19 @@ extension View {
         self
             .environment(DevPreview.shared.container)
             .environment(LogManager(services: []))
+            .environment(AppBuilder(container: DevPreview.shared.container))
+            .environment(TabBarBuilder(container: DevPreview.shared.container))
+            .environment(WelcomeBuilder(container: DevPreview.shared.container))
             .environment(ExploreBuilder(container: DevPreview.shared.container))
+            .environment(
+                CreateAccountBuilder(container: DevPreview.shared.container)
+            )
+            .environment(
+                DevSettingsBuilder(container: DevPreview.shared.container)
+            )
+            .environment(
+                CategoryListBuilder(container: DevPreview.shared.container)
+            )
             .environment(CoreBuilder(container: DevPreview.shared.container))
     }
 }
