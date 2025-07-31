@@ -9,7 +9,9 @@ import SwiftUI
 
 struct AppView: View {
     
-    @Environment(DependencyContainer.self) private var container
+    @Environment(AppBuilder.self) private var appBuilder
+    @Environment(TabBarBuilder.self) private var tabBarBuilder
+    @Environment(WelcomeBuilder.self) private var welcomeBuilder
     @State var viewModel: AppViewModel
     
     var body: some View {
@@ -30,14 +32,10 @@ struct AppView: View {
             AppViewBuilder(
                 showTabBar: viewModel.showTabBar,
                 tabBarView: {
-                    TabBarView()
+                    tabBarBuilder.buildTabBarView()
                 },
                 onboardingView: {
-                    WelcomeView(
-                        viewModel: WelcomeViewModel(
-                            welcomeUseCase: WelcomeUseCase(container: container)
-                        )
-                    )
+                    welcomeBuilder.buildWelcomeView()
                 }
             )
             .screenAppearAnalytics(name: Self.screenName)
@@ -68,12 +66,10 @@ struct AppView: View {
         AppState(showTabBar: true)
     }
     
-    return AppView(
-        viewModel: AppViewModel(
-            appViewUseCase: AppViewUseCase(container: container)
-        )
-    )
-    .previewEnvironment()
+    let builder = CoreBuilder(container: container)
+    
+    return builder.appView()
+        .previewEnvironment()
 }
 
 #Preview("AppView - Onboarding") {
@@ -91,13 +87,9 @@ struct AppView: View {
         AppState(showTabBar: false)
     }
     
-    return AppView(
-        viewModel: AppViewModel(
-            appViewUseCase: AppViewUseCase(
-                container: container
-            )
-        )
-    )
-    .previewEnvironment()
+    let builder = AppBuilder(container: container)
+    
+    return builder.buildAppView()
+        .previewEnvironment()
 }
 
