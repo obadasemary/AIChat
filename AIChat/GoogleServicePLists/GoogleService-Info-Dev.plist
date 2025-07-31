@@ -7,7 +7,7 @@
 	<key>REVERSED_CLIENT_ID</key>
 	<string>com.googleusercontent.apps.925847372979-taso0s11v0o6mbh1q46q99hjah5ab8ie</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDON9eXrJuAdF2TkQBflD0fJo9x_661k4A</string>
+	<string>AIzaSyB3PhtitiNkYscwye6qPwOQVJrikh8vTHw</string>
 	<key>GCM_SENDER_ID</key>
 	<string>925847372979</string>
 	<key>PLIST_VERSION</key>
@@ -19,15 +19,15 @@
 	<key>STORAGE_BUCKET</key>
 	<string>aichat-b8847.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_APPINVITE_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_GCM_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:925847372979:ios:137d55e6a98e41837bdcc6</string>
 </dict>
