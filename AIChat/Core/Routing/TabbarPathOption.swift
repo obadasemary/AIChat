@@ -26,8 +26,10 @@ struct NavigationDestinationForTabbarModuleViewModifier: ViewModifier {
                         viewModel: ChatViewModel(
                             chatUseCase: ChatUseCase(container: container)
                         ),
-                        avatarId: avatarId,
-                        chat: chat
+                        delegate: ChatDelegate(
+                            avatarId: avatarId,
+                            chat: chat
+                        )
                     )
                 case .character(category: let category, imageName: let imageName):
                     CategoryListView(
