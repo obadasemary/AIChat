@@ -61,12 +61,9 @@ struct PaywallView: View {
 }
 
 #Preview {
-    PaywallView(
-        viewModel: PaywallViewModel(
-            paywallUseCase: PaywallUseCase(
-                container: DevPreview.shared.container
-            )
-        )
-    )
-    .previewEnvironment()
+    let container = DevPreview.shared.container
+    let paywallBuilder = PaywallBuilder(container: container)
+    
+    return paywallBuilder.buildPaywallView()
+        .previewEnvironment()
 }
