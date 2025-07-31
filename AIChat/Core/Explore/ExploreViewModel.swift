@@ -224,6 +224,13 @@ extension ExploreViewModel {
                 )
             )
     }
+    
+    func onLogoutButtonPressed() {
+        if (interactor.auth != nil) {
+            try? interactor.signOut()
+        }
+        interactor.updateAppState(showTabBarView: false)
+    }
 }
 
 // MARK: - Event
