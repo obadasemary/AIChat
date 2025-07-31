@@ -10,17 +10,14 @@ import SwiftUI
 struct TabBarView: View {
     
     @Environment(DependencyContainer.self) private var container
+    @Environment(ExploreBuilder.self) private var exploreBuilder
     
     var body: some View {
         TabView {
-            ExploreView(
-                viewModel: ExploreViewModel(
-                    interactor: CoreInteractor(container: container)
-                )
-            )
-            .tabItem {
-                Label("Explore", systemImage: "eyes")
-            }
+            exploreBuilder.buildExploreView()
+                .tabItem {
+                    Label("Explore", systemImage: "eyes")
+                }
             ChatsView(
                 viewModel: ChatsViewModel(
                     chatsUseCase: ChatsUseCase(container: container)
