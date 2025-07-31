@@ -68,8 +68,8 @@ struct CreateAccountView: View {
 }
 
 #Preview {
-    let builder = CoreBuilder(container: DevPreview.shared.container)
+    let builder = CreateAccountBuilder(container: DevPreview.shared.container)
     
-    return builder.createAccountView()
+    return builder.buildCreateAccountView()
         .previewEnvironment()
 }
