@@ -78,4 +78,21 @@ class CoreBuilder {
             delegate: delegate
         )
     }
+    
+    func chatView(delegate: ChatDelegate) -> some View {
+        ChatView(
+            viewModel: ChatViewModel(
+                chatUseCase: ChatUseCase(container: container)
+            ),
+            delegate: delegate
+        )
+    }
+    
+    func paywallView() -> some View {
+        PaywallView(
+            viewModel: PaywallViewModel(
+                paywallUseCase: PaywallUseCase(container: container)
+            )
+        )
+    }
 }
