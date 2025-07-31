@@ -36,9 +36,11 @@ struct NavigationDestinationForTabbarModuleViewModifier: ViewModifier {
                                 container: container
                             )
                         ),
-                        category: category,
-                        imageName: imageName,
-                        path: path
+                        delegate: CategoryListDelegate(
+                            category: category,
+                            imageName: imageName,
+                            path: path
+                        )
                     )
                 }
             }
