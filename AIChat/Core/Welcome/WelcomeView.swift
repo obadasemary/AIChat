@@ -9,7 +9,7 @@ import SwiftUI
 
 struct WelcomeView: View {
     
-    @Environment(CoreBuilder.self) private var builder
+    @Environment(CreateAccountBuilder.self) private var createAccountBuilder
     @State var viewModel: WelcomeViewModel
     
     var body: some View {
@@ -30,17 +30,18 @@ struct WelcomeView: View {
         }
         .screenAppearAnalytics(name: "WelcomeView")
         .sheet(isPresented: $viewModel.showSignInView) {
-            builder.createAccountView(
-                delegate: CreateAccountDelegate(
-                    title: "Sign In",
-                    subtitle: "Connect to an existing account",
-                    onDidSignIn: { isNewUser in
-                        viewModel
-                            .handleDidSignIn(isNewUser: isNewUser)
-                    }
+            createAccountBuilder
+                .buildCreateAccountView(
+                    delegate: CreateAccountDelegate(
+                        title: "Sign In",
+                        subtitle: "Connect to an existing account",
+                        onDidSignIn: { isNewUser in
+                            viewModel
+                                .handleDidSignIn(isNewUser: isNewUser)
+                        }
+                    )
                 )
-            )
-            .presentationDetents([.medium])
+                .presentationDetents([.medium])
         }
     }
 }
@@ -111,12 +112,8 @@ private extension WelcomeView {
 }
 
 #Preview {
-    WelcomeView(
-        viewModel: WelcomeViewModel(
-            welcomeUseCase: WelcomeUseCase(
-                container: DevPreview.shared.container
-            )
-        )
-    )
-    .previewEnvironment()
+    let welcomeBuilder = WelcomeBuilder(container: DevPreview.shared.container)
+    
+    return welcomeBuilder.buildWelcomeView()
+        .previewEnvironment()
 }
