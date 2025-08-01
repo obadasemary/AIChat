@@ -152,12 +152,9 @@ private extension CreateAvatarView {
 }
 
 #Preview {
-    CreateAvatarView(
-        viewModel: CreateAvatarViewModel(
-            createAvatarUseCase: CreateAvatarUseCase(
-                container: DevPreview.shared.container
-            )
-        )
-    )
-    .previewEnvironment()
+    let container = DevPreview.shared.container
+    let createAvatarBuilder = CreateAvatarBuilder(container: container)
+    
+    return createAvatarBuilder.buildCreateAvatarView()
+        .previewEnvironment()
 }
