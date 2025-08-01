@@ -206,6 +206,9 @@ extension View {
             .environment(
                 PaywallBuilder(container: DevPreview.shared.container)
             )
+            .environment(
+                CreateAvatarBuilder(container: DevPreview.shared.container)
+            )
             .environment(CoreBuilder(container: DevPreview.shared.container))
     }
 }
