@@ -10,6 +10,7 @@ import SwiftUI
 struct ProfileView: View {
     
     @Environment(DependencyContainer.self) private var container
+    @Environment(CreateAvatarBuilder.self) private var createAvatarBuilder
     @State var viewModel: ProfileViewModel
     
     var body: some View {
@@ -40,13 +41,14 @@ struct ProfileView: View {
                 await viewModel.loadData()
             }
         } content: {
-            CreateAvatarView(
-                viewModel: CreateAvatarViewModel(
-                    createAvatarUseCase: CreateAvatarUseCase(
-                        container: container
-                    )
-                )
-            )
+//            CreateAvatarView(
+//                viewModel: CreateAvatarViewModel(
+//                    createAvatarUseCase: CreateAvatarUseCase(
+//                        container: container
+//                    )
+//                )
+//            )
+            createAvatarBuilder.buildCreateAvatarView()
         }
         .task {
             await viewModel.loadData()
