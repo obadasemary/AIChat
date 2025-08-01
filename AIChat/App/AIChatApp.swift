@@ -59,6 +59,9 @@ struct AIChatApp: App {
             .environment(
                 PaywallBuilder(container: delegate.dependencies.container)
             )
+            .environment(
+                CreateAvatarBuilder(container: delegate.dependencies.container)
+            )
             .environment(delegate.dependencies.container)
             .environment(delegate.dependencies.logManager)
         }
