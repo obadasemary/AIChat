@@ -95,4 +95,12 @@ class CoreBuilder {
             )
         )
     }
+    
+    func createAvatarView() -> some View {
+        CreateAvatarView(
+            viewModel: CreateAvatarViewModel(
+                createAvatarUseCase: CreateAvatarUseCase(container: container)
+            )
+        )
+    }
 }
