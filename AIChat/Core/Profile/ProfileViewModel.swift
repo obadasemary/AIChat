@@ -11,7 +11,7 @@ import Foundation
 @MainActor
 final class ProfileViewModel {
     
-    private let interactor: ProfileInteractor
+    private let profileUseCase: ProfileUseCaseProtocol
     
     private(set) var currentUser: UserModel?
     private(set) var myAvatars: [AvatarModel] = []
@@ -22,8 +22,8 @@ final class ProfileViewModel {
     var showAlert: AnyAppAlert?
     var path: [TabbarPathOption] = []
     
-    init(interactor: ProfileInteractor) {
-        self.interactor = interactor
+    init(profileUseCase: ProfileUseCaseProtocol) {
+        self.profileUseCase = profileUseCase
     }
 }
 
@@ -31,20 +31,20 @@ final class ProfileViewModel {
 extension ProfileViewModel {
     
     func loadData() async {
-        currentUser = interactor.currentUser
-        interactor.trackEvent(event: Event.loadAvatarsStart)
+        currentUser = profileUseCase.currentUser
+        profileUseCase.trackEvent(event: Event.loadAvatarsStart)
         
         do {
-            let userId = try interactor.getAuthId()
-            myAvatars = try await interactor
+            let userId = try profileUseCase.getAuthId()
+            myAvatars = try await profileUseCase
                 .getAvatarsForAuthor(userId: userId)
-            interactor.trackEvent(
+            profileUseCase.trackEvent(
                 event: Event.loadAvatarsSuccess(
                     count: myAvatars.count
                 )
             )
         } catch {
-            interactor
+            profileUseCase
                 .trackEvent(
                     event: Event.loadAvatarsFail(
                         error: error
@@ -61,17 +61,17 @@ extension ProfileViewModel {
     
     func onSettingsButtonPressed() {
         showSettingsView = true
-        interactor.trackEvent(event: Event.settingsPressed)
+        profileUseCase.trackEvent(event: Event.settingsPressed)
     }
     
     func onNewAvatarButtonPressed() {
         showCreateAvatarView = true
-        interactor.trackEvent(event: Event.newAvatarPressed)
+        profileUseCase.trackEvent(event: Event.newAvatarPressed)
     }
     
     func onAvatarSelected(avatar: AvatarModel) {
         path.append(.chat(avatarId: avatar.avatarId, chat: nil))
-        interactor
+        profileUseCase
             .trackEvent(
                 event: Event.avatarPressed(
                     avatar: avatar
@@ -82,7 +82,7 @@ extension ProfileViewModel {
     func onDeleteAvatar(indexSet: IndexSet) {
         guard let index = indexSet.first else { return }
         let avatar = myAvatars[index]
-        interactor
+        profileUseCase
             .trackEvent(
                 event: Event.deleteAvatarStart(
                     avatar: avatar
@@ -91,10 +91,10 @@ extension ProfileViewModel {
         
         Task {
             do {
-                try await interactor
+                try await profileUseCase
                     .removeAuthorIdFromAvatar(avatarId: avatar.id)
                 myAvatars.remove(at: index)
-                interactor
+                profileUseCase
                     .trackEvent(
                         event: Event.deleteAvatarSuccess(
                             avatar: avatar
@@ -105,7 +105,7 @@ extension ProfileViewModel {
                     title: "Unable to delete avatar",
                     subtitle: "Please try again later."
                 )
-                interactor
+                profileUseCase
                     .trackEvent(
                         event: Event.deleteAvatarFail(
                             error: error
