@@ -41,13 +41,6 @@ struct ProfileView: View {
                 await viewModel.loadData()
             }
         } content: {
-//            CreateAvatarView(
-//                viewModel: CreateAvatarViewModel(
-//                    createAvatarUseCase: CreateAvatarUseCase(
-//                        container: container
-//                    )
-//                )
-//            )
             createAvatarBuilder.buildCreateAvatarView()
         }
         .task {
@@ -133,22 +126,10 @@ private extension ProfileView {
     }
 }
 
-#Preview("CoreInteractor") {
-    ProfileView(
-        viewModel: ProfileViewModel(
-            interactor: CoreInteractor(container: DevPreview.shared.container)
-        )
-    )
-    .previewEnvironment()
-}
-
-#Preview("ProdProfileInteractor") {
-    ProfileView(
-        viewModel: ProfileViewModel(
-            interactor: ProdProfileInteractor(
-                container: DevPreview.shared.container
-            )
-        )
-    )
-    .previewEnvironment()
+#Preview() {
+    let container = DevPreview.shared.container
+    let profileBuilder = ProfileBuilder(container: container)
+    
+    return profileBuilder.buildProfileView()
+        .previewEnvironment()
 }
