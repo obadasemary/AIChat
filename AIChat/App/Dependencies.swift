@@ -209,6 +209,9 @@ extension View {
             .environment(
                 CreateAvatarBuilder(container: DevPreview.shared.container)
             )
+            .environment(
+                ProfileBuilder(container: DevPreview.shared.container)
+            )
             .environment(CoreBuilder(container: DevPreview.shared.container))
     }
 }
