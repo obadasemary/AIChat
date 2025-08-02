@@ -11,6 +11,7 @@ struct TabBarView: View {
     
     @Environment(DependencyContainer.self) private var container
     @Environment(ExploreBuilder.self) private var exploreBuilder
+    @Environment(ProfileBuilder.self) private var profileBuilder
     
     var body: some View {
         TabView {
@@ -29,14 +30,10 @@ struct TabBarView: View {
                     systemImage: "bubble.left.and.bubble.right"
                 )
             }
-            ProfileView(
-                viewModel: ProfileViewModel(
-                    interactor: CoreInteractor(container: container)
-                )
-            )
-            .tabItem {
-                Label("Profile", systemImage: "person.fill")
-            }
+            profileBuilder.buildProfileView()
+                .tabItem {
+                    Label("Profile", systemImage: "person.fill")
+                }
         }
     }
 }
