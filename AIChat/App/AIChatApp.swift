@@ -42,6 +42,26 @@ struct AIChatApp: App {
                 WelcomeBuilder(container: delegate.dependencies.container)
             )
             .environment(
+                OnboardingIntroBuilder(
+                    container: delegate.dependencies.container
+                )
+            )
+            .environment(
+                OnboardingCommunityBuilder(
+                    container: delegate.dependencies.container
+                )
+            )
+            .environment(
+                OnboardingColorBuilder(
+                    container: delegate.dependencies.container
+                )
+            )
+            .environment(
+                OnboardingCompletedBuilder(
+                    container: delegate.dependencies.container
+                )
+            )
+            .environment(
                 ExploreBuilder(container: delegate.dependencies.container)
             )
             .environment(
