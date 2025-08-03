@@ -9,8 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     
-    @Environment(DependencyContainer.self) private var container
-    @Environment(CoreBuilder.self) private var builder
+    @Environment(CreateAccountBuilder.self) private var createAccountBuilder
     @State var viewModel: SettingsViewModel
     
     @Environment(\.dismiss) private var dismiss
@@ -31,7 +30,7 @@ struct SettingsView: View {
                     viewModel.setAnonymousAccountStatus()
                 },
                 content: {
-                    builder.createAccountView()
+                    createAccountBuilder.buildCreateAccountView()
                         .presentationDetents([.medium])
                 }
             )
@@ -206,12 +205,10 @@ fileprivate extension View {
         AuthManager(service: MockAuthService(currentUser: nil))
     }
     
-    return SettingsView(
-        viewModel: SettingsViewModel(
-            settingsUseCase: SettingsUseCase(container: container)
-        )
-    )
-    .previewEnvironment(isSignedIn: false)
+    let settingsBuilder = SettingsBuilder(container: container)
+    
+    return settingsBuilder.buildSettingsView()
+        .previewEnvironment(isSignedIn: false)
 }
 
 #Preview("Anonymous") {
@@ -231,12 +228,10 @@ fileprivate extension View {
         )
     }
     
-    return SettingsView(
-        viewModel: SettingsViewModel(
-            settingsUseCase: SettingsUseCase(container: container)
-        )
-    )
-    .previewEnvironment()
+    let settingsBuilder = SettingsBuilder(container: container)
+    
+    return settingsBuilder.buildSettingsView()
+        .previewEnvironment(isSignedIn: false)
 }
 
 #Preview("Not Anonymous") {
@@ -256,10 +251,8 @@ fileprivate extension View {
         )
     }
     
-    return SettingsView(
-        viewModel: SettingsViewModel(
-            settingsUseCase: SettingsUseCase(container: container)
-        )
-    )
-    .previewEnvironment()
+    let settingsBuilder = SettingsBuilder(container: container)
+    
+    return settingsBuilder.buildSettingsView()
+        .previewEnvironment(isSignedIn: false)
 }
