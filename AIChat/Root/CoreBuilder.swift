@@ -42,7 +42,7 @@ class CoreBuilder {
     func exploreView() -> some View {
         ExploreView(
             viewModel: ExploreViewModel(
-                interactor: CoreInteractor(container: container)
+                exploreUseCase: ExploreUseCase(container: container)
             )
         )
     }
