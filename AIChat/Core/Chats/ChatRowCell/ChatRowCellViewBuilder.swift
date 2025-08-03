@@ -10,7 +10,7 @@ import SwiftUI
 struct ChatRowCellViewBuilder: View {
     
     @State var viewModel: ChatRowCellViewModel
-    var chat: ChatModel = .mock
+    let delegate: ChatRowCellDelegate
     
     var body: some View {
         ChatRowCellView(
@@ -21,24 +21,22 @@ struct ChatRowCellViewBuilder: View {
         )
         .redacted(reason: viewModel.isLoading ? .placeholder : [])
         .task {
-            await viewModel.loadAvatar(chat: chat)
+            await viewModel.loadAvatar(chat: delegate.chat)
         }
         .task {
-            await viewModel.loadLastChatMessage(chat: chat)
+            await viewModel.loadLastChatMessage(chat: delegate.chat)
         }
     }
 }
 
 #Preview {
     VStack {
-        ChatRowCellViewBuilder(
-            viewModel: ChatRowCellViewModel(
-                chatRowCellUseCase: ChatRowCellUseCase(
-                    container: DevPreview.shared.container
-                )
-            ),
-            chat: .mock
-        )
+        let container = DevPreview.shared.container
+        let chatRowCellBuilder = ChatRowCellBuilder(container: container)
+        let delegate = ChatRowCellDelegate(chat: .mock)
+        
+        chatRowCellBuilder
+            .buildChatRowCellBuilderView(delegate: delegate)
         
         ChatRowCellViewBuilder(
             viewModel: ChatRowCellViewModel(
@@ -53,7 +51,7 @@ struct ChatRowCellViewBuilder: View {
                     }
                 )
             ),
-            chat: .mock
+            delegate: ChatRowCellDelegate()
         )
         
         ChatRowCellViewBuilder(
@@ -67,7 +65,7 @@ struct ChatRowCellViewBuilder: View {
                     }
                 )
             ),
-            chat: .mock
+            delegate: ChatRowCellDelegate()
         )
         
         ChatRowCellViewBuilder(
@@ -81,7 +79,7 @@ struct ChatRowCellViewBuilder: View {
                     }
                 )
             ),
-            chat: .mock
+            delegate: ChatRowCellDelegate()
         )
     }
 }
