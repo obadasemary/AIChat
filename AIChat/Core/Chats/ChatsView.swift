@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ChatsView: View {
     
-    @Environment(DependencyContainer.self) private var container
+    @Environment(ChatRowCellBuilder.self) private var chatRowCellBuilder
     @State var viewModel: ChatsViewModel
     
     @Environment(\.colorScheme) var colorScheme
@@ -99,18 +99,14 @@ private extension ChatsView {
                 contentUnavailableView
             } else {
                 ForEach(viewModel.chats) { chat in
-                    ChatRowCellViewBuilder(
-                        viewModel: ChatRowCellViewModel(
-                            chatRowCellUseCase: ChatRowCellUseCase(
-                                container: container
-                            )
-                        ),
-                        chat: chat
-                    )
-                    .anyButton(.highlight) {
-                        viewModel.onChatSelected(chat: chat)
-                    }
-                    .removeListRowFormatting()
+                    chatRowCellBuilder
+                        .buildChatRowCellBuilderView(
+                            delegate: ChatRowCellDelegate(chat: chat)
+                        )
+                        .anyButton(.highlight) {
+                            viewModel.onChatSelected(chat: chat)
+                        }
+                        .removeListRowFormatting()
                 }
             }
         } header: {
@@ -122,12 +118,10 @@ private extension ChatsView {
 #Preview("Has Data") {
     let container = DevPreview.shared.container
     
-    return ChatsView(
-        viewModel: ChatsViewModel(
-            chatsUseCase: ChatsUseCase(container: container)
-        )
-    )
-    .previewEnvironment()
+    let chatsBuilder = ChatsBuilder(container: container)
+    
+    return chatsBuilder.buildChatsView()
+        .previewEnvironment()
 }
 
 #Preview("No Data") {
@@ -149,12 +143,10 @@ private extension ChatsView {
         LogManager(services: [])
     }
     
-    return ChatsView(
-        viewModel: ChatsViewModel(
-            chatsUseCase: ChatsUseCase(container: container)
-        )
-    )
-    .previewEnvironment()
+    let chatsBuilder = ChatsBuilder(container: container)
+    
+    return chatsBuilder.buildChatsView()
+        .previewEnvironment()
 }
 
 #Preview("Slow loading chats") {
@@ -164,10 +156,8 @@ private extension ChatsView {
         ChatManager(service: MockChatService(delay: 5))
     }
     
-    return ChatsView(
-        viewModel: ChatsViewModel(
-            chatsUseCase: ChatsUseCase(container: container)
-        )
-    )
-    .previewEnvironment()
+    let chatsBuilder = ChatsBuilder(container: container)
+    
+    return chatsBuilder.buildChatsView()
+        .previewEnvironment()
 }
