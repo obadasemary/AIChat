@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ProfileView: View {
     
-    @Environment(DependencyContainer.self) private var container
+    @Environment(SettingsBuilder.self) private var settingsBuilder
     @Environment(CreateAvatarBuilder.self) private var createAvatarBuilder
     @State var viewModel: ProfileViewModel
     
@@ -30,11 +30,7 @@ struct ProfileView: View {
             }
         }
         .sheet(isPresented: $viewModel.showSettingsView) {
-            SettingsView(
-                viewModel: SettingsViewModel(
-                    settingsUseCase: SettingsUseCase(container: container)
-                )
-            )
+            settingsBuilder.buildSettingsView()
         }
         .fullScreenCover(isPresented: $viewModel.showCreateAvatarView) {
             Task {
