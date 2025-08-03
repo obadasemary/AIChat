@@ -19,7 +19,7 @@ final class ExploreBuilder {
     func buildExploreView() -> some View {
         ExploreView(
             viewModel: ExploreViewModel(
-                interactor: CoreInteractor(container: container)
+                exploreUseCase: ExploreUseCase(container: container)
             )
         )
     }
