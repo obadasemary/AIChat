@@ -79,6 +79,27 @@ class CoreBuilder {
         )
     }
     
+    func chatsView() -> some View {
+        ChatsView(
+            viewModel: ChatsViewModel(
+                chatsUseCase: ChatsUseCase(container: container)
+            )
+        )
+    }
+    
+    func chatRowCellBuilderView(
+        delegate: ChatRowCellDelegate = ChatRowCellDelegate()
+    ) -> some View {
+        ChatRowCellViewBuilder(
+            viewModel: ChatRowCellViewModel(
+                chatRowCellUseCase: ChatRowCellUseCase(
+                    container: container
+                )
+            ),
+            delegate: delegate
+        )
+    }
+    
     func chatView(delegate: ChatDelegate) -> some View {
         ChatView(
             viewModel: ChatViewModel(
@@ -92,6 +113,22 @@ class CoreBuilder {
         PaywallView(
             viewModel: PaywallViewModel(
                 paywallUseCase: PaywallUseCase(container: container)
+            )
+        )
+    }
+    
+    func profileView() -> some View {
+        ProfileView(
+            viewModel: ProfileViewModel(
+                profileUseCase: ProfileUseCase(container: container)
+            )
+        )
+    }
+    
+    func settingsView() -> some View {
+        SettingsView(
+            viewModel: SettingsViewModel(
+                settingsUseCase: SettingsUseCase(container: container)
             )
         )
     }
