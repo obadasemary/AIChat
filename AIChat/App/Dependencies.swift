@@ -190,6 +190,18 @@ extension View {
             .environment(AppBuilder(container: DevPreview.shared.container))
             .environment(TabBarBuilder(container: DevPreview.shared.container))
             .environment(WelcomeBuilder(container: DevPreview.shared.container))
+            .environment(
+                OnboardingIntroBuilder(container: DevPreview.shared.container)
+            )
+            .environment(
+                OnboardingCommunityBuilder(container: DevPreview.shared.container)
+            )
+            .environment(
+                OnboardingColorBuilder(container: DevPreview.shared.container)
+            )
+            .environment(
+                OnboardingCompletedBuilder(container: DevPreview.shared.container)
+            )
             .environment(ExploreBuilder(container: DevPreview.shared.container))
             .environment(
                 CreateAccountBuilder(container: DevPreview.shared.container)
