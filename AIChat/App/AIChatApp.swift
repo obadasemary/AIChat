@@ -54,16 +54,25 @@ struct AIChatApp: App {
                 CategoryListBuilder(container: delegate.dependencies.container)
             )
             .environment(
+                ChatsBuilder(container: delegate.dependencies.container)
+            )
+            .environment(
+                ChatRowCellBuilder(container: delegate.dependencies.container)
+            )
+            .environment(
                 ChatBuilder(container: delegate.dependencies.container)
             )
             .environment(
                 PaywallBuilder(container: delegate.dependencies.container)
             )
             .environment(
-                CreateAvatarBuilder(container: delegate.dependencies.container)
+                ProfileBuilder(container: delegate.dependencies.container)
             )
             .environment(
-                ProfileBuilder(container: delegate.dependencies.container)
+                SettingsBuilder(container: delegate.dependencies.container)
+            )
+            .environment(
+                CreateAvatarBuilder(container: delegate.dependencies.container)
             )
             .environment(delegate.dependencies.container)
             .environment(delegate.dependencies.logManager)
