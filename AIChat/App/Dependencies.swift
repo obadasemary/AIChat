@@ -201,16 +201,25 @@ extension View {
                 CategoryListBuilder(container: DevPreview.shared.container)
             )
             .environment(
+                ChatsBuilder(container: DevPreview.shared.container)
+            )
+            .environment(
+                ChatRowCellBuilder(container: DevPreview.shared.container)
+            )
+            .environment(
                 ChatBuilder(container: DevPreview.shared.container)
             )
             .environment(
                 PaywallBuilder(container: DevPreview.shared.container)
             )
             .environment(
-                CreateAvatarBuilder(container: DevPreview.shared.container)
+                ProfileBuilder(container: DevPreview.shared.container)
             )
             .environment(
-                ProfileBuilder(container: DevPreview.shared.container)
+                SettingsBuilder(container: DevPreview.shared.container)
+            )
+            .environment(
+                CreateAvatarBuilder(container: DevPreview.shared.container)
             )
             .environment(CoreBuilder(container: DevPreview.shared.container))
     }
