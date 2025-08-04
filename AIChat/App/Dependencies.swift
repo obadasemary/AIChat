@@ -185,7 +185,6 @@ struct Dependencies {
 extension View {
     func previewEnvironment(isSignedIn: Bool = true) -> some View {
         self
-            .environment(DevPreview.shared.container)
             .environment(LogManager(services: []))
             .environment(AppBuilder(container: DevPreview.shared.container))
             .environment(TabBarBuilder(container: DevPreview.shared.container))
@@ -233,6 +232,5 @@ extension View {
             .environment(
                 CreateAvatarBuilder(container: DevPreview.shared.container)
             )
-            .environment(CoreBuilder(container: DevPreview.shared.container))
     }
 }
