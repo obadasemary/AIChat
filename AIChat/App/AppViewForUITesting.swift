@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AppViewForUITesting: View {
     
-    @Environment(DependencyContainer.self) private var container
+    @Environment(AppBuilder.self) private var appBuilder
     @Environment(CreateAvatarBuilder.self) private var createAvatarBuilder
     
     private var startOnCreateAvatar: Bool {
@@ -21,18 +21,9 @@ struct AppViewForUITesting: View {
     
     var body: some View {
         if startOnCreateAvatar {
-//            CreateAvatarView(
-//                viewModel: CreateAvatarViewModel(
-//                    createAvatarUseCase: CreateAvatarUseCase(container: DevPreview.shared.container)
-//                )
-//            )
             createAvatarBuilder.buildCreateAvatarView()
         } else {
-            AppView(
-                viewModel: AppViewModel(
-                    appViewUseCase: AppViewUseCase(container: container)
-                )
-            )
+            appBuilder.buildAppView()
         }
     }
 }
