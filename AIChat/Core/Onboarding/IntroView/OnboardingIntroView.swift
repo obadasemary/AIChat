@@ -9,9 +9,8 @@ import SwiftUI
 
 struct OnboardingIntroView: View {
     
-    @Environment(DependencyContainer.self) private var container
     @State var viewModel: OnboardingIntroViewModel
-    @Binding var path: [OnboardingPathOption]
+    let delegate: OnboardingIntroDelegate
     
     var body: some View {
         VStack {
@@ -38,7 +37,7 @@ struct OnboardingIntroView: View {
             Text("Continue")
                 .callToActionButton()
                 .anyButton(.press) {
-                    viewModel.onContinuePress(path: $path)
+                    viewModel.onContinuePress(path: delegate.path)
                 }
                 .accessibilityIdentifier("ContinueButton")
         }
@@ -50,6 +49,16 @@ struct OnboardingIntroView: View {
 }
 
 #Preview("Original") {
+    let contaner = DevPreview.shared.container
+    let onboardingIntroBuilder = OnboardingIntroBuilder(container: contaner)
+    let delegate = OnboardingIntroDelegate(path: .constant([]))
+    return NavigationStack {
+        onboardingIntroBuilder.buildOnboardingIntroView(delegate: delegate)
+            .previewEnvironment()
+    }
+}
+
+#Preview("T") {
     NavigationStack {
         OnboardingIntroView(
             viewModel: OnboardingIntroViewModel(
@@ -57,10 +66,9 @@ struct OnboardingIntroView: View {
                     container: DevPreview.shared.container
                 )
             ),
-            path: .constant([])
+            delegate: OnboardingIntroDelegate(path: .constant([]))
         )
     }
-    .previewEnvironment()
 }
 
 #Preview("Onb Comm Test") {
@@ -74,15 +82,11 @@ struct OnboardingIntroView: View {
         )
     }
     
+    let onboardingIntroBuilder = OnboardingIntroBuilder(container: contaner)
+    let delegate = OnboardingIntroDelegate(path: .constant([]))
+    
     return NavigationStack {
-        OnboardingIntroView(
-            viewModel: OnboardingIntroViewModel(
-                OnboardingIntroUseCase: OnboardingIntroUseCase(
-                    container: contaner
-                )
-            ),
-            path: .constant([])
-        )
+        onboardingIntroBuilder.buildOnboardingIntroView(delegate: delegate)
     }
     .previewEnvironment()
 }
