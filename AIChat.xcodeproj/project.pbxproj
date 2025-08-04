@@ -15,8 +15,6 @@
 		AF3986952DF8D2E5000F064C /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = AF3986942DF8D2E5000F064C /* GoogleSignInSwift */; };
 		AF3E88B22E0B7CA1002FAC13 /* Mixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = AF3E88B12E0B7CA1002FAC13 /* Mixpanel */; };
 		AF76C0CE2E4166550068E2E0 /* _ConfidentialKit in Frameworks */ = {isa = PBXBuildFile; productRef = AF76C0CD2E4166550068E2E0 /* _ConfidentialKit */; };
-		AF76C0ED2E4172570068E2E0 /* _ConfidentialKit in Frameworks */ = {isa = PBXBuildFile; productRef = AF76C0EC2E4172570068E2E0 /* _ConfidentialKit */; };
-		AF76C0F12E4172720068E2E0 /* _ConfidentialKit in Frameworks */ = {isa = PBXBuildFile; productRef = AF76C0F02E4172720068E2E0 /* _ConfidentialKit */; };
 		AF95B1772DF38774003D5BA0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = AF95B1762DF38774003D5BA0 /* FirebaseAuth */; };
 		AFA98BB32DA46E0600492141 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = AFA98BB22DA46E0600492141 /* SDWebImageSwiftUI */; };
 		AFAA66B62DF4E4960013F8DC /* SignInAppleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = AFAA66B52DF4E4960013F8DC /* SignInAppleAsync */; };
@@ -111,7 +109,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AF76C0ED2E4172570068E2E0 /* _ConfidentialKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,7 +116,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AF76C0F12E4172720068E2E0 /* _ConfidentialKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -211,7 +207,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				AF76C0DA2E4171870068E2E0 /* PBXTargetDependency */,
 				AF90350E2DA3FDB100A35095 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
@@ -219,7 +214,6 @@
 			);
 			name = AIChatTests;
 			packageProductDependencies = (
-				AF76C0EC2E4172570068E2E0 /* _ConfidentialKit */,
 			);
 			productName = AIChatTests;
 			productReference = AF90350C2DA3FDB100A35095 /* AIChatTests.xctest */;
@@ -236,7 +230,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				AF76C0EF2E4172630068E2E0 /* PBXTargetDependency */,
 				AF9035182DA3FDB100A35095 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
@@ -244,7 +237,6 @@
 			);
 			name = AIChatUITests;
 			packageProductDependencies = (
-				AF76C0F02E4172720068E2E0 /* _ConfidentialKit */,
 			);
 			productName = AIChatUITests;
 			productReference = AF9035162DA3FDB100A35095 /* AIChatUITests.xctest */;
@@ -406,14 +398,6 @@
 		AF76C0CA2E41638B0068E2E0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			productRef = AF76C0C92E41638B0068E2E0 /* Confidential */;
-		};
-		AF76C0DA2E4171870068E2E0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = AF76C0D92E4171870068E2E0 /* Confidential */;
-		};
-		AF76C0EF2E4172630068E2E0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = AF76C0EE2E4172630068E2E0 /* Confidential */;
 		};
 		AF90350E2DA3FDB100A35095 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1064,26 +1048,6 @@
 			productName = "plugin:Confidential";
 		};
 		AF76C0CD2E4166550068E2E0 /* _ConfidentialKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = AF76C0C52E41636D0068E2E0 /* XCRemoteSwiftPackageReference "swift-confidential" */;
-			productName = _ConfidentialKit;
-		};
-		AF76C0D92E4171870068E2E0 /* Confidential */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = AF76C0C82E4163820068E2E0 /* XCRemoteSwiftPackageReference "swift-confidential-plugin" */;
-			productName = "plugin:Confidential";
-		};
-		AF76C0EC2E4172570068E2E0 /* _ConfidentialKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = AF76C0C52E41636D0068E2E0 /* XCRemoteSwiftPackageReference "swift-confidential" */;
-			productName = _ConfidentialKit;
-		};
-		AF76C0EE2E4172630068E2E0 /* Confidential */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = AF76C0C82E4163820068E2E0 /* XCRemoteSwiftPackageReference "swift-confidential-plugin" */;
-			productName = "plugin:Confidential";
-		};
-		AF76C0F02E4172720068E2E0 /* _ConfidentialKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = AF76C0C52E41636D0068E2E0 /* XCRemoteSwiftPackageReference "swift-confidential" */;
 			productName = _ConfidentialKit;
