@@ -14,88 +14,34 @@ struct AIChatApp: App {
     
     var body: some Scene {
         WindowGroup {
-            Group {
+            let rootView = Group {
                 if Utilities.isUITesting {
                     AppViewForUITesting()
                 } else {
-                    AppView(
-                        viewModel: AppViewModel(
-                            appViewUseCase: AppViewUseCase(
-                                container: delegate
-                                    .dependencies
-                                    .container
-                            )
-                        )
-                    )
+                    delegate.appBuilder.buildAppView()
                 }
             }
-            .environment(
-                CoreBuilder(container: delegate.dependencies.container)
-            )
-            .environment(
-                AppBuilder(container: delegate.dependencies.container)
-            )
-            .environment(
-                TabBarBuilder(container: delegate.dependencies.container)
-            )
-            .environment(
-                WelcomeBuilder(container: delegate.dependencies.container)
-            )
-            .environment(
-                OnboardingIntroBuilder(
-                    container: delegate.dependencies.container
-                )
-            )
-            .environment(
-                OnboardingCommunityBuilder(
-                    container: delegate.dependencies.container
-                )
-            )
-            .environment(
-                OnboardingColorBuilder(
-                    container: delegate.dependencies.container
-                )
-            )
-            .environment(
-                OnboardingCompletedBuilder(
-                    container: delegate.dependencies.container
-                )
-            )
-            .environment(
-                ExploreBuilder(container: delegate.dependencies.container)
-            )
-            .environment(
-                CreateAccountBuilder(container: delegate.dependencies.container)
-            )
-            .environment(
-                DevSettingsBuilder(container: delegate.dependencies.container)
-            )
-            .environment(
-                CategoryListBuilder(container: delegate.dependencies.container)
-            )
-            .environment(
-                ChatsBuilder(container: delegate.dependencies.container)
-            )
-            .environment(
-                ChatRowCellBuilder(container: delegate.dependencies.container)
-            )
-            .environment(
-                ChatBuilder(container: delegate.dependencies.container)
-            )
-            .environment(
-                PaywallBuilder(container: delegate.dependencies.container)
-            )
-            .environment(
-                ProfileBuilder(container: delegate.dependencies.container)
-            )
-            .environment(
-                SettingsBuilder(container: delegate.dependencies.container)
-            )
-            .environment(
-                CreateAvatarBuilder(container: delegate.dependencies.container)
-            )
-            .environment(delegate.dependencies.container)
-            .environment(delegate.dependencies.logManager)
+
+            rootView
+                .environment(delegate.appBuilder)
+                .environment(delegate.welcomeBuilder)
+                .environment(delegate.onboardingIntroBuilder)
+                .environment(delegate.onboardingCommunityBuilder)
+                .environment(delegate.onboardingColorBuilder)
+                .environment(delegate.onboardingCompletedBuilder)
+                .environment(delegate.tabBarBuilder)
+                .environment(delegate.exploreBuilder)
+                .environment(delegate.categoryListBuilder)
+                .environment(delegate.devSettingsBuilder)
+                .environment(delegate.createAccountBuilder)
+                .environment(delegate.chatsBuilder)
+                .environment(delegate.chatRowCellBuilder)
+                .environment(delegate.chatBuilder)
+                .environment(delegate.paywallBuilder)
+                .environment(delegate.profileBuilder)
+                .environment(delegate.settingsBuilder)
+                .environment(delegate.createAvatarBuilder)
+                .environment(delegate.dependencies.logManager)
         }
     }
 }
