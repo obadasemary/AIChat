@@ -13,6 +13,31 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
     var dependencies: Dependencies!
     
+//    var builder: CoreBuilder!
+    
+    var appBuilder: AppBuilder!
+    var welcomeBuilder: WelcomeBuilder!
+    var onboardingIntroBuilder: OnboardingIntroBuilder!
+    var onboardingCommunityBuilder: OnboardingCommunityBuilder!
+    var onboardingColorBuilder: OnboardingColorBuilder!
+    var onboardingCompletedBuilder: OnboardingCompletedBuilder!
+    
+    var tabBarBuilder: TabBarBuilder!
+    var exploreBuilder: ExploreBuilder!
+    var categoryListBuilder: CategoryListBuilder!
+    var devSettingsBuilder: DevSettingsBuilder!
+    var createAccountBuilder: CreateAccountBuilder!
+    
+    var chatsBuilder: ChatsBuilder!
+    var chatRowCellBuilder: ChatRowCellBuilder!
+    var chatBuilder: ChatBuilder!
+    
+    var paywallBuilder: PaywallBuilder!
+    
+    var profileBuilder: ProfileBuilder!
+    var settingsBuilder: SettingsBuilder!
+    var createAvatarBuilder: CreateAvatarBuilder!
+    
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
@@ -42,6 +67,32 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         config.configureFirebase()
         dependencies = Dependencies(configuration: config)
+        
+//        builder = CoreBuilder(container: dependencies.container)
+        
+        appBuilder = AppBuilder(container: dependencies.container)
+        welcomeBuilder = WelcomeBuilder(container: dependencies.container)
+        onboardingIntroBuilder = OnboardingIntroBuilder(container: dependencies.container)
+        onboardingCommunityBuilder = OnboardingCommunityBuilder(container: dependencies.container)
+        onboardingColorBuilder = OnboardingColorBuilder(container: dependencies.container)
+        onboardingCompletedBuilder = OnboardingCompletedBuilder(container: dependencies.container)
+        
+        tabBarBuilder = TabBarBuilder(container: dependencies.container)
+        exploreBuilder = ExploreBuilder(container: dependencies.container)
+        categoryListBuilder = CategoryListBuilder(container: dependencies.container)
+        devSettingsBuilder = DevSettingsBuilder(container: dependencies.container)
+        createAccountBuilder = CreateAccountBuilder(container: dependencies.container)
+        
+        chatsBuilder = ChatsBuilder(container: dependencies.container)
+        chatRowCellBuilder = ChatRowCellBuilder(container: dependencies.container)
+        chatBuilder = ChatBuilder(container: dependencies.container)
+        
+        paywallBuilder = PaywallBuilder(container: dependencies.container)
+        
+        profileBuilder = ProfileBuilder(container: dependencies.container)
+        settingsBuilder = SettingsBuilder(container: dependencies.container)
+        createAvatarBuilder = CreateAvatarBuilder(container: dependencies.container)
+        
         return true
     }
     
