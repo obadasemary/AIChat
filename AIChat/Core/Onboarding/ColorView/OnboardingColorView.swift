@@ -9,9 +9,8 @@ import SwiftUI
 
 struct OnboardingColorView: View {
     
-    @Environment(DependencyContainer.self) private var container
     @State var viewModel: OnboardingColorViewModel
-    @Binding var path: [OnboardingPathOption]
+    let delegate: OnboardingColorDelegate
     
     var body: some View {
         ScrollView {
@@ -83,23 +82,20 @@ private extension OnboardingColorView {
         Text("Continue")
             .callToActionButton()
             .anyButton(.press) {
-                viewModel.onContinuePress(path: $path)
+                viewModel.onContinuePress(path: delegate.path)
             }
             .accessibilityIdentifier("ContinueButton")
     }
 }
 
 #Preview {
-    NavigationStack {
-        OnboardingColorView(
-            viewModel: OnboardingColorViewModel(
-                onboardingColorUseCase: OnboardingColorUseCase(
-                    container: DevPreview
-                        .shared.container
-                )
-            ),
-            path: .constant([])
-        )
+    let contaner = DevPreview.shared.container
+    let onboardingColorBuilder = OnboardingColorBuilder(container: contaner)
+    let delegate = OnboardingColorDelegate(path: .constant([]))
+    
+    return NavigationStack {
+        onboardingColorBuilder
+            .buildOnboardingColorView(delegate: delegate)
     }
     .previewEnvironment()
 }

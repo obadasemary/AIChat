@@ -9,9 +9,8 @@ import SwiftUI
 
 struct OnboardingCommunityView: View {
     
-    @Environment(DependencyContainer.self) private var container
     @State var viewModel: OnboardingCommunityViewModel
-    @Binding var path: [OnboardingPathOption]
+    let delegate: OnboardingCommunityDelegate
     
     var body: some View {
         VStack {
@@ -38,7 +37,7 @@ struct OnboardingCommunityView: View {
             Text("Continue")
                 .callToActionButton()
                 .anyButton(.press) {
-                    viewModel.onContinuePress(path: $path)
+                    viewModel.onContinuePress(path: delegate.path)
                 }
                 .accessibilityIdentifier("OnboardingCommunityContinueButton")
         }
@@ -50,15 +49,12 @@ struct OnboardingCommunityView: View {
 }
 
 #Preview {
-    NavigationStack {
-        OnboardingCommunityView(
-            viewModel: OnboardingCommunityViewModel(
-                onboardingCommunityUseCase: OnboardingCommunityUseCase(
-                    container: DevPreview.shared.container
-                )
-            ),
-            path: .constant([])
-        )
+    let contaner = DevPreview.shared.container
+    let onboardingCommunityBuilder = OnboardingCommunityBuilder(container: contaner)
+    let delegate = OnboardingCommunityDelegate(path: .constant([]))
+    return NavigationStack {
+        onboardingCommunityBuilder
+            .buildOnboardingCommunityView(delegate: delegate)
     }
     .previewEnvironment()
 }
