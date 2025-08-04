@@ -14,7 +14,8 @@ enum TabbarPathOption: Hashable {
 
 struct NavigationDestinationForTabbarModuleViewModifier: ViewModifier {
     
-    @Environment(DependencyContainer.self) private var container
+    @Environment(CategoryListBuilder.self) private var categoryListBuilder
+    @Environment(ChatBuilder.self) private var chatBuilder
     let path: Binding<[TabbarPathOption]>
     
     func body(content: Content) -> some View {
@@ -22,28 +23,22 @@ struct NavigationDestinationForTabbarModuleViewModifier: ViewModifier {
             .navigationDestination(for: TabbarPathOption.self) { newValue in
                 switch newValue {
                 case .chat(avatarId: let avatarId, chat: let chat):
-                    ChatView(
-                        viewModel: ChatViewModel(
-                            chatUseCase: ChatUseCase(container: container)
-                        ),
-                        delegate: ChatDelegate(
-                            avatarId: avatarId,
-                            chat: chat
-                        )
-                    )
-                case .character(category: let category, imageName: let imageName):
-                    CategoryListView(
-                        viewModel: CategoryListViewModel(
-                            categoryListUseCase: CategoryListUseCase(
-                                container: container
+                    chatBuilder
+                        .buildChatView(
+                            delegate: ChatDelegate(
+                                avatarId: avatarId,
+                                chat: chat
                             )
-                        ),
-                        delegate: CategoryListDelegate(
-                            category: category,
-                            imageName: imageName,
-                            path: path
                         )
-                    )
+                case .character(category: let category, imageName: let imageName):
+                    categoryListBuilder
+                        .buildCategoryListView(
+                            delegate: CategoryListDelegate(
+                                category: category,
+                                imageName: imageName,
+                                path: path
+                            )
+                        )
                 }
             }
     }
