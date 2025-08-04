@@ -9,7 +9,7 @@ import Foundation
 @testable import AIChat
 
 @MainActor
-struct AnyProfileInteractor: ProfileInteractor {
+struct AnyProfileInteractor: ProfileUseCaseProtocol {
     
     let anyCurrentUser: UserModel?
     let anyGetAuthId: () throws -> String
