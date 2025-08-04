@@ -14,6 +14,7 @@
 		AF3986932DF8D2E5000F064C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = AF3986922DF8D2E5000F064C /* GoogleSignIn */; };
 		AF3986952DF8D2E5000F064C /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = AF3986942DF8D2E5000F064C /* GoogleSignInSwift */; };
 		AF3E88B22E0B7CA1002FAC13 /* Mixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = AF3E88B12E0B7CA1002FAC13 /* Mixpanel */; };
+		AF76C0CE2E4166550068E2E0 /* _ConfidentialKit in Frameworks */ = {isa = PBXBuildFile; productRef = AF76C0CD2E4166550068E2E0 /* _ConfidentialKit */; };
 		AF95B1772DF38774003D5BA0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = AF95B1762DF38774003D5BA0 /* FirebaseAuth */; };
 		AFA98BB32DA46E0600492141 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = AFA98BB22DA46E0600492141 /* SDWebImageSwiftUI */; };
 		AFAA66B62DF4E4960013F8DC /* SignInAppleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = AFAA66B52DF4E4960013F8DC /* SignInAppleAsync */; };
@@ -94,6 +95,7 @@
 				AF3986952DF8D2E5000F064C /* GoogleSignInSwift in Frameworks */,
 				AFA98BB32DA46E0600492141 /* SDWebImageSwiftUI in Frameworks */,
 				AF95B1772DF38774003D5BA0 /* FirebaseAuth in Frameworks */,
+				AF76C0CE2E4166550068E2E0 /* _ConfidentialKit in Frameworks */,
 				AFCE8E3C2E1D443900CC88C7 /* FirebaseRemoteConfig in Frameworks */,
 				AFCB2B912DFC779000694E6E /* FirebaseFirestore in Frameworks */,
 				AF3E88B22E0B7CA1002FAC13 /* Mixpanel in Frameworks */,
@@ -166,6 +168,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				AF76C0CA2E41638B0068E2E0 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				AF9034FD2DA3FDB000A35095 /* AIChat */,
@@ -187,6 +190,7 @@
 				AF3E88B12E0B7CA1002FAC13 /* Mixpanel */,
 				AF1E6BF42E0C4DE3005D93F8 /* FirebaseCrashlytics */,
 				AFCE8E3B2E1D443900CC88C7 /* FirebaseRemoteConfig */,
+				AF76C0CD2E4166550068E2E0 /* _ConfidentialKit */,
 			);
 			productName = AIChat;
 			productReference = AF9034FB2DA3FDB000A35095 /* AIChat.app */;
@@ -280,6 +284,8 @@
 				AFCB2B9E2DFDC20B00694E6E /* XCRemoteSwiftPackageReference "SwiftfulFirestore" */,
 				AFEF44052DFF1489000E87DC /* XCRemoteSwiftPackageReference "OpenAI" */,
 				AF3E88B02E0B7CA1002FAC13 /* XCRemoteSwiftPackageReference "mixpanel-swift" */,
+				AF76C0C52E41636D0068E2E0 /* XCRemoteSwiftPackageReference "swift-confidential" */,
+				AF76C0C82E4163820068E2E0 /* XCRemoteSwiftPackageReference "swift-confidential-plugin" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = AF9034FC2DA3FDB000A35095 /* Products */;
@@ -389,6 +395,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		AF76C0CA2E41638B0068E2E0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = AF76C0C92E41638B0068E2E0 /* Confidential */;
+		};
 		AF90350E2DA3FDB100A35095 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = AF9034FA2DA3FDB000A35095 /* AIChat */;
@@ -938,6 +948,22 @@
 				minimumVersion = 5.0.0;
 			};
 		};
+		AF76C0C52E41636D0068E2E0 /* XCRemoteSwiftPackageReference "swift-confidential" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/securevale/swift-confidential";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.4.1;
+			};
+		};
+		AF76C0C82E4163820068E2E0 /* XCRemoteSwiftPackageReference "swift-confidential-plugin" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/securevale/swift-confidential-plugin";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.4.1;
+			};
+		};
 		AF95B1752DF38774003D5BA0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -1015,6 +1041,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AF3E88B02E0B7CA1002FAC13 /* XCRemoteSwiftPackageReference "mixpanel-swift" */;
 			productName = Mixpanel;
+		};
+		AF76C0C92E41638B0068E2E0 /* Confidential */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AF76C0C82E4163820068E2E0 /* XCRemoteSwiftPackageReference "swift-confidential-plugin" */;
+			productName = "plugin:Confidential";
+		};
+		AF76C0CD2E4166550068E2E0 /* _ConfidentialKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AF76C0C52E41636D0068E2E0 /* XCRemoteSwiftPackageReference "swift-confidential" */;
+			productName = _ConfidentialKit;
 		};
 		AF95B1762DF38774003D5BA0 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
