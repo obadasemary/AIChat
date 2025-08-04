@@ -10,15 +10,14 @@ import SwiftUI
 struct OnboardingCompletedView: View {
     
     @State var viewModel: OnboardingCompletedViewModel
-    
-    var selectedColor: Color = .accent
+    let delegate: OnboardingCompletedDelegate
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Setup completed!")
                 .font(.largeTitle)
                 .fontWeight(.semibold)
-                .foregroundStyle(selectedColor)
+                .foregroundStyle(delegate.selectedColor)
             
             Text("we've set up for profile and you're ready to start chatting")
                 .font(.title)
@@ -36,7 +35,9 @@ struct OnboardingCompletedView: View {
                     title: "Finish",
                     action: {
                         viewModel
-                            .onFinishButtonPressed(selectedColor: selectedColor)
+                            .onFinishButtonPressed(
+                                selectedColor: delegate.selectedColor
+                            )
                     }
                 )
                 .accessibilityIdentifier("FinishButton")
@@ -50,13 +51,12 @@ struct OnboardingCompletedView: View {
 }
 
 #Preview {
-    OnboardingCompletedView(
-        viewModel: OnboardingCompletedViewModel(
-            onboardingCompletedUseCase: OnboardingCompletedUseCase(
-                container: DevPreview
-                    .shared.container)
-        ),
-        selectedColor: .orange
+    let contaner = DevPreview.shared.container
+    let onboardingCompletedBuilder = OnboardingCompletedBuilder(
+        container: contaner
     )
-    .previewEnvironment()
+    let delegate = OnboardingCompletedDelegate(selectedColor: .orange)
+    
+    onboardingCompletedBuilder.buildOnboardingCompletedView(delegate: delegate)
+        .previewEnvironment()
 }
