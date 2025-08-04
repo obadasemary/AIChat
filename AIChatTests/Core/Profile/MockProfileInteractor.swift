@@ -9,7 +9,7 @@ import Foundation
 @testable import AIChat
 
 @MainActor
-struct MockProfileInteractor: ProfileInteractor {
+struct MockProfileInteractor: ProfileUseCaseProtocol {
     
     var logger = MockLogService()
     var user: UserModel = UserModel.mock

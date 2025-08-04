@@ -37,7 +37,7 @@ struct ProfileViewTests {
         // Given
         let interactore = MockProfileInteractor()
         let viewModel = ProfileViewModel(
-            interactor: interactore
+            profileUseCase: interactore
         )
         
         // When
@@ -109,7 +109,7 @@ struct ProfileViewTests {
             }
         )
         let viewModel = ProfileViewModel(
-            interactor: interactore
+            profileUseCase: interactore
         )
         
         // When
@@ -158,7 +158,7 @@ struct ProfileViewTests {
         
         // Given
         let viewModel = ProfileViewModel(
-            interactor: ProdProfileInteractor(container: container)
+            profileUseCase: ProfileUseCase(container: container)
         )
         
         // When
@@ -196,7 +196,7 @@ struct ProfileViewTests {
         
         // Given
         let viewModel = ProfileViewModel(
-            interactor: ProdProfileInteractor(container: container)
+            profileUseCase: ProfileUseCase(container: container)
         )
         
         // When
@@ -235,7 +235,7 @@ struct ProfileViewTests {
         
         // Given
         let viewModel = ProfileViewModel(
-            interactor: ProdProfileInteractor(container: container)
+            profileUseCase: ProfileUseCase(container: container)
         )
         
         // When
@@ -273,7 +273,7 @@ struct ProfileViewTests {
         
         // Given
         let viewModel = ProfileViewModel(
-            interactor: ProdProfileInteractor(container: container)
+            profileUseCase: ProfileUseCase(container: container)
         )
         
         // When
@@ -323,7 +323,7 @@ struct ProfileViewTests {
         
         // Given
         let viewModel = ProfileViewModel(
-            interactor: ProdProfileInteractor(container: container)
+            profileUseCase: ProfileUseCase(container: container)
         )
         
         // When
@@ -377,7 +377,7 @@ struct ProfileViewTests {
         
         // Given
         let viewModel = ProfileViewModel(
-            interactor: ProdProfileInteractor(container: container)
+            profileUseCase: ProfileUseCase(container: container)
         )
         
         // When
