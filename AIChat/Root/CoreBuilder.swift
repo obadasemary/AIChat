@@ -39,6 +39,50 @@ class CoreBuilder {
         )
     }
     
+    func onboardingIntroView(delegate: OnboardingIntroDelegate) -> some View {
+        OnboardingIntroView(
+            viewModel: OnboardingIntroViewModel(
+                OnboardingIntroUseCase: OnboardingIntroUseCase(
+                    container: container
+                )
+            ),
+            delegate: delegate
+        )
+    }
+
+    func onboardingCommunityView(delegate: OnboardingCommunityDelegate) -> some View {
+        OnboardingCommunityView(
+            viewModel: OnboardingCommunityViewModel(
+                onboardingCommunityUseCase: OnboardingCommunityUseCase(
+                    container: container
+                )
+            ),
+            delegate: delegate
+        )
+    }
+    
+    func onboardingColorView(delegate: OnboardingColorDelegate) -> some View {
+        OnboardingColorView(
+            viewModel: OnboardingColorViewModel(
+                onboardingColorUseCase: OnboardingColorUseCase(
+                    container: container
+                )
+            ),
+            delegate: delegate
+        )
+    }
+    
+    func onboardingCompletedView(delegate: OnboardingCompletedDelegate) -> some View {
+        OnboardingCompletedView(
+            viewModel: OnboardingCompletedViewModel(
+                onboardingCompletedUseCase: OnboardingCompletedUseCase(
+                    container: container
+                )
+            ),
+            delegate: delegate
+        )
+    }
+    
     func exploreView() -> some View {
         ExploreView(
             viewModel: ExploreViewModel(
