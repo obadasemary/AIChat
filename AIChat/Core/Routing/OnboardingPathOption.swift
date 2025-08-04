@@ -16,7 +16,10 @@ enum OnboardingPathOption: Hashable {
 
 struct NavigationDestinationForOnboardingModuleViewModifier: ViewModifier {
     
-    @Environment(DependencyContainer.self) private var container
+    @Environment(OnboardingIntroBuilder.self) private var onboardingIntroBuilder
+    @Environment(OnboardingCommunityBuilder.self) private var onboardingCommunityBuilder
+    @Environment(OnboardingColorBuilder.self) private var onboardingColorBuilder
+    @Environment(OnboardingCompletedBuilder.self) private var onboardingCompletedBuilder
     let path: Binding<[OnboardingPathOption]>
     
     func body(content: Content) -> some View {
@@ -24,41 +27,27 @@ struct NavigationDestinationForOnboardingModuleViewModifier: ViewModifier {
             .navigationDestination(for: OnboardingPathOption.self) { newValue in
                 switch newValue {
                 case .onboardingIntro:
-                    OnboardingIntroView(
-                        viewModel: OnboardingIntroViewModel(
-                            OnboardingIntroUseCase: OnboardingIntroUseCase(
-                                container: container
-                            )
-                        ),
-                        path: path
-                    )
+                    onboardingIntroBuilder
+                        .buildOnboardingIntroView(
+                            delegate: OnboardingIntroDelegate(path: path)
+                        )
                 case .onboardingCommunity:
-                    OnboardingCommunityView(
-                        viewModel: OnboardingCommunityViewModel(
-                            onboardingCommunityUseCase: OnboardingCommunityUseCase(
-                                container: container
-                            )
-                        ),
-                        path: path
-                    )
+                    onboardingCommunityBuilder
+                        .buildOnboardingCommunityView(
+                            delegate: OnboardingCommunityDelegate(path: path)
+                        )
                 case .onboardingColor:
-                    OnboardingColorView(
-                        viewModel: OnboardingColorViewModel(
-                            onboardingColorUseCase: OnboardingColorUseCase(
-                                container: container
-                            )
-                        ),
-                        path: path
-                    )
+                    onboardingColorBuilder
+                        .buildOnboardingColorView(
+                            delegate: OnboardingColorDelegate(path: path)
+                        )
                 case .onboardingComplete(selectedColor: let selectedColor):
-                    OnboardingCompletedView(
-                        viewModel: OnboardingCompletedViewModel(
-                            onboardingCompletedUseCase: OnboardingCompletedUseCase(
-                                container: container
+                    onboardingCompletedBuilder
+                        .buildOnboardingCompletedView(
+                            delegate: OnboardingCompletedDelegate(
+                                selectedColor: selectedColor
                             )
-                        ),
-                        selectedColor: selectedColor
-                    )
+                        )
                 }
             }
     }
