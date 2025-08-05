@@ -78,7 +78,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         onboardingCompletedBuilder = OnboardingCompletedBuilder(container: dependencies.container)
         
         tabBarBuilder = TabBarBuilder(container: dependencies.container)
-        exploreBuilder = ExploreBuilder(container: dependencies.container)
+        exploreBuilder = ExploreBuilder(
+            container: dependencies.container,
+            devSettingsBuilder: DevSettingsBuilder(container: DevPreview.shared.container),
+            createAccountBuilder: CreateAccountBuilder(container: DevPreview.shared.container)
+        )
         categoryListBuilder = CategoryListBuilder(container: dependencies.container)
         devSettingsBuilder = DevSettingsBuilder(container: dependencies.container)
         createAccountBuilder = CreateAccountBuilder(container: dependencies.container)
