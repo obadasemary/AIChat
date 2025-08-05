@@ -201,7 +201,13 @@ extension View {
             .environment(
                 OnboardingCompletedBuilder(container: DevPreview.shared.container)
             )
-            .environment(ExploreBuilder(container: DevPreview.shared.container))
+            .environment(
+                ExploreBuilder(
+                    container: DevPreview.shared.container,
+                    devSettingsBuilder: DevSettingsBuilder(container: DevPreview.shared.container),
+                    createAccountBuilder: CreateAccountBuilder(container: DevPreview.shared.container)
+                )
+            )
             .environment(
                 CreateAccountBuilder(container: DevPreview.shared.container)
             )
