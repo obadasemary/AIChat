@@ -259,10 +259,10 @@ private extension ExploreView {
             exploreUseCase: ExploreUseCase(container: container)
         ),
         devSettingsView: {
-            
+            Color.orange
         },
         createAccountView: {
-            
+            Color.green
         }
     )
     .previewEnvironment()
