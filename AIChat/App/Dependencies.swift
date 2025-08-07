@@ -203,9 +203,10 @@ extension View {
             )
             .environment(
                 ExploreBuilder(
-                    container: DevPreview.shared.container,
-                    devSettingsBuilder: DevSettingsBuilder(container: DevPreview.shared.container),
-                    createAccountBuilder: CreateAccountBuilder(container: DevPreview.shared.container)
+                    container: DevPreview.shared.container
+//                    ,
+//                    devSettingsBuilder: DevSettingsBuilder(container: DevPreview.shared.container),
+//                    createAccountBuilder: CreateAccountBuilder(container: DevPreview.shared.container)
                 )
             )
             .environment(
