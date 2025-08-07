@@ -7,13 +7,11 @@
 
 import SwiftUI
 
-struct ExploreView<DevSettingsView: View, CreateAccountView: View>: View {
+struct ExploreView: View {
     
     @Environment(DevSettingsBuilder.self) private var devSettingsBuilder
     @Environment(CreateAccountBuilder.self) private var createAccountBuilder
     @State var viewModel: ExploreViewModel
-    @ViewBuilder var devSettingsView: () -> DevSettingsView
-    @ViewBuilder var createAccountView: () -> CreateAccountView
     
     var body: some View {
         NavigationStack(path: $viewModel.path) {
@@ -61,13 +59,13 @@ struct ExploreView<DevSettingsView: View, CreateAccountView: View>: View {
                 }
             }
             .sheet(isPresented: $viewModel.showDevSettings) {
-//                devSettingsBuilder.buildDevSettingsView()
-                self.devSettingsView()
+                devSettingsBuilder.buildDevSettingsView()
+//                self.devSettingsView()
                     
             }
             .sheet(isPresented: $viewModel.showCreateAccountView) {
-//                createAccountBuilder.buildCreateAccountView()
-                self.createAccountView()
+                createAccountBuilder.buildCreateAccountView()
+//                self.createAccountView()
                     .presentationDetents([.medium])
             }
             .navigationDestinationForTabbarModule(path: $viewModel.path)
@@ -248,26 +246,24 @@ private extension ExploreView {
         )
 //    let devSettingsBuilder: DevSettingsBuilder = .init(container: container)
 //    let createAccountBuilder: CreateAccountBuilder = .init(container: container)
-//    let exploreBuilder = ExploreBuilder(
-//        container: container,
-//        devSettingsBuilder: devSettingsBuilder,
-//        createAccountBuilder: createAccountBuilder
-//    )
-    
-    return ExploreView(
-        viewModel: ExploreViewModel(
-            exploreUseCase: ExploreUseCase(container: container)
-        ),
-        devSettingsView: {
-            Color.orange
-        },
-        createAccountView: {
-            Color.green
-        }
+    let exploreBuilder = ExploreBuilder(
+        container: container
     )
-    .previewEnvironment()
-//    return exploreBuilder.buildExploreView()
-//        .previewEnvironment()
+    
+//    return ExploreView(
+//        viewModel: ExploreViewModel(
+//            exploreUseCase: ExploreUseCase(container: container)
+//        ),
+//        devSettingsView: {
+//            Color.orange
+//        },
+//        createAccountView: {
+//            Color.green
+//        }
+//    )
+//    .previewEnvironment()
+    return exploreBuilder.buildExploreView()
+        .previewEnvironment()
 }
 
 #Preview("Mock Has Data w/ create Acct Test") {
@@ -292,22 +288,22 @@ private extension ExploreView {
             ABTestManager(service: MockABTestService(createAccountTest: true))
         )
     
-    return ExploreView(
-        viewModel: ExploreViewModel(
-            exploreUseCase: ExploreUseCase(container: container)
-        ),
-        devSettingsView: {
-            
-        },
-        createAccountView: {
-            
-        }
-    )
-    .previewEnvironment()
-//    let exploreBuilder = ExploreBuilder(container: container)
-//    
-//    return exploreBuilder.buildExploreView()
-//        .previewEnvironment()
+//    return ExploreView(
+//        viewModel: ExploreViewModel(
+//            exploreUseCase: ExploreUseCase(container: container)
+//        ),
+//        devSettingsView: {
+//            
+//        },
+//        createAccountView: {
+//            
+//        }
+//    )
+//    .previewEnvironment()
+    let exploreBuilder = ExploreBuilder(container: container)
+    
+    return exploreBuilder.buildExploreView()
+        .previewEnvironment()
 }
 
 #Preview("CategoryRowTest: Original") {
@@ -318,23 +314,23 @@ private extension ExploreView {
             ABTestManager(service: MockABTestService(categoryRowTest: .original))
         )
     
-    return ExploreView(
-        viewModel: ExploreViewModel(
-            exploreUseCase: ExploreUseCase(container: container)
-        ),
-        devSettingsView: {
-            
-        },
-        createAccountView: {
-            
-        }
-    )
-    .previewEnvironment()
+//    return ExploreView(
+//        viewModel: ExploreViewModel(
+//            exploreUseCase: ExploreUseCase(container: container)
+//        ),
+//        devSettingsView: {
+//            
+//        },
+//        createAccountView: {
+//            
+//        }
+//    )
+//    .previewEnvironment()
     
-//    let exploreBuilder = ExploreBuilder(container: container)
-//    
-//    return exploreBuilder.buildExploreView()
-//        .previewEnvironment()
+    let exploreBuilder = ExploreBuilder(container: container)
+    
+    return exploreBuilder.buildExploreView()
+        .previewEnvironment()
 }
 
 #Preview("CategoryRowTest: Top") {
@@ -345,22 +341,22 @@ private extension ExploreView {
             ABTestManager(service: MockABTestService(categoryRowTest: .top))
         )
     
-    return ExploreView(
-        viewModel: ExploreViewModel(
-            exploreUseCase: ExploreUseCase(container: container)
-        ),
-        devSettingsView: {
-            
-        },
-        createAccountView: {
-            
-        }
-    )
-    .previewEnvironment()
-//    let exploreBuilder = ExploreBuilder(container: container)
-//    
-//    return exploreBuilder.buildExploreView()
-//        .previewEnvironment()
+//    return ExploreView(
+//        viewModel: ExploreViewModel(
+//            exploreUseCase: ExploreUseCase(container: container)
+//        ),
+//        devSettingsView: {
+//            
+//        },
+//        createAccountView: {
+//            
+//        }
+//    )
+//    .previewEnvironment()
+    let exploreBuilder = ExploreBuilder(container: container)
+    
+    return exploreBuilder.buildExploreView()
+        .previewEnvironment()
 }
 
 #Preview("CategoryRowTest: Hidden") {
@@ -371,22 +367,22 @@ private extension ExploreView {
             ABTestManager(service: MockABTestService(categoryRowTest: .hidden))
         )
     
-    return ExploreView(
-        viewModel: ExploreViewModel(
-            exploreUseCase: ExploreUseCase(container: container)
-        ),
-        devSettingsView: {
-            
-        },
-        createAccountView: {
-            
-        }
-    )
-    .previewEnvironment()
-//    let exploreBuilder = ExploreBuilder(container: container)
-//    
-//    return exploreBuilder.buildExploreView()
-//        .previewEnvironment()
+//    return ExploreView(
+//        viewModel: ExploreViewModel(
+//            exploreUseCase: ExploreUseCase(container: container)
+//        ),
+//        devSettingsView: {
+//            
+//        },
+//        createAccountView: {
+//            
+//        }
+//    )
+//    .previewEnvironment()
+    let exploreBuilder = ExploreBuilder(container: container)
+    
+    return exploreBuilder.buildExploreView()
+        .previewEnvironment()
 }
 
 #Preview("Mock No Data") {
@@ -399,23 +395,23 @@ private extension ExploreView {
             )
         )
     
-    return ExploreView(
-        viewModel: ExploreViewModel(
-            exploreUseCase: ExploreUseCase(container: container)
-        ),
-        devSettingsView: {
-            
-        },
-        createAccountView: {
-            
-        }
-    )
-    .previewEnvironment()
+//    return ExploreView(
+//        viewModel: ExploreViewModel(
+//            exploreUseCase: ExploreUseCase(container: container)
+//        ),
+//        devSettingsView: {
+//            
+//        },
+//        createAccountView: {
+//            
+//        }
+//    )
+//    .previewEnvironment()
     
-//    let exploreBuilder = ExploreBuilder(container: container)
-//    
-//    return exploreBuilder.buildExploreView()
-//        .previewEnvironment()
+    let exploreBuilder = ExploreBuilder(container: container)
+    
+    return exploreBuilder.buildExploreView()
+        .previewEnvironment()
 }
 
 #Preview("Mock Slow Loading") {
@@ -428,22 +424,22 @@ private extension ExploreView {
             )
         )
     
-    return ExploreView(
-        viewModel: ExploreViewModel(
-            exploreUseCase: ExploreUseCase(container: container)
-        ),
-        devSettingsView: {
-            
-        },
-        createAccountView: {
-            
-        }
-    )
-    .previewEnvironment()
-//    let exploreBuilder = ExploreBuilder(container: container)
-//    
-//    return exploreBuilder.buildExploreView()
-//        .previewEnvironment()
+//    return ExploreView(
+//        viewModel: ExploreViewModel(
+//            exploreUseCase: ExploreUseCase(container: container)
+//        ),
+//        devSettingsView: {
+//            
+//        },
+//        createAccountView: {
+//            
+//        }
+//    )
+//    .previewEnvironment()
+    let exploreBuilder = ExploreBuilder(container: container)
+    
+    return exploreBuilder.buildExploreView()
+        .previewEnvironment()
 }
 
 #Preview("Remote Service") {
@@ -458,20 +454,20 @@ private extension ExploreView {
             )
         )
     
-    return ExploreView(
-        viewModel: ExploreViewModel(
-            exploreUseCase: ExploreUseCase(container: container)
-        ),
-        devSettingsView: {
-            
-        },
-        createAccountView: {
-            
-        }
-    )
-    .previewEnvironment()
-//    let exploreBuilder = ExploreBuilder(container: container)
-//    
-//    return exploreBuilder.buildExploreView()
-//        .previewEnvironment()
+//    return ExploreView(
+//        viewModel: ExploreViewModel(
+//            exploreUseCase: ExploreUseCase(container: container)
+//        ),
+//        devSettingsView: {
+//            
+//        },
+//        createAccountView: {
+//            
+//        }
+//    )
+//    .previewEnvironment()
+    let exploreBuilder = ExploreBuilder(container: container)
+    
+    return exploreBuilder.buildExploreView()
+        .previewEnvironment()
 }
