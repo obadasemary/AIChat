@@ -87,13 +87,14 @@ class CoreBuilder {
         ExploreView(
             viewModel: ExploreViewModel(
                 exploreUseCase: ExploreUseCase(container: container)
-            ),
-            devSettingsView: {
-                self.devSettingsView()
-            },
-            createAccountView: {
-                self.createAccountView()
-            }
+            )
+//            ,
+//            devSettingsView: {
+//                self.devSettingsView()
+//            },
+//            createAccountView: {
+//                self.createAccountView()
+//            }
         )
     }
     
