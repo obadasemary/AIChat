@@ -64,9 +64,9 @@ struct ExploreView: View {
                     
             }
             .sheet(isPresented: $viewModel.showCreateAccountView) {
-                createAccountBuilder.buildCreateAccountView()
-//                self.createAccountView()
-                    .presentationDetents([.medium])
+//                createAccountBuilder.buildCreateAccountView()
+////                self.createAccountView()
+//                    .presentationDetents([.medium])
             }
             .navigationDestinationForTabbarModule(path: $viewModel.path)
             .showModal(showModal: $viewModel.showPushNotificationModal) {
