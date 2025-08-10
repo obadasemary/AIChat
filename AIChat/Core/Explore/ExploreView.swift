@@ -59,7 +59,7 @@ struct ExploreView: View {
                 }
             }
             .sheet(isPresented: $viewModel.showDevSettings) {
-                devSettingsBuilder.buildDevSettingsView()
+//                devSettingsBuilder.buildDevSettingsView()
 //                self.devSettingsView()
                     
             }
