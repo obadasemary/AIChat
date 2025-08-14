@@ -13,7 +13,7 @@ struct PaywallView: View {
     @State var viewModel: PaywallViewModel
     
     @Environment(\.dismiss) private var dismiss
-    let option: PaywallOptional = .storeKit
+    let option: PaywallOptional = .custom
     
     var body: some View {
         Group {
