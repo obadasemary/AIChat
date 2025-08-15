@@ -59,14 +59,11 @@ struct ExploreView: View {
                 }
             }
             .sheet(isPresented: $viewModel.showDevSettings) {
-//                devSettingsBuilder.buildDevSettingsView()
-//                self.devSettingsView()
-                    
+                devSettingsBuilder.buildDevSettingsView()
             }
             .sheet(isPresented: $viewModel.showCreateAccountView) {
-//                createAccountBuilder.buildCreateAccountView()
-////                self.createAccountView()
-//                    .presentationDetents([.medium])
+                createAccountBuilder.buildCreateAccountView()
+                    .presentationDetents([.medium])
             }
             .navigationDestinationForTabbarModule(path: $viewModel.path)
             .showModal(showModal: $viewModel.showPushNotificationModal) {
