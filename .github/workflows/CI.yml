@@ -29,6 +29,7 @@ jobs:
         
       - name: Build and Test
         run: |
+            swift build --enable-experimental-prebuilts
             xcodebuild clean build test \
             -project AIChat.xcodeproj \
             -scheme "AIChat - Development" \

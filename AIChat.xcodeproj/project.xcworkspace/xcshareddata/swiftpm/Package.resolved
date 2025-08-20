@@ -1,5 +1,5 @@
 {
-  "originHash" : "f96adfa65c88f6c823c00e8961d4f68d021df9520a68429626c1dc24c3bebbc8",
+  "originHash" : "e39acdf4531f095e1090995e4099e6e160d5283972292bbe6f0e520e94ca527c",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -209,12 +209,39 @@
       }
     },
     {
+      "identity" : "swift-confidential",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/securevale/swift-confidential",
+      "state" : {
+        "revision" : "7f571ab0df5b0ffd4b26b92b9dd8f21d6b3a6ca8",
+        "version" : "0.4.1"
+      }
+    },
+    {
+      "identity" : "swift-confidential-plugin",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/securevale/swift-confidential-plugin",
+      "state" : {
+        "revision" : "9bf4fb3c87a769e13557aa1b564d7c66d74423b4",
+        "version" : "0.4.1"
+      }
+    },
+    {
       "identity" : "swift-protobuf",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-protobuf.git",
       "state" : {
         "revision" : "102a647b573f60f73afdce5613a51d71349fe507",
         "version" : "1.30.0"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "state" : {
+        "revision" : "f99ae8aa18f0cf0d53481901f88a0991dc3bd4a2",
+        "version" : "601.0.1"
       }
     },
     {

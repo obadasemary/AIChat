@@ -8,7 +8,8 @@
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
@@ -116,5 +117,10 @@ fastlane/test_output
 # https://github.com/johnno1962/injectionforxcode
 
 iOSInjectionProject/
+
+# Firebase config files (do not commit secrets!)
+GoogleService-Info*.plist
+GoogleService-Info-Dev.plist
+GoogleService-Info-Prod.plist
 
 # End of https://www.toptal.com/developers/gitignore/api/swift,macos
