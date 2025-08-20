@@ -85,41 +85,76 @@ AIChat/
 
 ---
 
-## 🖼️ Screenshots
+## 🖼️ App Screenshots
 
 <div align="center">
+  <h3>🎯 Core User Experience</h3>
+  
   <table>
     <tr>
       <td align="center">
+        <strong>Onboarding</strong><br/>
+        <img src="docs/screenshots/onboarding.png" alt="Onboarding Screen" width="200">
+        <br><em>Beautiful nature-themed welcome screen</em>
+      </td>
+      <td align="center">
         <strong>Chat Interface</strong><br/>
         <img src="docs/screenshots/chat-interface.png" alt="Chat Interface" width="200">
+        <br><em>AI-powered conversations</em>
       </td>
       <td align="center">
         <strong>User Profile</strong><br/>
         <img src="docs/screenshots/user-profile.png" alt="User Profile" width="200">
-      </td>
-      <td align="center">
-        <strong>Onboarding</strong><br/>
-        <img src="docs/screenshots/onboarding.png" alt="Onboarding" width="200">
+        <br><em>Personalized avatar management</em>
       </td>
     </tr>
+  </table>
+
+  <h3>⚙️ App Features & Settings</h3>
+  
+  <table>
     <tr>
       <td align="center">
         <strong>Settings</strong><br/>
         <img src="docs/screenshots/settings.png" alt="Settings" width="200">
+        <br><em>Account and app configuration</em>
       </td>
       <td align="center">
         <strong>Avatar Creation</strong><br/>
         <img src="docs/screenshots/avatar-creation.png" alt="Avatar Creation" width="200">
+        <br><em>Custom AI avatar builder</em>
       </td>
       <td align="center">
-        <strong>Paywall</strong><br/>
-        <img src="docs/screenshots/paywall.png" alt="Paywall" width="200">
+        <strong>Dev Settings</strong><br/>
+        <img src="docs/screenshots/dev-settings.png" alt="Dev Settings" width="200">
+        <br><em>Developer tools and A/B testing</em>
+      </td>
+    </tr>
+  </table>
+
+  <h3>🔍 Discovery & Navigation</h3>
+  
+  <table>
+    <tr>
+      <td align="center">
+        <strong>Explore</strong><br/>
+        <img src="docs/screenshots/explore.png" alt="Explore Screen" width="200">
+        <br><em>Discover categories and avatars</em>
+      </td>
+      <td align="center">
+        <strong>Chats List</strong><br/>
+        <img src="docs/screenshots/chats-list.png" alt="Chats List" width="200">
+        <br><em>Recent conversations overview</em>
+      </td>
+      <td align="center">
+        <strong>Profile Color Selection</strong><br/>
+        <img src="docs/screenshots/profile-color-selection.png" alt="Profile Color Selection" width="200">
+        <br><em>Personalize your profile</em>
       </td>
     </tr>
   </table>
   
-  *📱 Screenshots coming soon - Add your app screenshots to the `docs/screenshots/` folder*
+  <p><em>📱 All screenshots are placeholder files. Replace them with actual app screenshots for the best visual impact!</em></p>
 </div>
 
 ---
