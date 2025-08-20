@@ -8,6 +8,15 @@
 import Foundation
 
 struct Keys {
-    static let openAIAPIKey = "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"
-    static let mixpanelToken = "5b7313d016ebb60e3ac788b6a67474a8"
+    static let openAIAPIKey: String = {
+        let key = ConfigurationManager.shared.openAIAPIKey
+        print("🔑 Keys: OpenAI API Key loaded: \(key.isEmpty ? "EMPTY" : "\(String(key.prefix(8)))...")")
+        return key
+    }()
+    
+    static let mixpanelToken: String = {
+        let token = ConfigurationManager.shared.mixpanelToken
+        print("🔑 Keys: Mixpanel Token loaded: \(token.isEmpty ? "EMPTY" : "\(String(token.prefix(8)))...")")
+        return token
+    }()
 }

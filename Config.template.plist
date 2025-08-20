@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>OpenAIAPIKey</key>
+	<string>YOUR_OPENAI_API_KEY_HERE</string>
+	<key>MixpanelToken</key>
+	<string>YOUR_MIXPANEL_TOKEN_HERE</string>
+</dict>
+</plist>
