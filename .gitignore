@@ -124,3 +124,10 @@ iOSInjectionProject/
 Config.plist
 # Template file (safe to commit)
 # Config.template.plist
+
+# Firebase configuration files with sensitive data
+GoogleService-Info-Dev.plist
+GoogleService-Info-Prod.plist
+# Template files (safe to commit)
+# GoogleService-Info-Dev.template.plist
+# GoogleService-Info-Prod.template.plist
