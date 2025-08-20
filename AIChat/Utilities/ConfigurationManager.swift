@@ -38,6 +38,27 @@ struct ConfigurationManager {
         return nil
     }
     
+    // MARK: - Firebase Configuration
+    func getFirebaseConfigPath(for environment: BuildConfiguration) -> String? {
+        let fileName: String
+        switch environment {
+        case .dev:
+            fileName = "GoogleService-Info-Dev"
+        case .prod:
+            fileName = "GoogleService-Info-Prod"
+        case .mock:
+            return nil
+        }
+        
+        if let path = Bundle.main.path(forResource: fileName, ofType: "plist") {
+            print("📱 ConfigurationManager: Found Firebase config for \(environment) at: \(path)")
+            return path
+        } else {
+            print("❌ ConfigurationManager: Firebase config for \(environment) not found")
+            return nil
+        }
+    }
+    
     // MARK: - API Keys
     var openAIAPIKey: String {
         // First try to get from environment variable (for CI/CD)
@@ -94,11 +115,17 @@ struct ConfigurationManager {
     2. Fill in your actual API keys in Config.plist
     3. Make sure Config.plist is added to your Xcode project bundle
     
+    For Firebase configuration:
+    1. Copy GoogleService-Info-Dev.template.plist to GoogleService-Info-Dev.plist
+    2. Copy GoogleService-Info-Prod.template.plist to GoogleService-Info-Prod.plist
+    3. Fill in your actual Firebase configuration values
+    4. Make sure both plist files are added to your Xcode project bundle
+    
     Alternatively, you can set environment variables:
     - OPENAI_API_KEY
     - MIXPANEL_TOKEN
     
-    Note: Config.plist is already added to .gitignore to prevent committing sensitive data.
+    Note: All configuration plist files are already added to .gitignore to prevent committing sensitive data.
     
     For new developers: See README.md for detailed setup instructions.
     """

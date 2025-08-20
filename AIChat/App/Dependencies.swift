@@ -19,14 +19,13 @@ enum BuildConfiguration {
         switch self {
         case .mock:
             break
-        case .dev:
-            let pList = Bundle.main.path(forResource: "GoogleService-Info-Dev", ofType: "plist")!
-            let options = FirebaseOptions(contentsOfFile: pList)!
-            FirebaseApp.configure(options: options)
-        case .prod:
-            let pList = Bundle.main.path(forResource: "GoogleService-Info-Prod", ofType: "plist")!
-            let options = FirebaseOptions(contentsOfFile: pList)!
-            FirebaseApp.configure(options: options)
+        case .dev, .prod:
+            if let pList = ConfigurationManager.shared.getFirebaseConfigPath(for: self) {
+                let options = FirebaseOptions(contentsOfFile: pList)!
+                FirebaseApp.configure(options: options)
+            } else {
+                print("❌ Firebase configuration not found for \(self)")
+            }
         }
     }
     // swiftlint:enable force_unwrapping
