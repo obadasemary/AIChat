@@ -20,7 +20,8 @@ final class PaywallBuilder {
         PaywallView(
             viewModel: PaywallViewModel(
                 paywallUseCase: PaywallUseCase(container: container)
-            )
+            ),
+            option: PaywallConfiguration.shared.currentOption
         )
     }
 }
