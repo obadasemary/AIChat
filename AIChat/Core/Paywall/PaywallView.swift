@@ -11,9 +11,9 @@ import StoreKit
 struct PaywallView: View {
     
     @State var viewModel: PaywallViewModel
+    let option: PaywallOptional
     
     @Environment(\.dismiss) private var dismiss
-    let option: PaywallOptional = .custom
     
     var body: some View {
         Group {
@@ -65,11 +65,6 @@ struct PaywallView: View {
             await viewModel.onLoadProducts()
         }
     }
-}
-
-enum PaywallOptional {
-    case custom
-    case storeKit
 }
 
 #Preview {

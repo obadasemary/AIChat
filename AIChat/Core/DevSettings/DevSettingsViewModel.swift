@@ -16,6 +16,7 @@ class DevSettingsViewModel {
     var createAccountTest: Bool = false
     var onboardingCommunityTest: Bool = false
     var categoryRowTest: CategoryRowTestOption = .default
+    var paywallOption: PaywallOptional = .custom
     
     var authData: [(key: String, value: Any)] {
         devSettingsUseCase
@@ -49,6 +50,7 @@ extension DevSettingsViewModel {
         createAccountTest = devSettingsUseCase.activeTests.createAccountTest
         onboardingCommunityTest = devSettingsUseCase.activeTests.onboardingCommunityTest
         categoryRowTest = devSettingsUseCase.activeTests.categoryRowTest
+        paywallOption = PaywallConfiguration.shared.currentOption
     }
 }
 
@@ -90,6 +92,13 @@ extension DevSettingsViewModel {
         ) { tests in
             tests.update(categoryRowTest: newValue)
         }
+    }
+    
+    func handlePaywallOptionChange(
+        oldValue: PaywallOptional,
+        newValue: PaywallOptional
+    ) {
+        PaywallConfiguration.shared.updateOption(newValue)
     }
 }
 

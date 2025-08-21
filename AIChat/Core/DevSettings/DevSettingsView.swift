@@ -75,6 +75,17 @@ private extension DevSettingsView {
                 viewModel.handleOnCategoryRowOptionChange
             )
 
+            Picker("Paywall Option", selection: $viewModel.paywallOption) {
+                ForEach(PaywallOptional.allCases, id: \.self) { option in
+                    Text(option.rawValue)
+                        .id(option)
+                }
+            }
+            .onChange(
+                of: viewModel.paywallOption,
+                viewModel.handlePaywallOptionChange
+            )
+
         } header: {
             Text("AB Tests")
         }
