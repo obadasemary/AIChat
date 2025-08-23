@@ -164,8 +164,7 @@ class CoreBuilder {
         PaywallView(
             viewModel: PaywallViewModel(
                 paywallUseCase: PaywallUseCase(container: container)
-            ),
-            option: .custom
+            )
         )
     }
     
