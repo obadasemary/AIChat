@@ -11,13 +11,12 @@ import StoreKit
 struct PaywallView: View {
     
     @State var viewModel: PaywallViewModel
-    let option: PaywallOptional
     
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         Group {
-            switch option {
+            switch viewModel.option {
             case .custom:
                 ZStack {
                     if viewModel.products.isEmpty {

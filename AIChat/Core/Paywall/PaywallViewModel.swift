@@ -16,6 +16,7 @@ class PaywallViewModel {
     
     private(set) var products: [AnyProduct] = []
     private(set) var productIds: [String] = EntitlementOption.allProductIds
+    let option: PaywallOptional = PaywallConfiguration.shared.currentOption
     
     var showAlert: AnyAppAlert?
     
