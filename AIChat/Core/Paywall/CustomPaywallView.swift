@@ -75,7 +75,7 @@ struct CustomPaywallView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(product.title)
                         .font(.headline)
-                    Text(product.priceString)
+                    Text(product.priceStringWithDuration)
                         .font(.subheadline)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
