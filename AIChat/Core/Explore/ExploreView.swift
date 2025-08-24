@@ -241,24 +241,8 @@ private extension ExploreView {
                 remoteService: MockAvatarService()
             )
         )
-//    let devSettingsBuilder: DevSettingsBuilder = .init(container: container)
-//    let createAccountBuilder: CreateAccountBuilder = .init(container: container)
-    let exploreBuilder = ExploreBuilder(
-        container: container
-    )
     
-//    return ExploreView(
-//        viewModel: ExploreViewModel(
-//            exploreUseCase: ExploreUseCase(container: container)
-//        ),
-//        devSettingsView: {
-//            Color.orange
-//        },
-//        createAccountView: {
-//            Color.green
-//        }
-//    )
-//    .previewEnvironment()
+    let exploreBuilder = ExploreBuilder(container: container)
     return exploreBuilder.buildExploreView()
         .previewEnvironment()
 }
@@ -285,20 +269,7 @@ private extension ExploreView {
             ABTestManager(service: MockABTestService(createAccountTest: true))
         )
     
-//    return ExploreView(
-//        viewModel: ExploreViewModel(
-//            exploreUseCase: ExploreUseCase(container: container)
-//        ),
-//        devSettingsView: {
-//            
-//        },
-//        createAccountView: {
-//            
-//        }
-//    )
-//    .previewEnvironment()
     let exploreBuilder = ExploreBuilder(container: container)
-    
     return exploreBuilder.buildExploreView()
         .previewEnvironment()
 }
@@ -311,21 +282,7 @@ private extension ExploreView {
             ABTestManager(service: MockABTestService(categoryRowTest: .original))
         )
     
-//    return ExploreView(
-//        viewModel: ExploreViewModel(
-//            exploreUseCase: ExploreUseCase(container: container)
-//        ),
-//        devSettingsView: {
-//            
-//        },
-//        createAccountView: {
-//            
-//        }
-//    )
-//    .previewEnvironment()
-    
     let exploreBuilder = ExploreBuilder(container: container)
-    
     return exploreBuilder.buildExploreView()
         .previewEnvironment()
 }
@@ -338,20 +295,7 @@ private extension ExploreView {
             ABTestManager(service: MockABTestService(categoryRowTest: .top))
         )
     
-//    return ExploreView(
-//        viewModel: ExploreViewModel(
-//            exploreUseCase: ExploreUseCase(container: container)
-//        ),
-//        devSettingsView: {
-//            
-//        },
-//        createAccountView: {
-//            
-//        }
-//    )
-//    .previewEnvironment()
     let exploreBuilder = ExploreBuilder(container: container)
-    
     return exploreBuilder.buildExploreView()
         .previewEnvironment()
 }
@@ -364,20 +308,7 @@ private extension ExploreView {
             ABTestManager(service: MockABTestService(categoryRowTest: .hidden))
         )
     
-//    return ExploreView(
-//        viewModel: ExploreViewModel(
-//            exploreUseCase: ExploreUseCase(container: container)
-//        ),
-//        devSettingsView: {
-//            
-//        },
-//        createAccountView: {
-//            
-//        }
-//    )
-//    .previewEnvironment()
     let exploreBuilder = ExploreBuilder(container: container)
-    
     return exploreBuilder.buildExploreView()
         .previewEnvironment()
 }
@@ -392,21 +323,7 @@ private extension ExploreView {
             )
         )
     
-//    return ExploreView(
-//        viewModel: ExploreViewModel(
-//            exploreUseCase: ExploreUseCase(container: container)
-//        ),
-//        devSettingsView: {
-//            
-//        },
-//        createAccountView: {
-//            
-//        }
-//    )
-//    .previewEnvironment()
-    
     let exploreBuilder = ExploreBuilder(container: container)
-    
     return exploreBuilder.buildExploreView()
         .previewEnvironment()
 }
@@ -421,20 +338,7 @@ private extension ExploreView {
             )
         )
     
-//    return ExploreView(
-//        viewModel: ExploreViewModel(
-//            exploreUseCase: ExploreUseCase(container: container)
-//        ),
-//        devSettingsView: {
-//            
-//        },
-//        createAccountView: {
-//            
-//        }
-//    )
-//    .previewEnvironment()
     let exploreBuilder = ExploreBuilder(container: container)
-    
     return exploreBuilder.buildExploreView()
         .previewEnvironment()
 }
@@ -451,20 +355,7 @@ private extension ExploreView {
             )
         )
     
-//    return ExploreView(
-//        viewModel: ExploreViewModel(
-//            exploreUseCase: ExploreUseCase(container: container)
-//        ),
-//        devSettingsView: {
-//            
-//        },
-//        createAccountView: {
-//            
-//        }
-//    )
-//    .previewEnvironment()
     let exploreBuilder = ExploreBuilder(container: container)
-    
     return exploreBuilder.buildExploreView()
         .previewEnvironment()
 }
