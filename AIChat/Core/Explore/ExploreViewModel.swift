@@ -12,6 +12,7 @@ import Foundation
 final class ExploreViewModel {
     
     private let exploreUseCase: ExploreUseCaseProtocol
+    private let router: ExploreRouterProtocol
     
     private(set) var categories: [CharacterOption] = CharacterOption.allCases
     private(set) var featuredAvatars: [AvatarModel] = []
@@ -21,9 +22,6 @@ final class ExploreViewModel {
     private(set) var isLoadingPopular: Bool = true
     private(set) var showNotificationButton: Bool = false
     
-    var showPushNotificationModal: Bool = false
-    var showCreateAccountView: Bool = false
-    var showDevSettings: Bool = false
     var showDevSettingsButton: Bool {
         #if DEV || MOCK
             return true
@@ -36,10 +34,12 @@ final class ExploreViewModel {
         exploreUseCase.categoryRowTest
     }
     
-    var path: [TabbarPathOption] = []
-    
-    init(exploreUseCase: ExploreUseCaseProtocol) {
+    init(
+        exploreUseCase: ExploreUseCaseProtocol,
+        router: ExploreRouterProtocol
+    ) {
         self.exploreUseCase = exploreUseCase
+        self.router = router
     }
 }
 
@@ -124,13 +124,14 @@ extension ExploreViewModel {
         for queryItem in queryItems {
             if queryItem.name == "category", let value = queryItem.value, let category = CharacterOption(rawValue: value) {
                 let imageName = popularAvatars.first(where: { $0.characterOption == category })?.profileImageName ?? Constants.randomImage
-                path
-                    .append(
-                        .character(
-                            category: category,
-                            imageName: imageName
-                        )
-                    )
+                
+                let delegate = CategoryListDelegate(
+                    category: category,
+                    imageName: imageName,
+                    path: .constant([])
+                )
+                router.showCategoryListView(delegate: delegate)
+                
                 exploreUseCase.trackEvent(event: Event.deepLinkCategory(category: category))
             }
             return
@@ -150,7 +151,7 @@ extension ExploreViewModel {
                 return
             }
             
-            showCreateAccountView = true
+            router.showCreateAccountView(delegate: CreateAccountDelegate())
         }
     }
 }
@@ -159,70 +160,80 @@ extension ExploreViewModel {
 extension ExploreViewModel {
     
     func onDevSettingsButtonTapped() {
-        showDevSettings = true
         exploreUseCase
             .trackEvent(
                 event: Event.devSettingsPressed
             )
+        router.showDevSettingsView()
     }
     
     func onPushNotificationButtonTapped() {
-        showPushNotificationModal = true
+        
+        func onEnablePushNotificationTapped() {
+            router.dismissModal()
+            Task {
+                let isAuthorized = try await exploreUseCase.reuestAuthorization()
+                exploreUseCase
+                    .trackEvent(
+                        event: Event
+                            .pushNotificationEnabled(isAuthorized: isAuthorized)
+                    )
+                await handleShowPushNotificationButton()
+            }
+        }
+        
+        func onCancelPushNotificationTapped() {
+            router.dismissModal()
+            exploreUseCase
+                .trackEvent(
+                    event: Event.pushNotificationCancel
+                )
+        }
+        
         exploreUseCase
             .trackEvent(
                 event: Event.pushNotificationStart
             )
-    }
-    
-    func onEnablePushNotificationTapped() {
-        showPushNotificationModal = false
-        
-        Task {
-            let isAuthorized = try await exploreUseCase.reuestAuthorization()
-            exploreUseCase
-                .trackEvent(
-                    event: Event
-                        .pushNotificationEnabled(isAuthorized: isAuthorized)
-                )
-            await handleShowPushNotificationButton()
-        }
-    }
-    
-    func onCancelPushNotificationTapped() {
-        showPushNotificationModal = false
-        exploreUseCase
-            .trackEvent(
-                event: Event.pushNotificationCancel
+        router
+            .showPushNotificationModal(
+                onEnablePressed: {
+                    onEnablePushNotificationTapped()
+                },
+                onCancelPressed: {
+                    onCancelPushNotificationTapped()
+                }
             )
     }
     
+    
+    
     func onAvaterSelected(avatar: AvatarModel) {
-        path.append(.chat(avatarId: avatar.avatarId, chat: nil))
         exploreUseCase
             .trackEvent(
                 event: Event.avatarPressed(
                     avatar: avatar
                 )
             )
+        let chatDelegate = ChatDelegate(avatarId: avatar.avatarId, chat: nil)
+        router.showChatView(delegate: chatDelegate)
     }
     
     func onCategorySelected(
         category: CharacterOption,
         imageName: String
     ) {
-        path
-            .append(
-                .character(
-                    category: category,
-                    imageName: imageName
-                )
-            )
         exploreUseCase
             .trackEvent(
                 event: Event.categoryPressed(
                     category: category
                 )
             )
+        let categoryListDelegate = CategoryListDelegate(
+            category: category,
+            imageName: imageName,
+            path: .constant([])
+        )
+        router.showCategoryListView(delegate: categoryListDelegate)
     }
     
     func onLogoutButtonPressed() {
