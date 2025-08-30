@@ -6,37 +6,37 @@
 //
 
 import SwiftUI
+import SUIRouting
 
 @Observable
 @MainActor
 final class ExploreBuilder {
     private let container: DependencyContainer
-//    private let devSettingsBuilder: DevSettingsBuilder
-//    private let createAccountBuilder: CreateAccountBuilder
-
+    
     init(
         container: DependencyContainer
-//        ,
-//        devSettingsBuilder: DevSettingsBuilder,
-//        createAccountBuilder: CreateAccountBuilder
     ) {
         self.container = container
-//        self.devSettingsBuilder = devSettingsBuilder
-//        self.createAccountBuilder = createAccountBuilder
     }
-
-    func buildExploreView() -> some View {
+    
+    func buildExploreView(router: Router) -> some View {
         ExploreView(
             viewModel: ExploreViewModel(
-                exploreUseCase: ExploreUseCase(container: container)
+                exploreUseCase: ExploreUseCase(container: container),
+                router: ExploreRouter(
+                    router: router,
+                    categoryListBuilder: CategoryListBuilder(
+                        container: container
+                    ),
+                    chatBuilder: ChatBuilder(container: container),
+                    devSettingsBuilder: DevSettingsBuilder(
+                        container: container
+                    ),
+                    createAccountBuilder: CreateAccountBuilder(
+                        container: container
+                    )
+                )
             )
-//            ,
-//            devSettingsView: {
-//                self.devSettingsBuilder.buildDevSettingsView()
-//            },
-//            createAccountView: {
-//                self.createAccountBuilder.buildCreateAccountView()
-//            }
         )
     }
 }
