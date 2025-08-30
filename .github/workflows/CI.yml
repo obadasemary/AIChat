@@ -133,6 +133,27 @@ jobs:
             -only-testing:AIChatTests \
             ONLY_ACTIVE_ARCH=YES
 
+      - name: Boot Simulator for UI Tests
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+            echo "🚀 Pre-booting simulator for UI tests"
+            xcrun simctl boot "iPhone 16 Pro" || true
+            xcrun simctl list devices | grep "iPhone 16 Pro"
+
+      - name: Run UI Tests (Main Branch Only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+            echo "🧪 Running UI Tests on main branch"
+            xcodebuild test \
+            -project AIChat.xcodeproj \
+            -scheme "AIChat - Development" \
+            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
+            -only-testing:AIChatUITests \
+            ONLY_ACTIVE_ARCH=YES \
+            -maximum-concurrent-test-device-destinations 1
+
 #      - name: Build app
 #        run: |
 #          echo "🚀 Starting xcodebuild"
@@ -151,11 +172,13 @@ jobs:
 #            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' \
 #            test | tee xctest.log | xcpretty
 
-      - name: Upload raw logs on failure
+      - name: Upload test results and logs on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: xcode-logs
+          name: test-results-and-logs
           path: |
             xcodebuild.log
             xctest.log
+            ~/Library/Developer/Xcode/DerivedData/AIChat-*/Logs/Test/
+          retention-days: 7
