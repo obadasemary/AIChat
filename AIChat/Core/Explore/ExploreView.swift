@@ -9,85 +9,70 @@ import SwiftUI
 
 struct ExploreView: View {
     
-    @Environment(DevSettingsBuilder.self) private var devSettingsBuilder
-    @Environment(CreateAccountBuilder.self) private var createAccountBuilder
     @State var viewModel: ExploreViewModel
     
     var body: some View {
-        NavigationStack(path: $viewModel.path) {
-            List {
-                if viewModel.featuredAvatars.isEmpty && viewModel.popularAvatars.isEmpty {
-                    if viewModel.isLoadingFeatured || viewModel.isLoadingPopular {
-                        loadingIndicator
-                    } else {
-                        contentUnavailableView
+        List {
+            if viewModel.featuredAvatars.isEmpty && viewModel.popularAvatars.isEmpty {
+                if viewModel.isLoadingFeatured || viewModel.isLoadingPopular {
+                    loadingIndicator
+                } else {
+                    contentUnavailableView
+                }
+            }
+            
+            if !viewModel.popularAvatars.isEmpty {
+                if viewModel.categoryRowTest == .top {
+                    categoriesSection
+                }
+            }
+            
+            if !viewModel.featuredAvatars.isEmpty {
+                featuredSection
+            }
+            
+            if !viewModel.popularAvatars.isEmpty {
+                if viewModel.categoryRowTest == .original {
+                    categoriesSection
+                }
+                popularSection
+            }
+        }
+        .navigationTitle("Explore")
+        .screenAppearAnalytics(name: "ExploreView")
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                if viewModel.showDevSettingsButton {
+                    devSettingsButton
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                HStack(spacing: 16) {
+                    if viewModel.showNotificationButton {
+                        pushNotificationButton
                     }
-                }
-                
-                if !viewModel.popularAvatars.isEmpty {
-                    if viewModel.categoryRowTest == .top {
-                        categoriesSection
-                    }
-                }
-                
-                if !viewModel.featuredAvatars.isEmpty {
-                    featuredSection
-                }
-                
-                if !viewModel.popularAvatars.isEmpty {
-                    if viewModel.categoryRowTest == .original {
-                        categoriesSection
-                    }
-                    popularSection
+                    logoutButton
                 }
             }
-            .navigationTitle("Explore")
-            .screenAppearAnalytics(name: "ExploreView")
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    if viewModel.showDevSettingsButton {
-                        devSettingsButton
-                    }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    HStack(spacing: 16) {
-                        if viewModel.showNotificationButton {
-                            pushNotificationButton
-                        }
-                        logoutButton
-                    }
-                }
-            }
-            .sheet(isPresented: $viewModel.showDevSettings) {
-                devSettingsBuilder.buildDevSettingsView()
-            }
-            .sheet(isPresented: $viewModel.showCreateAccountView) {
-                createAccountBuilder.buildCreateAccountView()
-                    .presentationDetents([.medium])
-            }
-            .navigationDestinationForTabbarModule(path: $viewModel.path)
-            .showModal(showModal: $viewModel.showPushNotificationModal) {
-                pushNotificationModal
-            }
-            .task {
-                await viewModel.loadFeaturedAvatars()
-            }
-            .task {
-                await viewModel.loadPopularAvatars()
-            }
-            .refreshable {
-                await viewModel.refreshAvatars()
-            }
-            .task {
-                await viewModel.handleShowPushNotificationButton()
-            }
-            .onFirstAppear {
-                viewModel.schedulePushNotifications()
-                viewModel.showCreateAccountScreenIfNeeded()
-            }
-            .onOpenURL { url in
-                viewModel.handleDeepLink(url)
-            }
+        }
+        .task {
+            await viewModel.loadFeaturedAvatars()
+        }
+        .task {
+            await viewModel.loadPopularAvatars()
+        }
+        .refreshable {
+            await viewModel.refreshAvatars()
+        }
+        .task {
+            await viewModel.handleShowPushNotificationButton()
+        }
+        .onFirstAppear {
+            viewModel.schedulePushNotifications()
+            viewModel.showCreateAccountScreenIfNeeded()
+        }
+        .onOpenURL { url in
+            viewModel.handleDeepLink(url)
         }
     }
 }
@@ -207,21 +192,6 @@ private extension ExploreView {
             }
     }
     
-    var pushNotificationModal: some View {
-        CustomModalView(
-            title: "Enable Push Notifications?",
-            subtitle: "We'll send you updates about new features and improvements",
-            primaryButtonTitle: "Enable",
-            primaryButtonAction: {
-                viewModel.onEnablePushNotificationTapped()
-            },
-            secondaryButtonTitle: "Cancel",
-            secondaryButtonAction: {
-                viewModel.onCancelPushNotificationTapped()
-            }
-        )
-    }
-    
     var logoutButton: some View {
         Image(systemName: "gear")
             .font(.headline)
@@ -243,8 +213,10 @@ private extension ExploreView {
         )
     
     let exploreBuilder = ExploreBuilder(container: container)
-    return exploreBuilder.buildExploreView()
-        .previewEnvironment()
+    return RouterView { router in
+        exploreBuilder.buildExploreView(router: router)
+    }
+    .previewEnvironment()
 }
 
 #Preview("Mock Has Data w/ create Acct Test") {
@@ -270,8 +242,11 @@ private extension ExploreView {
         )
     
     let exploreBuilder = ExploreBuilder(container: container)
-    return exploreBuilder.buildExploreView()
-        .previewEnvironment()
+    
+    return RouterView { router in
+        exploreBuilder.buildExploreView(router: router)
+    }
+    .previewEnvironment()
 }
 
 #Preview("CategoryRowTest: Original") {
@@ -283,8 +258,11 @@ private extension ExploreView {
         )
     
     let exploreBuilder = ExploreBuilder(container: container)
-    return exploreBuilder.buildExploreView()
-        .previewEnvironment()
+    
+    return RouterView { router in
+        exploreBuilder.buildExploreView(router: router)
+    }
+    .previewEnvironment()
 }
 
 #Preview("CategoryRowTest: Top") {
@@ -296,8 +274,11 @@ private extension ExploreView {
         )
     
     let exploreBuilder = ExploreBuilder(container: container)
-    return exploreBuilder.buildExploreView()
-        .previewEnvironment()
+    
+    return RouterView { router in
+        exploreBuilder.buildExploreView(router: router)
+    }
+    .previewEnvironment()
 }
 
 #Preview("CategoryRowTest: Hidden") {
@@ -309,8 +290,11 @@ private extension ExploreView {
         )
     
     let exploreBuilder = ExploreBuilder(container: container)
-    return exploreBuilder.buildExploreView()
-        .previewEnvironment()
+    
+    return RouterView { router in
+        exploreBuilder.buildExploreView(router: router)
+    }
+    .previewEnvironment()
 }
 
 #Preview("Mock No Data") {
@@ -324,8 +308,11 @@ private extension ExploreView {
         )
     
     let exploreBuilder = ExploreBuilder(container: container)
-    return exploreBuilder.buildExploreView()
-        .previewEnvironment()
+    
+    return RouterView { router in
+        exploreBuilder.buildExploreView(router: router)
+    }
+    .previewEnvironment()
 }
 
 #Preview("Mock Slow Loading") {
@@ -339,8 +326,11 @@ private extension ExploreView {
         )
     
     let exploreBuilder = ExploreBuilder(container: container)
-    return exploreBuilder.buildExploreView()
-        .previewEnvironment()
+    
+    return RouterView { router in
+        exploreBuilder.buildExploreView(router: router)
+    }
+    .previewEnvironment()
 }
 
 #Preview("Remote Service") {
@@ -356,6 +346,9 @@ private extension ExploreView {
         )
     
     let exploreBuilder = ExploreBuilder(container: container)
-    return exploreBuilder.buildExploreView()
-        .previewEnvironment()
+    
+    return RouterView { router in
+        exploreBuilder.buildExploreView(router: router)
+    }
+    .previewEnvironment()
 }
