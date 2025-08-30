@@ -18,6 +18,91 @@ jobs:
       - name: Select Xcode 16.4
         run: sudo xcode-select -switch /Applications/Xcode_16.4.app
 
+      - name: Create mock Firebase configuration files
+        run: |
+          # Create the GoogleServicePLists directory
+          mkdir -p AIChat/GoogleServicePLists
+          
+          # Create mock GoogleService-Info-Dev.plist for CI builds
+          cat > AIChat/GoogleServicePLists/GoogleService-Info-Dev.plist << 'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>CLIENT_ID</key>
+            <string>mock-client-id</string>
+            <key>REVERSED_CLIENT_ID</key>
+            <string>mock-reversed-client-id</string>
+            <key>API_KEY</key>
+            <string>mock-api-key</string>
+            <key>GCM_SENDER_ID</key>
+            <string>123456789</string>
+            <key>PLIST_VERSION</key>
+            <string>1</string>
+            <key>BUNDLE_ID</key>
+            <string>com.aichat.dev</string>
+            <key>PROJECT_ID</key>
+            <string>mock-project-id</string>
+            <key>STORAGE_BUCKET</key>
+            <string>mock-project-id.appspot.com</string>
+            <key>IS_ADS_ENABLED</key>
+            <false/>
+            <key>IS_ANALYTICS_ENABLED</key>
+            <false/>
+            <key>IS_APPINVITE_ENABLED</key>
+            <true/>
+            <key>IS_GCM_ENABLED</key>
+            <true/>
+            <key>IS_SIGNIN_ENABLED</key>
+            <true/>
+            <key>GOOGLE_APP_ID</key>
+            <string>1:123456789:ios:abcdef123456</string>
+            <key>DATABASE_URL</key>
+            <string>https://mock-project-id.firebaseio.com</string>
+          </dict>
+          </plist>
+          EOF
+          
+          # Create mock GoogleService-Info-Prod.plist for CI builds
+          cat > AIChat/GoogleServicePLists/GoogleService-Info-Prod.plist << 'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>CLIENT_ID</key>
+            <string>mock-client-id-prod</string>
+            <key>REVERSED_CLIENT_ID</key>
+            <string>mock-reversed-client-id-prod</string>
+            <key>API_KEY</key>
+            <string>mock-api-key-prod</string>
+            <key>GCM_SENDER_ID</key>
+            <string>987654321</string>
+            <key>PLIST_VERSION</key>
+            <string>1</string>
+            <key>BUNDLE_ID</key>
+            <string>com.aichat.prod</string>
+            <key>PROJECT_ID</key>
+            <string>mock-project-id-prod</string>
+            <key>STORAGE_BUCKET</key>
+            <string>mock-project-id-prod.appspot.com</string>
+            <key>IS_ADS_ENABLED</key>
+            <false/>
+            <key>IS_ANALYTICS_ENABLED</key>
+            <false/>
+            <key>IS_APPINVITE_ENABLED</key>
+            <true/>
+            <key>IS_GCM_ENABLED</key>
+            <true/>
+            <key>IS_SIGNIN_ENABLED</key>
+            <true/>
+            <key>GOOGLE_APP_ID</key>
+            <string>1:987654321:ios:fedcba654321</string>
+            <key>DATABASE_URL</key>
+            <string>https://mock-project-id-prod.firebaseio.com</string>
+          </dict>
+          </plist>
+          EOF
+
       - name: Show environment info
         run: |
           sw_vers
