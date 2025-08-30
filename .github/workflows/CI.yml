@@ -8,15 +8,15 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 15
 
     steps:
       - name: Checkout project
         uses: actions/checkout@v4
 
-      - name: Select Xcode 16.2
-        run: sudo xcode-select -switch /Applications/Xcode_16.2.app
+      - name: Select Xcode 16.4
+        run: sudo xcode-select -switch /Applications/Xcode_16.4.app
 
       - name: Show environment info
         run: |
@@ -34,7 +34,7 @@ jobs:
             -scheme "AIChat - Development" \
             CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
             ONLY_ACTIVE_ARCH=YES
 
 #      - name: Build app
