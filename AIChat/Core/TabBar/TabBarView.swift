@@ -15,10 +15,12 @@ struct TabBarView: View {
     
     var body: some View {
         TabView {
-            exploreBuilder.buildExploreView()
-                .tabItem {
-                    Label("Explore", systemImage: "eyes")
-                }
+            RouterView { router in
+                exploreBuilder.buildExploreView(router: router)
+            }
+            .tabItem {
+                Label("Explore", systemImage: "eyes")
+            }
             chatsBuilder.buildChatsView()
                 .tabItem {
                     Label(
