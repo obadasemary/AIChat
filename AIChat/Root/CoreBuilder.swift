@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SUIRouting
 
 @Observable
 @MainActor
@@ -83,18 +84,15 @@ class CoreBuilder {
         )
     }
     
-    func exploreView() -> some View {
+    func exploreView(router: Router) -> some View {
         ExploreView(
             viewModel: ExploreViewModel(
-                exploreUseCase: ExploreUseCase(container: container)
+                exploreUseCase: ExploreUseCase(container: container),
+                router: CoreRouter(
+                    router: router,
+                    builder: self
+                )
             )
-//            ,
-//            devSettingsView: {
-//                self.devSettingsView()
-//            },
-//            createAccountView: {
-//                self.createAccountView()
-//            }
         )
     }
     
