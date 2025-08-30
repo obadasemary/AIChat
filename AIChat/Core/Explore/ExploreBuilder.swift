@@ -29,9 +29,7 @@ final class ExploreBuilder {
                         container: container
                     ),
                     chatBuilder: ChatBuilder(container: container),
-                    devSettingsBuilder: DevSettingsBuilder(
-                        container: container
-                    ),
+                    devSettingsBuilder: DevSettingsBuilder(container: container),
                     createAccountBuilder: CreateAccountBuilder(
                         container: container
                     )
