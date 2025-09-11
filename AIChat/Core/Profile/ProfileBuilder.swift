@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SUIRouting
 
 @Observable
 @MainActor
@@ -16,10 +17,17 @@ final class ProfileBuilder {
         self.container = container
     }
     
-    func buildProfileView() -> some View {
+    func buildProfileView(router: Router) -> some View {
         ProfileView(
             viewModel: ProfileViewModel(
-                profileUseCase: ProfileUseCase(container: container)
+                profileUseCase: ProfileUseCase(container: container),
+                router: ProfileRouter(
+                    router: router,
+                    settingsBuilder: SettingsBuilder(container: container),
+                    createAvatarBuilder: CreateAvatarBuilder(
+                        container: container
+                    )
+                )
             )
         )
     }
