@@ -12,6 +12,7 @@ import Foundation
 final class ProfileViewModel {
     
     private let profileUseCase: ProfileUseCaseProtocol
+    private let router: ProfileRouterProtocol
     
     private(set) var currentUser: UserModel?
     private(set) var myAvatars: [AvatarModel] = []
@@ -22,8 +23,12 @@ final class ProfileViewModel {
     var showAlert: AnyAppAlert?
     var path: [TabbarPathOption] = []
     
-    init(profileUseCase: ProfileUseCaseProtocol) {
+    init(
+        profileUseCase: ProfileUseCaseProtocol,
+        router: ProfileRouterProtocol
+    ) {
         self.profileUseCase = profileUseCase
+        self.router = router
     }
 }
 
@@ -60,13 +65,13 @@ extension ProfileViewModel {
 extension ProfileViewModel {
     
     func onSettingsButtonPressed() {
-        showSettingsView = true
         profileUseCase.trackEvent(event: Event.settingsPressed)
+        router.showSettingsView()
     }
     
     func onNewAvatarButtonPressed() {
-        showCreateAvatarView = true
         profileUseCase.trackEvent(event: Event.newAvatarPressed)
+        router.showCreateAvatarView()
     }
     
     func onAvatarSelected(avatar: AvatarModel) {
