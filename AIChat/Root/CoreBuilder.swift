@@ -166,10 +166,14 @@ class CoreBuilder {
         )
     }
     
-    func profileView() -> some View {
+    func profileView(router: Router) -> some View {
         ProfileView(
             viewModel: ProfileViewModel(
-                profileUseCase: ProfileUseCase(container: container)
+                profileUseCase: ProfileUseCase(container: container),
+                router: CoreRouter(
+                    router: router,
+                    builder: self
+                )
             )
         )
     }
