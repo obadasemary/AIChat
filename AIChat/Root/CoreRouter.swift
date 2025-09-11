@@ -76,4 +76,16 @@ struct CoreRouter {
     func dismissAlert() {
         router.dismissAlert()
     }
+    
+    func showCreateAvatarView() {
+        router.showScreen(.fullScreenCover) { router in
+            builder.createAvatarView()
+        }
+    }
+    
+    func showSettingsView() {
+        router.showScreen(.sheet) { router in
+            builder.settingsView()
+        }
+    }
 }
