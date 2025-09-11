@@ -9,8 +9,6 @@ import SwiftUI
 
 struct ProfileView: View {
     
-    @Environment(SettingsBuilder.self) private var settingsBuilder
-    @Environment(CreateAvatarBuilder.self) private var createAvatarBuilder
     @State var viewModel: ProfileViewModel
     
     var body: some View {
@@ -28,16 +26,6 @@ struct ProfileView: View {
                     settingsButton
                 }
             }
-        }
-        .sheet(isPresented: $viewModel.showSettingsView) {
-            settingsBuilder.buildSettingsView()
-        }
-        .fullScreenCover(isPresented: $viewModel.showCreateAvatarView) {
-            Task {
-                await viewModel.loadData()
-            }
-        } content: {
-            createAvatarBuilder.buildCreateAvatarView()
         }
         .task {
             await viewModel.loadData()
@@ -126,6 +114,8 @@ private extension ProfileView {
     let container = DevPreview.shared.container
     let profileBuilder = ProfileBuilder(container: container)
     
-    return profileBuilder.buildProfileView()
-        .previewEnvironment()
+    return RouterView { router in
+        profileBuilder.buildProfileView(router: router)
+    }
+    .previewEnvironment()
 }
