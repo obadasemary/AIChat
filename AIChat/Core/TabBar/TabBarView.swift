@@ -28,10 +28,12 @@ struct TabBarView: View {
                         systemImage: "bubble.left.and.bubble.right"
                     )
                 }
-            profileBuilder.buildProfileView()
-                .tabItem {
-                    Label("Profile", systemImage: "person.fill")
-                }
+            RouterView { router in
+                profileBuilder.buildProfileView(router: router)
+            }
+            .tabItem {
+                Label("Profile", systemImage: "person.fill")
+            }
         }
     }
 }
