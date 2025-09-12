@@ -18,8 +18,6 @@ final class ProfileViewModel {
     private(set) var myAvatars: [AvatarModel] = []
     private(set) var isLoading: Bool = true
     
-    var showSettingsView: Bool = false
-    var showCreateAvatarView: Bool = false
     var showAlert: AnyAppAlert?
     var path: [TabbarPathOption] = []
     
