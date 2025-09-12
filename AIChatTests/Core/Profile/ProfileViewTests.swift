@@ -36,8 +36,10 @@ struct ProfileViewTests {
         
         // Given
         let interactore = MockProfileInteractor()
+        let profileRouter = MockProfileRouter()
         let viewModel = ProfileViewModel(
-            profileUseCase: interactore
+            profileUseCase: interactore,
+            router: profileRouter
         )
         
         // When
@@ -108,8 +110,11 @@ struct ProfileViewTests {
                 events.append(event)
             }
         )
+        
+        let profileRouter = MockProfileRouter()
         let viewModel = ProfileViewModel(
-            profileUseCase: interactore
+            profileUseCase: interactore,
+            router: profileRouter
         )
         
         // When
@@ -156,9 +161,11 @@ struct ProfileViewTests {
         container.register(AvatarManager.self) {  avatarManager }
         container.register(LogManager.self) {  logManager }
         
+        let profileRouter = MockProfileRouter()
         // Given
         let viewModel = ProfileViewModel(
-            profileUseCase: ProfileUseCase(container: container)
+            profileUseCase: ProfileUseCase(container: container),
+            router: profileRouter
         )
         
         // When
@@ -194,16 +201,18 @@ struct ProfileViewTests {
         container.register(AvatarManager.self) {  avatarManager }
         container.register(LogManager.self) {  logManager }
         
+        let profileRouter = MockProfileRouter()
         // Given
         let viewModel = ProfileViewModel(
-            profileUseCase: ProfileUseCase(container: container)
+            profileUseCase: ProfileUseCase(container: container),
+            router: profileRouter
         )
         
         // When
         viewModel.onSettingsButtonPressed()
         
         // Then
-        #expect(viewModel.showSettingsView == true)
+        #expect(profileRouter.showSettingsViewCalled == true)
         #expect(
             mockLogService.trackedEvents
                 .contains {
@@ -233,16 +242,18 @@ struct ProfileViewTests {
         container.register(AvatarManager.self) {  avatarManager }
         container.register(LogManager.self) {  logManager }
         
+        let profileRouter = MockProfileRouter()
         // Given
         let viewModel = ProfileViewModel(
-            profileUseCase: ProfileUseCase(container: container)
+            profileUseCase: ProfileUseCase(container: container),
+            router: profileRouter
         )
         
         // When
         viewModel.onNewAvatarButtonPressed()
         
         // Then
-        #expect(viewModel.showCreateAvatarView == true)
+        #expect(profileRouter.showCreateAvatarViewCalled == true)
         #expect(
             mockLogService.trackedEvents
                 .contains {
@@ -271,9 +282,11 @@ struct ProfileViewTests {
         container.register(AvatarManager.self) {  avatarManager }
         container.register(LogManager.self) {  logManager }
         
+        let profileRouter = MockProfileRouter()
         // Given
         let viewModel = ProfileViewModel(
-            profileUseCase: ProfileUseCase(container: container)
+            profileUseCase: ProfileUseCase(container: container),
+            router: profileRouter
         )
         
         // When
@@ -321,9 +334,11 @@ struct ProfileViewTests {
         container.register(AvatarManager.self) {  avatarManager }
         container.register(LogManager.self) {  logManager }
         
+        let profileRouter = MockProfileRouter()
         // Given
         let viewModel = ProfileViewModel(
-            profileUseCase: ProfileUseCase(container: container)
+            profileUseCase: ProfileUseCase(container: container),
+            router: profileRouter
         )
         
         // When
@@ -375,9 +390,11 @@ struct ProfileViewTests {
         container.register(AvatarManager.self) {  avatarManager }
         container.register(LogManager.self) {  logManager }
         
+        let profileRouter = MockProfileRouter()
         // Given
         let viewModel = ProfileViewModel(
-            profileUseCase: ProfileUseCase(container: container)
+            profileUseCase: ProfileUseCase(container: container),
+            router: profileRouter
         )
         
         // When
