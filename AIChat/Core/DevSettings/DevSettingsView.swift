@@ -41,8 +41,8 @@ private extension DevSettingsView {
     
     var backButtonView: some View {
         Image(systemName: "xmark")
-            .font(.title2)
-            .fontWeight(.black)
+            .font(.subheadline)
+            .padding(4)
             .anyButton {
                 viewModel.onBackButtonTap {
                     dismiss()
