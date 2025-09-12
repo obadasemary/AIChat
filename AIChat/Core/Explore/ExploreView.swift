@@ -46,13 +46,27 @@ struct ExploreView: View {
                     devSettingsButton
                 }
             }
+            
+            // Notification button
             ToolbarItem(placement: .topBarTrailing) {
-                HStack(spacing: 16) {
-                    if viewModel.showNotificationButton {
-                        pushNotificationButton
-                    }
-                    logoutButton
+                if viewModel.showNotificationButton {
+                    pushNotificationButton
                 }
+            }
+            
+            // Spacer or fallback
+            if #available(iOS 26.0, *) {
+                ToolbarSpacer(.fixed, placement: .topBarTrailing)
+            } else {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Spacer()
+                        .frame(width: .zero)
+                }
+            }
+            
+            // Logout button
+            ToolbarItem(placement: .topBarTrailing) {
+                logoutButton
             }
         }
         .task {
@@ -171,14 +185,14 @@ private extension ExploreView {
     }
     
     var devSettingsButton: some View {
-        HStack {
-            Image(systemName:"rectangle.portrait.and.arrow.forward")
-            Text("Dev 🤫")
-        }
-        .badgeButton()
-        .anyButton(.press) {
-            viewModel.onDevSettingsButtonTapped()
-        }
+        Image(systemName: "pencil")
+            .font(.headline)
+            .padding(4)
+            .foregroundStyle(.accent)
+            .tappableBackground()
+            .anyButton(.press) {
+                viewModel.onDevSettingsButtonTapped()
+            }
     }
     
     var pushNotificationButton: some View {
