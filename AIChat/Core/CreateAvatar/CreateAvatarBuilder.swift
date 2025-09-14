@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SUIRouting
 
 @Observable
 @MainActor
@@ -16,11 +17,13 @@ final class CreateAvatarBuilder {
         self.container = container
     }
     
-    func buildCreateAvatarView() -> some View {
+    func buildCreateAvatarView(router: Router) -> some View {
         CreateAvatarView(
             viewModel: CreateAvatarViewModel(
-                createAvatarUseCase: CreateAvatarUseCase(container: container)
+                createAvatarUseCase: CreateAvatarUseCase(container: container),
+                router: CreateAvatarRouter(router: router)
             )
         )
     }
 }
+
