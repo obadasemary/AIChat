@@ -186,10 +186,13 @@ class CoreBuilder {
         )
     }
     
-    func createAvatarView() -> some View {
+    func createAvatarView(router: Router) -> some View {
         CreateAvatarView(
             viewModel: CreateAvatarViewModel(
-                createAvatarUseCase: CreateAvatarUseCase(container: container)
+                createAvatarUseCase: CreateAvatarUseCase(
+                    container: container
+                ),
+                router: CoreRouter(router: router, builder: self)
             )
         )
     }
