@@ -76,13 +76,27 @@ struct CoreRouter {
     
     // MARK: Alerts
     
+    func showAlert(_ option: RouterAlertType, title: String, subtitle: String?, buttons: (@Sendable () -> AnyView)?) {
+        router.showAlert(option, title: title, subtitle: subtitle, buttons: buttons)
+    }
+    
+    func showSimpleAlert(title: String, subtitle: String?) {
+        router.showAlert(.alert, title: title, subtitle: subtitle, buttons: nil)
+    }
+    
+    func showAlert(error: Error) {
+        router.showAlert(.alert, title: "Error", subtitle: error.localizedDescription, buttons: nil)
+    }
+    
     func dismissAlert() {
         router.dismissAlert()
     }
     
+    // MARK: Profile View
+    
     func showCreateAvatarView() {
         router.showScreen(.fullScreenCover) { router in
-            builder.createAvatarView()
+            builder.createAvatarView(router: router)
         }
     }
     
@@ -91,4 +105,6 @@ struct CoreRouter {
             builder.settingsView()
         }
     }
+    
+    // MARK: Create Avatar View
 }
