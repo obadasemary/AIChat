@@ -26,7 +26,7 @@ extension ProfileRouter: ProfileRouterProtocol {
     
     func showCreateAvatarView() {
         router.showScreen(.fullScreenCover) { router in
-            createAvatarBuilder.buildCreateAvatarView()
+            createAvatarBuilder.buildCreateAvatarView(router: router)
         }
     }
     
