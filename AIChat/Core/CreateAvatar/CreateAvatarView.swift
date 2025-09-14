@@ -11,8 +11,6 @@ struct CreateAvatarView: View {
     
     @State var viewModel: CreateAvatarViewModel
     
-    @Environment(\.dismiss) private var dismiss
-    
     var body: some View {
         NavigationStack {
             List {
@@ -27,7 +25,6 @@ struct CreateAvatarView: View {
                     dismissButton
                 }
             }
-            .showCustomAlert(alert: $viewModel.showAlert)
             .screenAppearAnalytics(name: "CreateAvatar")
         }
     }
@@ -41,9 +38,7 @@ private extension CreateAvatarView {
             .font(.title2)
             .fontWeight(.semibold)
             .anyButton(.plain) {
-                viewModel.onDismissButtonTapped {
-                    dismiss()
-                }
+                viewModel.onDismissButtonTapped()
             }
             .foregroundStyle(.accent)
     }
@@ -137,9 +132,7 @@ private extension CreateAvatarView {
                 isLoading: viewModel.isSaving,
                 title: "Save",
                 action: {
-                    viewModel.onSaveTapped {
-                        dismiss()
-                    }
+                    viewModel.onSaveTapped()
                 }
             )
             .removeListRowFormatting()
@@ -155,6 +148,8 @@ private extension CreateAvatarView {
     let container = DevPreview.shared.container
     let createAvatarBuilder = CreateAvatarBuilder(container: container)
     
-    return createAvatarBuilder.buildCreateAvatarView()
-        .previewEnvironment()
+    return RouterView { router in
+        createAvatarBuilder.buildCreateAvatarView(router: router)
+    }
+    .previewEnvironment()
 }
