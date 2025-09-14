@@ -8,8 +8,6 @@
 import SwiftUI
 import SUIRouting
 
-typealias RouterView = SUIRouting.RouterView
-
 @MainActor
 struct ExploreRouter {
     let router: Router
