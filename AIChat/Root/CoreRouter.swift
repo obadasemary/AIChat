@@ -5,8 +5,11 @@
 //  Created by Abdelrahman Mohamed on 30.08.2025.
 //
 
-import SUIRouting
 import SwiftUI
+import SUIRouting
+
+typealias RouterView = SUIRouting.RouterView
+typealias RouterAlertType = SUIRouting.AlertType
 
 @MainActor
 struct CoreRouter {
