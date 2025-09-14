@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SUIRouting
 
 struct AppViewForUITesting: View {
     
@@ -21,7 +22,9 @@ struct AppViewForUITesting: View {
     
     var body: some View {
         if startOnCreateAvatar {
-            createAvatarBuilder.buildCreateAvatarView()
+            RouterView { router in
+                createAvatarBuilder.buildCreateAvatarView(router: router)
+            }
         } else {
             appBuilder.buildAppView()
         }
