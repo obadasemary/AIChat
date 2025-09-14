@@ -12,6 +12,7 @@ import SwiftUI
 final class CreateAvatarViewModel {
     
     private let createAvatarUseCase: CreateAvatarUseCaseProtocol
+    private let router: CreateAvatarRouterProtocol
     
     private(set) var isGenerating: Bool = false
     private(set) var generatedImage: UIImage?
@@ -24,17 +25,21 @@ final class CreateAvatarViewModel {
     var avatarName: String = ""
     var showAlert: AnyAppAlert?
     
-    init(createAvatarUseCase: CreateAvatarUseCaseProtocol) {
+    init(
+        createAvatarUseCase: CreateAvatarUseCaseProtocol,
+        router: CreateAvatarRouterProtocol
+    ) {
         self.createAvatarUseCase = createAvatarUseCase
+        self.router = router
     }
 }
 
 // MARK: - Action
 extension CreateAvatarViewModel {
     
-    func onDismissButtonTapped(onDismiss: @escaping () -> Void) {
+    func onDismissButtonTapped() {
         createAvatarUseCase.trackEvent(event: Event.backButtonPressed)
-        onDismiss()
+        router.dismissScreen()
     }
     
     // swiftlint:disable force_unwrapping
@@ -67,7 +72,7 @@ extension CreateAvatarViewModel {
     }
     // swiftlint:enable force_unwrapping
     
-    func onSaveTapped(onDismiss: @escaping () -> Void) {
+    func onSaveTapped() {
         createAvatarUseCase.trackEvent(event: Event.saveAvatarStart)
         guard let generatedImage else { return }
         isSaving = true
@@ -93,10 +98,10 @@ extension CreateAvatarViewModel {
                         )
                     )
                 
-                onDismiss()
+                router.dismissScreen()
                 isSaving = false
             } catch {
-                showAlert = AnyAppAlert(error: error)
+                router.showAlert(error: error)
                 createAvatarUseCase
                     .trackEvent(
                         event: Event.saveAvatarFail(
