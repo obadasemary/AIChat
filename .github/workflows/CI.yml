@@ -15,8 +15,21 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v4
 
-      - name: Select Xcode 26 RC
-        run: sudo xcode-select -switch /Applications/Xcode_26_RC.app
+      - name: Select Xcode 26 RC (with fallback)
+        run: |
+          # Try Xcode 26 RC first, fallback to Xcode 16.4 if not available
+          if [ -d "/Applications/Xcode_26_RC.app" ]; then
+            echo "✅ Using Xcode 26 RC"
+            sudo xcode-select -switch /Applications/Xcode_26_RC.app
+          elif [ -d "/Applications/Xcode_16.4.app" ]; then
+            echo "⚠️ Xcode 26 RC not found, falling back to Xcode 16.4"
+            sudo xcode-select -switch /Applications/Xcode_16.4.app
+          else
+            echo "❌ Neither Xcode 26 RC nor Xcode 16.4 found"
+            echo "Available Xcode installations:"
+            ls -la /Applications/Xcode*.app 2>/dev/null || echo "No Xcode installations found"
+            exit 1
+          fi
 
       - name: Create mock Firebase configuration files
         run: |
