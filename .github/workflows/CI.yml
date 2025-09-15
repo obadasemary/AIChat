@@ -15,7 +15,7 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v4
 
-      - name: Select Xcode 16.4
+      - name: Select Xcode 26 RC
         run: sudo xcode-select -switch /Applications/Xcode_16.4.app
 
       - name: Create mock Firebase configuration files
