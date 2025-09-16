@@ -54,15 +54,15 @@ struct ExploreView: View {
                 }
             }
             
-//            // Spacer or fallback
-//            if #available(iOS 26.0, *) {
-//                ToolbarSpacer(.fixed, placement: .topBarTrailing)
-//            } else {
-//                ToolbarItem(placement: .navigationBarTrailing) {
-//                    Spacer()
-//                        .frame(width: .zero)
-//                }
-//            }
+            // Spacer or fallback
+            if #available(iOS 26.0, *) {
+                ToolbarSpacer(.fixed, placement: .topBarTrailing)
+            } else {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Spacer()
+                        .frame(width: .zero)
+                }
+            }
             
             // Logout button
             ToolbarItem(placement: .topBarTrailing) {
