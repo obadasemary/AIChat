@@ -98,9 +98,10 @@ extension CreateAvatarViewModel {
                         )
                     )
                 
-                router.dismissScreen()
                 isSaving = false
+                router.dismissScreen()
             } catch {
+                isSaving = false
                 router.showAlert(error: error)
                 createAvatarUseCase
                     .trackEvent(
