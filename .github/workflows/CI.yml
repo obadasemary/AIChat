@@ -18,9 +18,9 @@ jobs:
       - name: Select Xcode 26 RC (with fallback)
         run: |
           # Try Xcode 26 RC first, fallback to Xcode 16.4 if not available
-          if [ -d "/Applications/Xcode_26_RC.app" ]; then
+          if [ -d "/Applications/Xcode_26_Release_Candidate.app" ]; then
             echo "✅ Using Xcode 26 RC"
-            sudo xcode-select -switch /Applications/Xcode_26_RC.app
+            sudo xcode-select -switch /Applications/Xcode_26_Release_Candidate.app
           elif [ -d "/Applications/Xcode_16.4.app" ]; then
             echo "⚠️ Xcode 26 RC not found, falling back to Xcode 16.4"
             sudo xcode-select -switch /Applications/Xcode_16.4.app
