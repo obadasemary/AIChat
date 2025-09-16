@@ -124,23 +124,6 @@ jobs:
 
       - name: List available Xcode schemes (debugging)
         run: xcodebuild -list
-
-      - name: Install iOS Simulator
-        run: |
-          echo "📱 Installing iOS Simulator..."
-          xcrun simctl list runtimes
-          # Install the latest iOS runtime if available
-          xcrun simctl list runtimes | grep iOS || echo "No iOS runtimes found"
-          
-          # List available devices
-          echo "Available simulators:"
-          xcrun simctl list devices available
-          
-          # Create a simulator if none exist
-          if ! xcrun simctl list devices available | grep -q "iPhone"; then
-            echo "Creating iPhone simulator..."
-            xcrun simctl create "CI iPhone" "iPhone 15" "iOS" || echo "Failed to create simulator"
-          fi
         
       - name: Build Project
         run: |
@@ -149,7 +132,7 @@ jobs:
             -scheme "AIChat - Development" \
             CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,OS=latest' \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
             ONLY_ACTIVE_ARCH=YES
 
       - name: Run Unit Tests
@@ -159,7 +142,7 @@ jobs:
             -scheme "AIChat - Development" \
             CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,OS=latest' \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
             -only-testing:AIChatTests \
             ONLY_ACTIVE_ARCH=YES
 
@@ -167,16 +150,8 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
             echo "🚀 Pre-booting simulator for UI tests"
-            # Get the first available iOS simulator
-            SIMULATOR_ID=$(xcrun simctl list devices available | grep "iPhone" | head -1 | grep -o '([^)]*' | tr -d '()')
-            if [ -n "$SIMULATOR_ID" ]; then
-              echo "Booting simulator: $SIMULATOR_ID"
-              xcrun simctl boot "$SIMULATOR_ID" || true
-              xcrun simctl list devices | grep "$SIMULATOR_ID"
-            else
-              echo "No iPhone simulators found, trying to create one"
-              xcrun simctl create "CI iPhone" "iPhone 15" "iOS" || true
-            fi
+            xcrun simctl boot "iPhone 16 Pro" || true
+            xcrun simctl list devices | grep "iPhone 16 Pro"
 
       - name: Run UI Tests (Main Branch Only)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -187,7 +162,7 @@ jobs:
             -scheme "AIChat - Development" \
             CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,OS=latest' \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
             -only-testing:AIChatUITests \
             ONLY_ACTIVE_ARCH=YES \
             -maximum-concurrent-test-device-destinations 1
