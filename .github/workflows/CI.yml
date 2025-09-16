@@ -132,7 +132,7 @@ jobs:
             -scheme "AIChat - Development" \
             CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
+            -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest' \
             ONLY_ACTIVE_ARCH=YES
 
       - name: Run Unit Tests
@@ -142,7 +142,7 @@ jobs:
             -scheme "AIChat - Development" \
             CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
+            -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest' \
             -only-testing:AIChatTests \
             ONLY_ACTIVE_ARCH=YES
 
@@ -151,7 +151,7 @@ jobs:
         run: |
             echo "🚀 Pre-booting simulator for UI tests"
             xcrun simctl boot "iPhone 16 Pro" || true
-            xcrun simctl list devices | grep "iPhone 16 Pro"
+            xcrun simctl list devices | grep "iPhone 17 Pro"
 
       - name: Run UI Tests (Main Branch Only)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -162,7 +162,7 @@ jobs:
             -scheme "AIChat - Development" \
             CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
+            -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest' \
             -only-testing:AIChatUITests \
             ONLY_ACTIVE_ARCH=YES \
             -maximum-concurrent-test-device-destinations 1
