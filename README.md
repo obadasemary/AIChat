@@ -386,6 +386,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 - **OpenAI** for providing the AI language models
 - **Firebase** for backend infrastructure
+- **Mixpanel** for Analytics that drive decisions
 - **Apple** for iOS development tools and frameworks
 - **Open Source Community** for various libraries and tools
 
