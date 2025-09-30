@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     runs-on: macos-26
-    timeout-minutes: 15
+    timeout-minutes: 45
 
     steps:
       - name: Checkout project
@@ -150,7 +150,7 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
             echo "🚀 Pre-booting simulator for UI tests"
-            xcrun simctl boot "iPhone 16 Pro" || true
+            xcrun simctl boot "iPhone 17 Pro" || true
             xcrun simctl list devices | grep "iPhone 17 Pro"
 
       - name: Run UI Tests (Main Branch Only)
