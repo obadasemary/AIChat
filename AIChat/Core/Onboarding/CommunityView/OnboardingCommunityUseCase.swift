@@ -8,6 +8,9 @@
 import Foundation
 
 @MainActor
+protocol OnboardingCommunityUseCaseProtocol {}
+
+@MainActor
 final class OnboardingCommunityUseCase {
     
     init(container: DependencyContainer) {}
