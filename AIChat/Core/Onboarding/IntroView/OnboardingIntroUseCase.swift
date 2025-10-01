@@ -8,6 +8,11 @@
 import Foundation
 
 @MainActor
+protocol OnboardingIntroUseCaseProtocol {
+    var onboardingCommunityTest: Bool { get }
+}
+
+@MainActor
 final class OnboardingIntroUseCase {
     
     private let abTestManager: ABTestManager
