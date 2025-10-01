@@ -8,6 +8,11 @@
 import Foundation
 
 @MainActor
+protocol OnboardingColorUseCaseProtocol {
+    func trackEvent(event: any LoggableEvent)
+}
+
+@MainActor
 final class OnboardingColorUseCase {
     
     private let logManager: LogManager
