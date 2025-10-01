@@ -14,7 +14,6 @@ protocol ProfileRouterProtocol {
     func showSettingsView()
 }
 
-
 @MainActor
 struct ProfileRouter {
     let router: Router
