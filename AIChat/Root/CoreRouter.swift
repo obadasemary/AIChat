@@ -107,4 +107,18 @@ struct CoreRouter {
     }
     
     // MARK: Create Avatar View
+    
+    // MARK: OnboardingIntro
+    
+    func showOnboardingCommunityView(delegate: OnboardingCommunityDelegate) {
+        router.showScreen(.push) { router in
+            builder.onboardingCommunityView(delegate: delegate)
+        }
+    }
+    
+    func showOnboardingColorView(delegate: OnboardingColorDelegate) {
+        router.showScreen(.push) { router in
+            builder.onboardingColorView(delegate: delegate)
+        }
+    }
 }
