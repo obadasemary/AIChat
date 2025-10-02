@@ -13,15 +13,20 @@ import SwiftUI
 final class OnboardingIntroViewModel {
     
     private let OnboardingIntroUseCase: OnboardingIntroUseCaseProtocol
+    private let router: OnboardingIntroRouterProtocol
     
     var onboardingCommunityTest: Bool {
         OnboardingIntroUseCase.onboardingCommunityTest
     }
     
-    var path: [OnboardingPathOption] = []
+//    var path: [OnboardingPathOption] = []
     
-    init(OnboardingIntroUseCase: OnboardingIntroUseCaseProtocol) {
+    init(
+        OnboardingIntroUseCase: OnboardingIntroUseCaseProtocol,
+        router: OnboardingIntroRouterProtocol
+    ) {
         self.OnboardingIntroUseCase = OnboardingIntroUseCase
+        self.router = router
     }
 }
 
@@ -29,9 +34,9 @@ extension OnboardingIntroViewModel {
     
     func onContinuePress(path: Binding<[OnboardingPathOption]>) {
         if onboardingCommunityTest {
-            path.wrappedValue.append(.onboardingCommunity)
+            router.showOnboardingCommunityView(delegate: OnboardingCommunityDelegate())
         } else {
-            path.wrappedValue.append(.onboardingColor)
+            router.showOnboardingColorView(delegate: OnboardingColorDelegate())
         }
     }
 }
