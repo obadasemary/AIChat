@@ -40,12 +40,16 @@ class CoreBuilder {
         )
     }
     
-    func onboardingIntroView(delegate: OnboardingIntroDelegate) -> some View {
+    func onboardingIntroView(
+        router: Router,
+        delegate: OnboardingIntroDelegate
+    ) -> some View {
         OnboardingIntroView(
             viewModel: OnboardingIntroViewModel(
                 OnboardingIntroUseCase: OnboardingIntroUseCase(
                     container: container
-                )
+                ),
+                router: CoreRouter(router: router, builder: self)
             ),
             delegate: delegate
         )
