@@ -7,6 +7,4 @@
 
 import SwiftUI
 
-struct OnboardingColorDelegate {
-    var path: Binding<[OnboardingPathOption]>
-}
+struct OnboardingColorDelegate {}
