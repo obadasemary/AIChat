@@ -7,6 +7,4 @@
 
 import SwiftUI
 
-struct OnboardingCommunityDelegate {
-    var path: Binding<[OnboardingPathOption]>
-}
+struct OnboardingCommunityDelegate {}
