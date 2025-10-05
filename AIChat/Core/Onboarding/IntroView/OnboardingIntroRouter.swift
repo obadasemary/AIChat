@@ -41,4 +41,4 @@ extension OnboardingIntroRouter: OnboardingIntroRouterProtocol {
 }
 
 //MARK: FIXME We don't need it just if we going to use CoreRouter and CoreBuilder
-//extension CoreRouter: OnboardingIntroRouterProtocol {}
+extension CoreRouter: OnboardingIntroRouterProtocol {}
