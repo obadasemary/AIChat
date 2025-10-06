@@ -32,10 +32,11 @@ class CoreBuilder {
         TabBarView()
     }
     
-    func welcomeView() -> some View {
+    func welcomeView(router: Router,) -> some View {
         WelcomeView(
             viewModel: WelcomeViewModel(
-                welcomeUseCase: WelcomeUseCase(container: container)
+                welcomeUseCase: WelcomeUseCase(container: container),
+                router: CoreRouter(router: router, builder: self)
             )
         )
     }
@@ -55,34 +56,46 @@ class CoreBuilder {
         )
     }
 
-    func onboardingCommunityView(delegate: OnboardingCommunityDelegate) -> some View {
+    func onboardingCommunityView(
+        router: Router,
+        delegate: OnboardingCommunityDelegate
+    ) -> some View {
         OnboardingCommunityView(
             viewModel: OnboardingCommunityViewModel(
                 onboardingCommunityUseCase: OnboardingCommunityUseCase(
                     container: container
-                )
+                ),
+                router: CoreRouter(router: router, builder: self)
             ),
             delegate: delegate
         )
     }
     
-    func onboardingColorView(delegate: OnboardingColorDelegate) -> some View {
+    func onboardingColorView(
+        router: Router,
+        delegate: OnboardingColorDelegate
+    ) -> some View {
         OnboardingColorView(
             viewModel: OnboardingColorViewModel(
                 onboardingColorUseCase: OnboardingColorUseCase(
                     container: container
-                )
+                ),
+                router: CoreRouter(router: router, builder: self)
             ),
             delegate: delegate
         )
     }
     
-    func onboardingCompletedView(delegate: OnboardingCompletedDelegate) -> some View {
+    func onboardingCompletedView(
+        router: Router,
+        delegate: OnboardingCompletedDelegate
+    ) -> some View {
         OnboardingCompletedView(
             viewModel: OnboardingCompletedViewModel(
                 onboardingCompletedUseCase: OnboardingCompletedUseCase(
                     container: container
-                )
+                ),
+                router: CoreRouter(router: router, builder: self)
             ),
             delegate: delegate
         )
