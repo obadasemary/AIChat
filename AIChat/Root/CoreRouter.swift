@@ -36,10 +36,16 @@ struct CoreRouter {
         }
     }
     
-    func showCreateAccountView(delegate: CreateAccountDelegate) {
+    func showCreateAccountView(
+        delegate: CreateAccountDelegate,
+        onDisappear: (() -> Void)?
+    ) {
         router.showScreen(.sheet) { router in
             builder.createAccountView(delegate: delegate)
                 .presentationDetents([.medium])
+                .onDisappear {
+                    onDisappear?()
+                }
         }
     }
     
@@ -110,15 +116,29 @@ struct CoreRouter {
     
     // MARK: OnboardingIntro
     
+    func showOnboardingIntroView(delegate: OnboardingIntroDelegate) {
+        router.showScreen(.push) { router in
+            builder
+                .onboardingIntroView(router: router, delegate: delegate)
+        }
+    }
+    
     func showOnboardingCommunityView(delegate: OnboardingCommunityDelegate) {
         router.showScreen(.push) { router in
-            builder.onboardingCommunityView(delegate: delegate)
+            builder.onboardingCommunityView(router: router, delegate: delegate)
         }
     }
     
     func showOnboardingColorView(delegate: OnboardingColorDelegate) {
         router.showScreen(.push) { router in
-            builder.onboardingColorView(delegate: delegate)
+            builder.onboardingColorView(router: router, delegate: delegate)
+        }
+    }
+    
+    func showOnboardingCompletedView(delegate: OnboardingCompletedDelegate) {
+        router.showScreen(.push) { router in
+            builder
+                .onboardingCompletedView(router: router, delegate: delegate)
         }
     }
 }
