@@ -151,7 +151,11 @@ extension ExploreViewModel {
                 return
             }
             
-            router.showCreateAccountView(delegate: CreateAccountDelegate())
+            router
+                .showCreateAccountView(
+                    delegate: CreateAccountDelegate(),
+                    onDisappear: nil
+                )
         }
     }
 }
