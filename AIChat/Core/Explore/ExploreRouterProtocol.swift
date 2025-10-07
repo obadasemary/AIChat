@@ -12,7 +12,10 @@ protocol ExploreRouterProtocol {
     func showCategoryListView(delegate: CategoryListDelegate)
     func showChatView(delegate: ChatDelegate)
     func showDevSettingsView()
-    func showCreateAccountView(delegate: CreateAccountDelegate)
+    func showCreateAccountView(
+        delegate: CreateAccountDelegate,
+        onDisappear: (() -> Void)?
+    )
     func dismissScreen()
     
     func showPushNotificationModal(
