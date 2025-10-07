@@ -35,7 +35,9 @@ struct AppView: View {
                     tabBarBuilder.buildTabBarView()
                 },
                 onboardingView: {
-                    welcomeBuilder.buildWelcomeView()
+                    return RouterView { router in
+                        welcomeBuilder.buildWelcomeView(router: router)
+                    }
                 }
             )
             .screenAppearAnalytics(name: Self.screenName)
