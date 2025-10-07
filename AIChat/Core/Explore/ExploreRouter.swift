@@ -39,10 +39,16 @@ extension ExploreRouter: ExploreRouterProtocol {
         }
     }
     
-    func showCreateAccountView(delegate: CreateAccountDelegate) {
+    func showCreateAccountView(
+        delegate: CreateAccountDelegate,
+        onDisappear: (() -> Void)?
+    ) {
         router.showScreen(.sheet) { router in
             createAccountBuilder.buildCreateAccountView(delegate: delegate)
                 .presentationDetents([.medium])
+                .onDisappear {
+                    onDisappear?()
+                }
         }
     }
     
