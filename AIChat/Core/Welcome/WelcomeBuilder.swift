@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SUIRouting
 
 @Observable
 @MainActor
@@ -16,11 +17,22 @@ final class WelcomeBuilder {
         self.container = container
     }
 
-    func buildWelcomeView() -> some View {
+    func buildWelcomeView(router: Router) -> some View {
         WelcomeView(
             viewModel: WelcomeViewModel(
-                welcomeUseCase: WelcomeUseCase(container: container)
+                welcomeUseCase: WelcomeUseCase(container: container),
+                router: WelcomeRouter(
+                    router: router,
+                    onboardingIntroBuilder: OnboardingIntroBuilder(
+                        container: container
+                    ),
+                    createAccountBuilder: CreateAccountBuilder(
+                        container: container
+                    )
+                )
             )
         )
     }
 }
+
+
