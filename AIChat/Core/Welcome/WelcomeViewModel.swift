@@ -12,14 +12,17 @@ import Foundation
 class WelcomeViewModel {
     
     private let welcomeUseCase: WelcomeUseCaseProtocol
+    private let router: WelcomeRouterProtocol
     
     private(set) var imageName: String = Constants.randomImage
     var showSignInView: Bool = false
     
-    var path: [OnboardingPathOption] = []
-    
-    init(welcomeUseCase: WelcomeUseCaseProtocol) {
+    init(
+        welcomeUseCase: WelcomeUseCaseProtocol,
+        router: WelcomeRouterProtocol
+    ) {
         self.welcomeUseCase = welcomeUseCase
+        self.router = router
     }
 }
 
@@ -27,7 +30,7 @@ class WelcomeViewModel {
 extension WelcomeViewModel {
     
     func onGetStartedPressed() {
-        path.append(.onboardingIntro)
+        router.showOnboardingIntroView(delegate: OnboardingIntroDelegate())
         welcomeUseCase.trackEvent(event: Event.getStartedPressed)
     }
     
@@ -47,8 +50,16 @@ extension WelcomeViewModel {
     }
     
     func onSignInPressed() {
-        showSignInView = true
         welcomeUseCase.trackEvent(event: Event.signInPressed)
+        
+        let delegate = CreateAccountDelegate(
+            title: "Sign In",
+            subtitle: "Connect to an existing account"
+        ) { isNewUser in
+            self.handleDidSignIn(isNewUser: isNewUser)
+        }
+        
+        router.showCreateAccountView(delegate: delegate, onDisappear: nil)
     }
 }
 
