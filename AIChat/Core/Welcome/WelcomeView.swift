@@ -9,40 +9,22 @@ import SwiftUI
 
 struct WelcomeView: View {
     
-    @Environment(CreateAccountBuilder.self) private var createAccountBuilder
     @State var viewModel: WelcomeViewModel
     
     var body: some View {
-        NavigationStack(path: $viewModel.path) {
-            VStack(spacing: 8) {
-                ImageLoaderView(urlString: viewModel.imageName)
-                    .ignoresSafeArea()
-                
-                titleSection
-                    .padding(.top, 24)
-                
-                ctaButtons
-                    .padding(16)
-                
-                policyLinks
-            }
-            .navigationDestinationForOnboardingModule(path: $viewModel.path)
+        VStack(spacing: 8) {
+            ImageLoaderView(urlString: viewModel.imageName)
+                .ignoresSafeArea()
+            
+            titleSection
+                .padding(.top, 24)
+            
+            ctaButtons
+                .padding(16)
+            
+            policyLinks
         }
         .screenAppearAnalytics(name: "WelcomeView")
-        .sheet(isPresented: $viewModel.showSignInView) {
-            createAccountBuilder
-                .buildCreateAccountView(
-                    delegate: CreateAccountDelegate(
-                        title: "Sign In",
-                        subtitle: "Connect to an existing account",
-                        onDidSignIn: { isNewUser in
-                            viewModel
-                                .handleDidSignIn(isNewUser: isNewUser)
-                        }
-                    )
-                )
-                .presentationDetents([.medium])
-        }
     }
 }
 
@@ -114,6 +96,8 @@ private extension WelcomeView {
 #Preview {
     let welcomeBuilder = WelcomeBuilder(container: DevPreview.shared.container)
     
-    return welcomeBuilder.buildWelcomeView()
-        .previewEnvironment()
+    return RouterView { router in
+        welcomeBuilder.buildWelcomeView(router: router)
+    }
+    .previewEnvironment()
 }
