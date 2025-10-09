@@ -82,7 +82,7 @@ private extension OnboardingColorView {
         Text("Continue")
             .callToActionButton()
             .anyButton(.press) {
-                viewModel.onContinuePress(path: delegate.path)
+                viewModel.onContinuePress()
             }
             .accessibilityIdentifier("ContinueButton")
     }
@@ -91,11 +91,14 @@ private extension OnboardingColorView {
 #Preview {
     let contaner = DevPreview.shared.container
     let onboardingColorBuilder = OnboardingColorBuilder(container: contaner)
-    let delegate = OnboardingColorDelegate(path: .constant([]))
+    let delegate = OnboardingColorDelegate()
     
-    return NavigationStack {
+    return RouterView { router in
         onboardingColorBuilder
-            .buildOnboardingColorView(delegate: delegate)
+            .buildOnboardingColorView(
+                router: router,
+                delegate: delegate
+            )
     }
     .previewEnvironment()
 }
