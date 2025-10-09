@@ -12,6 +12,7 @@ import SwiftUI
 class OnboardingColorViewModel {
     
     private let onboardingColorUseCase: OnboardingColorUseCaseProtocol
+    private let router: OnboardingColorRouterProtocol
     
     private(set) var selectedColor: Color?
     let profileColors: [Color] = [
@@ -29,10 +30,12 @@ class OnboardingColorViewModel {
         .brown
     ]
     
-    var path: [OnboardingPathOption] = []
-    
-    init(onboardingColorUseCase: OnboardingColorUseCaseProtocol) {
+    init(
+        onboardingColorUseCase: OnboardingColorUseCaseProtocol,
+        router: OnboardingColorRouterProtocol
+    ) {
         self.onboardingColorUseCase = onboardingColorUseCase
+        self.router = router
     }
 }
 
@@ -44,9 +47,10 @@ extension OnboardingColorViewModel {
             .trackEvent(event: Event.onboardingColorSelected)
     }
     
-    func onContinuePress(path: Binding<[OnboardingPathOption]>) {
+    func onContinuePress() {
         guard let selectedColor else { return }
-        path.wrappedValue.append(.onboardingComplete(selectedColor: selectedColor))
+        let delegate = OnboardingCompletedDelegate(selectedColor: selectedColor)
+        router.showOnboardingCompletedView(delegate: delegate)
     }
 }
 
