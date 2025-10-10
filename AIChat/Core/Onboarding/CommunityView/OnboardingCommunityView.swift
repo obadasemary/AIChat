@@ -37,7 +37,7 @@ struct OnboardingCommunityView: View {
             Text("Continue")
                 .callToActionButton()
                 .anyButton(.press) {
-                    viewModel.onContinuePress(path: delegate.path)
+                    viewModel.onContinuePress()
                 }
                 .accessibilityIdentifier("OnboardingCommunityContinueButton")
         }
@@ -51,10 +51,14 @@ struct OnboardingCommunityView: View {
 #Preview {
     let contaner = DevPreview.shared.container
     let onboardingCommunityBuilder = OnboardingCommunityBuilder(container: contaner)
-    let delegate = OnboardingCommunityDelegate(path: .constant([]))
-    return NavigationStack {
+    let delegate = OnboardingCommunityDelegate()
+    
+    return RouterView { router in
         onboardingCommunityBuilder
-            .buildOnboardingCommunityView(delegate: delegate)
+            .buildOnboardingCommunityView(
+                router: router,
+                delegate: delegate
+            )
     }
     .previewEnvironment()
 }
