@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SUIRouting
 
 @Observable
 @MainActor
@@ -16,11 +17,20 @@ final class OnboardingCommunityBuilder {
         self.container = container
     }
 
-    func buildOnboardingCommunityView(delegate: OnboardingCommunityDelegate) -> some View {
+    func buildOnboardingCommunityView(
+        router: Router,
+        delegate: OnboardingCommunityDelegate
+    ) -> some View {
         OnboardingCommunityView(
             viewModel: OnboardingCommunityViewModel(
                 onboardingCommunityUseCase: OnboardingCommunityUseCase(
                     container: container
+                ),
+                router: OnboardingCommunityRouter(
+                    router: router,
+                    onboardingColorBuilder: OnboardingColorBuilder(
+                        container: container
+                    )
                 )
             ),
             delegate: delegate
