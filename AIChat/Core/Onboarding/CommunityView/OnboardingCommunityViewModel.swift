@@ -12,17 +12,20 @@ import SwiftUI
 class OnboardingCommunityViewModel {
     
     private let onboardingCommunityUseCase: OnboardingCommunityUseCaseProtocol
+    private let router: OnboardingCommunityRouterProtocol
     
-    var path: [OnboardingPathOption] = []
-    
-    init(onboardingCommunityUseCase: OnboardingCommunityUseCaseProtocol) {
+    init(
+        onboardingCommunityUseCase: OnboardingCommunityUseCaseProtocol,
+        router: OnboardingCommunityRouterProtocol
+    ) {
         self.onboardingCommunityUseCase = onboardingCommunityUseCase
+        self.router = router
     }
 }
 
 extension OnboardingCommunityViewModel {
     
-    func onContinuePress(path: Binding<[OnboardingPathOption]>) {
-        path.wrappedValue.append(.onboardingColor)
+    func onContinuePress() {
+        router.showOnboardingColorView(delegate: OnboardingColorDelegate())
     }
 }
