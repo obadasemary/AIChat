@@ -57,6 +57,12 @@ struct OnboardingCompletedView: View {
     )
     let delegate = OnboardingCompletedDelegate(selectedColor: .orange)
     
-    onboardingCompletedBuilder.buildOnboardingCompletedView(delegate: delegate)
-        .previewEnvironment()
+    return RouterView { router in
+        onboardingCompletedBuilder
+            .buildOnboardingCompletedView(
+                router: router,
+                delegate: delegate
+            )
+    }
+    .previewEnvironment()
 }
