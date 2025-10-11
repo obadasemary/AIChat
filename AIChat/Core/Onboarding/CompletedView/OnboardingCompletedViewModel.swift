@@ -12,15 +12,18 @@ import SwiftUI
 class OnboardingCompletedViewModel {
     
     private let onboardingCompletedUseCase: OnboardingCompletedUseCaseProtocol
+    private let router: OnboardingCompletedRouterProtocol
     
     private(set) var isCompletingProfileSetup: Bool = false
     
     var showAlert: AnyAppAlert?
     
-    var path: [OnboardingPathOption] = []
-    
-    init(onboardingCompletedUseCase: OnboardingCompletedUseCaseProtocol) {
+    init(
+        onboardingCompletedUseCase: OnboardingCompletedUseCaseProtocol,
+        router: OnboardingCompletedRouterProtocol
+    ) {
         self.onboardingCompletedUseCase = onboardingCompletedUseCase
+        self.router = router
     }
 }
 
@@ -48,7 +51,7 @@ extension OnboardingCompletedViewModel {
                 
                 onboardingCompletedUseCase.updateAppState(showTabBarView: true)
             } catch {
-                showAlert = AnyAppAlert(error: error)
+                router.showAlert(error: error)
                 onboardingCompletedUseCase
                     .trackEvent(
                         event: Event.finishFail(
