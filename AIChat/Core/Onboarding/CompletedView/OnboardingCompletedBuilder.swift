@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SUIRouting
 
 @Observable
 @MainActor
@@ -16,12 +17,16 @@ final class OnboardingCompletedBuilder {
         self.container = container
     }
 
-    func buildOnboardingCompletedView(delegate: OnboardingCompletedDelegate) -> some View {
+    func buildOnboardingCompletedView(
+        router: Router,
+        delegate: OnboardingCompletedDelegate
+    ) -> some View {
         OnboardingCompletedView(
             viewModel: OnboardingCompletedViewModel(
                 onboardingCompletedUseCase: OnboardingCompletedUseCase(
                     container: container
-                )
+                ),
+                router: OnboardingCompletedRouter(router: router)
             ),
             delegate: delegate
         )
