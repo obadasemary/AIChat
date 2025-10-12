@@ -7,6 +7,4 @@
 
 import SwiftUI
 
-struct OnboardingIntroDelegate {
-    var path: Binding<[OnboardingPathOption]>
-}
+struct OnboardingIntroDelegate {}
