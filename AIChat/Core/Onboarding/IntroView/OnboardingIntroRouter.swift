@@ -11,7 +11,6 @@ import SUIRouting
 
 @MainActor
 protocol OnboardingIntroRouterProtocol {
-//    func showOnboardingIntroView(delegate: OnboardingIntroDelegate)
     func showOnboardingCommunityView(delegate: OnboardingCommunityDelegate)
     func showOnboardingColorView(delegate: OnboardingColorDelegate)
 }
@@ -28,14 +27,17 @@ extension OnboardingIntroRouter: OnboardingIntroRouterProtocol {
     func showOnboardingCommunityView(delegate: OnboardingCommunityDelegate) {
         router.showScreen(.push) { router in
             onboardingCommunityBuilder
-                .buildOnboardingCommunityView(delegate: delegate)
+                .buildOnboardingCommunityView(
+                    router: router,
+                    delegate: delegate
+                )
         }
     }
     
     func showOnboardingColorView(delegate: OnboardingColorDelegate) {
         router.showScreen(.push) { router in
             onboardingColorBuilder
-                .buildOnboardingColorView(delegate: delegate)
+                .buildOnboardingColorView(router: router, delegate: delegate)
         }
     }
 }
