@@ -19,8 +19,6 @@ final class OnboardingIntroViewModel {
         OnboardingIntroUseCase.onboardingCommunityTest
     }
     
-//    var path: [OnboardingPathOption] = []
-    
     init(
         OnboardingIntroUseCase: OnboardingIntroUseCaseProtocol,
         router: OnboardingIntroRouterProtocol
@@ -32,7 +30,7 @@ final class OnboardingIntroViewModel {
 
 extension OnboardingIntroViewModel {
     
-    func onContinuePress(path: Binding<[OnboardingPathOption]>) {
+    func onContinuePress() {
         if onboardingCommunityTest {
             router.showOnboardingCommunityView(delegate: OnboardingCommunityDelegate())
         } else {
