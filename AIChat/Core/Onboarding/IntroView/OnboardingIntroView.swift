@@ -37,7 +37,7 @@ struct OnboardingIntroView: View {
             Text("Continue")
                 .callToActionButton()
                 .anyButton(.press) {
-                    viewModel.onContinuePress(path: delegate.path)
+                    viewModel.onContinuePress()
                 }
                 .accessibilityIdentifier("ContinueButton")
         }
@@ -51,24 +51,13 @@ struct OnboardingIntroView: View {
 #Preview("Original") {
     let contaner = DevPreview.shared.container
     let onboardingIntroBuilder = OnboardingIntroBuilder(container: contaner)
-    let delegate = OnboardingIntroDelegate(path: .constant([]))
-    return NavigationStack {
-        onboardingIntroBuilder.buildOnboardingIntroView(delegate: delegate)
-            .previewEnvironment()
+    let delegate = OnboardingIntroDelegate()
+    
+    return RouterView { router in
+        onboardingIntroBuilder
+            .buildOnboardingIntroView(router: router, delegate: delegate)
     }
-}
-
-#Preview("T") {
-    NavigationStack {
-        OnboardingIntroView(
-            viewModel: OnboardingIntroViewModel(
-                OnboardingIntroUseCase: OnboardingIntroUseCase(
-                    container: DevPreview.shared.container
-                )
-            ),
-            delegate: OnboardingIntroDelegate(path: .constant([]))
-        )
-    }
+    .previewEnvironment()
 }
 
 #Preview("Onb Comm Test") {
@@ -83,10 +72,11 @@ struct OnboardingIntroView: View {
     }
     
     let onboardingIntroBuilder = OnboardingIntroBuilder(container: contaner)
-    let delegate = OnboardingIntroDelegate(path: .constant([]))
+    let delegate = OnboardingIntroDelegate()
     
-    return NavigationStack {
-        onboardingIntroBuilder.buildOnboardingIntroView(delegate: delegate)
+    return RouterView { router in
+        onboardingIntroBuilder
+            .buildOnboardingIntroView(router: router, delegate: delegate)
     }
     .previewEnvironment()
 }
