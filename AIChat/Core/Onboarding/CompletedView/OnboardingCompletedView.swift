@@ -46,7 +46,6 @@ struct OnboardingCompletedView: View {
         .padding(24)
         .toolbar(.hidden, for: .navigationBar)
         .screenAppearAnalytics(name: "OnboardingCompletedView")
-        .showCustomAlert(alert: $viewModel.showAlert)
     }
 }
 
