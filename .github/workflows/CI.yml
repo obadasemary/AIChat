@@ -18,7 +18,7 @@ jobs:
       - name: Select Xcode 26
         run: |
           echo "✅ Using Xcode 26"
-          sudo xcode-select -switch /Applications/Xcode_26.app
+          sudo xcode-select -switch /Applications/Xcode_26.0.1.app
 
       - name: Create mock Firebase configuration files
         run: |
