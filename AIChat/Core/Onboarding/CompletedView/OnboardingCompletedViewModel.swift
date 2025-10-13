@@ -16,8 +16,6 @@ class OnboardingCompletedViewModel {
     
     private(set) var isCompletingProfileSetup: Bool = false
     
-    var showAlert: AnyAppAlert?
-    
     init(
         onboardingCompletedUseCase: OnboardingCompletedUseCaseProtocol,
         router: OnboardingCompletedRouterProtocol
@@ -51,6 +49,7 @@ extension OnboardingCompletedViewModel {
                 
                 onboardingCompletedUseCase.updateAppState(showTabBarView: true)
             } catch {
+                isCompletingProfileSetup = false
                 router.showAlert(error: error)
                 onboardingCompletedUseCase
                     .trackEvent(
