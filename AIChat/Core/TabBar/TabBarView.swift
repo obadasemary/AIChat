@@ -21,13 +21,15 @@ struct TabBarView: View {
             .tabItem {
                 Label("Explore", systemImage: "eyes")
             }
-            chatsBuilder.buildChatsView()
-                .tabItem {
-                    Label(
-                        "Chats",
-                        systemImage: "bubble.left.and.bubble.right"
-                    )
-                }
+            RouterView { router in
+                chatsBuilder.buildChatsView()
+            }
+            .tabItem {
+                Label(
+                    "Chats",
+                    systemImage: "bubble.left.and.bubble.right"
+                )
+            }
             RouterView { router in
                 profileBuilder.buildProfileView(router: router)
             }
