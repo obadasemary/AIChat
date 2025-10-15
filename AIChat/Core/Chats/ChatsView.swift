@@ -15,22 +15,19 @@ struct ChatsView: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        NavigationStack(path: $viewModel.path) {
-            List {
-                if !viewModel.recentAvatars.isEmpty {
-                    recentsSection
-                }
-                chatsSection
+        List {
+            if !viewModel.recentAvatars.isEmpty {
+                recentsSection
             }
-            .navigationTitle("Chats")
-            .navigationDestinationForTabbarModule(path: $viewModel.path)
-            .screenAppearAnalytics(name: "ChatsView")
-            .onAppear {
-                viewModel.loadRecentAvatars()
-            }
-            .task {
-                await viewModel.loadChats()
-            }
+            chatsSection
+        }
+        .navigationTitle("Chats")
+        .screenAppearAnalytics(name: "ChatsView")
+        .onAppear {
+            viewModel.loadRecentAvatars()
+        }
+        .task {
+            await viewModel.loadChats()
         }
     }
 }
@@ -120,8 +117,10 @@ private extension ChatsView {
     
     let chatsBuilder = ChatsBuilder(container: container)
     
-    return chatsBuilder.buildChatsView()
-        .previewEnvironment()
+    return RouterView { router in
+        chatsBuilder.buildChatsView(router: router)
+    }
+    .previewEnvironment()
 }
 
 #Preview("No Data") {
@@ -145,8 +144,10 @@ private extension ChatsView {
     
     let chatsBuilder = ChatsBuilder(container: container)
     
-    return chatsBuilder.buildChatsView()
-        .previewEnvironment()
+    return RouterView { router in
+        chatsBuilder.buildChatsView(router: router)
+    }
+    .previewEnvironment()
 }
 
 #Preview("Slow loading chats") {
@@ -158,6 +159,8 @@ private extension ChatsView {
     
     let chatsBuilder = ChatsBuilder(container: container)
     
-    return chatsBuilder.buildChatsView()
-        .previewEnvironment()
+    return RouterView { router in
+        chatsBuilder.buildChatsView(router: router)
+    }
+    .previewEnvironment()
 }
