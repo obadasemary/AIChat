@@ -22,7 +22,7 @@ struct TabBarView: View {
                 Label("Explore", systemImage: "eyes")
             }
             RouterView { router in
-                chatsBuilder.buildChatsView()
+                chatsBuilder.buildChatsView(router: router)
             }
             .tabItem {
                 Label(
