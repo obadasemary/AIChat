@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SUIRouting
 
 @Observable
 @MainActor
@@ -16,7 +17,7 @@ final class ChatsBuilder {
         self.container = container
     }
     
-    func buildChatsView() -> some View {
+    func buildChatsView(router: Router) -> some View {
         ChatsView(
             viewModel: ChatsViewModel(
                 chatsUseCase: ChatsUseCase(container: container)
