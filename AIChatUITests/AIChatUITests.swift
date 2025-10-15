@@ -15,7 +15,16 @@ final class AIChatUITests: XCTestCase {
         // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
 
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+        // In UI tests it's important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+    }
+    
+    // Helper function to wait for element with better timeout handling
+    private func waitForElement(_ element: XCUIElement, timeout: TimeInterval = 5, file: StaticString = #file, line: UInt = #line) -> Bool {
+        let exists = element.waitForExistence(timeout: timeout)
+        if !exists {
+            XCTFail("Element \(element) did not appear within \(timeout) seconds", file: file, line: line)
+        }
+        return exists
     }
 
     override func tearDownWithError() throws {
@@ -29,27 +38,36 @@ final class AIChatUITests: XCTestCase {
         app.launch()
 
         // Welcome View
-        app.buttons["StartButton"].tap()
+        let startButton = app.buttons["StartButton"]
+        XCTAssert(waitForElement(startButton, timeout: 10))
+        startButton.tap()
 
         // Onboarding Intro View
-        app.buttons["ContinueButton"].tap()
+        let continueButton = app.buttons["ContinueButton"]
+        XCTAssert(waitForElement(continueButton, timeout: 5))
+        continueButton.tap()
         
         // Onboarding Color View
         let colorCircleElementsQuery = app.otherElements.matching(
             identifier: "ColorCircle"
         )
+        // Wait for color circles to appear
+        XCTAssert(waitForElement(colorCircleElementsQuery.firstMatch, timeout: 5))
+        
         let randomIndex = Int.random(in: 0..<colorCircleElementsQuery.count)
         colorCircleElementsQuery.element(boundBy: randomIndex).tap()
+        
+        XCTAssert(waitForElement(app.buttons["ContinueButton"], timeout: 3))
         app.buttons["ContinueButton"].tap()
         
         // Onboarding Completed View
-        app.buttons["FinishButton"].tap()
+        let finishButton = app.buttons["FinishButton"]
+        XCTAssert(waitForElement(finishButton, timeout: 5))
+        finishButton.tap()
         
         // Explore View
-        let exploreExists = app.navigationBars["Explore"].waitForExistence(
-            timeout: 1
-        )
-        XCTAssert(exploreExists)
+        let exploreNavBar = app.navigationBars["Explore"]
+        XCTAssert(waitForElement(exploreNavBar, timeout: 5))
     }
     
     @MainActor
@@ -59,30 +77,40 @@ final class AIChatUITests: XCTestCase {
         app.launch()
 
         // Welcome View
-        app.buttons["StartButton"].tap()
+        let startButton = app.buttons["StartButton"]
+        XCTAssert(waitForElement(startButton, timeout: 10))
+        startButton.tap()
 
         // Onboarding Intro View
-        app.buttons["ContinueButton"].tap()
+        let continueButton = app.buttons["ContinueButton"]
+        XCTAssert(waitForElement(continueButton, timeout: 5))
+        continueButton.tap()
         
         // Onboarding Community View
-        app.buttons["OnboardingCommunityContinueButton"].tap()
+        let communityContinueButton = app.buttons["OnboardingCommunityContinueButton"]
+        XCTAssert(waitForElement(communityContinueButton, timeout: 5))
+        communityContinueButton.tap()
         
         // Onboarding Color View
         let colorCircleElementsQuery = app.otherElements.matching(
             identifier: "ColorCircle"
         )
+        XCTAssert(waitForElement(colorCircleElementsQuery.firstMatch, timeout: 5))
+        
         let randomIndex = Int.random(in: 0..<colorCircleElementsQuery.count)
         colorCircleElementsQuery.element(boundBy: randomIndex).tap()
+        
+        XCTAssert(waitForElement(app.buttons["ContinueButton"], timeout: 3))
         app.buttons["ContinueButton"].tap()
         
         // Onboarding Completed View
-        app.buttons["FinishButton"].tap()
+        let finishButton = app.buttons["FinishButton"]
+        XCTAssert(waitForElement(finishButton, timeout: 5))
+        finishButton.tap()
         
         // Explore View
-        let exploreExists = app.navigationBars["Explore"].waitForExistence(
-            timeout: 1
-        )
-        XCTAssert(exploreExists)
+        let exploreNavBar = app.navigationBars["Explore"]
+        XCTAssert(waitForElement(exploreNavBar, timeout: 5))
     }
     
     @MainActor
@@ -92,43 +120,61 @@ final class AIChatUITests: XCTestCase {
         app.launch()
         
         let tabBar = app.tabBars["Tab Bar"]
+        XCTAssert(waitForElement(tabBar, timeout: 10))
         
-        let exploreExists = app.navigationBars["Explore"].exists
-        XCTAssert(exploreExists)
+        let exploreNavBar = app.navigationBars["Explore"]
+        XCTAssert(waitForElement(exploreNavBar, timeout: 5))
         
         // Click Hero Cell
-        app.collectionViews.scrollViews.otherElements.buttons.firstMatch.tap()
+        let heroCell = app.collectionViews.scrollViews.otherElements.buttons.firstMatch
+        XCTAssert(waitForElement(heroCell, timeout: 5))
+        heroCell.tap()
         
-        let textFieldExists = app.textFields["ChatTextField"].exists
-        XCTAssert(textFieldExists)
+        let chatTextField = app.textFields["ChatTextField"]
+        XCTAssert(waitForElement(chatTextField, timeout: 5))
         
-        app.navigationBars.buttons.firstMatch.tap()
-        XCTAssert(exploreExists)
+        let backButton = app.navigationBars.buttons.firstMatch
+        XCTAssert(waitForElement(backButton, timeout: 3))
+        backButton.tap()
+        
+        XCTAssert(waitForElement(exploreNavBar, timeout: 3))
         
         tabBar.buttons["Chats"].tap()
-        let chatsExists = app.navigationBars["Chats"].exists
-        XCTAssert(chatsExists)
+        let chatsNavBar = app.navigationBars["Chats"]
+        XCTAssert(waitForElement(chatsNavBar, timeout: 5))
         
         // Click Hero Cell
-        app.collectionViews.scrollViews.otherElements.buttons.firstMatch.tap()
-        XCTAssert(textFieldExists)
+        let chatsHeroCell = app.collectionViews.scrollViews.otherElements.buttons.firstMatch
+        XCTAssert(waitForElement(chatsHeroCell, timeout: 5))
+        chatsHeroCell.tap()
         
-        app.navigationBars.buttons.firstMatch.tap()
-        XCTAssert(chatsExists)
+        XCTAssert(waitForElement(chatTextField, timeout: 5))
+        
+        let chatsBackButton = app.navigationBars.buttons.firstMatch
+        XCTAssert(waitForElement(chatsBackButton, timeout: 3))
+        chatsBackButton.tap()
+        
+        XCTAssert(waitForElement(chatsNavBar, timeout: 3))
         
         tabBar.buttons["Profile"].tap()
-        let profileExists = app.navigationBars["Profile"].exists
-        XCTAssert(profileExists)
+        let profileNavBar = app.navigationBars["Profile"]
+        XCTAssert(waitForElement(profileNavBar, timeout: 5))
         
         // Click Hero Cell
-        app.collectionViews.buttons.element(boundBy: 1).tap()
-        XCTAssert(textFieldExists)
+        let profileHeroCell = app.collectionViews.buttons.element(boundBy: 1)
+        XCTAssert(waitForElement(profileHeroCell, timeout: 5))
+        profileHeroCell.tap()
         
-        app.navigationBars.buttons.firstMatch.tap()
-        XCTAssert(profileExists)
+        XCTAssert(waitForElement(chatTextField, timeout: 5))
+        
+        let profileBackButton = app.navigationBars.buttons.firstMatch
+        XCTAssert(waitForElement(profileBackButton, timeout: 3))
+        profileBackButton.tap()
+        
+        XCTAssert(waitForElement(profileNavBar, timeout: 3))
 
         tabBar.buttons["Explore"].tap()
-        XCTAssert(exploreExists)
+        XCTAssert(waitForElement(exploreNavBar, timeout: 5))
     }
     
     @MainActor
@@ -138,22 +184,25 @@ final class AIChatUITests: XCTestCase {
         app.launch()
         
         let tabBar = app.tabBars["Tab Bar"]
+        XCTAssert(waitForElement(tabBar, timeout: 10))
         
-        let exploreExists = app.navigationBars["Explore"].exists
-        XCTAssert(exploreExists)
+        let exploreNavBar = app.navigationBars["Explore"]
+        XCTAssert(waitForElement(exploreNavBar, timeout: 5))
         
         tabBar.buttons["Profile"].tap()
-        let profileExists = app.navigationBars["Profile"].exists
-        XCTAssert(profileExists)
+        let profileNavBar = app.navigationBars["Profile"]
+        XCTAssert(waitForElement(profileNavBar, timeout: 5))
         
-        app.navigationBars["Profile"].buttons["Settings"].tap()
+        let settingsButton = app.navigationBars["Profile"].buttons["Settings"]
+        XCTAssert(waitForElement(settingsButton, timeout: 3))
+        settingsButton.tap()
         
-        app.collectionViews.buttons["Sign Out"].tap()
+        let signOutButton = app.collectionViews.buttons["Sign Out"]
+        XCTAssert(waitForElement(signOutButton, timeout: 5))
+        signOutButton.tap()
         
-        let startButtonExists = app.buttons["StartButton"].waitForExistence(
-            timeout: 2
-        )
-        XCTAssert(startButtonExists)
+        let startButton = app.buttons["StartButton"]
+        XCTAssert(waitForElement(startButton, timeout: 5))
     }
     
     @MainActor
@@ -162,7 +211,7 @@ final class AIChatUITests: XCTestCase {
         app.launchArguments = ["UI_TESTING", "SIGNED_IN_TEST", "STARTSCREEN_CREATE_AVATAR_TEST"]
         app.launch()
         
-        let screenExists = app.navigationBars["Create Avatar"].firstMatch.exists
-        XCTAssert(screenExists)
+        let createAvatarNavBar = app.navigationBars["Create Avatar"].firstMatch
+        XCTAssert(waitForElement(createAvatarNavBar, timeout: 10))
     }
 }
