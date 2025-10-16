@@ -145,10 +145,11 @@ class CoreBuilder {
         )
     }
     
-    func chatsView() -> some View {
+    func chatsView(router: Router) -> some View {
         ChatsView(
             viewModel: ChatsViewModel(
-                chatsUseCase: ChatsUseCase(container: container)
+                chatsUseCase: ChatsUseCase(container: container),
+                router: CoreRouter(router: router, builder: self)
             )
         )
     }
