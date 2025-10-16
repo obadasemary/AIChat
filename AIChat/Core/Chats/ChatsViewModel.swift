@@ -12,16 +12,19 @@ import Foundation
 final class ChatsViewModel {
     
     private let chatsUseCase: ChatsUseCaseProtocol
+    private let router: ChatsRouterProtocol
     
     private(set) var currentUserId: String?
     private(set) var chats: [ChatModel] = []
     private(set) var recentAvatars: [AvatarModel] = []
     private(set) var isLoadingChats: Bool = true
     
-    var path: [TabbarPathOption] = []
-    
-    init(chatsUseCase: ChatsUseCaseProtocol) {
+    init(
+        chatsUseCase: ChatsUseCaseProtocol,
+        router: ChatsRouterProtocol
+    ) {
         self.chatsUseCase = chatsUseCase
+        self.router = router
     }
 }
 
@@ -69,13 +72,23 @@ extension ChatsViewModel {
 extension ChatsViewModel {
     
     func onChatSelected(chat: ChatModel) {
-        path.append(.chat(avatarId: chat.avatarId, chat: chat))
         chatsUseCase.trackEvent(event: Event.chatPressed(chat: chat))
+        router.showChatView(
+            delegate: ChatDelegate(
+                avatarId: chat.avatarId,
+                chat: chat
+            )
+        )
     }
     
     func onRecentsAvatarsTapped(avatar: AvatarModel) {
-        path.append(.chat(avatarId: avatar.avatarId, chat: nil))
         chatsUseCase.trackEvent(event: Event.avatarPressed(avatar: avatar))
+        router.showChatView(
+            delegate: ChatDelegate(
+                avatarId: avatar.avatarId,
+                chat: nil
+            )
+        )
     }
 }
 
