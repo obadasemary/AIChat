@@ -72,7 +72,8 @@ private extension ChatsView {
                                     .lineLimit(1)
                             }
                             .anyButton {
-                                viewModel.onRecentsAvatarsTapped(avatar: avatar)
+                                viewModel
+                                    .onRecentsAvatarsTapped(avatar: avatar)
                             }
                         }
                     }
@@ -127,7 +128,9 @@ private extension ChatsView {
     let container = DevPreview.shared.container
     
     container.register(AuthManager.self) {
-        AuthManager(service: MockAuthService(currentUser: .mock(isAnonymous: true)))
+        AuthManager(
+            service: MockAuthService(currentUser: .mock(isAnonymous: true))
+        )
     }
     container.register(AvatarManager.self) {
         AvatarManager(
