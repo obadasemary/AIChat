@@ -68,31 +68,25 @@ private extension SettingsView {
         Section {
             if viewModel.isAnonymousUser {
                 Text("Save & Backup Account")
-                    .rowFormatting()
                     .anyButton(.highlight) {
                         viewModel.onCreateAccountPressed()
                     }
-                    .removeListRowFormatting()
             } else {
                 Text("Sign Out")
-                    .rowFormatting()
                     .anyButton(.highlight) {
                         viewModel.onSignOutPressed {
                             await dismissScreen()
                         }
                     }
-                    .removeListRowFormatting()
             }
             
             Text("Delete Account")
                 .foregroundStyle(.red)
-                .rowFormatting()
                 .anyButton(.highlight) {
                     viewModel.onDeleteAccountPressed {
                         await dismissScreen()
                     }
                 }
-                .removeListRowFormatting()
         } header: {
             Text("Account")
         }
@@ -110,12 +104,10 @@ private extension SettingsView {
                         .badgeButton()
                 }
             }
-            .rowFormatting()
             .anyButton(.highlight) {
                 
             }
             .disabled(!viewModel.isPremium)
-            .removeListRowFormatting()
         } header: {
             Text("Purchase")
         }
@@ -125,11 +117,9 @@ private extension SettingsView {
         Section {
             Text("Rate us on the App Store")
                 .foregroundStyle(.blue)
-                .rowFormatting()
                 .anyButton(.highlight) {
                     viewModel.onRatingsPressed()
                 }
-                .removeListRowFormatting()
             
             HStack(spacing: 8) {
                 Text("Version")
@@ -137,8 +127,6 @@ private extension SettingsView {
                 Text(Utilities.appVersion ?? "")
                     .foregroundStyle(.secondary)
             }
-            .rowFormatting()
-            .removeListRowFormatting()
             
             HStack(spacing: 8) {
                 Text("Build Number")
@@ -146,22 +134,20 @@ private extension SettingsView {
                 Text(Utilities.buildNumber ?? "")
                     .foregroundStyle(.secondary)
             }
-            .rowFormatting()
-            .removeListRowFormatting()
             
             Text("Contact Support")
                 .foregroundStyle(.blue)
-                .rowFormatting()
                 .anyButton(.highlight) {
                     viewModel.onContactUsPressed()
                 }
-                .removeListRowFormatting()
         } header: {
             Text("Application")
         } footer: {
-            Text("© \(Calendar.current.component(.year, from: Date()).description) Obada Inc.\n All rights reserved. \n Learn more at https://github.com/obadasemary")
-                .foregroundStyle(.secondary)
-                .baselineOffset(6)
+            Text(
+                "© \(Calendar.current.component(.year, from: Date()).description) Obada Inc."
+            )
+            .foregroundStyle(.secondary)
+            .baselineOffset(6)
         }
     }
 }
