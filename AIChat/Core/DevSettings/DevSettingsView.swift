@@ -40,14 +40,23 @@ struct DevSettingsView: View {
 private extension DevSettingsView {
     
     var backButtonView: some View {
-        Image(systemName: "xmark")
-            .font(.subheadline)
-            .padding(4)
-            .anyButton {
+        if #available(iOS 26.0, *) {
+            return Button(role: .close) {
                 viewModel.onBackButtonTap {
                     dismiss()
                 }
             }
+            .tint(.accent)
+        } else {
+            return Image(systemName: "xmark")
+                .font(.subheadline)
+                .padding(4)
+                .anyButton {
+                    viewModel.onBackButtonTap {
+                        dismiss()
+                    }
+                }
+        }
     }
     
     var abTestSection: some View {
