@@ -8,6 +8,17 @@
 import Foundation
 
 @MainActor
+protocol ProfileUseCaseProtocol {
+    var currentUser: UserModel? { get }
+    
+    func getAuthId() throws -> String
+    func getAvatarsForAuthor(userId: String) async throws -> [AvatarModel]
+    func removeAuthorIdFromAvatar(avatarId: String) async throws
+    
+    func trackEvent(event: any LoggableEvent)
+}
+
+@MainActor
 final class ProfileUseCase {
     
     private let authManager: AuthManager
