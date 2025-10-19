@@ -34,13 +34,21 @@ struct CreateAvatarView: View {
 private extension CreateAvatarView {
     
     var dismissButton: some View {
-        Image(systemName: "xmark")
-            .font(.title2)
-            .fontWeight(.semibold)
-            .anyButton(.plain) {
+        if #available(iOS 26.0, *) {
+            return Button(role: .close) {
                 viewModel.onDismissButtonTapped()
             }
-            .foregroundStyle(.accent)
+            .tint(.accent)
+        } else {
+            // Fallback on earlier versions
+            return Image(systemName: "xmark")
+                .font(.title2)
+                .fontWeight(.semibold)
+                .anyButton(.plain) {
+                    viewModel.onDismissButtonTapped()
+                }
+                .foregroundStyle(.accent)
+        }
     }
     
     var nameSection: some View {
@@ -122,7 +130,6 @@ private extension CreateAvatarView {
                     .clipShape(Circle())
                     .frame(maxWidth: .infinity, maxHeight: 400)
             }
-            .removeListRowFormatting()
         }
     }
     
