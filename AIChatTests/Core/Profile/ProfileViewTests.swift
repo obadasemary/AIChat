@@ -294,7 +294,9 @@ struct ProfileViewTests {
         viewModel.onAvatarSelected(avatar: avatar)
         
         // Then
-        #expect(viewModel.path.first == .chat(avatarId: avatar.id, chat: nil))
+        #expect(profileRouter.showChatViewCalled == true)
+        #expect(profileRouter.showChatViewDelegate?.avatarId == avatar.id)
+        #expect(profileRouter.showChatViewDelegate?.chat == nil)
         #expect(
             mockLogService.trackedEvents
                 .contains {
