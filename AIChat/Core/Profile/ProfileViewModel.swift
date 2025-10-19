@@ -18,9 +18,6 @@ final class ProfileViewModel {
     private(set) var myAvatars: [AvatarModel] = []
     private(set) var isLoading: Bool = true
     
-    var showAlert: AnyAppAlert?
-    var path: [TabbarPathOption] = []
-    
     init(
         profileUseCase: ProfileUseCaseProtocol,
         router: ProfileRouterProtocol
@@ -69,17 +66,22 @@ extension ProfileViewModel {
     
     func onNewAvatarButtonPressed() {
         profileUseCase.trackEvent(event: Event.newAvatarPressed)
-        router.showCreateAvatarView()
+        router.showCreateAvatarView {
+            Task {
+                await self.loadData()
+            }
+        }
     }
     
     func onAvatarSelected(avatar: AvatarModel) {
-        path.append(.chat(avatarId: avatar.avatarId, chat: nil))
         profileUseCase
             .trackEvent(
                 event: Event.avatarPressed(
                     avatar: avatar
                 )
             )
+        let delegate = ChatDelegate(avatarId: avatar.avatarId, chat: nil)
+        router.showChatView(delegate: delegate)
     }
     
     func onDeleteAvatar(indexSet: IndexSet) {
@@ -104,7 +106,7 @@ extension ProfileViewModel {
                         )
                     )
             } catch {
-                showAlert = AnyAppAlert(
+                router.showSimpleAlert(
                     title: "Unable to delete avatar",
                     subtitle: "Please try again later."
                 )

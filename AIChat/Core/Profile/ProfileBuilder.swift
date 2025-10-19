@@ -26,7 +26,8 @@ final class ProfileBuilder {
                     settingsBuilder: SettingsBuilder(container: container),
                     createAvatarBuilder: CreateAvatarBuilder(
                         container: container
-                    )
+                    ),
+                    chatBuilder: ChatBuilder(container: container)
                 )
             )
         )

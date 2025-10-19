@@ -12,19 +12,15 @@ struct ProfileView: View {
     @State var viewModel: ProfileViewModel
     
     var body: some View {
-        NavigationStack(path: $viewModel.path) {
-            List {
-                myInfoSection
-                myAvatarsSection
-            }
-            .navigationTitle("Profile")
-            .navigationDestinationForTabbarModule(path: $viewModel.path)
-            .showCustomAlert(alert: $viewModel.showAlert)
-            .screenAppearAnalytics(name: "ProfileView")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    settingsButton
-                }
+        List {
+            myInfoSection
+            myAvatarsSection
+        }
+        .navigationTitle("Profile")
+        .screenAppearAnalytics(name: "ProfileView")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                settingsButton
             }
         }
         .task {

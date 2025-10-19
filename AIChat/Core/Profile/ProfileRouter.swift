@@ -10,8 +10,10 @@ import SUIRouting
 
 @MainActor
 protocol ProfileRouterProtocol {
-    func showCreateAvatarView()
     func showSettingsView()
+    func showCreateAvatarView(onDisappear: @escaping () -> Void)
+    func showChatView(delegate: ChatDelegate)
+    func showSimpleAlert(title: String, subtitle: String?)
 }
 
 @MainActor
@@ -19,20 +21,32 @@ struct ProfileRouter {
     let router: Router
     let settingsBuilder: SettingsBuilder
     let createAvatarBuilder: CreateAvatarBuilder
+    let chatBuilder: ChatBuilder
 }
     
 extension ProfileRouter: ProfileRouterProtocol {
-    
-    func showCreateAvatarView() {
-        router.showScreen(.fullScreenCover) { router in
-            createAvatarBuilder.buildCreateAvatarView(router: router)
-        }
-    }
     
     func showSettingsView() {
         router.showScreen(.sheet) { router in
             settingsBuilder.buildSettingsView()
         }
+    }
+    
+    func showCreateAvatarView(onDisappear: @escaping () -> Void) {
+        router.showScreen(.fullScreenCover) { router in
+            createAvatarBuilder.buildCreateAvatarView(router: router)
+                .onDisappear(perform: onDisappear)
+        }
+    }
+    
+    func showChatView(delegate: ChatDelegate) {
+        router.showScreen(.push) { router in
+            chatBuilder.buildChatView(delegate: delegate)
+        }
+    }
+    
+    func showSimpleAlert(title: String, subtitle: String?) {
+        router.showAlert(.alert, title: title, subtitle: subtitle, buttons: nil)
     }
 }
 
