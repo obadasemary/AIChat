@@ -9,6 +9,26 @@ import SwiftUI
 import SUIRouting
 
 @MainActor
+protocol ExploreRouterProtocol {
+    func showCategoryListView(delegate: CategoryListDelegate)
+    func showChatView(delegate: ChatDelegate)
+    func showDevSettingsView()
+    func showCreateAccountView(
+        delegate: CreateAccountDelegate,
+        onDisappear: (() -> Void)?
+    )
+    func dismissScreen()
+    
+    func showPushNotificationModal(
+        onEnablePressed: @escaping () -> Void,
+        onCancelPressed: @escaping () -> Void
+    )
+    func dismissModal()
+    
+    func dismissAlert()
+}
+
+@MainActor
 struct ExploreRouter {
     let router: Router
     let categoryListBuilder: CategoryListBuilder
@@ -92,3 +112,6 @@ extension ExploreRouter: ExploreRouterProtocol {
         router.dismissAlert()
     }
 }
+
+//MARK: FIXME We don't need it just if we going to use CoreRouter and CoreBuilder
+extension CoreRouter: ExploreRouterProtocol {}
