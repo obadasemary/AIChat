@@ -8,6 +8,26 @@
 import Foundation
 
 @MainActor
+protocol ExploreUseCaseProtocol {
+    var categoryRowTest: CategoryRowTestOption { get }
+    var createAccountTest: Bool { get }
+    
+    var auth: UserAuthInfo? { get }
+    
+    func getFeaturedAvatars() async throws -> [AvatarModel]
+    func getPopularAvatars() async throws -> [AvatarModel]
+    
+    func schedulePushNotificationForTheNextWeek()
+    func canRequestAuthorization() async -> Bool
+    func reuestAuthorization() async throws -> Bool
+    
+    func updateAppState(showTabBarView: Bool)
+    func signOut() throws
+    
+    func trackEvent(event: LoggableEvent)
+}
+
+@MainActor
 final class ExploreUseCase {
     
     private let authManager: AuthManager
