@@ -8,6 +8,14 @@
 import Foundation
 
 @MainActor
+protocol CreateAccountUseCaseProtocol {
+    func signInWithApple() async throws -> (user: UserAuthInfo, isNewUser: Bool)
+    func signInWithGoogle() async throws -> (user: UserAuthInfo, isNewUser: Bool)
+    func logIn(auth: UserAuthInfo, isNewUser: Bool) async throws
+    func trackEvent(event: any LoggableEvent)
+}
+
+@MainActor
 final class CreateAccountUseCase {
     
     private let authManager: AuthManager
