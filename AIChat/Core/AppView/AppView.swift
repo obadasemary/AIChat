@@ -13,6 +13,7 @@ struct AppView: View {
     @Environment(TabBarBuilder.self) private var tabBarBuilder
     @Environment(WelcomeBuilder.self) private var welcomeBuilder
     @State var viewModel: AppViewModel
+    @StateObject private var colorSchemeManager = ColorSchemeManager.shared
     
     var body: some View {
         RootView(
@@ -40,6 +41,7 @@ struct AppView: View {
                     }
                 }
             )
+            .preferredColorScheme(colorSchemeManager.currentColorScheme)
             .screenAppearAnalytics(name: Self.screenName)
             .task {
                 await viewModel.checkUserStatus()

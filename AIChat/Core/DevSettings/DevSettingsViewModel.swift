@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 @Observable
 @MainActor
@@ -17,6 +18,7 @@ class DevSettingsViewModel {
     var onboardingCommunityTest: Bool = false
     var categoryRowTest: CategoryRowTestOption = .default
     var paywallOption: PaywallOptional = .custom
+    var colorSchemePreference: ColorSchemePreference = .light
     
     var authData: [(key: String, value: Any)] {
         devSettingsUseCase
@@ -51,6 +53,7 @@ extension DevSettingsViewModel {
         onboardingCommunityTest = devSettingsUseCase.activeTests.onboardingCommunityTest
         categoryRowTest = devSettingsUseCase.activeTests.categoryRowTest
         paywallOption = PaywallConfiguration.shared.currentOption
+        colorSchemePreference = ColorSchemeManager.shared.currentPreference
     }
 }
 
@@ -99,6 +102,16 @@ extension DevSettingsViewModel {
         newValue: PaywallOptional
     ) {
         PaywallConfiguration.shared.updateOption(newValue)
+    }
+    
+    @MainActor
+    func handleColorSchemeChange(
+        oldValue: ColorSchemePreference,
+        newValue: ColorSchemePreference
+    ) {
+        withAnimation(.smooth(duration: 0.35)) {
+            ColorSchemeManager.shared.updatePreference(newValue)
+        }
     }
 }
 
