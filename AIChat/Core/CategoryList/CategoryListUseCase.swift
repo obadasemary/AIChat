@@ -8,6 +8,12 @@
 import Foundation
 
 @MainActor
+protocol CategoryListUseCaseProtocol {
+    func getAvatarsForCategory(category: CharacterOption) async throws -> [AvatarModel]
+    func trackEvent(event: any LoggableEvent)
+}
+
+@MainActor
 final class CategoryListUseCase {
     
     private let avatarManager: AvatarManager
