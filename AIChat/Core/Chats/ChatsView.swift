@@ -9,8 +9,8 @@ import SwiftUI
 
 struct ChatsView: View {
     
-    @Environment(ChatRowCellBuilder.self) private var chatRowCellBuilder
     @State var viewModel: ChatsViewModel
+    @Environment(ChatRowCellBuilder.self) private var chatRowCellBuilder
     
     @Environment(\.colorScheme) var colorScheme
     
