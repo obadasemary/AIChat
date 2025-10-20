@@ -11,12 +11,14 @@ import SwiftfulUtilities
 struct DevSettingsView: View {
     
     @State var viewModel: DevSettingsViewModel
+    @StateObject private var colorSchemeManager = ColorSchemeManager.shared
     
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {
             List {
+                appearanceSection
                 abTestSection
                 authInfoSection
                 userInfoSection
@@ -33,11 +35,33 @@ struct DevSettingsView: View {
                 viewModel.loadABTest()
             }
         }
+        .preferredColorScheme(colorSchemeManager.currentColorScheme)
     }
 }
 
 // MARK: - SectionViews
 private extension DevSettingsView {
+    
+    var appearanceSection: some View {
+        Section {
+            Picker(
+                "Appearance",
+                selection: $viewModel.colorSchemePreference
+            ) {
+                ForEach(ColorSchemePreference.allCases, id: \.self) { preference in
+                    Text(preference.rawValue)
+                        .id(preference)
+                }
+            }
+            .onChange(
+                of: viewModel.colorSchemePreference,
+                viewModel.handleColorSchemeChange
+            )
+        } header: {
+            Text("Appearance")
+        }
+        .font(.caption)
+    }
     
     var backButtonView: some View {
         if #available(iOS 26.0, *) {
