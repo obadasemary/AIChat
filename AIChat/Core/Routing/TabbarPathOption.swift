@@ -9,12 +9,12 @@ import SwiftUI
 
 enum TabbarPathOption: Hashable {
     case chat(avatarId: String, chat: ChatModel?)
-    case character(category: CharacterOption, imageName: String)
+//    case character(category: CharacterOption, imageName: String)
 }
 
 struct NavigationDestinationForTabbarModuleViewModifier: ViewModifier {
     
-    @Environment(CategoryListBuilder.self) private var categoryListBuilder
+//    @Environment(CategoryListBuilder.self) private var categoryListBuilder
     @Environment(ChatBuilder.self) private var chatBuilder
     let path: Binding<[TabbarPathOption]>
     
@@ -30,15 +30,15 @@ struct NavigationDestinationForTabbarModuleViewModifier: ViewModifier {
                                 chat: chat
                             )
                         )
-                case .character(category: let category, imageName: let imageName):
-                    categoryListBuilder
-                        .buildCategoryListView(
-                            delegate: CategoryListDelegate(
-                                category: category,
-                                imageName: imageName,
-                                path: path
-                            )
-                        )
+//                case .character(category: let category, imageName: let imageName):
+//                    categoryListBuilder
+//                        .buildCategoryListView(
+//                            delegate: CategoryListDelegate(
+//                                category: category,
+//                                imageName: imageName,
+//                                path: path
+//                            )
+//                        )
                 }
             }
     }

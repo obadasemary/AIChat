@@ -7,19 +7,24 @@
 
 import SwiftUI
 
+
+
 @Observable
 @MainActor
 final class CategoryListViewModel {
     
     private let categoryListUseCase: CategoryListUseCaseProtocol
+    private let router: CategoryListRouterProtocol
     
     private(set) var avatars: [AvatarModel] = []
     private(set) var isLoading: Bool = true
     
-    var showAlert: AnyAppAlert?
-    
-    init(categoryListUseCase: CategoryListUseCaseProtocol) {
+    init(
+        categoryListUseCase: CategoryListUseCaseProtocol,
+        router: CategoryListRouterProtocol
+    ) {
         self.categoryListUseCase = categoryListUseCase
+        self.router = router
     }
 }
 
@@ -34,7 +39,7 @@ extension CategoryListViewModel {
             categoryListUseCase
                 .trackEvent(event: Event.loadAvatarsSuccess)
         } catch {
-            showAlert = AnyAppAlert(error: error)
+            router.showAlert(error: error)
             categoryListUseCase
                 .trackEvent(event: Event.loadAvatarsFail(error: error))
         }
@@ -45,9 +50,10 @@ extension CategoryListViewModel {
 // MARK: - Action
 extension CategoryListViewModel {
     
-    func onAvatarTapped(avatar: AvatarModel, path: Binding<[TabbarPathOption]>) {
-        path.wrappedValue.append(.chat(avatarId: avatar.avatarId, chat: nil))
+    func onAvatarTapped(avatar: AvatarModel) {
         categoryListUseCase.trackEvent(event: Event.avatarTapped(avatar: avatar))
+        let delegate = ChatDelegate(avatarId: avatar.avatarId)
+        router.showChatView(delegate: delegate)
     }
 }
 

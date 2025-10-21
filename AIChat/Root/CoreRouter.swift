@@ -20,7 +20,10 @@ struct CoreRouter {
     
     func showCategoryListView(delegate: CategoryListDelegate) {
         router.showScreen(.push) { router in
-            builder.categoryListView(delegate: delegate)
+            builder.categoryListView(
+                router: router,
+                delegate: delegate
+            )
         }
     }
     

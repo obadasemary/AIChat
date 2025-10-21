@@ -1,3 +1,10 @@
+//
+//  ConfigurationManager.swift
+//  AIChat
+//
+//  Created by Abdelrahman Mohamed on 20.10.2025.
+//
+
 import Foundation
 
 /// Configuration manager for handling API keys and other sensitive configuration
