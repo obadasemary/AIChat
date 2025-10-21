@@ -35,8 +35,7 @@ struct CategoryListView: View {
                     )
                     .anyButton(.highlight) {
                         viewModel.onAvatarTapped(
-                            avatar: avatar,
-                            path: delegate.path
+                            avatar: avatar
                         )
                     }
                     .removeListRowFormatting()
@@ -44,7 +43,6 @@ struct CategoryListView: View {
             }
         }
         .scrollBounceBehavior(.basedOnSize)
-        .showCustomAlert(alert: $viewModel.showAlert)
         .screenAppearAnalytics(name: Self.screenName)
         .ignoresSafeArea(edges: .top)
         .listStyle(.plain)
@@ -89,8 +87,11 @@ private extension CategoryListView {
     let categoryListBuilder = CategoryListBuilder(container: container)
     let delegate = CategoryListDelegate(path: .constant([]))
     
-    return categoryListBuilder.buildCategoryListView(delegate: delegate)
-        .previewEnvironment()
+    return RouterView { router in
+        categoryListBuilder
+            .buildCategoryListView(router: router, delegate: delegate)
+    }
+    .previewEnvironment()
 }
 
 #Preview("Mock No Data") {
@@ -105,8 +106,14 @@ private extension CategoryListView {
     let categoryListBuilder = CategoryListBuilder(container: container)
     let delegate = CategoryListDelegate(path: .constant([]))
     
-    return categoryListBuilder.buildCategoryListView(delegate: delegate)
-        .previewEnvironment()
+    return RouterView { router in
+        categoryListBuilder
+            .buildCategoryListView(
+                router: router,
+                delegate: delegate
+            )
+    }
+    .previewEnvironment()
 }
 
 #Preview("Mock Slow Loading") {
@@ -121,8 +128,14 @@ private extension CategoryListView {
     let categoryListBuilder = CategoryListBuilder(container: container)
     let delegate = CategoryListDelegate(path: .constant([]))
     
-    return categoryListBuilder.buildCategoryListView(delegate: delegate)
-        .previewEnvironment()
+    return RouterView { router in
+        categoryListBuilder
+            .buildCategoryListView(
+                router: router,
+                delegate: delegate
+            )
+    }
+    .previewEnvironment()
 }
 
 #Preview("Error Loading") {
@@ -137,6 +150,12 @@ private extension CategoryListView {
     let categoryListBuilder = CategoryListBuilder(container: container)
     let delegate = CategoryListDelegate(path: .constant([]))
     
-    return categoryListBuilder.buildCategoryListView(delegate: delegate)
-        .previewEnvironment()
+    return RouterView { router in
+        categoryListBuilder
+            .buildCategoryListView(
+                router: router,
+                delegate: delegate
+            )
+    }
+    .previewEnvironment()
 }

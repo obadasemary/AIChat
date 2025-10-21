@@ -43,7 +43,8 @@ extension ExploreRouter: ExploreRouterProtocol {
     
     func showCategoryListView(delegate: CategoryListDelegate) {
         router.showScreen(.push) { router in
-            categoryListBuilder.buildCategoryListView(delegate: delegate)
+            categoryListBuilder
+                .buildCategoryListView(router: router, delegate: delegate)
         }
     }
     

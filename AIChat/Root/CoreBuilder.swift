@@ -134,12 +134,16 @@ class CoreBuilder {
         )
     }
     
-    func categoryListView(delegate: CategoryListDelegate) -> some View {
+    func categoryListView(
+        router: Router,
+        delegate: CategoryListDelegate
+    ) -> some View {
         CategoryListView(
             viewModel: CategoryListViewModel(
                 categoryListUseCase: CategoryListUseCase(
                     container: container
-                )
+                ),
+                router: CoreRouter(router: router, builder: self)
             ),
             delegate: delegate
         )

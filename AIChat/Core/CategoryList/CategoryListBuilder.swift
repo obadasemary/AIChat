@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SUIRouting
 
 @Observable
 @MainActor
@@ -16,11 +17,18 @@ final class CategoryListBuilder {
         self.container = container
     }
 
-    func buildCategoryListView(delegate: CategoryListDelegate) -> some View {
+    func buildCategoryListView(
+        router: Router,
+        delegate: CategoryListDelegate
+    ) -> some View {
         CategoryListView(
             viewModel: CategoryListViewModel(
                 categoryListUseCase: CategoryListUseCase(
                     container: container
+                ),
+                router: CategoryListRouter(
+                    router: router,
+                    chatBuilder: ChatBuilder(container: container)
                 )
             ),
             delegate: delegate
