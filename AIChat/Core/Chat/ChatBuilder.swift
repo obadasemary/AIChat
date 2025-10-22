@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SUIRouting
 
 @Observable
 @MainActor
@@ -16,10 +17,14 @@ final class ChatBuilder {
         self.container = container
     }
     
-    func buildChatView(delegate: ChatDelegate) -> some View {
+    func buildChatView(router: Router, delegate: ChatDelegate) -> some View {
         ChatView(
             viewModel: ChatViewModel(
-                chatUseCase: ChatUseCase(container: container)
+                chatUseCase: ChatUseCase(container: container),
+                router: ChatRouter(
+                    router: router,
+                    paywallBuilder: PaywallBuilder(container: container)
+                )
             ),
             delegate: delegate
         )

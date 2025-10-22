@@ -29,7 +29,34 @@ struct CoreRouter {
     
     func showChatView(delegate: ChatDelegate) {
         router.showScreen(.push) { router in
-            builder.chatView(delegate: delegate)
+            builder.chatView(router: router, delegate: delegate)
+        }
+    }
+    
+    func showProfileModal(
+        avatar: AvatarModel,
+        onXMarkPressed: @escaping () -> Void
+    ) {
+        router
+            .showModal(
+                backgroundColor: Color.black.opacity(0.6),
+                transition: .slide
+            ) {
+                ProfileModalView(
+                    imageName: avatar.profileImageName,
+                    title: avatar.name,
+                    subtitle: avatar.characterOption?.rawValue.capitalized,
+                    headline: avatar.characterDescription
+                ) {
+                    router.dismissModal()
+                }
+                .padding()
+            }
+    }
+    
+    func showPaywallView() {
+        router.showScreen(.sheet) { router in
+            builder.paywallView(router: router)
         }
     }
     
@@ -62,7 +89,10 @@ struct CoreRouter {
         router.dismissModal()
     }
     
-    func showPushNotificationModal(onEnablePressed: @escaping () -> Void, onCancelPressed: @escaping () -> Void) {
+    func showPushNotificationModal(
+        onEnablePressed: @escaping () -> Void,
+        onCancelPressed: @escaping () -> Void
+    ) {
         router.showModal(
             backgroundColor: Color.black.opacity(0.6),
             transition: .move(edge: .bottom),
@@ -85,16 +115,42 @@ struct CoreRouter {
     
     // MARK: Alerts
     
-    func showAlert(_ option: RouterAlertType, title: String, subtitle: String?, buttons: (@Sendable () -> AnyView)?) {
-        router.showAlert(option, title: title, subtitle: subtitle, buttons: buttons)
+    func showAlert(
+        _ option: RouterAlertType,
+        title: String,
+        subtitle: String?,
+        buttons: (@Sendable () -> AnyView)?
+    ) {
+        router
+            .showAlert(
+                option,
+                title: title,
+                subtitle: subtitle,
+                buttons: buttons
+            )
     }
     
-    func showSimpleAlert(title: String, subtitle: String?) {
-        router.showAlert(.alert, title: title, subtitle: subtitle, buttons: nil)
+    func showSimpleAlert(
+        title: String,
+        subtitle: String?
+    ) {
+        router
+            .showAlert(
+                .alert,
+                title: title,
+                subtitle: subtitle,
+                buttons: nil
+            )
     }
     
     func showAlert(error: Error) {
-        router.showAlert(.alert, title: "Error", subtitle: error.localizedDescription, buttons: nil)
+        router
+            .showAlert(
+                .alert,
+                title: "Error",
+                subtitle: error.localizedDescription,
+                buttons: nil
+            )
     }
     
     func dismissAlert() {

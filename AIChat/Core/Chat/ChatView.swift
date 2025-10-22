@@ -9,10 +9,7 @@ import SwiftUI
 
 struct ChatView: View {
     
-    @Environment(PaywallBuilder.self) private var paywallBuilder
     @State var viewModel: ChatViewModel
-    
-    @Environment(\.dismiss) private var dismiss
     @FocusState private var isTextFieldFocused: Bool
     
     let delegate: ChatDelegate
@@ -34,25 +31,13 @@ struct ChatView: View {
                     Image(systemName: "ellipsis")
                         .padding(8)
                         .anyButton {
-                            viewModel.onChatSettingsTapped {
-                                dismiss()
-                            }
+                            viewModel.onChatSettingsTapped()
                         }
                     
                 }
             }
         }
         .screenAppearAnalytics(name: ScreenName.from(Self.self))
-        .showCustomAlert(type: .confirmationDialog, alert: $viewModel.showChatSettings)
-        .showCustomAlert(alert: $viewModel.showAlert)
-        .showModal(showModal: $viewModel.showProfileModal) {
-            if let avatar = viewModel.avatar {
-                profileModal(avatar: avatar)
-            }
-        }
-        .sheet(isPresented: $viewModel.showPaywall) {
-            paywallBuilder.buildPaywallView()
-        }
         .task {
             await viewModel.loadAvatar(avatarId: delegate.avatarId)
         }
@@ -106,19 +91,6 @@ private extension ChatView {
         .scrollPosition(id: $viewModel.scrollPosition, anchor: .center)
         .animation(.easeInOut, value: viewModel.chatMessages.count)
         .animation(.easeInOut, value: viewModel.scrollPosition)
-    }
-    
-    func profileModal(avatar: AvatarModel) -> some View {
-        ProfileModalView(
-            imageName: avatar.profileImageName,
-            title: avatar.name,
-            subtitle: avatar.characterOption?.rawValue.capitalized,
-            headline: avatar.characterDescription
-        ) {
-            viewModel.onProfileModalXmarksTapped()
-        }
-        .padding()
-        .transition(.slide)
     }
     
     func timestampView(date: Date) -> some View {
@@ -184,10 +156,10 @@ private extension ChatView {
     let chatBuilder = ChatBuilder(container: container)
     let delegate = ChatDelegate(avatarId: AvatarModel.mock.avatarId)
     
-    return NavigationStack {
-        chatBuilder.buildChatView(delegate: delegate)
-            .previewEnvironment()
+    return RouterView { router in
+        chatBuilder.buildChatView(router: router, delegate: delegate)
     }
+    .previewEnvironment()
 }
 
 // MARK: - Preview Working Chat Premium
@@ -201,10 +173,10 @@ private extension ChatView {
     let chatBuilder = ChatBuilder(container: container)
     let delegate = ChatDelegate(avatarId: AvatarModel.mock.avatarId)
     
-    return NavigationStack {
-        chatBuilder.buildChatView(delegate: delegate)
-            .previewEnvironment()
+    return RouterView { router in
+        chatBuilder.buildChatView(router: router, delegate: delegate)
     }
+    .previewEnvironment()
 }
 
 // MARK: - Preview Slow AI Generation
@@ -218,10 +190,10 @@ private extension ChatView {
     let chatBuilder = ChatBuilder(container: container)
     let delegate = ChatDelegate(avatarId: AvatarModel.mock.avatarId)
     
-    return NavigationStack {
-        chatBuilder.buildChatView(delegate: delegate)
-            .previewEnvironment()
+    return RouterView { router in
+        chatBuilder.buildChatView(router: router, delegate: delegate)
     }
+    .previewEnvironment()
 }
 
 // MARK: - Preview Failed AI Generation
@@ -239,8 +211,8 @@ private extension ChatView {
     let chatBuilder = ChatBuilder(container: container)
     let delegate = ChatDelegate(avatarId: AvatarModel.mock.avatarId)
     
-    return NavigationStack {
-        chatBuilder.buildChatView(delegate: delegate)
-            .previewEnvironment()
+    return RouterView { router in
+        chatBuilder.buildChatView(router: router, delegate: delegate)
     }
+    .previewEnvironment()
 }

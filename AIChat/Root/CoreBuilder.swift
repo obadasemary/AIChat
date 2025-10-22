@@ -171,16 +171,17 @@ class CoreBuilder {
         )
     }
     
-    func chatView(delegate: ChatDelegate) -> some View {
+    func chatView(router: Router, delegate: ChatDelegate) -> some View {
         ChatView(
             viewModel: ChatViewModel(
-                chatUseCase: ChatUseCase(container: container)
+                chatUseCase: ChatUseCase(container: container),
+                router: CoreRouter(router: router, builder: self)
             ),
             delegate: delegate
         )
     }
     
-    func paywallView() -> some View {
+    func paywallView(router: Router) -> some View {
         PaywallView(
             viewModel: PaywallViewModel(
                 paywallUseCase: PaywallUseCase(container: container)

@@ -50,7 +50,11 @@ extension ExploreRouter: ExploreRouterProtocol {
     
     func showChatView(delegate: ChatDelegate) {
         router.showScreen(.push) { router in
-            chatBuilder.buildChatView(delegate: delegate)
+            chatBuilder
+                .buildChatView(
+                    router: router,
+                    delegate: delegate
+                )
         }
     }
     
