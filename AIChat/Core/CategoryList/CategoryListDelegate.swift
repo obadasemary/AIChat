@@ -10,5 +10,4 @@ import SwiftUI
 struct CategoryListDelegate {
     var category: CharacterOption = .alien
     var imageName: String = Constants.randomImage
-    var path: Binding<[TabbarPathOption]>
 }

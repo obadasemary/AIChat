@@ -85,7 +85,7 @@ private extension CategoryListView {
     )
     
     let categoryListBuilder = CategoryListBuilder(container: container)
-    let delegate = CategoryListDelegate(path: .constant([]))
+    let delegate = CategoryListDelegate()
     
     return RouterView { router in
         categoryListBuilder
@@ -104,7 +104,7 @@ private extension CategoryListView {
     )
     
     let categoryListBuilder = CategoryListBuilder(container: container)
-    let delegate = CategoryListDelegate(path: .constant([]))
+    let delegate = CategoryListDelegate()
     
     return RouterView { router in
         categoryListBuilder
@@ -126,7 +126,7 @@ private extension CategoryListView {
     )
     
     let categoryListBuilder = CategoryListBuilder(container: container)
-    let delegate = CategoryListDelegate(path: .constant([]))
+    let delegate = CategoryListDelegate()
     
     return RouterView { router in
         categoryListBuilder
@@ -148,7 +148,7 @@ private extension CategoryListView {
     )
     
     let categoryListBuilder = CategoryListBuilder(container: container)
-    let delegate = CategoryListDelegate(path: .constant([]))
+    let delegate = CategoryListDelegate()
     
     return RouterView { router in
         categoryListBuilder
