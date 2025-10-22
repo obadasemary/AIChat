@@ -127,8 +127,7 @@ extension ExploreViewModel {
                 
                 let delegate = CategoryListDelegate(
                     category: category,
-                    imageName: imageName,
-                    path: .constant([])
+                    imageName: imageName
                 )
                 router.showCategoryListView(delegate: delegate)
                 
@@ -234,8 +233,7 @@ extension ExploreViewModel {
             )
         let categoryListDelegate = CategoryListDelegate(
             category: category,
-            imageName: imageName,
-            path: .constant([])
+            imageName: imageName
         )
         router.showCategoryListView(delegate: categoryListDelegate)
     }
