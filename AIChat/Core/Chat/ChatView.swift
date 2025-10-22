@@ -26,14 +26,13 @@ struct ChatView: View {
                 HStack {
                     if viewModel.isGeneratingResponse {
                         ProgressView()
+                    } else {
+                        Image(systemName: "ellipsis")
+                            .padding(8)
+                            .anyButton {
+                                viewModel.onChatSettingsTapped()
+                            }
                     }
-                    
-                    Image(systemName: "ellipsis")
-                        .padding(8)
-                        .anyButton {
-                            viewModel.onChatSettingsTapped()
-                        }
-                    
                 }
             }
         }
