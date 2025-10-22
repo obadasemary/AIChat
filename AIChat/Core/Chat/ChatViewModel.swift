@@ -12,6 +12,7 @@ import SwiftUI
 final class ChatViewModel {
     
     private let chatUseCase: ChatUseCaseProtocol
+    private let router: ChatRouterProtocol
     
     private(set) var chat: ChatModel?
     private(set) var chatMessages: [ChatMessageModel] = []
@@ -23,13 +24,13 @@ final class ChatViewModel {
     
     var textFieldText: String = ""
     var scrollPosition: String?
-    var showAlert: AnyAppAlert?
-    var showChatSettings: AnyAppAlert?
-    var showProfileModal: Bool = false
-    var showPaywall: Bool = false
     
-    init(chatUseCase: ChatUseCaseProtocol) {
+    init(
+        chatUseCase: ChatUseCaseProtocol,
+        router: ChatRouterProtocol
+    ) {
         self.chatUseCase = chatUseCase
+        self.router = router
     }
 }
 
@@ -88,7 +89,7 @@ extension ChatViewModel {
     }
     
     func onProfileModalXmarksTapped() {
-        showProfileModal = false
+        router.dismissModal()
     }
     
     func onMessageDidAppear(message: ChatMessageModel) {
@@ -129,7 +130,7 @@ extension ChatViewModel {
             do {
                 // Show paywall if needed
                 if !chatUseCase.isPremium && chatMessages.count >= 3 {
-                    showPaywall = true
+                    router.showPaywallView()
                     return
                 }
                 
@@ -237,9 +238,9 @@ extension ChatViewModel {
                 isGeneratingResponse = false
                 
             } catch let error {
-                showAlert = AnyAppAlert(error: error)
                 chatUseCase
                     .trackEvent(event: Event.sendMessageFail(error: error))
+                router.showAlert(error: error)
             }
             
             isGeneratingResponse = false
@@ -247,26 +248,26 @@ extension ChatViewModel {
     }
     // swiftlint:enable function_body_length
     
-    func onChatSettingsTapped(
-        onDidDeleteChat: @escaping @MainActor () -> Void
-    ) {
+    func onChatSettingsTapped() {
         chatUseCase.trackEvent(event: Event.chatSettingsTapped)
-        showChatSettings = AnyAppAlert(
-            title: "",
-            subtitle: "What would you like to do?"
-        ) {
-            AnyView(
-                Group {
-                    Button("Report User / Chat", role: .destructive) {
-                        self.onReportChatTapped()
+        router
+            .showAlert(
+                .confirmationDialog,
+                title: "",
+                subtitle: "What would you like to do?"
+            ) {
+                AnyView(
+                    Group {
+                        Button("Report User / Chat", role: .destructive) {
+                            self.onReportChatTapped()
+                        }
+                        
+                        Button("Delete Chat", role: .destructive) {
+                            self.onDeleteChatTapped()
+                        }
                     }
-                    
-                    Button("Delete Chat", role: .destructive) {
-                        self.onDeleteChatTapped(onDidDeleteChat: onDidDeleteChat)
-                    }
-                }
-            )
-        }
+                )
+            }
     }
     
     func onReportChatTapped() {
@@ -277,45 +278,56 @@ extension ChatViewModel {
                 let userId = try chatUseCase.getAuthId()
                 try await chatUseCase.reportChat(chatId: chatId, userId: userId)
                 chatUseCase.trackEvent(event: Event.reportChatSuccess)
-                
-                showAlert = AnyAppAlert(
-                    title: "🚨 Reported! 🚨",
-                    subtitle: "We will look into this as soon as possible. You may leave the chat at any time. Thanks for bringing this to our attention!"
-                )
+                router
+                    .showAlert(
+                        .alert,
+                        title: "🚨 Reported! 🚨",
+                        subtitle: "We will look into this as soon as possible. You may leave the chat at any time. Thanks for bringing this to our attention!",
+                        buttons: nil
+                    )
             } catch {
                 chatUseCase
                     .trackEvent(event: Event.reportChatFail(error: error))
-                showAlert = AnyAppAlert(
-                    title: "Something went wrong",
-                    subtitle: "Please try again later."
-                )
+                router
+                    .showAlert(
+                        .alert,
+                        title: "Something went wrong",
+                        subtitle: "Please try again later.",
+                        buttons: nil
+                    )
             }
         }
     }
     
-    func onDeleteChatTapped(onDidDeleteChat: @escaping () -> Void) {
+    func onDeleteChatTapped() {
         chatUseCase.trackEvent(event: Event.deleteChatStart)
         Task {
             do {
                 let chatId = try getChatId()
                 try await chatUseCase.deleteChat(chatId: chatId)
                 chatUseCase.trackEvent(event: Event.deleteChatSuccess)
-                onDidDeleteChat()
+                router.dismissModal()
             } catch {
                 chatUseCase
                     .trackEvent(event: Event.deleteChatFail(error: error))
-                showAlert = AnyAppAlert(
-                    title: "Something went wrong",
-                    subtitle: "Please try again later."
-                )
+                router
+                    .showAlert(
+                        .alert,
+                        title: "Something went wrong",
+                        subtitle: "Please try again later.",
+                        buttons: nil
+                    )
             }
         }
     }
     
     func onAvatarImageTapped() {
+        guard let avatar else { return }
         chatUseCase
             .trackEvent(event: Event.avatarImageTapped(avatar: avatar))
-        showProfileModal = true
+        router.showProfileModal(avatar: avatar) { [weak self] in
+            self?.onProfileModalXmarksTapped()
+        }
     }
     
     func onDisappear() {

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SUIRouting
 
 @Observable
 @MainActor
@@ -16,7 +17,7 @@ final class PaywallBuilder {
         self.container = container
     }
     
-    func buildPaywallView() -> some View {
+    func buildPaywallView(router: Router) -> some View {
         PaywallView(
             viewModel: PaywallViewModel(
                 paywallUseCase: PaywallUseCase(container: container)

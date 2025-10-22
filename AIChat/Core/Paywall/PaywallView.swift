@@ -70,6 +70,8 @@ struct PaywallView: View {
     let container = DevPreview.shared.container
     let paywallBuilder = PaywallBuilder(container: container)
     
-    return paywallBuilder.buildPaywallView()
-        .previewEnvironment()
+    return RouterView { router in
+        paywallBuilder.buildPaywallView(router: router)
+    }
+    .previewEnvironment()
 }
