@@ -23,6 +23,7 @@ protocol ChatRouterProtocol {
         buttons: (@Sendable () -> AnyView)?
     )
     func dismissModal()
+    func dismissScreen()
 }
 
 @MainActor
@@ -81,6 +82,10 @@ extension ChatRouter: ChatRouterProtocol {
     
     func dismissModal() {
         router.dismissModal()
+    }
+    
+    func dismissScreen() {
+        router.dismissScreen()
     }
 }
 

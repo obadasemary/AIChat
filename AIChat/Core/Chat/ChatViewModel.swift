@@ -307,6 +307,10 @@ extension ChatViewModel {
                 try await chatUseCase.deleteChat(chatId: chatId)
                 chatUseCase.trackEvent(event: Event.deleteChatSuccess)
                 router.dismissModal()
+                Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
+                    router.dismissScreen()
+                }
             } catch {
                 chatUseCase
                     .trackEvent(event: Event.deleteChatFail(error: error))
@@ -526,3 +530,4 @@ private extension ChatViewModel {
         }
     }
 }
+
