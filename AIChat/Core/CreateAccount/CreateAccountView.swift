@@ -69,7 +69,11 @@ struct CreateAccountView: View {
 
 #Preview {
     let builder = CreateAccountBuilder(container: DevPreview.shared.container)
+    let delegate = CreateAccountDelegate()
     
-    return builder.buildCreateAccountView()
-        .previewEnvironment()
+    return RouterView { router in
+        builder
+            .buildCreateAccountView(router: router, delegate: delegate)
+    }
+    .previewEnvironment()
 }

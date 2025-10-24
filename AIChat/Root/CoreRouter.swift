@@ -79,6 +79,30 @@ struct CoreRouter {
         }
     }
     
+    func showRatingsModal(
+        onEnjoyingAppYesPressed: @escaping () -> Void,
+        onEnjoyingAppNoPressed: @escaping () -> Void
+    ) {
+        router
+            .showModal(
+                backgroundColor: Color.black.opacity(0.6),
+                transition: .fade
+            ) {
+                CustomModalView(
+                    title: "Are you enjoying AIChat?",
+                    subtitle: "We'd love to hear your feedback!",
+                    primaryButtonTitle: "Yes",
+                    primaryButtonAction: {
+                        onEnjoyingAppYesPressed()
+                    },
+                    secondaryButtonTitle: "No",
+                    secondaryButtonAction: {
+                        onEnjoyingAppNoPressed()
+                    }
+                )
+            }
+    }
+    
     func dismissScreen() {
         router.dismissScreen()
     }
@@ -168,7 +192,7 @@ struct CoreRouter {
     
     func showSettingsView() {
         router.showScreen(.sheet) { router in
-            builder.settingsView()
+            builder.settingsView(router: router)
         }
     }
     
