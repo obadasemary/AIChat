@@ -10,13 +10,21 @@ import SwiftUI
 struct SettingsView: View {
     
     @State var viewModel: SettingsViewModel
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
-        List {
-            accountSection
-            purchaseSection
-            applicationSection
+        ScrollView {
+            VStack(spacing: 16) {
+                accountSection
+                purchaseSection
+                applicationSection
+                
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
         }
+        .background(Color(uiColor: .systemGroupedBackground))
         .lineLimit(1)
         .minimumScaleFactor(0.5)
         .navigationTitle("Settings")
@@ -24,8 +32,6 @@ struct SettingsView: View {
             viewModel.setAnonymousAccountStatus()
         }
         .screenAppearAnalytics(name: "SettingsView")
-//        NavigationStack {
-//        }
     }
 }
 
@@ -33,135 +39,165 @@ struct SettingsView: View {
 private extension SettingsView {
     
     var accountSection: some View {
-        Section {
-            if viewModel.isAnonymousUser {
-                Text("Save & Backup Account")
-                    .anyButton(.highlight) {
-                        viewModel.onCreateAccountPressed()
-                    }
-            } else {
-                Text("Sign Out")
-                    .anyButton(.highlight) {
-                        viewModel.onSignOutPressed()
-                    }
-            }
-            
-            Text("Delete Account")
-                .foregroundStyle(.red)
-                .anyButton(.highlight) {
-                    viewModel.onDeleteAccountPressed()
-                }
-        } header: {
+        VStack(alignment: .leading, spacing: 8) {
             Text("Account")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 16)
+            
+            VStack(spacing: 0) {
+                if viewModel.isAnonymousUser {
+                    SettingRowButton(
+                        title: "Save & Backup Account",
+                        textColor: .primary,
+                        action: viewModel.onCreateAccountPressed,
+                        isFirst: true,
+                        isLast: false
+                    )
+                } else {
+                    SettingRowButton(
+                        title: "Sign Out",
+                        textColor: .primary,
+                        action: viewModel.onSignOutPressed,
+                        isFirst: true,
+                        isLast: false
+                    )
+                }
+                
+                Divider()
+                    .padding(.leading, 16)
+                
+                SettingRowButton(
+                    title: "Delete Account",
+                    textColor: .red,
+                    action: viewModel.onDeleteAccountPressed,
+                    isFirst: false,
+                    isLast: true
+                )
+            }
+            .background(Color(uiColor: .systemBackground))
+            .cornerRadius(12)
         }
     }
     
     var purchaseSection: some View {
-        Section {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Purchase")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 16)
+            
             HStack(spacing: 8) {
                 Text("Account Status: \(viewModel.isPremium ? "PREMIUM" : "FREE")")
                 
                 Spacer(minLength: 0)
                 
-                if viewModel.isPremium {
+                Button {
+                    viewModel.onManagePurchase()
+                } label: {
                     Text("MANAGE")
                         .badgeButton()
                 }
             }
-            .anyButton(.highlight) {
-                
-            }
-            .disabled(!viewModel.isPremium)
-        } header: {
-            Text("Purchase")
+            .padding(.vertical, 14)
+            .padding(.horizontal, 16)
+            .background(Color(uiColor: .systemBackground))
+            .cornerRadius(12)
         }
     }
     
     var applicationSection: some View {
-        Section {
-            Text("Rate us on the App Store")
-                .foregroundStyle(.blue)
-                .anyButton(.highlight) {
-                    viewModel.onRatingsPressed()
-                }
-            
-            HStack(spacing: 8) {
-                Text("Version")
-                Spacer(minLength: 0)
-                Text(Utilities.appVersion ?? "")
-                    .foregroundStyle(.secondary)
-            }
-            
-            HStack(spacing: 8) {
-                Text("Build Number")
-                Spacer(minLength: 0)
-                Text(Utilities.buildNumber ?? "")
-                    .foregroundStyle(.secondary)
-            }
-            
-            Text("Contact Support")
-                .foregroundStyle(.blue)
-                .anyButton(.highlight) {
-                    viewModel.onContactUsPressed()
-                }
-        } header: {
+        VStack(alignment: .leading, spacing: 8) {
             Text("Application")
-        } footer: {
-            Text(
-                "© \(Calendar.current.component(.year, from: Date()).description) Obada Inc."
-            )
-            .foregroundStyle(.secondary)
-            .baselineOffset(6)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 16)
+            
+            VStack(spacing: 0) {
+                SettingRowButton(
+                    title: "Rate us on the App Store",
+                    textColor: .blue,
+                    action: viewModel.onRatingsPressed,
+                    isFirst: true,
+                    isLast: false
+                )
+                
+                Divider()
+                    .padding(.leading, 16)
+                
+                HStack(spacing: 8) {
+                    Text("Version")
+                    Spacer(minLength: 0)
+                    Text(Utilities.appVersion ?? "")
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.vertical, 14)
+                .padding(.horizontal, 16)
+                .background(Color(uiColor: .systemBackground))
+                
+                Divider()
+                    .padding(.leading, 16)
+                
+                HStack(spacing: 8) {
+                    Text("Build Number")
+                    Spacer(minLength: 0)
+                    Text(Utilities.buildNumber ?? "")
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.vertical, 14)
+                .padding(.horizontal, 16)
+                .background(Color(uiColor: .systemBackground))
+                
+                Divider()
+                    .padding(.leading, 16)
+                
+                SettingRowButton(
+                    title: "Contact Support",
+                    textColor: .blue,
+                    action: viewModel.onContactUsPressed,
+                    isFirst: false,
+                    isLast: true
+                )
+            }
+            .background(Color(uiColor: .systemBackground))
+            .cornerRadius(12)
+            
+            Text("© \(Calendar.current.component(.year, from: Date()).description) Obada Inc.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity)
+                .padding(.top, 4)
         }
     }
 }
 
-private struct RowFormattingViewModifier: ViewModifier {
+private struct SettingRowButton: View {
+    let title: String
+    let textColor: Color
+    let action: () -> Void
+    let isFirst: Bool
+    let isLast: Bool
     
-    @Environment(\.colorScheme) private var colorScheme
-    
-    func body(content: Content) -> some View {
-        content
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.vertical, 12)
-            .padding(.horizontal, 16)
-            .background(colorScheme.backgroundPrimary)
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .foregroundStyle(textColor)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.vertical, 14)
+                .padding(.horizontal, 16)
+        }
+        .buttonStyle(SettingRowButtonStyle())
     }
 }
 
-private struct TapHighlightModifier: ViewModifier {
-    @State private var isPressed = false
-    
-    func body(content: Content) -> some View {
-        content
-            .background(alignment: .center) {
-                if isPressed {
-                    Color.accent.opacity(0.5)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
-            }
-            .animation(.smooth, value: isPressed)
-            .simultaneousGesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged { _ in
-                        isPressed = true
-                    }
-                    .onEnded { _ in
-                        isPressed = false
-                    }
-            )
+private struct SettingRowButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .background(configuration.isPressed ? Color.accent.opacity(0.5) : Color(uiColor: .systemBackground))
+            .animation(.smooth, value: configuration.isPressed)
     }
 }
 
-fileprivate extension View {
-    func rowFormatting() -> some View {
-        modifier(RowFormattingViewModifier())
-    }
-    
-    func tappableWithHighlight() -> some View {
-        modifier(TapHighlightModifier())
-    }
-}
 
 #Preview("No Auth") {
     let container = DevPreview.shared.container
