@@ -36,7 +36,7 @@ extension WelcomeRouter: WelcomeRouterProtocol {
     ) {
         router.showScreen(.sheet) { router in
             createAccountBuilder
-                .buildCreateAccountView(delegate: delegate)
+                .buildCreateAccountView(router: router, delegate: delegate)
                 .presentationDetents([.medium])
                 .onDisappear {
                     onDisappear?()

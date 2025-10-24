@@ -28,7 +28,7 @@ extension ProfileRouter: ProfileRouterProtocol {
     
     func showSettingsView() {
         router.showScreen(.sheet) { router in
-            settingsBuilder.buildSettingsView()
+            settingsBuilder.buildSettingsView(router: router)
         }
     }
     

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SUIRouting
 
 @Observable
 @MainActor
@@ -17,6 +18,7 @@ final class CreateAccountBuilder {
     }
 
     func buildCreateAccountView(
+        router: Router,
         delegate: CreateAccountDelegate = CreateAccountDelegate()
     ) -> some View {
         CreateAccountView(

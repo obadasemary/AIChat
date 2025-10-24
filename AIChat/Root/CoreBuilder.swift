@@ -201,10 +201,11 @@ class CoreBuilder {
         )
     }
     
-    func settingsView() -> some View {
+    func settingsView(router: Router) -> some View {
         SettingsView(
             viewModel: SettingsViewModel(
-                settingsUseCase: SettingsUseCase(container: container)
+                settingsUseCase: SettingsUseCase(container: container),
+                router: CoreRouter(router: router, builder: self)
             )
         )
     }

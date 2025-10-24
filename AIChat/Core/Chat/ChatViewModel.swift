@@ -308,7 +308,7 @@ extension ChatViewModel {
                 chatUseCase.trackEvent(event: Event.deleteChatSuccess)
                 router.dismissModal()
                 Task { @MainActor in
-                    try? await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
+                    try? await Task.sleep(for: .seconds(3))
                     router.dismissScreen()
                 }
             } catch {

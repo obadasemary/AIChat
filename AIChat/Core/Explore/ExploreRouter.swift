@@ -69,7 +69,8 @@ extension ExploreRouter: ExploreRouterProtocol {
         onDisappear: (() -> Void)?
     ) {
         router.showScreen(.sheet) { router in
-            createAccountBuilder.buildCreateAccountView(delegate: delegate)
+            createAccountBuilder
+                .buildCreateAccountView(router: router, delegate: delegate)
                 .presentationDetents([.medium])
                 .onDisappear {
                     onDisappear?()
