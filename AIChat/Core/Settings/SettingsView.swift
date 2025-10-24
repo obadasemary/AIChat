@@ -9,83 +9,48 @@ import SwiftUI
 
 struct SettingsView: View {
     
-    @Environment(CreateAccountBuilder.self) private var createAccountBuilder
     @State var viewModel: SettingsViewModel
     
-    @Environment(\.dismiss) private var dismiss
-    
     var body: some View {
-        NavigationStack {
-            List {
-                accountSection
-                purchaseSection
-                applicationSection
-            }
-            .lineLimit(1)
-            .minimumScaleFactor(0.5)
-            .navigationTitle("Settings")
-            .sheet(
-                isPresented: $viewModel.showCreateAccountView,
-                onDismiss: {
-                    viewModel.setAnonymousAccountStatus()
-                },
-                content: {
-                    createAccountBuilder.buildCreateAccountView()
-                        .presentationDetents([.medium])
-                }
-            )
-            .onAppear {
-                viewModel.setAnonymousAccountStatus()
-            }
-            .showCustomAlert(alert: $viewModel.showAlert)
-            .screenAppearAnalytics(name: "SettingsView")
-            .showModal(showModal: $viewModel.showRatingsModal) {
-                ratingsModal
-            }
+        List {
+            accountSection
+            purchaseSection
+            applicationSection
         }
+        .lineLimit(1)
+        .minimumScaleFactor(0.5)
+        .navigationTitle("Settings")
+        .onAppear {
+            viewModel.setAnonymousAccountStatus()
+        }
+        .screenAppearAnalytics(name: "SettingsView")
+//        NavigationStack {
+//        }
     }
 }
 
 // MARK: - SectionViews
 private extension SettingsView {
     
-    var ratingsModal: some View {
-        CustomModalView(
-            title: "Are you enjoying AIChat?",
-            subtitle: "We'd love to hear your feedback!",
-            primaryButtonTitle: "Yes",
-            primaryButtonAction: {
-                viewModel.onEnjoyingAppYesPressed()
-            },
-            secondaryButtonTitle: "No",
-            secondaryButtonAction: {
-                viewModel.onEnjoyingAppNoPressed()
-            }
-        )
-    }
-    
     var accountSection: some View {
         Section {
             if viewModel.isAnonymousUser {
                 Text("Save & Backup Account")
+                    .contentShape(Rectangle())
                     .anyButton(.highlight) {
                         viewModel.onCreateAccountPressed()
                     }
             } else {
                 Text("Sign Out")
                     .anyButton(.highlight) {
-                        viewModel.onSignOutPressed {
-                            await dismissScreen()
-                        }
+                        viewModel.onSignOutPressed()
                     }
             }
             
             Text("Delete Account")
                 .foregroundStyle(.red)
                 .anyButton(.highlight) {
-                    viewModel.onDeleteAccountPressed {
-                        await dismissScreen()
-                    }
+                    viewModel.onDeleteAccountPressed()
                 }
         } header: {
             Text("Account")
@@ -152,15 +117,6 @@ private extension SettingsView {
     }
 }
 
-// MARK: - Action
-private extension SettingsView {
-    
-    func dismissScreen() async {
-        dismiss()
-        try? await Task.sleep(for: .seconds(1))
-    }
-}
-
 private struct RowFormattingViewModifier: ViewModifier {
     
     @Environment(\.colorScheme) private var colorScheme
@@ -193,8 +149,10 @@ fileprivate extension View {
     
     let settingsBuilder = SettingsBuilder(container: container)
     
-    return settingsBuilder.buildSettingsView()
-        .previewEnvironment(isSignedIn: false)
+    return RouterView { router in
+        settingsBuilder.buildSettingsView(router: router)
+    }
+    .previewEnvironment(isSignedIn: false)
 }
 
 #Preview("Anonymous") {
@@ -216,8 +174,10 @@ fileprivate extension View {
     
     let settingsBuilder = SettingsBuilder(container: container)
     
-    return settingsBuilder.buildSettingsView()
-        .previewEnvironment(isSignedIn: false)
+    return RouterView { router in
+        settingsBuilder.buildSettingsView(router: router)
+    }
+    .previewEnvironment(isSignedIn: false)
 }
 
 #Preview("Not Anonymous") {
@@ -239,6 +199,8 @@ fileprivate extension View {
     
     let settingsBuilder = SettingsBuilder(container: container)
     
-    return settingsBuilder.buildSettingsView()
-        .previewEnvironment(isSignedIn: false)
+    return RouterView { router in
+        settingsBuilder.buildSettingsView(router: router)
+    }
+    .previewEnvironment(isSignedIn: false)
 }
