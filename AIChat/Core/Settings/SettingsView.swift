@@ -36,7 +36,6 @@ private extension SettingsView {
         Section {
             if viewModel.isAnonymousUser {
                 Text("Save & Backup Account")
-                    .contentShape(Rectangle())
                     .anyButton(.highlight) {
                         viewModel.onCreateAccountPressed()
                     }
@@ -130,9 +129,37 @@ private struct RowFormattingViewModifier: ViewModifier {
     }
 }
 
+private struct TapHighlightModifier: ViewModifier {
+    @State private var isPressed = false
+    
+    func body(content: Content) -> some View {
+        content
+            .background(alignment: .center) {
+                if isPressed {
+                    Color.accent.opacity(0.5)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+            }
+            .animation(.smooth, value: isPressed)
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { _ in
+                        isPressed = true
+                    }
+                    .onEnded { _ in
+                        isPressed = false
+                    }
+            )
+    }
+}
+
 fileprivate extension View {
     func rowFormatting() -> some View {
         modifier(RowFormattingViewModifier())
+    }
+    
+    func tappableWithHighlight() -> some View {
+        modifier(TapHighlightModifier())
     }
 }
 
