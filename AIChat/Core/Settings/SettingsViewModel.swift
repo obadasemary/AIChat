@@ -115,7 +115,7 @@ extension SettingsViewModel {
         let delegate = CreateAccountDelegate()
         router.showCreateAccountView(delegate: delegate) { [weak self] in
             self?.setAnonymousAccountStatus()
-//            self?.router.dismissModal()
+            self?.router.dismissModal()
         }
     }
     
@@ -153,6 +153,10 @@ extension SettingsViewModel {
                 onEnjoyingAppYesPressed: onEnjoyingAppYesPressed,
                 onEnjoyingAppNoPressed: onEnjoyingAppNoPressed
             )
+    }
+    
+    func onManagePurchase() {
+        isPremium.toggle()
     }
 }
 
