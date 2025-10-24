@@ -13,16 +13,17 @@ import SwiftfulUtilities
 class SettingsViewModel {
     
     private let settingsUseCase: SettingsUseCaseProtocol
+    private let router: SettingsRouterProtocol
     
     private(set) var isPremium: Bool = false
     private(set) var isAnonymousUser: Bool = true
     
-    var showCreateAccountView: Bool = false
-    var showAlert: AnyAppAlert?
-    var showRatingsModal: Bool = false
-    
-    init(settingsUseCase: SettingsUseCaseProtocol) {
+    init(
+        settingsUseCase: SettingsUseCaseProtocol,
+        router: SettingsRouterProtocol
+    ) {
         self.settingsUseCase = settingsUseCase
+        self.router = router
     }
 }
 
@@ -31,13 +32,15 @@ extension SettingsViewModel {
     
     func setAnonymousAccountStatus() {
         isAnonymousUser = settingsUseCase.auth?.isAnonymous == true
+//        try? await Task.sleep(for: .seconds(1))
+        router.dismissModal()
     }
 }
 
 // MARK: - Action
 extension SettingsViewModel {
     
-    func onSignOutPressed(onDismiss: @escaping () async -> Void) {
+    func onSignOutPressed() {
         settingsUseCase.trackEvent(event: Event.signOutStart)
         
         Task {
@@ -48,38 +51,37 @@ extension SettingsViewModel {
                         event: Event.signOutSuccess
                     )
                 
-                await onDismiss()
-                settingsUseCase.updateAppState(showTabBarView: false)
+                await dismissScreen()
             } catch {
-                showAlert = AnyAppAlert(error: error)
                 settingsUseCase
                     .trackEvent(
                         event: Event.signOutFail(
                             error: error
                         )
                     )
+                router.showAlert(error: error)
             }
         }
     }
     
-    func onDeleteAccountPressed(
-        onDismiss: @escaping @MainActor () async -> Void
-    ) {
+    func onDeleteAccountPressed() {
         settingsUseCase.trackEvent(event: Event.deleteAccountStart)
-        showAlert = AnyAppAlert(
-            title: "Delete Account?",
-            subtitle: "This action is permanent and cannot be undone. Your data will be deleted from our servers and you will be logged out forever.",
-            buttons: {
-                AnyView(
-                    Button("Delete Account", role: .destructive) {
-                        self.onDeleteAccountConfirmationPressed(onDismiss: onDismiss)
-                    }
-                )
-            }
-        )
+        router
+            .showAlert(
+                .alert,
+                title: "Delete Account?",
+                subtitle: "This action is permanent and cannot be undone. Your data will be deleted from our servers and you will be logged out forever.",
+                buttons: {
+                    AnyView(
+                        Button("Delete Account", role: .destructive) {
+                            self.onDeleteAccountConfirmationPressed()
+                        }
+                    )
+                }
+            )
     }
     
-    func onDeleteAccountConfirmationPressed(onDismiss: @escaping () async -> Void) {
+    func onDeleteAccountConfirmationPressed() {
         settingsUseCase.trackEvent(event: Event.deleteAccountStartConfirm)
         
         Task {
@@ -91,26 +93,30 @@ extension SettingsViewModel {
                         event: Event.deleteAccountSuccess
                     )
                 
-                await onDismiss()
-                settingsUseCase.updateAppState(showTabBarView: false)
+                await dismissScreen()
             } catch {
-                showAlert = AnyAppAlert(error: error)
                 settingsUseCase
                     .trackEvent(
                         event: Event.deleteAccountFail(
                             error: error
                         )
                     )
+                router.showAlert(error: error)
             }
         }
     }
     
     func onCreateAccountPressed() {
-        showCreateAccountView = true
         settingsUseCase
             .trackEvent(
                 event: Event.createAccountPressed
             )
+        
+        let delegate = CreateAccountDelegate()
+        router.showCreateAccountView(delegate: delegate) { [weak self] in
+            self?.setAnonymousAccountStatus()
+//            self?.router.dismissModal()
+        }
     }
     
     func onContactUsPressed() {
@@ -130,18 +136,33 @@ extension SettingsViewModel {
     
     func onRatingsPressed() {
         settingsUseCase.trackEvent(event: Event.ratingPressed)
-        showRatingsModal = true
+
+        func onEnjoyingAppYesPressed() {
+            settingsUseCase.trackEvent(event: Event.ratingYesPressed)
+            router.dismissModal()
+            AppStoreRatingsHelper.requestRatingsReview()
+        }
+        
+        func onEnjoyingAppNoPressed() {
+            settingsUseCase.trackEvent(event: Event.ratingNoPressed)
+            router.dismissModal()
+        }
+        
+        router
+            .showRatingsModal(
+                onEnjoyingAppYesPressed: onEnjoyingAppYesPressed,
+                onEnjoyingAppNoPressed: onEnjoyingAppNoPressed
+            )
     }
+}
+
+// MARK: - Helper
+private extension SettingsViewModel {
     
-    func onEnjoyingAppYesPressed() {
-        settingsUseCase.trackEvent(event: Event.ratingYesPressed)
-        showRatingsModal = false
-        AppStoreRatingsHelper.requestRatingsReview()
-    }
-    
-    func onEnjoyingAppNoPressed() {
-        settingsUseCase.trackEvent(event: Event.ratingNoPressed)
-        showRatingsModal = false
+    func dismissScreen() async {
+        router.dismissScreen()
+        try? await Task.sleep(for: .seconds(1))
+        settingsUseCase.updateAppState(showTabBarView: false)
     }
 }
 
