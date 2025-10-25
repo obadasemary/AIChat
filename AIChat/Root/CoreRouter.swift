@@ -71,7 +71,7 @@ struct CoreRouter {
         onDisappear: (() -> Void)?
     ) {
         router.showScreen(.sheet) { router in
-            builder.createAccountView(delegate: delegate)
+            builder.createAccountView(router: router, delegate: delegate)
                 .presentationDetents([.medium])
                 .onDisappear {
                     onDisappear?()
