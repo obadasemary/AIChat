@@ -12,9 +12,14 @@ import Foundation
 final class CreateAccountViewModel {
     
     private let createAccountUseCase: CreateAccountUseCaseProtocol
+    private let router: CreateAccountRouterProtocol
     
-    init(createAccountUseCase: CreateAccountUseCaseProtocol) {
+    init(
+        createAccountUseCase: CreateAccountUseCaseProtocol,
+        router: CreateAccountRouterProtocol
+    ) {
         self.createAccountUseCase = createAccountUseCase
+        self.router = router
     }
 }
 
@@ -22,7 +27,7 @@ final class CreateAccountViewModel {
 extension CreateAccountViewModel {
     
     func onSignInWithAppleTapped(
-        onDidSignInSuccessfully: @escaping (_ isNewUser: Bool) -> Void
+        delegate: CreateAccountDelegate
     ) {
         createAccountUseCase.trackEvent(event: Event.appleAuthStart)
         
@@ -45,7 +50,9 @@ extension CreateAccountViewModel {
                         )
                     )
                 
-                onDidSignInSuccessfully(result.isNewUser)
+//                onDidSignInSuccessfully(result.isNewUser)
+                delegate.onDidSignIn?(result.isNewUser)
+                router.dismissScreen()
             } catch {
                 createAccountUseCase.trackEvent(event: Event.appleAuthFail(error: error))
             }
@@ -53,7 +60,7 @@ extension CreateAccountViewModel {
     }
     
     func onSignInWithGoogleTapped(
-        onDidSignInSuccessfully: @escaping (_ isNewUser: Bool) -> Void
+        delegate: CreateAccountDelegate
     ) {
         createAccountUseCase.trackEvent(event: Event.googleAuthStart)
         
@@ -76,7 +83,8 @@ extension CreateAccountViewModel {
                         )
                     )
                 
-                onDidSignInSuccessfully(result.isNewUser)
+                delegate.onDidSignIn?(result.isNewUser)
+                router.dismissScreen()
             } catch {
                 createAccountUseCase.trackEvent(event: Event.googleAuthFail(error: error))
             }
