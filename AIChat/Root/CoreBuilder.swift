@@ -114,13 +114,15 @@ class CoreBuilder {
     }
     
     func createAccountView(
+        router: Router,
         delegate: CreateAccountDelegate = CreateAccountDelegate()
     ) -> some View {
         CreateAccountView(
             viewModel: CreateAccountViewModel(
                 createAccountUseCase: CreateAccountUseCase(
                     container: container
-                )
+                ),
+                router: CoreRouter(router: router, builder: self)
             ),
             delegate: delegate
         )
