@@ -32,8 +32,6 @@ extension SettingsViewModel {
     
     func setAnonymousAccountStatus() {
         isAnonymousUser = settingsUseCase.auth?.isAnonymous == true
-//        try? await Task.sleep(for: .seconds(1))
-        router.dismissModal()
     }
 }
 
@@ -115,7 +113,6 @@ extension SettingsViewModel {
         let delegate = CreateAccountDelegate()
         router.showCreateAccountView(delegate: delegate) { [weak self] in
             self?.setAnonymousAccountStatus()
-            self?.router.dismissModal()
         }
     }
     
