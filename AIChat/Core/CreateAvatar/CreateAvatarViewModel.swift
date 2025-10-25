@@ -23,7 +23,6 @@ final class CreateAvatarViewModel {
     var characterLocation: CharacterLocation = .default
     
     var avatarName: String = ""
-    var showAlert: AnyAppAlert?
     
     init(
         createAvatarUseCase: CreateAvatarUseCaseProtocol,
