@@ -11,7 +11,6 @@ import GoogleSignInSwift
 struct CreateAccountView: View {
     
     @State var viewModel: CreateAccountViewModel
-    @Environment(\.dismiss) private var dismiss
     var delegate: CreateAccountDelegate = CreateAccountDelegate()
     
     var body: some View {
@@ -37,10 +36,7 @@ struct CreateAccountView: View {
             .frame(maxWidth: 375)
             .frame(height: 55)
             .anyButton(.press) {
-                viewModel.onSignInWithAppleTapped { isNewUser in
-                    delegate.onDidSignIn?(isNewUser)
-                    dismiss()
-                }
+                viewModel.onSignInWithAppleTapped(delegate: delegate)
             }
             .frame(maxWidth: .infinity, alignment: .center)
             
@@ -51,10 +47,7 @@ struct CreateAccountView: View {
                     state: .normal
                 )
             ) {
-                viewModel.onSignInWithGoogleTapped { isNewUser in
-                    delegate.onDidSignIn?(isNewUser)
-                    dismiss()
-                }
+                viewModel.onSignInWithGoogleTapped(delegate: delegate)
             }
             .frame(maxWidth: 375)
             .frame(maxWidth: .infinity, alignment: .center)
