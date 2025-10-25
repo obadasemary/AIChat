@@ -23,7 +23,10 @@ final class CreateAccountBuilder {
     ) -> some View {
         CreateAccountView(
             viewModel: CreateAccountViewModel(
-                createAccountUseCase: CreateAccountUseCase(container: container)
+                createAccountUseCase: CreateAccountUseCase(
+                    container: container
+                ),
+                router: CreateAccountRouter(router: router)
             ),
             delegate: delegate
         )
