@@ -17,7 +17,10 @@ final class SettingsBuilder {
         self.container = container
     }
     
-    func buildSettingsView(router: Router) -> some View {
+    func buildSettingsView(
+        router: Router,
+        onSignedIn: @escaping () -> Void = {}
+    ) -> some View {
         SettingsView(
             viewModel: SettingsViewModel(
                 settingsUseCase: SettingsUseCase(container: container),
@@ -26,7 +29,8 @@ final class SettingsBuilder {
                     createAccountBuilder: CreateAccountBuilder(
                         container: container
                     )
-                )
+                ),
+                onSignedIn: onSignedIn
             )
         )
     }

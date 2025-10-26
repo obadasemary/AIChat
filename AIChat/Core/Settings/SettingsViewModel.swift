@@ -14,16 +14,19 @@ class SettingsViewModel {
     
     private let settingsUseCase: SettingsUseCaseProtocol
     private let router: SettingsRouterProtocol
+    private let onSignedIn: (() -> Void)?
     
     private(set) var isPremium: Bool = false
     private(set) var isAnonymousUser: Bool = true
     
     init(
         settingsUseCase: SettingsUseCaseProtocol,
-        router: SettingsRouterProtocol
+        router: SettingsRouterProtocol,
+        onSignedIn: (() -> Void)? = nil
     ) {
         self.settingsUseCase = settingsUseCase
         self.router = router
+        self.onSignedIn = onSignedIn
     }
 }
 
@@ -112,7 +115,12 @@ extension SettingsViewModel {
                 event: Event.createAccountPressed
             )
         
-        let delegate = CreateAccountDelegate()
+        var delegate = CreateAccountDelegate()
+        delegate.onDidSignIn = { [weak self] _ in
+            guard let self else { return }
+            self.setAnonymousAccountStatus()
+            self.onSignedIn?()
+        }
         router.showCreateAccountView(delegate: delegate) { [weak self] in
             self?.setAnonymousAccountStatus()
         }

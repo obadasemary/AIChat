@@ -203,11 +203,15 @@ class CoreBuilder {
         )
     }
     
-    func settingsView(router: Router) -> some View {
+    func settingsView(
+        router: Router,
+        onSignedIn: @escaping () -> Void = {}
+    ) -> some View {
         SettingsView(
             viewModel: SettingsViewModel(
                 settingsUseCase: SettingsUseCase(container: container),
-                router: CoreRouter(router: router, builder: self)
+                router: CoreRouter(router: router, builder: self),
+                onSignedIn: onSignedIn
             )
         )
     }

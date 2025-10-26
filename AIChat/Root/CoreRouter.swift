@@ -190,9 +190,16 @@ struct CoreRouter {
         }
     }
     
-    func showSettingsView(onDisappear: @escaping () -> Void) {
+    func showSettingsView(
+        onSignedIn: @escaping () -> Void,
+        onDisappear: @escaping () -> Void
+    ) {
         router.showScreen(.sheet) { router in
-            builder.settingsView(router: router)
+            builder
+                .settingsView(
+                    router: router,
+                    onSignedIn: onSignedIn
+                )
                 .onDisappear(perform: onDisappear)
         }
     }
