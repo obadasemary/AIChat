@@ -18,10 +18,12 @@ final class MockProfileRouter: ProfileRouterProtocol {
     private(set) var showSimpleAlertCalled = false
     private(set) var showSimpleAlertTitle: String?
     private(set) var showSimpleAlertSubtitle: String?
+    private(set) var settingsOnDisappearCallback: (() -> Void)?
     private(set) var createAvatarOnDisappearCallback: (() -> Void)?
 
-    func showSettingsView() {
+    func showSettingsView(onDisappear: @escaping () -> Void) {
         showSettingsViewCalled = true
+        settingsOnDisappearCallback = onDisappear
     }
 
     func showCreateAvatarView(onDisappear: @escaping () -> Void) {
