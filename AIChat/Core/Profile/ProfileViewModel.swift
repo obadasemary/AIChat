@@ -61,15 +61,22 @@ extension ProfileViewModel {
     
     func onSettingsButtonPressed() {
         profileUseCase.trackEvent(event: Event.settingsPressed)
-        let wasAuthenticated = isAuthenticated(user: profileUseCase.currentUser)
-        router.showSettingsView {
-            Task { [weak self] in
+        router.showSettingsView(
+            onSignedIn: { [weak self] in
+                Task { [weak self] in
+                    guard let self else { return }
+                    await self.loadData()
+                }
+            },
+            onDisappear: { [weak self] in
                 guard let self else { return }
-                let isAuthenticated = self.isAuthenticated(user: self.profileUseCase.currentUser)
-                guard isAuthenticated, wasAuthenticated == false else { return }
-                await self.loadData()
+                self.currentUser = self.profileUseCase.currentUser
+                if self.currentUser == nil {
+                    self.myAvatars = []
+                    self.isLoading = false
+                }
             }
-        }
+        )
     }
     
     func onNewAvatarButtonPressed() {
@@ -131,13 +138,6 @@ extension ProfileViewModel {
     }
 }
 
-private extension ProfileViewModel {
-    func isAuthenticated(user: UserModel?) -> Bool {
-        guard let user else { return false }
-        return user.isAnonymous == false
-    }
-}
-
 // MARK: - Event
 extension ProfileViewModel {
     
@@ -191,3 +191,4 @@ extension ProfileViewModel {
         }
     }
 }
+

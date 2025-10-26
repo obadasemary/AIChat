@@ -224,6 +224,32 @@ struct ProfileViewTests {
         )
     }
     
+    @Test("Settings sign-in reloads profile data")
+    func testSettingsSignInReloadsProfileData() async throws {
+        let useCase = MutableProfileUseCase()
+        useCase.currentUser = nil
+        useCase.avatars = AvatarModel.mocks
+        
+        let router = MockProfileRouter()
+        let viewModel = ProfileViewModel(
+            profileUseCase: useCase,
+            router: router
+        )
+        
+        viewModel.onSettingsButtonPressed()
+        
+        #expect(router.showSettingsViewCalled == true)
+        #expect(viewModel.myAvatars.isEmpty)
+        
+        useCase.currentUser = UserModel.mock
+        router.settingsOnSignedInCallback?()
+        
+        try await Task.sleep(nanoseconds: 10_000_000)
+        
+        #expect(viewModel.currentUser?.userId == useCase.currentUser?.userId)
+        #expect(viewModel.myAvatars.count == useCase.avatars.count)
+    }
+    
     
     @Test("onNewAvatarButtonPressed")
     func testOnNewAvatarButtonPressed() async throws {
@@ -415,5 +441,29 @@ struct ProfileViewTests {
                         .eventName
                 }
         )
+    }
+
+    @MainActor
+    private final class MutableProfileUseCase: ProfileUseCaseProtocol {
+        var currentUser: UserModel?
+        var avatars: [AvatarModel] = []
+        var trackedEvents: [LoggableEvent] = []
+        
+        func getAuthId() throws -> String {
+            guard let currentUser else {
+                throw URLError(.userAuthenticationRequired)
+            }
+            return currentUser.userId
+        }
+        
+        func getAvatarsForAuthor(userId: String) async throws -> [AvatarModel] {
+            avatars
+        }
+        
+        func removeAuthorIdFromAvatar(avatarId: String) async throws {}
+        
+        func trackEvent(event: any LoggableEvent) {
+            trackedEvents.append(event)
+        }
     }
 }
