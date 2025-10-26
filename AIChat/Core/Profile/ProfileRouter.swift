@@ -10,7 +10,7 @@ import SUIRouting
 
 @MainActor
 protocol ProfileRouterProtocol {
-    func showSettingsView()
+    func showSettingsView(onDisappear: @escaping () -> Void)
     func showCreateAvatarView(onDisappear: @escaping () -> Void)
     func showChatView(delegate: ChatDelegate)
     func showSimpleAlert(title: String, subtitle: String?)
@@ -26,9 +26,10 @@ struct ProfileRouter {
     
 extension ProfileRouter: ProfileRouterProtocol {
     
-    func showSettingsView() {
+    func showSettingsView(onDisappear: @escaping () -> Void) {
         router.showScreen(.sheet) { router in
             settingsBuilder.buildSettingsView(router: router)
+                .onDisappear(perform: onDisappear)
         }
     }
     

@@ -307,9 +307,10 @@ extension ChatViewModel {
                 try await chatUseCase.deleteChat(chatId: chatId)
                 chatUseCase.trackEvent(event: Event.deleteChatSuccess)
                 router.dismissModal()
-                Task { @MainActor in
+                Task { @MainActor [weak self] in
                     try? await Task.sleep(for: .seconds(3))
-                    router.dismissScreen()
+                    guard let self else { return }
+                    self.router.dismissScreen()
                 }
             } catch {
                 chatUseCase
