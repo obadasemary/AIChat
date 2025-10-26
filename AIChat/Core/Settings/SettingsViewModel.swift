@@ -41,23 +41,24 @@ extension SettingsViewModel {
     func onSignOutPressed() {
         settingsUseCase.trackEvent(event: Event.signOutStart)
         
-        Task {
+        Task { [weak self] in
+            guard let self else { return }
             do {
-                try settingsUseCase.signOut()
-                settingsUseCase
+                try self.settingsUseCase.signOut()
+                self.settingsUseCase
                     .trackEvent(
                         event: Event.signOutSuccess
                     )
                 
-                await dismissScreen()
+                await self.dismissScreen()
             } catch {
-                settingsUseCase
+                self.settingsUseCase
                     .trackEvent(
                         event: Event.signOutFail(
                             error: error
                         )
                     )
-                router.showAlert(error: error)
+                self.router.showAlert(error: error)
             }
         }
     }
@@ -82,24 +83,25 @@ extension SettingsViewModel {
     func onDeleteAccountConfirmationPressed() {
         settingsUseCase.trackEvent(event: Event.deleteAccountStartConfirm)
         
-        Task {
+        Task { [weak self] in
+            guard let self else { return }
             do {
-                try await settingsUseCase.deleteAccount()
+                try await self.settingsUseCase.deleteAccount()
                 
-                settingsUseCase
+                self.settingsUseCase
                     .trackEvent(
                         event: Event.deleteAccountSuccess
                     )
                 
-                await dismissScreen()
+                await self.dismissScreen()
             } catch {
-                settingsUseCase
+                self.settingsUseCase
                     .trackEvent(
                         event: Event.deleteAccountFail(
                             error: error
                         )
                     )
-                router.showAlert(error: error)
+                self.router.showAlert(error: error)
             }
         }
     }
