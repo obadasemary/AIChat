@@ -45,28 +45,29 @@ extension CreateAvatarViewModel {
     func onGenerateImageTapped() {
         isGenerating = true
         createAvatarUseCase.trackEvent(event: Event.generateImageStart)
-        Task {
+        Task { [weak self] in
+            guard let self else { return }
             do {
                 let avatarDescriptionBuilder = AvatarDescriptionBuilder(
-                    characterOption: characterOption,
-                    characterAction: characterAction,
-                    characterLocation: characterLocation
+                    characterOption: self.characterOption,
+                    characterAction: self.characterAction,
+                    characterLocation: self.characterLocation
                 )
                 
-                generatedImage = try await createAvatarUseCase.generateImage()
+                self.generatedImage = try await self.createAvatarUseCase.generateImage()
 //                let prompt = avatarDescriptionBuilder.characterDescription
 //                generatedImage = try await createAvatarUseCase.generateImage(input: prompt)
-                createAvatarUseCase
+                self.createAvatarUseCase
                     .trackEvent(
                         event: Event.generateImageSuccess(
                             avatarDescriptionBuilder: avatarDescriptionBuilder
                         )
                     )
             } catch {
-                createAvatarUseCase
+                self.createAvatarUseCase
                     .trackEvent(event: Event.generateImageFail(error: error))
             }
-            isGenerating = false
+            self.isGenerating = false
         }
     }
     // swiftlint:enable force_unwrapping
@@ -75,34 +76,35 @@ extension CreateAvatarViewModel {
         createAvatarUseCase.trackEvent(event: Event.saveAvatarStart)
         guard let generatedImage else { return }
         isSaving = true
-        Task {
+        Task { [weak self] in
+            guard let self else { return }
             do {
-                try TextValidationHelper.checkIfTextIsValid(text: avatarName)
-                let userId = try createAvatarUseCase.getAuthId()
+                try TextValidationHelper.checkIfTextIsValid(text: self.avatarName)
+                let userId = try self.createAvatarUseCase.getAuthId()
                 
                 let avatar = AvatarModel.newAvatar(
-                    name: avatarName,
-                    option: characterOption,
-                    action: characterAction,
-                    location: characterLocation,
+                    name: self.avatarName,
+                    option: self.characterOption,
+                    action: self.characterAction,
+                    location: self.characterLocation,
                     authorId: userId
                 )
                 
-                try await createAvatarUseCase
+                try await self.createAvatarUseCase
                     .createAvatar(avatar: avatar, image: generatedImage)
-                createAvatarUseCase
+                self.createAvatarUseCase
                     .trackEvent(
                         event: Event.saveAvatarSuccess(
                             avatar: avatar
                         )
                     )
                 
-                isSaving = false
-                router.dismissScreen()
+                self.isSaving = false
+                self.router.dismissScreen()
             } catch {
-                isSaving = false
-                router.showAlert(error: error)
-                createAvatarUseCase
+                self.isSaving = false
+                self.router.showAlert(error: error)
+                self.createAvatarUseCase
                     .trackEvent(
                         event: Event.saveAvatarFail(
                             error: error

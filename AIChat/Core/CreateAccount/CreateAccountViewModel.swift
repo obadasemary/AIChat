@@ -31,18 +31,19 @@ extension CreateAccountViewModel {
     ) {
         createAccountUseCase.trackEvent(event: Event.appleAuthStart)
         
-        Task {
+        Task { [weak self] in
+            guard let self else { return }
             do {
-                let result = try await createAccountUseCase.signInWithApple()
-                createAccountUseCase.trackEvent(
+                let result = try await self.createAccountUseCase.signInWithApple()
+                self.createAccountUseCase.trackEvent(
                     event: Event.appleAuthSuccess(
                         user: result.user,
                         isNewUser: result.isNewUser
                     )
                 )
-                try await createAccountUseCase
+                try await self.createAccountUseCase
                     .logIn(auth: result.user, isNewUser: result.isNewUser)
-                createAccountUseCase
+                self.createAccountUseCase
                     .trackEvent(
                         event: Event.appleAuthLoginSuccess(
                             user: result.user,
@@ -52,9 +53,9 @@ extension CreateAccountViewModel {
                 
 //                onDidSignInSuccessfully(result.isNewUser)
                 delegate.onDidSignIn?(result.isNewUser)
-                router.dismissScreen()
+                self.router.dismissScreen()
             } catch {
-                createAccountUseCase.trackEvent(event: Event.appleAuthFail(error: error))
+                self.createAccountUseCase.trackEvent(event: Event.appleAuthFail(error: error))
             }
         }
     }
@@ -64,18 +65,19 @@ extension CreateAccountViewModel {
     ) {
         createAccountUseCase.trackEvent(event: Event.googleAuthStart)
         
-        Task {
+        Task { [weak self] in
+            guard let self else { return }
             do {
-                let result = try await createAccountUseCase.signInWithGoogle()
-                createAccountUseCase.trackEvent(
+                let result = try await self.createAccountUseCase.signInWithGoogle()
+                self.createAccountUseCase.trackEvent(
                     event: Event.googleAuthSuccess(
                         user: result.user,
                         isNewUser: result.isNewUser
                     )
                 )
-                try await createAccountUseCase
+                try await self.createAccountUseCase
                     .logIn(auth: result.user, isNewUser: result.isNewUser)
-                createAccountUseCase
+                self.createAccountUseCase
                     .trackEvent(
                         event: Event.googleAuthLoginSuccess(
                             user: result.user,
@@ -84,9 +86,9 @@ extension CreateAccountViewModel {
                     )
                 
                 delegate.onDidSignIn?(result.isNewUser)
-                router.dismissScreen()
+                self.router.dismissScreen()
             } catch {
-                createAccountUseCase.trackEvent(event: Event.googleAuthFail(error: error))
+                self.createAccountUseCase.trackEvent(event: Event.googleAuthFail(error: error))
             }
         }
     }
