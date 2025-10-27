@@ -140,17 +140,18 @@ extension ExploreViewModel {
     }
     
     func showCreateAccountScreenIfNeeded() {
-        Task {
+        Task { [weak self] in
+            guard let self else { return }
             try? await Task.sleep(for: .seconds(1))
             
             guard
-                exploreUseCase.auth?.isAnonymous == true &&
-                    exploreUseCase.createAccountTest == true
+                self.exploreUseCase.auth?.isAnonymous == true &&
+                    self.exploreUseCase.createAccountTest == true
             else {
                 return
             }
             
-            router
+            self.router
                 .showCreateAccountView(
                     delegate: CreateAccountDelegate(),
                     onDisappear: nil
@@ -174,14 +175,15 @@ extension ExploreViewModel {
         
         func onEnablePushNotificationTapped() {
             router.dismissModal()
-            Task {
-                let isAuthorized = try await exploreUseCase.reuestAuthorization()
-                exploreUseCase
+            Task { [weak self] in
+                guard let self else { return }
+                let isAuthorized = try await self.exploreUseCase.reuestAuthorization()
+                self.exploreUseCase
                     .trackEvent(
                         event: Event
                             .pushNotificationEnabled(isAuthorized: isAuthorized)
                     )
-                await handleShowPushNotificationButton()
+                await self.handleShowPushNotificationButton()
             }
         }
         
