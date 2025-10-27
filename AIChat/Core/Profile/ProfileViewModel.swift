@@ -111,23 +111,24 @@ extension ProfileViewModel {
                 )
             )
         
-        Task {
+        Task { @MainActor [weak self] in
+            guard let self else { return }
             do {
-                try await profileUseCase
+                try await self.profileUseCase
                     .removeAuthorIdFromAvatar(avatarId: avatar.id)
-                myAvatars.remove(at: index)
-                profileUseCase
+                self.myAvatars.remove(at: index)
+                self.profileUseCase
                     .trackEvent(
                         event: Event.deleteAvatarSuccess(
                             avatar: avatar
                         )
                     )
             } catch {
-                router.showSimpleAlert(
+                self.router.showSimpleAlert(
                     title: "Unable to delete avatar",
                     subtitle: "Please try again later."
                 )
-                profileUseCase
+                self.profileUseCase
                     .trackEvent(
                         event: Event.deleteAvatarFail(
                             error: error
@@ -191,4 +192,3 @@ extension ProfileViewModel {
         }
     }
 }
-
