@@ -116,7 +116,9 @@ extension ProfileViewModel {
             do {
                 try await self.profileUseCase
                     .removeAuthorIdFromAvatar(avatarId: avatar.id)
-                self.myAvatars.remove(at: index)
+                if let removalIndex = self.myAvatars.firstIndex(where: { $0.id == avatar.id }) {
+                    self.myAvatars.remove(at: removalIndex)
+                }
                 self.profileUseCase
                     .trackEvent(
                         event: Event.deleteAvatarSuccess(
