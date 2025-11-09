@@ -128,10 +128,11 @@ class CoreBuilder {
         )
     }
     
-    func devSettingsView() -> some View {
+    func devSettingsView(router: Router) -> some View {
         DevSettingsView(
             viewModel: DevSettingsViewModel(
-                devSettingsUseCase: DevSettingsUseCase(container: container)
+                devSettingsUseCase: DevSettingsUseCase(container: container),
+                router: CoreRouter(router: router, builder: self)
             )
         )
     }

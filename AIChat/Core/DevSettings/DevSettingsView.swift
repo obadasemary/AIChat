@@ -9,12 +9,10 @@ import SwiftUI
 import SwiftfulUtilities
 
 struct DevSettingsView: View {
-    
+
     @State var viewModel: DevSettingsViewModel
     @StateObject private var colorSchemeManager = ColorSchemeManager.shared
-    
-    @Environment(\.dismiss) private var dismiss
-    
+
     var body: some View {
         NavigationStack {
             List {
@@ -66,9 +64,7 @@ private extension DevSettingsView {
     var backButtonView: some View {
         if #available(iOS 26.0, *) {
             return Button(role: .close) {
-                viewModel.onBackButtonTap {
-                    dismiss()
-                }
+                viewModel.onBackButtonTap()
             }
             .tint(.accent)
         } else {
@@ -76,9 +72,7 @@ private extension DevSettingsView {
                 .font(.subheadline)
                 .padding(4)
                 .anyButton {
-                    viewModel.onBackButtonTap {
-                        dismiss()
-                    }
+                    viewModel.onBackButtonTap()
                 }
         }
     }
@@ -173,12 +167,11 @@ private extension DevSettingsView {
 }
 
 #Preview {
-    DevSettingsView(
-        viewModel: DevSettingsViewModel(
-            devSettingsUseCase: DevSettingsUseCase(
-                container: DevPreview.shared.container
-            )
-        )
-    )
+    let container = DevPreview.shared.container
+    let devSettingsBuilder = DevSettingsBuilder(container: container)
+
+    return RouterView { router in
+        devSettingsBuilder.buildDevSettingsView(router: router)
+    }
     .previewEnvironment()
 }
