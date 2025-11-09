@@ -186,7 +186,8 @@ class CoreBuilder {
     func paywallView(router: Router) -> some View {
         PaywallView(
             viewModel: PaywallViewModel(
-                paywallUseCase: PaywallUseCase(container: container)
+                paywallUseCase: PaywallUseCase(container: container),
+                router: CoreRouter(router: router, builder: self)
             )
         )
     }

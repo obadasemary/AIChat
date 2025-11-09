@@ -11,17 +11,20 @@ import StoreKit
 @Observable
 @MainActor
 class PaywallViewModel {
-    
+
     private let paywallUseCase: PaywallUseCaseProtocol
-    
+    private let router: PaywallRouterProtocol
+
     private(set) var products: [AnyProduct] = []
     private(set) var productIds: [String] = EntitlementOption.allProductIds
     let option: PaywallOptional = PaywallConfiguration.shared.currentOption
-    
-    var showAlert: AnyAppAlert?
-    
-    init(paywallUseCase: PaywallUseCaseProtocol) {
+
+    init(
+        paywallUseCase: PaywallUseCaseProtocol,
+        router: PaywallRouterProtocol
+    ) {
         self.paywallUseCase = paywallUseCase
+        self.router = router
     }
 }
 
@@ -33,35 +36,32 @@ extension PaywallViewModel {
             products = try await paywallUseCase
                 .getProducts(productIds: productIds)
         } catch {
-            showAlert = AnyAppAlert(error: error)
+            router.showAlert(error: error)
         }
     }
     
-    func onBackButtonPressed(onDismiss: () -> Void) {
+    func onBackButtonPressed() {
         paywallUseCase.trackEvent(event: Event.backButtonPressed)
-        onDismiss()
+        router.dismissScreen()
     }
     
-    func onRestorePurchasePressed(onDismiss: @escaping () -> Void) {
+    func onRestorePurchasePressed() {
         paywallUseCase.trackEvent(event: Event.restorePurchaseStart)
 
         Task {
             do {
                 let entitlements = try await paywallUseCase.restorePurchase()
-                
+
                 if entitlements.hasActiveEntitlement {
-                    onDismiss()
+                    router.dismissScreen()
                 }
             } catch {
-                showAlert = AnyAppAlert(error: error)
+                router.showAlert(error: error)
             }
         }
     }
     
-    func onPurchaseProductPressed(
-        product: AnyProduct,
-        onDismiss: @escaping () -> Void
-    ) {
+    func onPurchaseProductPressed(product: AnyProduct) {
         paywallUseCase.trackEvent(event: Event.purchaseStart(product: product))
 
         Task {
@@ -70,11 +70,11 @@ extension PaywallViewModel {
                 paywallUseCase.trackEvent(event: Event.purchaseSuccess(product: product))
 
                 if entitlements.hasActiveEntitlement {
-                    onDismiss()
+                    router.dismissScreen()
                 }
             } catch {
                 paywallUseCase.trackEvent(event: Event.purchaseFail(error: error))
-                showAlert = AnyAppAlert(error: error)
+                router.showAlert(error: error)
             }
         }
     }
@@ -86,11 +86,10 @@ extension PaywallViewModel {
     
     func onPurchaseComplete(
         product: StoreKit.Product,
-        result: Result<Product.PurchaseResult, any Error>,
-        onDismiss: @escaping () -> Void
+        result: Result<Product.PurchaseResult, any Error>
     ) {
         let product = AnyProduct(storeKitProduct: product)
-        
+
         switch result {
         case .success(let vlaue):
             switch vlaue {
@@ -98,7 +97,7 @@ extension PaywallViewModel {
                 paywallUseCase.trackEvent(
                     event: Event.purchaseSuccess(product: product)
                 )
-                onDismiss()
+                router.dismissScreen()
             case .pending:
                 paywallUseCase.trackEvent(
                     event: Event.purchasePending(product: product)
