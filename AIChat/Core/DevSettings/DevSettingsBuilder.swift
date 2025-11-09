@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SUIRouting
 
 @Observable
 @MainActor
@@ -16,10 +17,13 @@ final class DevSettingsBuilder {
         self.container = container
     }
 
-    func buildDevSettingsView() -> some View {
-        DevSettingsView(
+    func buildDevSettingsView(router: Router) -> some View {
+        let devSettingsRouter = DevSettingsRouter(router: router)
+
+        return DevSettingsView(
             viewModel: DevSettingsViewModel(
-                devSettingsUseCase: DevSettingsUseCase(container: container)
+                devSettingsUseCase: DevSettingsUseCase(container: container),
+                router: devSettingsRouter
             )
         )
     }

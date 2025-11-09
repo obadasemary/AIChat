@@ -62,7 +62,7 @@ struct CoreRouter {
     
     func showDevSettingsView() {
         router.showScreen(.sheet) { router in
-            builder.devSettingsView()
+            builder.devSettingsView(router: router)
         }
     }
     
