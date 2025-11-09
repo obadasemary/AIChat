@@ -198,7 +198,7 @@ AIChat/Services/
 - **Force unwrapping (`!`) is an ERROR** - avoid at all costs (unless explicitly disabled with swiftlint comment)
 - **Force try (`try!`) is an ERROR** - use proper error handling
 - Function body length: max 50 lines
-- Line length: max 400 characters
+- Line length: max 160 characters
 - Type body length: max 400 lines
 - Use 4-space indentation
 
