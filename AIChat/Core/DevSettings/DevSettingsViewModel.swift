@@ -11,37 +11,42 @@ import SwiftUI
 @Observable
 @MainActor
 class DevSettingsViewModel {
-    
+
     private let devSettingsUseCase: DevSettingsUseCaseProtocol
-    
+    private let router: DevSettingsRouterProtocol
+
     var createAccountTest: Bool = false
     var onboardingCommunityTest: Bool = false
     var categoryRowTest: CategoryRowTestOption = .default
     var paywallOption: PaywallOptional = .custom
     var colorSchemePreference: ColorSchemePreference = .light
-    
+
     var authData: [(key: String, value: Any)] {
         devSettingsUseCase
             .auth?
             .eventParameters
             .asAlphabeticalArray ?? []
     }
-    
+
     var userData: [(key: String, value: Any)] {
         devSettingsUseCase
             .currentUser?
             .eventParameters
             .asAlphabeticalArray ?? []
     }
-    
+
     var utilities: [(key: String, value: Any)] {
         Utilities
             .eventParameters
             .asAlphabeticalArray
     }
-    
-    init(devSettingsUseCase: DevSettingsUseCaseProtocol) {
+
+    init(
+        devSettingsUseCase: DevSettingsUseCaseProtocol,
+        router: DevSettingsRouterProtocol
+    ) {
         self.devSettingsUseCase = devSettingsUseCase
+        self.router = router
     }
 }
 
@@ -59,9 +64,9 @@ extension DevSettingsViewModel {
 
 // MARK: - Action
 extension DevSettingsViewModel {
-    
-    func onBackButtonTap(onDismiss: () -> Void) {
-        onDismiss()
+
+    func onBackButtonTap() {
+        router.dismissScreen()
     }
     
     func handleCreateAccountChange(oldValue: Bool, newValue: Bool) {

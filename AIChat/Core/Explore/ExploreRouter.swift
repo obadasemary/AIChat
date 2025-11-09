@@ -60,7 +60,7 @@ extension ExploreRouter: ExploreRouterProtocol {
     
     func showDevSettingsView() {
         router.showScreen(.sheet) { router in
-            devSettingsBuilder.buildDevSettingsView()
+            devSettingsBuilder.buildDevSettingsView(router: router)
         }
     }
     
