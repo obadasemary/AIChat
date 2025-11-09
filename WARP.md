@@ -202,7 +202,7 @@ This project has three Xcode schemes corresponding to three build configurations
 - **AIChat - Production** (`.prod` config): 
   - Real Firebase, OpenAI, and other services
   - Console logging DISABLED (production-ready)
-  - Analytics enabled (Mixpanel, Firebase Analytics only)
+  - Analytics enabled (Mixpanel, Firebase Analytics)
   - Crashlytics enabled
   - Uses `GoogleService-Info-Prod.plist`
   
