@@ -20,7 +20,8 @@ final class PaywallBuilder {
     func buildPaywallView(router: Router) -> some View {
         PaywallView(
             viewModel: PaywallViewModel(
-                paywallUseCase: PaywallUseCase(container: container)
+                paywallUseCase: PaywallUseCase(container: container),
+                router: PaywallRouter(router: router)
             )
         )
     }

@@ -9,11 +9,9 @@ import SwiftUI
 import StoreKit
 
 struct PaywallView: View {
-    
+
     @State var viewModel: PaywallViewModel
-    
-    @Environment(\.dismiss) private var dismiss
-    
+
     var body: some View {
         Group {
             switch viewModel.option {
@@ -25,19 +23,13 @@ struct PaywallView: View {
                         CustomPaywallView(
                             products: viewModel.products,
                             onBackButtonPressed: {
-                                viewModel.onBackButtonPressed {
-                                    dismiss()
-                                }
+                                viewModel.onBackButtonPressed()
                             },
                             onRestorePurchasePressed: {
-                                viewModel.onRestorePurchasePressed {
-                                    dismiss()
-                                }
+                                viewModel.onRestorePurchasePressed()
                             },
                             onPurchaseProductPressed: { product in
-                                viewModel.onPurchaseProductPressed(product: product) {
-                                    dismiss()
-                                }
+                                viewModel.onPurchaseProductPressed(product: product)
                             }
                         )
                     }
@@ -51,15 +43,12 @@ struct PaywallView: View {
                             .onPurchaseComplete(
                                 product: product,
                                 result: result
-                            ) {
-                                dismiss()
-                            }
+                            )
                     }
                 )
             }
         }
         .screenAppearAnalytics(name: "Paywall")
-        .showCustomAlert(alert: $viewModel.showAlert)
         .task {
             await viewModel.onLoadProducts()
         }
