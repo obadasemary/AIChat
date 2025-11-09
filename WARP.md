@@ -64,6 +64,14 @@ xcodebuild test \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest' \
   -only-testing:AIChatTests/YourTestClassName
 
+# Run specific test method
+xcodebuild test \
+  -project AIChat.xcodeproj \
+  -scheme "AIChat - Development" \
+  -sdk iphonesimulator \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest' \
+  -only-testing:AIChatTests/YourTestClassName/testMethodName
+
 # Run with test plan (Development)
 xcodebuild test \
   -project AIChat.xcodeproj \
@@ -181,11 +189,30 @@ User Action → View → ViewModel → UseCase → Manager → Service → Exter
 4. Add all three files to Xcode project (verify target membership)
 5. **NEVER commit these files** - they are gitignored
 
-### Build Configurations
-- **Development** (`.dev`): Real services + console logging + analytics
-- **Production** (`.prod`): Real services + analytics only
-- **Mock** (`.mock`): Mock services for UI testing
-- Firebase configuration is selected automatically based on build config
+### Build Configurations & Schemes
+This project has three Xcode schemes corresponding to three build configurations:
+
+- **AIChat - Development** (`.dev` config): 
+  - Real Firebase, OpenAI, and other services
+  - Console logging enabled for debugging
+  - Analytics enabled (Mixpanel, Firebase Analytics)
+  - Crashlytics enabled
+  - Uses `GoogleService-Info-Dev.plist`
+  
+- **AIChat - Production** (`.prod` config): 
+  - Real Firebase, OpenAI, and other services
+  - Console logging DISABLED (production-ready)
+  - Analytics enabled (Mixpanel, Firebase Analytics only)
+  - Crashlytics enabled
+  - Uses `GoogleService-Info-Prod.plist`
+  
+- **AIChat - Mock** (`.mock` config): 
+  - Mock services for all external dependencies
+  - No real API calls
+  - Ideal for UI testing without network dependencies
+  - Can be configured to simulate signed-in or signed-out state
+  - Uses `MockAuthService`, `MockAIServer`, `MockChatService`, etc.
+  - Can trigger A/B test variants via launch arguments (e.g., `ONBOARDING_COMMUNITY_TEST`)
 
 ### Testing Strategy
 - **Unit Tests** (`AIChatTests/`): Test business logic with mock services
@@ -250,14 +277,15 @@ struct ParentView: View {
 ```
 
 ### Common Pitfalls to Avoid
-1. **DO NOT use force unwrapping (`!`)** - SwiftLint will error
+1. **DO NOT use force unwrapping (`!`)** - SwiftLint will error (except where explicitly disabled with swiftlint comments)
 2. **DO NOT use `try!`** - SwiftLint will error
 3. **DO NOT bypass DependencyContainer** - always resolve dependencies from container
-4. **DO NOT hardcode API keys** - use ConfigurationManager
+4. **DO NOT hardcode API keys** - use ConfigurationManager (supports both Config.plist and environment variables)
 5. **DO NOT create service instances directly** - use managers from container
 6. **DO NOT forget to register new services** in `Dependencies.swift`
-7. **DO NOT commit Config.plist** or Firebase plist files
+7. **DO NOT commit Config.plist** or Firebase plist files - these are gitignored
 8. **DO NOT mix view logic with business logic** - keep UseCase and ViewModel separate
+9. **DO NOT assume simulator names** - use 'iPhone 17 Pro' or 'OS=latest' for compatibility
 
 ### File Location Conventions
 - Features: `AIChat/Core/{FeatureName}/`
