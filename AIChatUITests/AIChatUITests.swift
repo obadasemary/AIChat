@@ -198,7 +198,8 @@ final class AIChatUITests: XCTestCase {
         settingsButton.tap()
 
         // Wait for Settings view to load and Sign Out button to appear
-        let signOutButton = app.collectionViews.buttons["Sign Out"]
+        // Note: Button is inside a ScrollView, not a collectionView
+        let signOutButton = app.buttons["Sign Out"]
         XCTAssert(waitForElement(signOutButton, timeout: 10))
         signOutButton.tap()
         
