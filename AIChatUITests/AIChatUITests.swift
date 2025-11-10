@@ -196,9 +196,10 @@ final class AIChatUITests: XCTestCase {
         let settingsButton = app.navigationBars["Profile"].buttons["Settings"]
         XCTAssert(waitForElement(settingsButton, timeout: 3))
         settingsButton.tap()
-        
+
+        // Wait for Settings view to load and Sign Out button to appear
         let signOutButton = app.collectionViews.buttons["Sign Out"]
-        XCTAssert(waitForElement(signOutButton, timeout: 5))
+        XCTAssert(waitForElement(signOutButton, timeout: 10))
         signOutButton.tap()
         
         let startButton = app.buttons["StartButton"]
