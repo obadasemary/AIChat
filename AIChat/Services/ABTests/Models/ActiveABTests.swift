@@ -30,7 +30,7 @@ struct ActiveABTests: Codable {
     enum CodingKeys: String, CodingKey {
         case createAccountTest = "_20250720_CreateAccTest"
         case onboardingCommunityTest = "_20250720_OnbCommunityTest"
-        case categoryRowTest = "_20250720_CateegoryRowTest"
+        case categoryRowTest = "_20250720_CategoryRowTest"
         case paywallOption = "_20250720_PaywallOption"
     }
     
