@@ -48,15 +48,16 @@ extension PaywallViewModel {
     func onRestorePurchasePressed() {
         paywallUseCase.trackEvent(event: Event.restorePurchaseStart)
 
-        Task {
+        Task { [weak self] in
+            guard let self else { return }
             do {
-                let entitlements = try await paywallUseCase.restorePurchase()
+                let entitlements = try await self.paywallUseCase.restorePurchase()
 
                 if entitlements.hasActiveEntitlement {
-                    router.dismissScreen()
+                    self.router.dismissScreen()
                 }
             } catch {
-                router.showAlert(error: error)
+                self.router.showAlert(error: error)
             }
         }
     }
@@ -64,17 +65,18 @@ extension PaywallViewModel {
     func onPurchaseProductPressed(product: AnyProduct) {
         paywallUseCase.trackEvent(event: Event.purchaseStart(product: product))
 
-        Task {
+        Task { [weak self] in
+            guard let self else { return }
             do {
-                let entitlements = try await paywallUseCase.purchaseProduct(productId: product.id)
-                paywallUseCase.trackEvent(event: Event.purchaseSuccess(product: product))
+                let entitlements = try await self.paywallUseCase.purchaseProduct(productId: product.id)
+                self.paywallUseCase.trackEvent(event: Event.purchaseSuccess(product: product))
 
                 if entitlements.hasActiveEntitlement {
-                    router.dismissScreen()
+                    self.router.dismissScreen()
                 }
             } catch {
-                paywallUseCase.trackEvent(event: Event.purchaseFail(error: error))
-                router.showAlert(error: error)
+                self.paywallUseCase.trackEvent(event: Event.purchaseFail(error: error))
+                self.router.showAlert(error: error)
             }
         }
     }
