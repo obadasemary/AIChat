@@ -28,7 +28,7 @@ class LocalABTestService {
     // swiftlint:enable force_unwrapping
 
     @UserDefaultEnum(
-        key: ActiveABTests.CodingKeys.paywallOption.rawValue,
+        key: UserDefaultsKeys.paywallOption,
         defaultValue: .custom
     ) private var paywallOption: PaywallOptional
 
