@@ -29,6 +29,9 @@ struct ChatsView: View {
         .task {
             await viewModel.loadChats()
         }
+        .refreshable {
+            await viewModel.loadChats()
+        }
     }
 }
 
