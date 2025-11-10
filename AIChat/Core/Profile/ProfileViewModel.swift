@@ -119,13 +119,28 @@ extension ProfileViewModel {
                 if let removalIndex = self.myAvatars
                     .firstIndex(where: { $0.id == avatar.id }) {
                     self.myAvatars.remove(at: removalIndex)
-                }
-                self.profileUseCase
-                    .trackEvent(
-                        event: Event.deleteAvatarSuccess(
-                            avatar: avatar
+                    self.profileUseCase
+                        .trackEvent(
+                            event: Event.deleteAvatarSuccess(
+                                avatar: avatar
+                            )
                         )
-                    )
+                } else {
+                    // Avatar not found locally despite server deletion success
+                    // This indicates a state inconsistency - log as failure
+                    self.profileUseCase
+                        .trackEvent(
+                            event: Event.deleteAvatarFail(
+                                error: NSError(
+                                    domain: "ProfileViewModel",
+                                    code: -1,
+                                    userInfo: [
+                                        NSLocalizedDescriptionKey: "Avatar not found in local state after server deletion"
+                                    ]
+                                )
+                            )
+                        )
+                }
             } catch {
                 self.router.showSimpleAlert(
                     title: "Unable to delete avatar",
