@@ -148,7 +148,7 @@ struct ActiveABTestsTests {
                 .onboardingCommunityTest
         )
         #expect(
-            params["test_20250720_CateegoryRowTest"] as? String == initialData
+            params["test_20250720_CategoryRowTest"] as? String == initialData
                 .categoryRowTest
                 .rawValue
         )
