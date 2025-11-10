@@ -57,8 +57,11 @@ extension DevSettingsViewModel {
         createAccountTest = devSettingsUseCase.activeTests.createAccountTest
         onboardingCommunityTest = devSettingsUseCase.activeTests.onboardingCommunityTest
         categoryRowTest = devSettingsUseCase.activeTests.categoryRowTest
-        paywallOption = PaywallConfiguration.shared.currentOption
+        paywallOption = devSettingsUseCase.activeTests.paywallOption
         colorSchemePreference = ColorSchemeManager.shared.currentPreference
+
+        // Sync PaywallConfiguration with saved value
+        PaywallConfiguration.shared.updateOption(paywallOption)
     }
 }
 
@@ -106,6 +109,13 @@ extension DevSettingsViewModel {
         oldValue: PaywallOptional,
         newValue: PaywallOptional
     ) {
+        updateTest(
+            property: &paywallOption,
+            newValue: newValue,
+            savedValue: devSettingsUseCase.activeTests.paywallOption
+        ) { tests in
+            tests.update(paywallOption: newValue)
+        }
         PaywallConfiguration.shared.updateOption(newValue)
     }
     
