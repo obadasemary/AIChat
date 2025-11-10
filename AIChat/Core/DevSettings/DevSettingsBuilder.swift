@@ -12,18 +12,16 @@ import SUIRouting
 @MainActor
 final class DevSettingsBuilder {
     private let container: DependencyContainer
-
+    
     init(container: DependencyContainer) {
         self.container = container
     }
-
+    
     func buildDevSettingsView(router: Router) -> some View {
-        let devSettingsRouter = DevSettingsRouter(router: router)
-
-        return DevSettingsView(
+        DevSettingsView(
             viewModel: DevSettingsViewModel(
                 devSettingsUseCase: DevSettingsUseCase(container: container),
-                router: devSettingsRouter
+                router: DevSettingsRouter(router: router)
             )
         )
     }
