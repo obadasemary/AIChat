@@ -116,7 +116,10 @@ extension DevSettingsViewModel {
         ) { tests in
             tests.update(paywallOption: newValue)
         }
-        PaywallConfiguration.shared.updateOption(newValue)
+        // Only update PaywallConfiguration if persistence succeeded
+        if paywallOption == newValue {
+            PaywallConfiguration.shared.updateOption(newValue)
+        }
     }
     
     @MainActor

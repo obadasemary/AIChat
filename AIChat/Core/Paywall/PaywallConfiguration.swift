@@ -17,7 +17,7 @@ final class PaywallConfiguration {
     private init() {
         // Load saved value from UserDefaults
         let savedValue = UserDefaults.standard.string(
-            forKey: ActiveABTests.CodingKeys.paywallOption.rawValue
+            forKey: UserDefaultsKeys.paywallOption
         )
         self.currentOption = PaywallOptional(rawValue: savedValue ?? "") ?? .custom
     }
