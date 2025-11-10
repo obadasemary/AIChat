@@ -131,3 +131,7 @@ GoogleService-Info-Prod.plist
 # Template files (safe to commit)
 # GoogleService-Info-Dev.template.plist
 # GoogleService-Info-Prod.template.plist
+
+# Local developer-specific configuration files
+*.local.*
+.claude/settings.local.json
