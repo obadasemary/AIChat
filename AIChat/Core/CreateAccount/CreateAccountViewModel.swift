@@ -51,7 +51,6 @@ extension CreateAccountViewModel {
                         )
                     )
                 
-//                onDidSignInSuccessfully(result.isNewUser)
                 delegate.onDidSignIn?(result.isNewUser)
                 self.router.dismissScreen()
             } catch {
