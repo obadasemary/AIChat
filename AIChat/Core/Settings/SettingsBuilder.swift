@@ -28,6 +28,9 @@ final class SettingsBuilder {
                     router: router,
                     createAccountBuilder: CreateAccountBuilder(
                         container: container
+                    ),
+                    aboutBuilder: AboutBuilder(
+                        container: container
                     )
                 ),
                 onSignedIn: onSignedIn

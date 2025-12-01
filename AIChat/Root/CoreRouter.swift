@@ -103,6 +103,12 @@ struct CoreRouter {
             }
     }
     
+    func showAboutView() {
+        router.showScreen(.sheet) { router in
+            builder.aboutView(router: router)
+        }
+    }
+    
     func dismissScreen() {
         router.dismissScreen()
     }

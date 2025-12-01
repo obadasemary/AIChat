@@ -218,6 +218,15 @@ class CoreBuilder {
         )
     }
     
+    func aboutView(router: Router) -> some View {
+        AboutView(
+            viewModel: AboutViewModel(
+                aboutUseCase: AboutUseCase(container: container),
+                router: CoreRouter(router: router, builder: self)
+            )
+        )
+    }
+    
     func createAvatarView(router: Router) -> some View {
         CreateAvatarView(
             viewModel: CreateAvatarViewModel(
