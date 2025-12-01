@@ -14,6 +14,7 @@ protocol SettingsRouterProtocol {
         delegate: CreateAccountDelegate,
         onDisappear: (() -> Void)?
     )
+    func showAboutView()
     func showRatingsModal(
         onEnjoyingAppYesPressed: @escaping () -> Void,
         onEnjoyingAppNoPressed: @escaping () -> Void
@@ -33,6 +34,7 @@ protocol SettingsRouterProtocol {
 struct SettingsRouter {
     let router: Router
     let createAccountBuilder: CreateAccountBuilder
+    let aboutBuilder: AboutBuilder
 }
 
 extension SettingsRouter: SettingsRouterProtocol {
@@ -50,7 +52,13 @@ extension SettingsRouter: SettingsRouterProtocol {
                 }
         }
     }
-    
+
+    func showAboutView() {
+        router.showScreen(.push) { router in
+            aboutBuilder.buildAboutView(router: router)
+        }
+    }
+
     func showRatingsModal(
         onEnjoyingAppYesPressed: @escaping () -> Void,
         onEnjoyingAppNoPressed: @escaping () -> Void
