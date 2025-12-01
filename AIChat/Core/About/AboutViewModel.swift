@@ -63,14 +63,14 @@ extension AboutViewModel {
     func onPrivacyPolicyPressed() {
         aboutUseCase.trackEvent(event: Event.privacyPolicyPressed)
         // TODO: Open privacy policy URL
-        guard let url = URL(string: "https://obada.com/privacy") else { return }
+        guard let url = URL(string: "https://SamuraiStudios.com/privacy") else { return }
         UIApplication.shared.open(url)
     }
 
     func onTermsOfServicePressed() {
         aboutUseCase.trackEvent(event: Event.termsOfServicePressed)
         // TODO: Open terms of service URL
-        guard let url = URL(string: "https://obada.com/terms") else { return }
+        guard let url = URL(string: "https://SamuraiStudios.com/terms") else { return }
         UIApplication.shared.open(url)
     }
 }
