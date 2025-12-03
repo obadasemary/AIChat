@@ -18,10 +18,10 @@ protocol AboutUseCaseProtocol {
 @MainActor
 final class AboutUseCase {
 
-    private let logManager: LogManager
+    private let logManager: LogManager?
 
     init(container: DependencyContainer) {
-        self.logManager = container.resolve(LogManager.self)!
+        self.logManager = container.resolve(LogManager.self)
     }
 }
 
@@ -36,6 +36,6 @@ extension AboutUseCase: AboutUseCaseProtocol {
     }
 
     func trackEvent(event: any LoggableEvent) {
-        logManager.trackEvent(event: event)
+        logManager?.trackEvent(event: event)
     }
 }
