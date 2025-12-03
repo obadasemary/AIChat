@@ -37,7 +37,7 @@ private extension AboutView {
         VStack(spacing: 16) {
             Image(systemName: "message.circle.fill")
                 .font(.system(size: 80))
-                .foregroundStyle(.accentColor)
+                .foregroundStyle(Color.accentColor)
                 .padding(.top, 16)
 
             Text("AIChat")
