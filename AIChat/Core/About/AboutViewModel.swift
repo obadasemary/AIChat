@@ -62,15 +62,21 @@ extension AboutViewModel {
 
     func onPrivacyPolicyPressed() {
         aboutUseCase.trackEvent(event: Event.privacyPolicyPressed)
-        // TODO: Open privacy policy URL
-        guard let url = URL(string: "https://SamuraiStudios.com/privacy") else { return }
+        
+        guard let url = URL(string: "https://SamuraiStudios.com/privacy") else {
+            aboutUseCase.trackEvent(event: Event.privacyPolicyFailed)
+            return
+        }
         UIApplication.shared.open(url)
     }
 
     func onTermsOfServicePressed() {
         aboutUseCase.trackEvent(event: Event.termsOfServicePressed)
-        // TODO: Open terms of service URL
-        guard let url = URL(string: "https://SamuraiStudios.com/terms") else { return }
+        
+        guard let url = URL(string: "https://SamuraiStudios.com/terms") else {
+            aboutUseCase.trackEvent(event: Event.termsOfServiceFailed)
+            return
+        }
         UIApplication.shared.open(url)
     }
 }
@@ -82,14 +88,18 @@ private extension AboutViewModel {
         case contactSupportPressed
         case contactSupportFailed
         case privacyPolicyPressed
+        case privacyPolicyFailed
         case termsOfServicePressed
+        case termsOfServiceFailed
 
         var eventName: String {
             switch self {
             case .contactSupportPressed: "AboutView_ContactSupport_Pressed"
             case .contactSupportFailed: "AboutView_ContactSupport_Failed"
             case .privacyPolicyPressed: "AboutView_PrivacyPolicy_Pressed"
+            case .privacyPolicyFailed: "AboutView_PrivacyPolicy_Failed"
             case .termsOfServicePressed: "AboutView_TermsOfService_Pressed"
+            case .termsOfServiceFailed: "AboutView_TermsOfService_Failed"
             }
         }
 
@@ -99,7 +109,7 @@ private extension AboutViewModel {
 
         var type: LogType {
             switch self {
-            case .contactSupportFailed:
+            case .contactSupportFailed, .privacyPolicyFailed, .termsOfServiceFailed:
                 return .severe
             default:
                 return .analytic
