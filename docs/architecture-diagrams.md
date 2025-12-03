@@ -2,6 +2,13 @@
 
 This document contains comprehensive architecture diagrams for the AIChat iOS application.
 
+## Table of Contents
+1. [Clean Architecture Data Flow](#1-clean-architecture-data-flow)
+2. [Dependency Injection System](#2-dependency-injection-system)
+3. [Build Configurations Comparison](#3-build-configurations-comparison)
+4. [Feature Module Structure](#4-feature-module-structure)
+5. [Services Architecture](#5-services-architecture)
+
 ## 1. Clean Architecture Data Flow
 
 ```mermaid
