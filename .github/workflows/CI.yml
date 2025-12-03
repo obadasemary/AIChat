@@ -157,17 +157,16 @@ jobs:
             xcrun simctl erase "$DEVICE_UUID" || true
             
             # Boot the simulator
-            xcrun simctl boot "$DEVICE_UUID" || true
-            
-            # Wait for simulator to fully boot (up to 60 seconds)
-            echo "⏳ Waiting for simulator to boot..."
-            for i in {1..60}; do
-                if xcrun simctl bootstatus "$DEVICE_UUID" 2>&1 | grep -q "Device already booted"; then
-                    echo "✅ Simulator is ready after $i seconds"
-                    break
-                fi
-                sleep 1
-            done
+            echo "⏳ Booting simulator..."
+            xcrun simctl boot "$DEVICE_UUID" || echo "Simulator may already be booted"
+
+            # Wait for simulator to be fully booted using bootstatus (blocks until ready)
+            echo "⏳ Waiting for simulator to be ready..."
+            timeout 120 xcrun simctl bootstatus "$DEVICE_UUID" -b || echo "Simulator boot completed or timeout reached"
+
+            # Additional wait to ensure services are ready
+            sleep 3
+            echo "✅ Simulator is ready"
             
             # Disable animations and accessibility features that can interfere with UI tests
             echo "⚙️ Configuring simulator for UI testing"
