@@ -187,10 +187,10 @@ jobs:
       - name: Build UI Test Target
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-            echo "🔨 Building UI test target"
+            echo "🔨 Building UI test target with Mock scheme"
             xcodebuild build-for-testing \
             -project AIChat.xcodeproj \
-            -scheme "AIChat - Development" \
+            -scheme "AIChat - Mock" \
             CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO \
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest' \
@@ -200,12 +200,12 @@ jobs:
       - name: Run UI Tests (Main Branch Only)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-            echo "🧪 Running UI Tests on main branch"
-            
+            echo "🧪 Running UI Tests on main branch with Mock scheme"
+
             # Run tests without building (already built in previous step)
             xcodebuild test-without-building \
             -project AIChat.xcodeproj \
-            -scheme "AIChat - Development" \
+            -scheme "AIChat - Mock" \
             CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO \
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest' \
@@ -219,11 +219,11 @@ jobs:
             || {
                 echo "❌ UI Tests failed on first attempt, retrying..."
                 sleep 10
-                
+
                 # Retry once on failure
                 xcodebuild test-without-building \
                 -project AIChat.xcodeproj \
-                -scheme "AIChat - Development" \
+                -scheme "AIChat - Mock" \
                 CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO \
                 -sdk iphonesimulator \
                 -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest' \
