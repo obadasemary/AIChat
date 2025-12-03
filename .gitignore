@@ -135,3 +135,6 @@ GoogleService-Info-Prod.plist
 # Local developer-specific configuration files
 *.local.*
 .claude/settings.local.json
+
+# MCP configuration with sensitive tokens
+.mcp.json
