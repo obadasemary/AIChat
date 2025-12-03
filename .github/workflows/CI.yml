@@ -171,8 +171,13 @@ jobs:
             
             # Disable animations and accessibility features that can interfere with UI tests
             echo "⚙️ Configuring simulator for UI testing"
-            xcrun simctl spawn "$DEVICE_UUID" defaults write com.apple.SpringBoard FBLaunchWatchdogScale 2
-            xcrun simctl spawn "$DEVICE_UUID" defaults write UIAutomation AutomationLoggingLevel Debug
+
+            # Disable keyboard helpers and autocorrection
+            xcrun simctl ui "$DEVICE_UUID" increase_contrast disable || true
+            xcrun simctl ui "$DEVICE_UUID" reduce_motion enable || true
+
+            # Allow time for settings to apply
+            sleep 2
             
             # Verify simulator status
             xcrun simctl list devices | grep "iPhone 17 Pro"
