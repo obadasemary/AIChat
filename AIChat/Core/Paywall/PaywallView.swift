@@ -29,7 +29,8 @@ struct PaywallView: View {
                                 viewModel.onRestorePurchasePressed()
                             },
                             onPurchaseProductPressed: { product in
-                                viewModel.onPurchaseProductPressed(product: product)
+                                viewModel
+                                    .onPurchaseProductPressed(product: product)
                             }
                         )
                     }
