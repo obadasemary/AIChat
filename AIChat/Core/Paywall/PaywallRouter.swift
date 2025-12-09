@@ -26,7 +26,7 @@ struct PaywallRouter {
 }
 
 extension PaywallRouter: PaywallRouterProtocol {
-
+    
     func showAlert(error: Error) {
         router.showAlert(
             .alert,
@@ -35,7 +35,7 @@ extension PaywallRouter: PaywallRouterProtocol {
             buttons: nil
         )
     }
-
+    
     func showAlert(
         _ option: RouterAlertType,
         title: String,
@@ -50,7 +50,7 @@ extension PaywallRouter: PaywallRouterProtocol {
                 buttons: buttons
             )
     }
-
+    
     func dismissScreen() {
         router.dismissScreen()
     }
