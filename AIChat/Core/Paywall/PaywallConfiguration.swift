@@ -11,9 +11,9 @@ import Foundation
 @MainActor
 final class PaywallConfiguration {
     static let shared = PaywallConfiguration()
-
+    
     var currentOption: PaywallOptional
-
+    
     private init() {
         // Load saved value from UserDefaults
         let savedValue = UserDefaults.standard.string(
@@ -21,7 +21,7 @@ final class PaywallConfiguration {
         )
         self.currentOption = PaywallOptional(rawValue: savedValue ?? "") ?? .custom
     }
-
+    
     /// Updates the current paywall option in memory.
     ///
     /// - Warning: This method only updates the in-memory value and does NOT persist to UserDefaults.
