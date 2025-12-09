@@ -50,20 +50,20 @@ extension SettingsUseCase: SettingsUseCaseProtocol {
     func deleteAccount() async throws {
         let userId = try authManager.getAuthId()
         
-//                async let deleteAuth: () = authManager.deleteAccount()
-//                async let deleteUser: () = userManager.deleteCurrentUser()
-//                async let deleteAvatar: () = avatarManager
-//                    .removeAuthorIdFromAllUserAvatars(userId: userId)
-//                async let deleteChats: () = chatManager.deleteAllChatsForUser(
-//                    userId: userId
-//                )
-//
-//                let (_, _, _, _) = await (
-//                    try deleteAuth,
-//                    try deleteUser,
-//                    try deleteAvatar,
-//                    try deleteChats
-//                )
+        //                async let deleteAuth: () = authManager.deleteAccount()
+        //                async let deleteUser: () = userManager.deleteCurrentUser()
+        //                async let deleteAvatar: () = avatarManager
+        //                    .removeAuthorIdFromAllUserAvatars(userId: userId)
+        //                async let deleteChats: () = chatManager.deleteAllChatsForUser(
+        //                    userId: userId
+        //                )
+        //
+        //                let (_, _, _, _) = await (
+        //                    try deleteAuth,
+        //                    try deleteUser,
+        //                    try deleteAvatar,
+        //                    try deleteChats
+        //                )
         
         try await chatManager.deleteAllChatsForUser(userId: userId)
         
