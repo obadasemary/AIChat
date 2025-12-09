@@ -9,9 +9,9 @@ import SwiftUI
 import StoreKit
 
 struct PaywallView: View {
-
+    
     @State var viewModel: PaywallViewModel
-
+    
     var body: some View {
         Group {
             switch viewModel.option {
