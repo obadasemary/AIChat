@@ -13,7 +13,7 @@ class DevPreview {
     static let shared = DevPreview()
     
     var container: DependencyContainer {
-        
+
         let container = DependencyContainer()
         container.register(AuthManager.self, authManager)
         container.register(UserManager.self, userManager)
@@ -24,8 +24,10 @@ class DevPreview {
         container.register(PushManager.self, pushManager)
         container.register(ABTestManager.self, abTestManager)
         container.register(PurchaseManager.self, purchaseManager)
+        container.register(NewsFeedManager.self, newsFeedManager)
+        container.register(NetworkMonitor.self, networkMonitor)
         container.register(AppState.self, AppState())
-        
+
         return container
     }
     
@@ -38,22 +40,39 @@ class DevPreview {
     private let pushManager: PushManager
     private let abTestManager: ABTestManager
     private let purchaseManager: PurchaseManager
+    private let newsFeedManager: NewsFeedManager
+    private let networkMonitor: NetworkMonitor
     private let appState: AppState
     
     init(isSignedIn: Bool = true) {
+        self.logManager = LogManager(services: [])
         self.authManager = AuthManager(
-            service: MockAuthService(currentUser: isSignedIn ? .mock() : nil)
+            service: MockAuthService(currentUser: isSignedIn ? .mock() : nil),
+            logManager: logManager
         )
         self.userManager = UserManager(
-            services: MockUserServices(currentUser: isSignedIn ? .mock : nil)
+            services: MockUserServices(currentUser: isSignedIn ? .mock : nil),
+            logManager: logManager
         )
         self.aiManager = AIManager(service: MockAIServer())
         self.avatarManager = AvatarManager(remoteService: MockAvatarService())
         self.chatManager = ChatManager(service: MockChatService())
-        self.logManager = LogManager(services: [])
-        self.pushManager = PushManager()
-        self.abTestManager = ABTestManager(service: MockABTestService())
-        self.purchaseManager = PurchaseManager(service: MockPurchaseService())
+        self.pushManager = PushManager(logManager: logManager)
+        self.abTestManager = ABTestManager(
+            service: MockABTestService(),
+            logManager: logManager
+        )
+        self.purchaseManager = PurchaseManager(
+            service: MockPurchaseService(),
+            logManager: logManager
+        )
+        self.networkMonitor = NetworkMonitor()
+        self.newsFeedManager = NewsFeedManager(
+            remoteService: MockNewsFeedService(),
+            localStorage: MockLocalNewsFeedService(),
+            networkMonitor: networkMonitor,
+            logManager: logManager
+        )
         self.appState = AppState()
     }
 }
