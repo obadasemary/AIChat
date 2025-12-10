@@ -68,7 +68,7 @@ class DevPreview {
         )
         self.networkMonitor = NetworkMonitor()
         self.newsFeedManager = NewsFeedManager(
-            remoteService: MockNewsFeedService(),
+            remoteService: MockRemoteNewsFeedService(),
             localStorage: MockLocalNewsFeedService(),
             networkMonitor: networkMonitor,
             logManager: logManager

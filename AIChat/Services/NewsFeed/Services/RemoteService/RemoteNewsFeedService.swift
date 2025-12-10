@@ -1,5 +1,5 @@
 //
-//  NewsAPIService.swift
+//  RemoteNewsFeedService.swift
 //  AIChat
 //
 //  Created by Claude on 10.12.2025.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class NewsAPIService: RemoteNewsFeedServiceProtocol {
+final class RemoteNewsFeedService: RemoteNewsFeedServiceProtocol {
 
     private let apiKey: String
     private let baseURL = "https://newsapi.org/v2"

@@ -96,7 +96,7 @@ struct Dependencies {
             )
             networkMonitor = NetworkMonitor()
             newsFeedManager = NewsFeedManager(
-                remoteService: MockNewsFeedService(),
+                remoteService: MockRemoteNewsFeedService(),
                 localStorage: MockLocalNewsFeedService(),
                 networkMonitor: networkMonitor,
                 logManager: logManager
@@ -137,7 +137,7 @@ struct Dependencies {
             )
             networkMonitor = NetworkMonitor()
             newsFeedManager = NewsFeedManager(
-                remoteService: NewsAPIService(),
+                remoteService: RemoteNewsFeedService(),
                 localStorage: FileManagerNewsFeedService(),
                 networkMonitor: networkMonitor,
                 logManager: logManager
@@ -177,7 +177,7 @@ struct Dependencies {
             )
             networkMonitor = NetworkMonitor()
             newsFeedManager = NewsFeedManager(
-                remoteService: NewsAPIService(),
+                remoteService: RemoteNewsFeedService(),
                 localStorage: FileManagerNewsFeedService(),
                 networkMonitor: networkMonitor,
                 logManager: logManager
