@@ -45,6 +45,8 @@ struct Dependencies {
     let pushManager: PushManager
     let abTestManager: ABTestManager
     let purchaseManager: PurchaseManager
+    let newsFeedManager: NewsFeedManager
+    let networkMonitor: NetworkMonitor
     let appState: AppState
     
     // swiftlint:disable function_body_length
@@ -92,6 +94,13 @@ struct Dependencies {
                 service: MockPurchaseService(),
                 logManager: logManager
             )
+            networkMonitor = NetworkMonitor()
+            newsFeedManager = NewsFeedManager(
+                remoteService: MockNewsFeedService(),
+                localStorage: MockLocalNewsFeedService(),
+                networkMonitor: networkMonitor,
+                logManager: logManager
+            )
             appState = AppState(showTabBar: isSignedIn)
         case .dev:
             logManager = LogManager(
@@ -124,6 +133,13 @@ struct Dependencies {
             )
             purchaseManager = PurchaseManager(
                 service: StoreKitPurchaseService(),
+                logManager: logManager
+            )
+            networkMonitor = NetworkMonitor()
+            newsFeedManager = NewsFeedManager(
+                remoteService: NewsAPIService(),
+                localStorage: FileManagerNewsFeedService(),
+                networkMonitor: networkMonitor,
                 logManager: logManager
             )
             appState = AppState()
@@ -159,9 +175,16 @@ struct Dependencies {
                 service: StoreKitPurchaseService(),
                 logManager: logManager
             )
+            networkMonitor = NetworkMonitor()
+            newsFeedManager = NewsFeedManager(
+                remoteService: NewsAPIService(),
+                localStorage: FileManagerNewsFeedService(),
+                networkMonitor: networkMonitor,
+                logManager: logManager
+            )
             appState = AppState()
         }
-        
+
         pushManager = PushManager(logManager: logManager)
         
         let container = DependencyContainer()
@@ -174,8 +197,10 @@ struct Dependencies {
         container.register(PushManager.self, pushManager)
         container.register(ABTestManager.self, abTestManager)
         container.register(PurchaseManager.self, purchaseManager)
+        container.register(NewsFeedManager.self, newsFeedManager)
+        container.register(NetworkMonitor.self, networkMonitor)
         container.register(AppState.self, appState)
-        
+
         self.container = container
     }
     // swiftlint:enable function_body_length
@@ -237,6 +262,9 @@ extension View {
             )
             .environment(
                 CreateAvatarBuilder(container: DevPreview.shared.container)
+            )
+            .environment(
+                NewsFeedBuilder(container: DevPreview.shared.container)
             )
     }
 }
