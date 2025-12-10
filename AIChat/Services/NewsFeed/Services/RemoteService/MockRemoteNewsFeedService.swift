@@ -1,5 +1,5 @@
 //
-//  MockNewsFeedService.swift
+//  MockRemoteNewsFeedService.swift
 //  AIChat
 //
 //  Created by Claude on 10.12.2025.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class MockNewsFeedService: RemoteNewsFeedServiceProtocol, @unchecked Sendable {
+final class MockRemoteNewsFeedService: RemoteNewsFeedServiceProtocol, @unchecked Sendable {
 
     var shouldFail: Bool = false
     var mockArticles: [NewsArticle] = [
