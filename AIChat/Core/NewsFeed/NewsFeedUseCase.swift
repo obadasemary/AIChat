@@ -13,10 +13,8 @@ final class NewsFeedUseCase {
     private let newsFeedManager: NewsFeedManager
 
     init(container: DependencyContainer) {
-        guard let manager = container.resolve(NewsFeedManager.self) else {
-            fatalError("NewsFeedManager not registered in container")
-        }
-        self.newsFeedManager = manager
+        // swiftlint:disable:next force_unwrapping
+        self.newsFeedManager = container.resolve(NewsFeedManager.self)!
     }
 
     func loadNews(category: String? = nil) async throws -> NewsFeedResult {

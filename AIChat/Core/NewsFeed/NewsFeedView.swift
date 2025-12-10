@@ -102,12 +102,12 @@ struct NewsArticleRow: View {
 }
 
 #Preview {
-    NewsFeedView(
-        viewModel: NewsFeedViewModel(
-            newsFeedUseCase: NewsFeedUseCase(
-                container: DevPreview.shared.container
-            )
-        )
-    )
+    let container = DevPreview.shared.container
+    
+    let newsFeedBuilder = NewsFeedBuilder(container: container)
+    
+    return RouterView { router in
+        newsFeedBuilder.buildNewsFeedView()
+    }
     .previewEnvironment()
 }
