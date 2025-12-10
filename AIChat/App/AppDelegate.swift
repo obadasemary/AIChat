@@ -31,9 +31,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     var chatsBuilder: ChatsBuilder!
     var chatRowCellBuilder: ChatRowCellBuilder!
     var chatBuilder: ChatBuilder!
-    
+
     var paywallBuilder: PaywallBuilder!
-    
+
+    var newsFeedBuilder: NewsFeedBuilder!
+
     var profileBuilder: ProfileBuilder!
     var settingsBuilder: SettingsBuilder!
     var createAvatarBuilder: CreateAvatarBuilder!
@@ -91,13 +93,15 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         chatsBuilder = ChatsBuilder(container: dependencies.container)
         chatRowCellBuilder = ChatRowCellBuilder(container: dependencies.container)
         chatBuilder = ChatBuilder(container: dependencies.container)
-        
+
         paywallBuilder = PaywallBuilder(container: dependencies.container)
-        
+
+        newsFeedBuilder = NewsFeedBuilder(container: dependencies.container)
+
         profileBuilder = ProfileBuilder(container: dependencies.container)
         settingsBuilder = SettingsBuilder(container: dependencies.container)
         createAvatarBuilder = CreateAvatarBuilder(container: dependencies.container)
-        
+
         return true
     }
     
