@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol NewsFeedManagerProtocol {
+protocol NewsFeedManagerProtocol: Sendable {
     func fetchNews(category: String?) async throws -> NewsFeedResult
     func fetchTopHeadlines(country: String?) async throws -> NewsFeedResult
 }
