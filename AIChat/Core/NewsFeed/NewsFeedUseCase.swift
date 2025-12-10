@@ -10,7 +10,7 @@ import Foundation
 @MainActor
 final class NewsFeedUseCase {
 
-    private let newsFeedManager: NewsFeedManager
+    private let newsFeedManager: NewsFeedManagerProtocol
 
     init(container: DependencyContainer) {
         // swiftlint:disable:next force_unwrapping
