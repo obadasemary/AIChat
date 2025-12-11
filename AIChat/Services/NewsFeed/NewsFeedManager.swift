@@ -31,12 +31,12 @@ final class NewsFeedManager {
 
 extension NewsFeedManager: NewsFeedManagerProtocol {
 
-    func fetchNews(category: String?) async throws -> NewsFeedResult {
+    func fetchNews(category: String?, page: Int, pageSize: Int) async throws -> NewsFeedResult {
         logManager?.trackEvent(event: Event.fetchNewsStart(category: category))
 
         if networkMonitor.isConnected {
             do {
-                let articles = try await remoteService.fetchNews(category: category)
+                let articles = try await remoteService.fetchNews(category: category, page: page, pageSize: pageSize)
                 logManager?.trackEvent(event: Event.fetchNewsRemoteSuccess(count: articles.count))
 
                 try localStorage.saveNews(articles)
@@ -54,12 +54,12 @@ extension NewsFeedManager: NewsFeedManagerProtocol {
         }
     }
 
-    func fetchTopHeadlines(country: String?) async throws -> NewsFeedResult {
+    func fetchTopHeadlines(country: String?, page: Int, pageSize: Int) async throws -> NewsFeedResult {
         logManager?.trackEvent(event: Event.fetchTopHeadlinesStart(country: country))
 
         if networkMonitor.isConnected {
             do {
-                let articles = try await remoteService.fetchTopHeadlines(country: country)
+                let articles = try await remoteService.fetchTopHeadlines(country: country, page: page, pageSize: pageSize)
                 logManager?.trackEvent(event: Event.fetchTopHeadlinesRemoteSuccess(count: articles.count))
 
                 try localStorage.saveNews(articles)

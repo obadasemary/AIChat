@@ -8,29 +8,62 @@
 import SwiftUI
 
 struct NewsFeedView: View {
-
+    
     @State var viewModel: NewsFeedViewModel
-
+    @Environment(\.colorScheme) var colorScheme
+    
     var body: some View {
+        let _ = Self._printChanges()
         NavigationStack {
-            ZStack {
-                if viewModel.isLoading {
-                    ProgressView("Loading news...")
-                } else if let errorMessage = viewModel.errorMessage {
-                    ContentUnavailableView(
-                        "Error",
-                        systemImage: "exclamationmark.triangle",
-                        description: Text(errorMessage)
-                    )
-                } else if viewModel.articles.isEmpty {
-                    ContentUnavailableView(
-                        "No News Available",
-                        systemImage: "newspaper",
-                        description: Text("Pull to refresh")
-                    )
-                } else {
-                    newsList
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    switch viewModel.state {
+                    case .idle, .loading:
+                        ProgressView()
+                            .padding(.vertical, 24)
+                    case .error:
+                        ContentUnavailableView(
+                            "Error",
+                            systemImage: "exclamationmark.triangle",
+                            description: Text(viewModel.errorMessage ?? "An error occurred")
+                        )
+                        .padding(.vertical, 24)
+                        
+                        Button("Retry") {
+                            viewModel.refreshData()
+                        }
+                        .buttonStyle(.borderedProminent)
+                    case .loaded, .loadingMore:
+                        if viewModel.articles.isEmpty {
+                            ContentUnavailableView(
+                                "No News Available",
+                                systemImage: "newspaper",
+                                description: Text("Pull to refresh")
+                            )
+                            .padding(.vertical, 100)
+                        } else {
+                            ForEach(viewModel.articles) { article in
+                                NewsArticleRow(article: article)
+                                    .padding(.horizontal)
+                                    .onAppear {
+                                        if article.id == viewModel.articles.last?.id {
+                                            viewModel.loadMoreData()
+                                        }
+                                    }
+                                Divider()
+                                    .padding(.leading)
+                            }
+                            
+                            if viewModel.isLoadingMore {
+                                ProgressView()
+                                    .padding(.vertical, 16)
+                            }
+                        }
+                    }
                 }
+            }
+            .refreshable {
+                viewModel.refreshData()
             }
             .navigationTitle("News Feed")
             .toolbar {
@@ -38,22 +71,12 @@ struct NewsFeedView: View {
                     dataSourceIndicator
                 }
             }
-            .refreshable {
-                await viewModel.refresh()
-            }
             .task {
-                await viewModel.loadTopHeadlines()
+                viewModel.loadInitialData()
             }
         }
     }
-
-    private var newsList: some View {
-        List(viewModel.articles) { article in
-            NewsArticleRow(article: article)
-        }
-        .listStyle(.plain)
-    }
-
+    
     private var dataSourceIndicator: some View {
         Group {
             if viewModel.isDataFromRemote {
