@@ -166,13 +166,14 @@ final class NewsFeedViewModel {
 
             // Calculate hasMorePages based on totalResults if available
             if let total = result.totalResults {
-                let fetchedSoFar = page * pageSize
-                hasMorePages = fetchedSoFar < total
-                print("🔍 ViewModel: Pagination - Fetched \(fetchedSoFar) of \(total). HasMore: \(hasMorePages)")
+                // Check if we have fetched all available articles
+                hasMorePages = articles.count < total
+                print("🔍 ViewModel: Pagination - Fetched \(articles.count) of \(total). HasMore: \(hasMorePages)")
             } else {
                 // Fallback for local storage (no totalResults)
+                // If we got fewer articles than requested, there are no more pages
                 hasMorePages = result.articles.count >= pageSize
-                print("🔍 ViewModel: Pagination - No totalResults. Using fallback. HasMore: \(hasMorePages)")
+                print("🔍 ViewModel: Pagination - No totalResults. Got \(result.articles.count) articles (pageSize: \(pageSize)). HasMore: \(hasMorePages)")
             }
 
             dataSource = result.source
