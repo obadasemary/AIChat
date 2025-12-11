@@ -8,22 +8,28 @@
 import Foundation
 import Network
 
+enum NetworkConnectionType {
+    case wifi
+    case cellular
+    case ethernet
+    case unknown
+}
+
+@MainActor
+protocol NetworkMonitorProtocol {
+    var isConnected: Bool { get }
+    var connectionType: NetworkConnectionType { get }
+}
+
 @MainActor
 @Observable
-final class NetworkMonitor {
+final class NetworkMonitor: NetworkMonitorProtocol {
 
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue(label: "NetworkMonitor")
 
     private(set) var isConnected: Bool = false
-    private(set) var connectionType: ConnectionType = .unknown
-
-    enum ConnectionType {
-        case wifi
-        case cellular
-        case ethernet
-        case unknown
-    }
+    private(set) var connectionType: NetworkConnectionType = .unknown
 
     init() {
         // Get initial network state synchronously

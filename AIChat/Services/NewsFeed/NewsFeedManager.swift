@@ -13,13 +13,13 @@ final class NewsFeedManager {
 
     private let remoteService: RemoteNewsFeedServiceProtocol
     private let localStorage: LocalNewsFeedServiceProtocol
-    private let networkMonitor: NetworkMonitor
+    private let networkMonitor: NetworkMonitorProtocol
     private let logManager: LogManagerProtocol?
 
     init(
         remoteService: RemoteNewsFeedServiceProtocol,
         localStorage: LocalNewsFeedServiceProtocol,
-        networkMonitor: NetworkMonitor,
+        networkMonitor: NetworkMonitorProtocol,
         logManager: LogManagerProtocol? = nil
     ) {
         self.remoteService = remoteService

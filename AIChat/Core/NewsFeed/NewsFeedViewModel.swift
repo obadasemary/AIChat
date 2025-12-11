@@ -12,15 +12,15 @@ import Foundation
 final class NewsFeedViewModel {
     
     // MARK: - State
-    enum State {
+    enum State: Equatable {
         case idle
         case loading
         case loaded([NewsArticle])
         case error(NewsFeedError)
         case loadingMore([NewsArticle])
     }
-    
-    enum NewsFeedError: LocalizedError {
+
+    enum NewsFeedError: LocalizedError, Equatable {
         case network
         case server(status: Int)
         case decoding
@@ -44,8 +44,8 @@ final class NewsFeedViewModel {
     }
     
     // MARK: - Dependencies
-    private let newsFeedUseCase: NewsFeedUseCase
-    private let networkMonitor: NetworkMonitor
+    private let newsFeedUseCase: NewsFeedUseCaseProtocol
+    private let networkMonitor: NetworkMonitorProtocol
 
     // MARK: - Published Properties
     private(set) var articles: [NewsArticle] = []
@@ -79,7 +79,7 @@ final class NewsFeedViewModel {
     private var wasDisconnected: Bool = false
 
     // MARK: - Initialization
-    init(newsFeedUseCase: NewsFeedUseCase, networkMonitor: NetworkMonitor) {
+    init(newsFeedUseCase: NewsFeedUseCaseProtocol, networkMonitor: NetworkMonitorProtocol) {
         self.newsFeedUseCase = newsFeedUseCase
         self.networkMonitor = networkMonitor
     }
