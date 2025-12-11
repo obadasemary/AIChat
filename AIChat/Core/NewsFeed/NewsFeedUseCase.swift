@@ -8,7 +8,7 @@
 import Foundation
 
 @MainActor
-final class NewsFeedUseCase {
+final class NewsFeedUseCase: NewsFeedUseCaseProtocol {
 
     private let newsFeedManager: NewsFeedManagerProtocol
 
