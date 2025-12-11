@@ -12,12 +12,12 @@ final class RemoteNewsFeedService: RemoteNewsFeedServiceProtocol {
     private let apiKey: String
     private let baseURL = "https://newsapi.org/v2"
 
-    init(apiKey: String = "") {
+    init(apiKey: String = Keys.newsAPIKey) {
         self.apiKey = apiKey
     }
 
-    func fetchNews(category: String?) async throws -> [NewsArticle] {
-        var urlString = "\(baseURL)/everything?apiKey=\(apiKey)&sortBy=publishedAt"
+    func fetchNews(category: String?, page: Int, pageSize: Int) async throws -> [NewsArticle] {
+        var urlString = "\(baseURL)/everything?apiKey=\(apiKey)&sortBy=publishedAt&page=\(page)&pageSize=\(pageSize)"
 
         if let category = category {
             urlString += "&q=\(category)"
@@ -57,8 +57,8 @@ final class RemoteNewsFeedService: RemoteNewsFeedServiceProtocol {
         }
     }
 
-    func fetchTopHeadlines(country: String?) async throws -> [NewsArticle] {
-        var urlString = "\(baseURL)/top-headlines?apiKey=\(apiKey)"
+    func fetchTopHeadlines(country: String?, page: Int, pageSize: Int) async throws -> [NewsArticle] {
+        var urlString = "\(baseURL)/top-headlines?apiKey=\(apiKey)&page=\(page)&pageSize=\(pageSize)"
 
         if let country = country {
             urlString += "&country=\(country)"

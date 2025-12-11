@@ -17,11 +17,11 @@ final class NewsFeedUseCase {
         self.newsFeedManager = container.resolve(NewsFeedManager.self)!
     }
 
-    func loadNews(category: String? = nil) async throws -> NewsFeedResult {
-        try await newsFeedManager.fetchNews(category: category)
+    func loadNews(category: String? = nil, page: Int, pageSize: Int) async throws -> NewsFeedResult {
+        try await newsFeedManager.fetchNews(category: category, page: page, pageSize: pageSize)
     }
 
-    func loadTopHeadlines(country: String? = nil) async throws -> NewsFeedResult {
-        try await newsFeedManager.fetchTopHeadlines(country: country)
+    func loadTopHeadlines(country: String? = nil, page: Int, pageSize: Int) async throws -> NewsFeedResult {
+        try await newsFeedManager.fetchTopHeadlines(country: country, page: page, pageSize: pageSize)
     }
 }

@@ -25,30 +25,52 @@ final class MockRemoteNewsFeedService: RemoteNewsFeedServiceProtocol, @unchecked
             title: "AI Advances in 2025",
             description: "Machine learning reaches new milestones",
             category: "Science"
-        )
+        ),
+        .mock(title: "Article 4", description: "Desc 4", category: "General"),
+        .mock(title: "Article 5", description: "Desc 5", category: "General"),
+        .mock(title: "Article 6", description: "Desc 6", category: "General"),
+        .mock(title: "Article 7", description: "Desc 7", category: "General"),
+        .mock(title: "Article 8", description: "Desc 8", category: "General"),
+        .mock(title: "Article 9", description: "Desc 9", category: "General"),
+        .mock(title: "Article 10", description: "Desc 10", category: "General"),
+        .mock(title: "Article 11", description: "Desc 11", category: "General"),
+        .mock(title: "Article 12", description: "Desc 12", category: "General"),
+        .mock(title: "Article 13", description: "Desc 13", category: "General")
     ]
 
-    func fetchNews(category: String?) async throws -> [NewsArticle] {
+    func fetchNews(category: String?, page: Int, pageSize: Int) async throws -> [NewsArticle] {
         if shouldFail {
             throw NewsFeedError.networkError
         }
 
         try await Task.sleep(nanoseconds: 500_000_000)
 
+        var filteredArticles = mockArticles
         if let category = category {
-            return mockArticles.filter { $0.category == category }
+            filteredArticles = mockArticles.filter { $0.category == category }
         }
 
-        return mockArticles
+        return paginateArticles(filteredArticles, page: page, pageSize: pageSize)
     }
 
-    func fetchTopHeadlines(country: String?) async throws -> [NewsArticle] {
+    func fetchTopHeadlines(country: String?, page: Int, pageSize: Int) async throws -> [NewsArticle] {
         if shouldFail {
             throw NewsFeedError.networkError
         }
 
         try await Task.sleep(nanoseconds: 500_000_000)
 
-        return mockArticles
+        return paginateArticles(mockArticles, page: page, pageSize: pageSize)
+    }
+
+    private func paginateArticles(_ articles: [NewsArticle], page: Int, pageSize: Int) -> [NewsArticle] {
+        let startIndex = (page - 1) * pageSize
+        let endIndex = min(startIndex + pageSize, articles.count)
+
+        guard startIndex < articles.count else {
+            return []
+        }
+
+        return Array(articles[startIndex..<endIndex])
     }
 }
