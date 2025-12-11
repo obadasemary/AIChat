@@ -15,7 +15,7 @@ struct NewsFeedViewModelTests {
 
     @Test("Initial Data Load Success")
     func testInitialDataLoadSuccess() async throws {
-        let mockUseCase = await MockNewsFeedUseCase(shouldFail: false)
+        let mockUseCase = MockNewsFeedUseCase(shouldFail: false)
         let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
 
         let viewModel = NewsFeedViewModel(
@@ -25,10 +25,7 @@ struct NewsFeedViewModelTests {
 
         #expect(viewModel.state == .idle)
 
-        viewModel.loadInitialData()
-
-        // Wait for async operation
-        try await Task.sleep(nanoseconds: 100_000_000)
+        await viewModel.loadInitialDataAndWait()
 
         #expect(viewModel.articles.count > 0)
         if case .loaded = viewModel.state {
@@ -40,7 +37,7 @@ struct NewsFeedViewModelTests {
 
     @Test("Initial Data Load Failure")
     func testInitialDataLoadFailure() async throws {
-        let mockUseCase = await MockNewsFeedUseCase(shouldFail: true, failWithError: NewsFeedError.networkError)
+        let mockUseCase = MockNewsFeedUseCase(shouldFail: true, failWithError: NewsFeedError.networkError)
         let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
 
         let viewModel = NewsFeedViewModel(
@@ -48,10 +45,7 @@ struct NewsFeedViewModelTests {
             networkMonitor: mockNetworkMonitor
         )
 
-        viewModel.loadInitialData()
-
-        // Wait for async operation
-        try await Task.sleep(nanoseconds: 100_000_000)
+        await viewModel.loadInitialDataAndWait()
 
         if case .error = viewModel.state {
             // Success
@@ -65,7 +59,7 @@ struct NewsFeedViewModelTests {
 
     @Test("Refresh Data Resets Page and Articles")
     func testRefreshDataResetsPageAndArticles() async throws {
-        let mockUseCase = await MockNewsFeedUseCase(shouldFail: false)
+        let mockUseCase = MockNewsFeedUseCase(shouldFail: false)
         let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
 
         let viewModel = NewsFeedViewModel(
@@ -74,14 +68,12 @@ struct NewsFeedViewModelTests {
         )
 
         // Load initial data
-        viewModel.loadInitialData()
-        try await Task.sleep(nanoseconds: 100_000_000)
+        await viewModel.loadInitialDataAndWait()
 
         let initialCount = viewModel.articles.count
 
         // Refresh
-        viewModel.refreshData()
-        try await Task.sleep(nanoseconds: 100_000_000)
+        await viewModel.refreshDataAndWait()
 
         #expect(viewModel.currentPage == 1)
         #expect(viewModel.articles.count > 0)
@@ -91,7 +83,7 @@ struct NewsFeedViewModelTests {
 
     @Test("Load More Data Increments Page")
     func testLoadMoreDataIncrementsPage() async throws {
-        let mockUseCase = await MockNewsFeedUseCase(shouldFail: false, totalResults: 100)
+        let mockUseCase = MockNewsFeedUseCase(shouldFail: false, totalResults: 100)
         let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
 
         let viewModel = NewsFeedViewModel(
@@ -100,15 +92,13 @@ struct NewsFeedViewModelTests {
         )
 
         // Load initial data
-        viewModel.loadInitialData()
-        try await Task.sleep(nanoseconds: 100_000_000)
+        await viewModel.loadInitialDataAndWait()
 
         let initialCount = viewModel.articles.count
         #expect(viewModel.currentPage == 1)
 
         // Load more
-        viewModel.loadMoreData()
-        try await Task.sleep(nanoseconds: 100_000_000)
+        await viewModel.loadMoreDataAndWait()
 
         #expect(viewModel.currentPage == 2)
         #expect(viewModel.articles.count > initialCount)
@@ -116,7 +106,7 @@ struct NewsFeedViewModelTests {
 
     @Test("Load More Data Stops When No More Pages")
     func testLoadMoreDataStopsWhenNoMorePages() async throws {
-        let mockUseCase = await MockNewsFeedUseCase(shouldFail: false, totalResults: 10)
+        let mockUseCase = MockNewsFeedUseCase(shouldFail: false, totalResults: 10)
         let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
 
         let viewModel = NewsFeedViewModel(
@@ -125,16 +115,14 @@ struct NewsFeedViewModelTests {
         )
 
         // Load initial data (pageSize=20, but only 10 total)
-        viewModel.loadInitialData()
-        try await Task.sleep(nanoseconds: 100_000_000)
+        await viewModel.loadInitialDataAndWait()
 
         #expect(viewModel.hasMorePages == false)
 
         let articleCountBeforeLoadMore = viewModel.articles.count
 
         // Try to load more
-        viewModel.loadMoreData()
-        try await Task.sleep(nanoseconds: 100_000_000)
+        await viewModel.loadMoreDataAndWait()
 
         // Should not have loaded more
         #expect(viewModel.articles.count == articleCountBeforeLoadMore)
@@ -143,7 +131,7 @@ struct NewsFeedViewModelTests {
 
     @Test("isLoadingMore Flag During Pagination")
     func testIsLoadingMoreFlagDuringPagination() async throws {
-        let mockUseCase = await MockNewsFeedUseCase(shouldFail: false)
+        let mockUseCase = MockNewsFeedUseCase(shouldFail: false)
         let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
 
         let viewModel = NewsFeedViewModel(
@@ -152,20 +140,12 @@ struct NewsFeedViewModelTests {
         )
 
         // Load initial data
-        viewModel.loadInitialData()
-        try await Task.sleep(nanoseconds: 100_000_000)
+        await viewModel.loadInitialDataAndWait()
 
         #expect(viewModel.isLoadingMore == false)
 
         // Start loading more
-        viewModel.loadMoreData()
-
-        // Check flag is set during loading
-        // Note: This might be flaky due to timing
-        try await Task.sleep(nanoseconds: 10_000_000)
-
-        // After completion
-        try await Task.sleep(nanoseconds: 100_000_000)
+        await viewModel.loadMoreDataAndWait()
         #expect(viewModel.isLoadingMore == false)
     }
 
@@ -173,7 +153,7 @@ struct NewsFeedViewModelTests {
 
     @Test("Data Source Indicator Shows Remote")
     func testDataSourceIndicatorShowsRemote() async throws {
-        let mockUseCase = await MockNewsFeedUseCase(shouldFail: false, dataSource: .remote)
+        let mockUseCase = MockNewsFeedUseCase(shouldFail: false, dataSource: .remote)
         let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
 
         let viewModel = NewsFeedViewModel(
@@ -181,8 +161,7 @@ struct NewsFeedViewModelTests {
             networkMonitor: mockNetworkMonitor
         )
 
-        viewModel.loadInitialData()
-        try await Task.sleep(nanoseconds: 100_000_000)
+        await viewModel.loadInitialDataAndWait()
 
         #expect(viewModel.isDataFromRemote == true)
         #expect(viewModel.isDataFromLocal == false)
@@ -190,7 +169,7 @@ struct NewsFeedViewModelTests {
 
     @Test("Data Source Indicator Shows Local")
     func testDataSourceIndicatorShowsLocal() async throws {
-        let mockUseCase = await MockNewsFeedUseCase(shouldFail: false, dataSource: .local)
+        let mockUseCase = MockNewsFeedUseCase(shouldFail: false, dataSource: .local)
         let mockNetworkMonitor = MockNetworkMonitor(isConnected: false)
 
         let viewModel = NewsFeedViewModel(
@@ -198,8 +177,7 @@ struct NewsFeedViewModelTests {
             networkMonitor: mockNetworkMonitor
         )
 
-        viewModel.loadInitialData()
-        try await Task.sleep(nanoseconds: 100_000_000)
+        await viewModel.loadInitialDataAndWait()
 
         #expect(viewModel.isDataFromRemote == false)
         #expect(viewModel.isDataFromLocal == true)
@@ -207,7 +185,7 @@ struct NewsFeedViewModelTests {
 
     @Test("Auto-Refresh on Connectivity Restored")
     func testAutoRefreshOnConnectivityRestored() async throws {
-        let mockUseCase = await MockNewsFeedUseCase(shouldFail: false, dataSource: .local)
+        let mockUseCase = MockNewsFeedUseCase(shouldFail: false, dataSource: .local)
         let mockNetworkMonitor = MockNetworkMonitor(isConnected: false)
 
         let viewModel = NewsFeedViewModel(
@@ -216,28 +194,24 @@ struct NewsFeedViewModelTests {
         )
 
         // Load initial data while offline
-        viewModel.loadInitialData()
-        try await Task.sleep(nanoseconds: 100_000_000)
+        await viewModel.loadInitialDataAndWait()
 
         #expect(viewModel.isDataFromLocal == true)
 
         // First handleConnectivityChange to set wasDisconnected = true
-        viewModel.handleConnectivityChange()
+        await viewModel.handleConnectivityChangeAndWait()
 
         // Restore connectivity and change data source to remote
-        await mockUseCase.setDataSource(.remote)
+        mockUseCase.setDataSource(.remote)
         mockNetworkMonitor.isConnected = true
-        viewModel.handleConnectivityChange()
-
-        // Wait for auto-refresh
-        try await Task.sleep(nanoseconds: 200_000_000)
+        await viewModel.handleConnectivityChangeAndWait()
 
         #expect(viewModel.isDataFromRemote == true)
     }
 
     @Test("No Auto-Refresh When Already Remote")
     func testNoAutoRefreshWhenAlreadyRemote() async throws {
-        let mockUseCase = await MockNewsFeedUseCase(shouldFail: false, dataSource: .remote)
+        let mockUseCase = MockNewsFeedUseCase(shouldFail: false, dataSource: .remote)
         let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
 
         let viewModel = NewsFeedViewModel(
@@ -246,14 +220,12 @@ struct NewsFeedViewModelTests {
         )
 
         // Load initial data while online
-        viewModel.loadInitialData()
-        try await Task.sleep(nanoseconds: 100_000_000)
+        await viewModel.loadInitialDataAndWait()
 
         let initialArticleCount = viewModel.articles.count
 
         // Connectivity change (still connected)
-        viewModel.handleConnectivityChange()
-        try await Task.sleep(nanoseconds: 100_000_000)
+        await viewModel.handleConnectivityChangeAndWait()
 
         // Should not have refreshed since data was already from remote
         #expect(viewModel.articles.count == initialArticleCount)
@@ -263,7 +235,7 @@ struct NewsFeedViewModelTests {
 
     @Test("Network Error Mapping")
     func testNetworkErrorMapping() async throws {
-        let mockUseCase = await MockNewsFeedUseCase(shouldFail: true, failWithError: NewsFeedError.networkError)
+        let mockUseCase = MockNewsFeedUseCase(shouldFail: true, failWithError: NewsFeedError.networkError)
         let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
 
         let viewModel = NewsFeedViewModel(
@@ -271,8 +243,7 @@ struct NewsFeedViewModelTests {
             networkMonitor: mockNetworkMonitor
         )
 
-        viewModel.loadInitialData()
-        try await Task.sleep(nanoseconds: 100_000_000)
+        await viewModel.loadInitialDataAndWait()
 
         #expect(viewModel.errorMessage != nil)
         #expect(viewModel.errorMessage?.contains("Network") == true || viewModel.errorMessage?.contains("network") == true)
@@ -280,7 +251,7 @@ struct NewsFeedViewModelTests {
 
     @Test("Invalid Response Error Mapping")
     func testInvalidResponseErrorMapping() async throws {
-        let mockUseCase = await MockNewsFeedUseCase(shouldFail: true, failWithError: NewsFeedError.invalidResponse)
+        let mockUseCase = MockNewsFeedUseCase(shouldFail: true, failWithError: NewsFeedError.invalidResponse)
         let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
 
         let viewModel = NewsFeedViewModel(
@@ -288,8 +259,7 @@ struct NewsFeedViewModelTests {
             networkMonitor: mockNetworkMonitor
         )
 
-        viewModel.loadInitialData()
-        try await Task.sleep(nanoseconds: 100_000_000)
+        await viewModel.loadInitialDataAndWait()
 
         #expect(viewModel.errorMessage != nil)
         #expect(viewModel.errorMessage?.contains("Invalid") == true || viewModel.errorMessage?.contains("invalid") == true)
@@ -299,7 +269,7 @@ struct NewsFeedViewModelTests {
 
     @Test("State Transitions During Load")
     func testStateTransitionsDuringLoad() async throws {
-        let mockUseCase = await MockNewsFeedUseCase(shouldFail: false)
+        let mockUseCase = MockNewsFeedUseCase(shouldFail: false)
         let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
 
         let viewModel = NewsFeedViewModel(
@@ -311,13 +281,7 @@ struct NewsFeedViewModelTests {
         #expect(viewModel.state == .idle)
 
         // Start loading
-        viewModel.loadInitialData()
-
-        // Should transition to loading
-        try await Task.sleep(nanoseconds: 10_000_000)
-
-        // After completion
-        try await Task.sleep(nanoseconds: 100_000_000)
+        await viewModel.loadInitialDataAndWait()
         if case .loaded = viewModel.state {
             // Success
         } else {

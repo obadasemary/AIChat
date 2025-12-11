@@ -87,43 +87,61 @@ final class NewsFeedViewModel {
     // MARK: - Public Methods
     func loadInitialData() {
         print("🔍 ViewModel: loadInitialData called. State: \(state)")
-        guard case .idle = state else { return }
         Task { [weak self] in
-            await self?.fetchData(page: 1)
+            await self?.loadInitialDataAndWait()
         }
     }
 
     func handleConnectivityChange() {
-        let isNowConnected = networkMonitor.isConnected
-
-        // Auto-refresh when connectivity is restored and we were showing cached data
-        if isNowConnected && wasDisconnected && isDataFromLocal {
-            print("🔍 ViewModel: Connectivity restored! Auto-refreshing from remote...")
-            refreshData()
+        Task { [weak self] in
+            await self?.handleConnectivityChangeAndWait()
         }
-
-        wasDisconnected = !isNowConnected
     }
     
     func refreshData() {
         print("🔍 ViewModel: refreshData called")
-        currentPage = 1
-        hasMorePages = true
-        // Keep articles empty or keep old ones depending on preference, reference does this:
-        articles = []
-        state = .loading
         Task { [weak self] in
-            await self?.fetchData(page: 1)
+            await self?.refreshDataAndWait()
         }
     }
     
     func loadMoreData() {
         print("🔍 ViewModel: loadMoreData called. Page: \(currentPage), HasMore: \(hasMorePages), IsLoading: \(isLoading)")
-        guard hasMorePages && !isLoading else { return }
         Task { [weak self] in
-            guard let self else { return }
-            await self.fetchData(page: self.currentPage + 1)
+            await self?.loadMoreDataAndWait()
         }
+    }
+    
+    // MARK: - Async, test-friendly variants
+    func loadInitialDataAndWait() async {
+        guard case .idle = state else { return }
+        await fetchData(page: 1)
+    }
+    
+    func refreshDataAndWait() async {
+        print("🔍 ViewModel: refreshDataAndWait called")
+        currentPage = 1
+        hasMorePages = true
+        // Keep articles empty or keep old ones depending on preference, reference does this:
+        articles = []
+        state = .loading
+        await fetchData(page: 1)
+    }
+    
+    func loadMoreDataAndWait() async {
+        guard hasMorePages && !isLoading else { return }
+        await fetchData(page: currentPage + 1)
+    }
+
+    func handleConnectivityChangeAndWait() async {
+        let isNowConnected = networkMonitor.isConnected
+
+        if isNowConnected && wasDisconnected && isDataFromLocal {
+            print("🔍 ViewModel: Connectivity restored! Auto-refreshing from remote...")
+            await refreshDataAndWait()
+        }
+
+        wasDisconnected = !isNowConnected
     }
     
     func loadTopHeadlines(country: String? = "eg") {
