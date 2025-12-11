@@ -96,31 +96,71 @@ struct NewsArticleRow: View {
     let article: NewsArticle
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(article.title)
-                .font(.headline)
-                .lineLimit(2)
-
-            if let description = article.description {
-                Text(description)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(3)
+        HStack(alignment: .top, spacing: 12) {
+            // Article Image
+            if let imageUrl = article.imageUrl, let url = URL(string: imageUrl) {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                            .frame(width: 100, height: 100)
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 100, height: 100)
+                            .clipped()
+                            .cornerRadius(8)
+                    case .failure:
+                        placeholderImage
+                    @unknown default:
+                        placeholderImage
+                    }
+                }
+                .frame(width: 100, height: 100)
+            } else {
+                placeholderImage
             }
 
-            HStack {
-                Text(article.source.name)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            // Article Content
+            VStack(alignment: .leading, spacing: 8) {
+                Text(article.title)
+                    .font(.headline)
+                    .lineLimit(2)
 
-                Spacer()
+                if let description = article.description {
+                    Text(description)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(3)
+                }
 
-                Text(article.publishedAt, style: .relative)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                HStack {
+                    Text(article.source.name)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+
+                    Spacer()
+
+                    Text(article.publishedAt, style: .relative)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 8)
+    }
+
+    private var placeholderImage: some View {
+        Rectangle()
+            .fill(Color.gray.opacity(0.2))
+            .frame(width: 100, height: 100)
+            .cornerRadius(8)
+            .overlay(
+                Image(systemName: "newspaper")
+                    .font(.title)
+                    .foregroundStyle(.gray)
+            )
     }
 }
 
