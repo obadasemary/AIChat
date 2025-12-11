@@ -2,7 +2,7 @@
 //  NewsFeedBuilder.swift
 //  AIChat
 //
-//  Created by Claude on 10.12.2025.
+//  Created by Abdelrahman Mohamed on 10.12.2025.
 //
 
 import SwiftUI
