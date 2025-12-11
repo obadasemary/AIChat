@@ -45,7 +45,8 @@ final class NewsFeedViewModel {
     
     // MARK: - Dependencies
     private let newsFeedUseCase: NewsFeedUseCase
-    
+    private let networkMonitor: NetworkMonitor
+
     // MARK: - Published Properties
     private(set) var articles: [NewsArticle] = []
     private(set) var currentPage: Int = 1
@@ -53,7 +54,7 @@ final class NewsFeedViewModel {
     private(set) var state: State = .idle
     private(set) var dataSource: NewsFeedResult.DataSource?
     private(set) var totalResults: Int?
-    
+
     var isDataFromRemote: Bool {
         dataSource == .remote
     }
@@ -61,18 +62,26 @@ final class NewsFeedViewModel {
     var isDataFromLocal: Bool {
         dataSource == .local
     }
-    
+
+    var isConnected: Bool {
+        networkMonitor.isConnected
+    }
+
     // Helper to track current query context
     private var currentCountry: String? = "us"
     private var currentCategory: String? = nil
-    
+
     // Loading guard
     private var isLoading: Bool = false
     private let pageSize: Int = 20
-    
+
+    // Track previous connectivity state for auto-refresh
+    private var wasDisconnected: Bool = false
+
     // MARK: - Initialization
-    init(newsFeedUseCase: NewsFeedUseCase) {
+    init(newsFeedUseCase: NewsFeedUseCase, networkMonitor: NetworkMonitor) {
         self.newsFeedUseCase = newsFeedUseCase
+        self.networkMonitor = networkMonitor
     }
     
     // MARK: - Public Methods
@@ -82,6 +91,18 @@ final class NewsFeedViewModel {
         Task { [weak self] in
             await self?.fetchData(page: 1)
         }
+    }
+
+    func handleConnectivityChange() {
+        let isNowConnected = networkMonitor.isConnected
+
+        // Auto-refresh when connectivity is restored and we were showing cached data
+        if isNowConnected && wasDisconnected && isDataFromLocal {
+            print("🔍 ViewModel: Connectivity restored! Auto-refreshing from remote...")
+            refreshData()
+        }
+
+        wasDisconnected = !isNowConnected
     }
     
     func refreshData() {

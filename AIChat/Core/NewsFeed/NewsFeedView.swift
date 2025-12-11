@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct NewsFeedView: View {
-    
+
     @State var viewModel: NewsFeedViewModel
     @Environment(\.colorScheme) var colorScheme
-    
+
     var body: some View {
         let _ = Self._printChanges()
         NavigationStack {
@@ -71,6 +71,9 @@ struct NewsFeedView: View {
             }
             .task {
                 viewModel.loadInitialData()
+            }
+            .onChange(of: viewModel.isConnected) { _, _ in
+                viewModel.handleConnectivityChange()
             }
         }
     }

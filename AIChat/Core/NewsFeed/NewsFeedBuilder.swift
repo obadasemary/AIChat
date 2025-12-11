@@ -18,11 +18,15 @@ final class NewsFeedBuilder {
     }
 
     func buildNewsFeedView() -> some View {
-        NewsFeedView(
+        // swiftlint:disable:next force_unwrapping
+        let networkMonitor = container.resolve(NetworkMonitor.self)!
+
+        return NewsFeedView(
             viewModel: NewsFeedViewModel(
                 newsFeedUseCase: NewsFeedUseCase(
                     container: container
-                )
+                ),
+                networkMonitor: networkMonitor
             )
         )
     }
