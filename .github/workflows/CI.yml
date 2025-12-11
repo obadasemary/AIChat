@@ -19,6 +19,14 @@ jobs:
         run: |
           echo "✅ Using Xcode 26"
           sudo xcode-select -switch /Applications/Xcode_26.0.1.app
+      
+      - name: Clear SwiftPM protoc artifact cache (workaround)
+        run: |
+          PROTOC_CACHE=~/Library/Caches/org.swift.swiftpm/artifacts/https___github_com_apple_swift_protobuf_releases_download_protoc_artifactbundle_v31_1_protoc_31_1_artifactbundle_zip
+          if [ -e "$PROTOC_CACHE" ]; then
+            echo "🧹 Removing stale SwiftPM protoc artifact bundle at $PROTOC_CACHE"
+            rm -rf "$PROTOC_CACHE"
+          fi
 
       - name: Create mock Firebase configuration files
         run: |
