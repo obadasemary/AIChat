@@ -2,7 +2,7 @@
 //  NewsFeedUseCaseProtocol.swift
 //  AIChat
 //
-//  Created by Claude on 11.12.2025.
+//  Created by Abdelrahman Mohamed on 11.12.2025.
 //
 
 import Foundation
