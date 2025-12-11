@@ -44,14 +44,12 @@ struct NewsFeedView: View {
                         } else {
                             ForEach(viewModel.articles) { article in
                                 NewsArticleRow(article: article)
-                                    .padding(.horizontal)
                                     .onAppear {
                                         if article.id == viewModel.articles.last?.id {
                                             viewModel.loadMoreData()
                                         }
                                     }
                                 Divider()
-                                    .padding(.leading)
                             }
                             
                             if viewModel.isLoadingMore {
@@ -96,28 +94,29 @@ struct NewsArticleRow: View {
     let article: NewsArticle
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            // Article Image
+        VStack(alignment: .leading, spacing: 0) {
+            // Article Image - Full Width
             if let imageUrl = article.imageUrl, let url = URL(string: imageUrl) {
                 AsyncImage(url: url) { phase in
                     switch phase {
                     case .empty:
                         ProgressView()
-                            .frame(width: 100, height: 100)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 200)
                     case .success(let image):
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                            .frame(width: 100, height: 100)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 200)
                             .clipped()
-                            .cornerRadius(8)
                     case .failure:
                         placeholderImage
                     @unknown default:
                         placeholderImage
                     }
                 }
-                .frame(width: 100, height: 100)
+                .frame(height: 200)
             } else {
                 placeholderImage
             }
@@ -147,18 +146,19 @@ struct NewsArticleRow: View {
                         .foregroundStyle(.secondary)
                 }
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
         }
-        .padding(.vertical, 8)
     }
 
     private var placeholderImage: some View {
         Rectangle()
             .fill(Color.gray.opacity(0.2))
-            .frame(width: 100, height: 100)
-            .cornerRadius(8)
+            .frame(maxWidth: .infinity)
+            .frame(height: 200)
             .overlay(
                 Image(systemName: "newspaper")
-                    .font(.title)
+                    .font(.largeTitle)
                     .foregroundStyle(.gray)
             )
     }
