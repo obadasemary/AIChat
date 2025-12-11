@@ -16,7 +16,7 @@ final class RemoteNewsFeedService: RemoteNewsFeedServiceProtocol {
         self.apiKey = apiKey
     }
 
-    func fetchNews(category: String?, page: Int, pageSize: Int) async throws -> [NewsArticle] {
+    func fetchNews(category: String?, page: Int, pageSize: Int) async throws -> NewsFeedResponse {
         var urlString = "\(baseURL)/everything?apiKey=\(apiKey)&sortBy=publishedAt&page=\(page)&pageSize=\(pageSize)"
 
         if let category = category {
@@ -38,7 +38,7 @@ final class RemoteNewsFeedService: RemoteNewsFeedServiceProtocol {
         decoder.dateDecodingStrategy = .iso8601
         let apiResponse = try decoder.decode(NewsAPIResponse.self, from: data)
 
-        return apiResponse.articles.map { apiArticle in
+        let articles = apiResponse.articles.map { apiArticle in
             NewsArticle(
                 id: UUID().uuidString,
                 title: apiArticle.title,
@@ -55,9 +55,14 @@ final class RemoteNewsFeedService: RemoteNewsFeedServiceProtocol {
                 category: nil
             )
         }
+
+        return NewsFeedResponse(
+            articles: articles,
+            totalResults: apiResponse.totalResults
+        )
     }
 
-    func fetchTopHeadlines(country: String?, page: Int, pageSize: Int) async throws -> [NewsArticle] {
+    func fetchTopHeadlines(country: String?, page: Int, pageSize: Int) async throws -> NewsFeedResponse {
         var urlString = "\(baseURL)/top-headlines?apiKey=\(apiKey)&page=\(page)&pageSize=\(pageSize)"
 
         if let country = country {
@@ -79,7 +84,7 @@ final class RemoteNewsFeedService: RemoteNewsFeedServiceProtocol {
         decoder.dateDecodingStrategy = .iso8601
         let apiResponse = try decoder.decode(NewsAPIResponse.self, from: data)
 
-        return apiResponse.articles.map { apiArticle in
+        let articles = apiResponse.articles.map { apiArticle in
             NewsArticle(
                 id: UUID().uuidString,
                 title: apiArticle.title,
@@ -96,6 +101,11 @@ final class RemoteNewsFeedService: RemoteNewsFeedServiceProtocol {
                 category: nil
             )
         }
+
+        return NewsFeedResponse(
+            articles: articles,
+            totalResults: apiResponse.totalResults
+        )
     }
 }
 
