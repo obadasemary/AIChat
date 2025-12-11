@@ -15,6 +15,7 @@ protocol NewsFeedManagerProtocol: Sendable {
 struct NewsFeedResult {
     let articles: [NewsArticle]
     let source: DataSource
+    let totalResults: Int?
 
     enum DataSource {
         case remote

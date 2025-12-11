@@ -36,13 +36,17 @@ extension NewsFeedManager: NewsFeedManagerProtocol {
 
         if networkMonitor.isConnected {
             do {
-                let articles = try await remoteService.fetchNews(category: category, page: page, pageSize: pageSize)
-                logManager?.trackEvent(event: Event.fetchNewsRemoteSuccess(count: articles.count))
+                let response = try await remoteService.fetchNews(category: category, page: page, pageSize: pageSize)
+                logManager?.trackEvent(event: Event.fetchNewsRemoteSuccess(count: response.articles.count))
 
-                try localStorage.saveNews(articles)
-                logManager?.trackEvent(event: Event.saveLocalSuccess(count: articles.count))
+                try localStorage.saveNews(response.articles)
+                logManager?.trackEvent(event: Event.saveLocalSuccess(count: response.articles.count))
 
-                return NewsFeedResult(articles: articles, source: .remote)
+                return NewsFeedResult(
+                    articles: response.articles,
+                    source: .remote,
+                    totalResults: response.totalResults
+                )
             } catch {
                 logManager?.trackEvent(event: Event.fetchNewsRemoteFail(error: error))
 
@@ -59,13 +63,17 @@ extension NewsFeedManager: NewsFeedManagerProtocol {
 
         if networkMonitor.isConnected {
             do {
-                let articles = try await remoteService.fetchTopHeadlines(country: country, page: page, pageSize: pageSize)
-                logManager?.trackEvent(event: Event.fetchTopHeadlinesRemoteSuccess(count: articles.count))
+                let response = try await remoteService.fetchTopHeadlines(country: country, page: page, pageSize: pageSize)
+                logManager?.trackEvent(event: Event.fetchTopHeadlinesRemoteSuccess(count: response.articles.count))
 
-                try localStorage.saveNews(articles)
-                logManager?.trackEvent(event: Event.saveLocalSuccess(count: articles.count))
+                try localStorage.saveNews(response.articles)
+                logManager?.trackEvent(event: Event.saveLocalSuccess(count: response.articles.count))
 
-                return NewsFeedResult(articles: articles, source: .remote)
+                return NewsFeedResult(
+                    articles: response.articles,
+                    source: .remote,
+                    totalResults: response.totalResults
+                )
             } catch {
                 logManager?.trackEvent(event: Event.fetchTopHeadlinesRemoteFail(error: error))
 
@@ -87,7 +95,7 @@ private extension NewsFeedManager {
         let articles = try localStorage.fetchCachedNews()
         logManager?.trackEvent(event: Event.fetchLocalSuccess(count: articles.count))
 
-        return NewsFeedResult(articles: articles, source: .local)
+        return NewsFeedResult(articles: articles, source: .local, totalResults: nil)
     }
 }
 

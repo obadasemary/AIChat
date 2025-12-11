@@ -38,7 +38,7 @@ final class MockRemoteNewsFeedService: RemoteNewsFeedServiceProtocol, @unchecked
         .mock(title: "Article 13", description: "Desc 13", category: "General")
     ]
 
-    func fetchNews(category: String?, page: Int, pageSize: Int) async throws -> [NewsArticle] {
+    func fetchNews(category: String?, page: Int, pageSize: Int) async throws -> NewsFeedResponse {
         if shouldFail {
             throw NewsFeedError.networkError
         }
@@ -53,7 +53,7 @@ final class MockRemoteNewsFeedService: RemoteNewsFeedServiceProtocol, @unchecked
         return paginateArticles(filteredArticles, page: page, pageSize: pageSize)
     }
 
-    func fetchTopHeadlines(country: String?, page: Int, pageSize: Int) async throws -> [NewsArticle] {
+    func fetchTopHeadlines(country: String?, page: Int, pageSize: Int) async throws -> NewsFeedResponse {
         if shouldFail {
             throw NewsFeedError.networkError
         }
@@ -63,14 +63,20 @@ final class MockRemoteNewsFeedService: RemoteNewsFeedServiceProtocol, @unchecked
         return paginateArticles(mockArticles, page: page, pageSize: pageSize)
     }
 
-    private func paginateArticles(_ articles: [NewsArticle], page: Int, pageSize: Int) -> [NewsArticle] {
+    private func paginateArticles(_ articles: [NewsArticle], page: Int, pageSize: Int) -> NewsFeedResponse {
         let startIndex = (page - 1) * pageSize
         let endIndex = min(startIndex + pageSize, articles.count)
 
-        guard startIndex < articles.count else {
-            return []
+        let paginatedArticles: [NewsArticle]
+        if startIndex < articles.count {
+            paginatedArticles = Array(articles[startIndex..<endIndex])
+        } else {
+            paginatedArticles = []
         }
 
-        return Array(articles[startIndex..<endIndex])
+        return NewsFeedResponse(
+            articles: paginatedArticles,
+            totalResults: articles.count
+        )
     }
 }

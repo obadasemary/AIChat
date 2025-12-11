@@ -52,6 +52,7 @@ final class NewsFeedViewModel {
     private(set) var hasMorePages: Bool = true
     private(set) var state: State = .idle
     private(set) var dataSource: NewsFeedResult.DataSource?
+    private(set) var totalResults: Int?
     
     var isDataFromRemote: Bool {
         dataSource == .remote
@@ -67,7 +68,7 @@ final class NewsFeedViewModel {
     
     // Loading guard
     private var isLoading: Bool = false
-    private let pageSize: Int = 5
+    private let pageSize: Int = 20
     
     // MARK: - Initialization
     init(newsFeedUseCase: NewsFeedUseCase) {
@@ -152,16 +153,28 @@ final class NewsFeedViewModel {
                 result = try await newsFeedUseCase.loadTopHeadlines(country: currentCountry, page: page, pageSize: pageSize)
             }
             
-            print("🔍 ViewModel: Success. Got \(result.articles.count) articles. Source: \(result.source)")
-            
+            print("🔍 ViewModel: Success. Got \(result.articles.count) articles. Source: \(result.source). TotalResults: \(result.totalResults ?? -1)")
+
             if page == 1 {
                 articles = result.articles
             } else {
                 articles.append(contentsOf: result.articles)
             }
-            
+
             currentPage = page
-            hasMorePages = result.articles.count >= pageSize
+            totalResults = result.totalResults
+
+            // Calculate hasMorePages based on totalResults if available
+            if let total = result.totalResults {
+                let fetchedSoFar = page * pageSize
+                hasMorePages = fetchedSoFar < total
+                print("🔍 ViewModel: Pagination - Fetched \(fetchedSoFar) of \(total). HasMore: \(hasMorePages)")
+            } else {
+                // Fallback for local storage (no totalResults)
+                hasMorePages = result.articles.count >= pageSize
+                print("🔍 ViewModel: Pagination - No totalResults. Using fallback. HasMore: \(hasMorePages)")
+            }
+
             dataSource = result.source
             state = .loaded(articles)
             print("🔍 ViewModel: State updated to .loaded. Articles count: \(articles.count)")
