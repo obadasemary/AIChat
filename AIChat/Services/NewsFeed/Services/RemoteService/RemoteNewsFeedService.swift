@@ -69,11 +69,12 @@ final class RemoteNewsFeedService: RemoteNewsFeedServiceProtocol {
     func fetchTopHeadlines(country: String?, language: String?, page: Int, pageSize: Int) async throws -> NewsFeedResponse {
         var urlString = "\(baseURL)/top-headlines?apiKey=\(apiKey)&page=\(page)&pageSize=\(pageSize)"
 
+        // Note: News API doesn't support both country and language together for top-headlines
+        // Country takes precedence as it returns news in that country's primary language
         if let country = country {
             urlString += "&country=\(country)"
-        }
-
-        if let language = language {
+        } else if let language = language {
+            // Only use language if country is not specified
             urlString += "&language=\(language)"
         }
 
