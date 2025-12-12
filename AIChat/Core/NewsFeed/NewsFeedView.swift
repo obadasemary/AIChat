@@ -117,7 +117,7 @@ struct NewsFeedView: View {
     private var categoryPicker: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 12) {
-                ForEach(NewsCategory.allCases) { category in
+                ForEach(availableCategories) { category in
                     CategoryChip(
                         category: category,
                         isSelected: selectedCategory == category
@@ -162,6 +162,15 @@ struct NewsFeedView: View {
             .padding(.vertical, 4)
         }
     }
+
+    private var availableCategories: [NewsCategory] {
+        // Only show Top Headlines if the selected country supports it
+        if selectedCountry.supportsTopHeadlines {
+            return NewsCategory.allCases
+        } else {
+            return NewsCategory.allCases.filter { $0 != .topHeadlines }
+        }
+    }
     
     private var settingsSheet: some View {
         NavigationStack {
@@ -187,6 +196,12 @@ struct NewsFeedView: View {
                 Section {
                     Button("Apply Settings") {
                         showSettings = false
+
+                        // If Top Headlines is selected but not supported by new country, switch to Tech
+                        if selectedCategory == .topHeadlines && !selectedCountry.supportsTopHeadlines {
+                            selectedCategory = .tech
+                        }
+
                         // Reload current category with new settings
                         switch selectedCategory {
                         case .topHeadlines:
@@ -304,6 +319,14 @@ enum NewsCountry: String, CaseIterable, Identifiable {
         case .spain: return "🇪🇸"
         case .saudiArabia: return "🇸🇦"
         case .uae: return "🇦🇪"
+        }
+    }
+
+    var supportsTopHeadlines: Bool {
+        // News API supports top headlines for these countries
+        switch self {
+        case .egypt, .unitedStates, .unitedKingdom, .germany, .france, .italy, .spain, .saudiArabia, .uae:
+            return true
         }
     }
 }
