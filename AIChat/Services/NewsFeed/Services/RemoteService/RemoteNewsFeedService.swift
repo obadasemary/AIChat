@@ -17,7 +17,7 @@ final class RemoteNewsFeedService: RemoteNewsFeedServiceProtocol {
     }
 
     func fetchNews(category: String?, page: Int, pageSize: Int) async throws -> NewsFeedResponse {
-        var urlString = "\(baseURL)/everything?apiKey=\(apiKey)&sortBy=publishedAt&page=\(page)&pageSize=\(pageSize)"
+        var urlString = "\(baseURL)/everything?apiKey=\(apiKey)&sortBy=publishedAt&page=\(page)&pageSize=\(pageSize)&language=ar"
 
         if let category = category {
             urlString += "&q=\(category)"
@@ -63,7 +63,7 @@ final class RemoteNewsFeedService: RemoteNewsFeedServiceProtocol {
     }
 
     func fetchTopHeadlines(country: String?, page: Int, pageSize: Int) async throws -> NewsFeedResponse {
-        var urlString = "\(baseURL)/top-headlines?apiKey=\(apiKey)&page=\(page)&pageSize=\(pageSize)"
+        var urlString = "\(baseURL)/top-headlines?apiKey=\(apiKey)&page=\(page)&pageSize=\(pageSize)&language=ar"
 
         if let country = country {
             urlString += "&country=\(country)"
