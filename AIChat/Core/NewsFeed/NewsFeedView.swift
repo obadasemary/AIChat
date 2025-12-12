@@ -123,39 +123,7 @@ struct NewsFeedView: View {
                         isSelected: selectedCategory == category
                     ) {
                         selectedCategory = category
-                        switch category {
-                        case .topHeadlines:
-                            viewModel
-                                .loadTopHeadlines(
-                                    country: selectedCountry.code,
-                                    language: selectedLanguage.code
-                                )
-                        case .tech:
-                            viewModel.loadNews(
-                                category: "technology",
-                                language: selectedLanguage.code
-                            )
-                        case .business:
-                            viewModel.loadNews(
-                                category: "business",
-                                language: selectedLanguage.code
-                            )
-                        case .sports:
-                            viewModel.loadNews(
-                                category: "sports",
-                                language: selectedLanguage.code
-                            )
-                        case .health:
-                            viewModel.loadNews(
-                                category: "health",
-                                language: selectedLanguage.code
-                            )
-                        case .science:
-                            viewModel.loadNews(
-                                category: "science",
-                                language: selectedLanguage.code
-                            )
-                        }
+                        loadCategory(category)
                     }
                 }
             }
@@ -169,6 +137,20 @@ struct NewsFeedView: View {
             return NewsCategory.allCases
         } else {
             return NewsCategory.allCases.filter { $0 != .topHeadlines }
+        }
+    }
+
+    private func loadCategory(_ category: NewsCategory) {
+        if category == .topHeadlines {
+            viewModel.loadTopHeadlines(
+                country: selectedCountry.code,
+                language: selectedLanguage.code
+            )
+        } else if let query = category.query {
+            viewModel.loadNews(
+                category: query.rawValue,
+                language: selectedLanguage.code
+            )
         }
     }
     
@@ -203,38 +185,7 @@ struct NewsFeedView: View {
                         }
 
                         // Reload current category with new settings
-                        switch selectedCategory {
-                        case .topHeadlines:
-                            viewModel.loadTopHeadlines(
-                                country: selectedCountry.code,
-                                language: selectedLanguage.code
-                            )
-                        case .tech:
-                            viewModel.loadNews(
-                                category: "technology",
-                                language: selectedLanguage.code
-                            )
-                        case .business:
-                            viewModel.loadNews(
-                                category: "business",
-                                language: selectedLanguage.code
-                            )
-                        case .sports:
-                            viewModel.loadNews(
-                                category: "sports",
-                                language: selectedLanguage.code
-                            )
-                        case .health:
-                            viewModel.loadNews(
-                                category: "health",
-                                language: selectedLanguage.code
-                            )
-                        case .science:
-                            viewModel.loadNews(
-                                category: "science",
-                                language: selectedLanguage.code
-                            )
-                        }
+                        loadCategory(selectedCategory)
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -261,11 +212,12 @@ enum NewsLanguage: String, CaseIterable, Identifiable {
     case german = "de"
     case spanish = "es"
     case italian = "it"
-    
+    case turkish = "tr"
+
     var id: String { rawValue }
-    
+
     var code: String { rawValue }
-    
+
     var displayName: String {
         switch self {
         case .arabic: return "العربية (Arabic)"
@@ -274,6 +226,7 @@ enum NewsLanguage: String, CaseIterable, Identifiable {
         case .german: return "Deutsch (German)"
         case .spanish: return "Español (Spanish)"
         case .italian: return "Italiano (Italian)"
+        case .turkish: return "Türkçe (Turkish)"
         }
     }
 }
@@ -289,11 +242,12 @@ enum NewsCountry: String, CaseIterable, Identifiable {
     case spain = "es"
     case saudiArabia = "sa"
     case uae = "ae"
-    
+    case turkey = "tr"
+
     var id: String { rawValue }
-    
+
     var code: String { rawValue }
-    
+
     var displayName: String {
         switch self {
         case .egypt: return "Egypt"
@@ -305,9 +259,10 @@ enum NewsCountry: String, CaseIterable, Identifiable {
         case .spain: return "Spain"
         case .saudiArabia: return "Saudi Arabia"
         case .uae: return "United Arab Emirates"
+        case .turkey: return "Turkey"
         }
     }
-    
+
     var flag: String {
         switch self {
         case .egypt: return "🇪🇬"
@@ -319,16 +274,26 @@ enum NewsCountry: String, CaseIterable, Identifiable {
         case .spain: return "🇪🇸"
         case .saudiArabia: return "🇸🇦"
         case .uae: return "🇦🇪"
+        case .turkey: return "🇹🇷"
         }
     }
 
     var supportsTopHeadlines: Bool {
         // News API supports top headlines for these countries
         switch self {
-        case .egypt, .unitedStates, .unitedKingdom, .germany, .france, .italy, .spain, .saudiArabia, .uae:
+        case .egypt, .unitedStates, .unitedKingdom, .germany, .france, .italy, .spain, .saudiArabia, .uae, .turkey:
             return true
         }
     }
+}
+
+// MARK: - News Category Query
+enum NewsCategoryQuery: String {
+    case technology
+    case business
+    case sports
+    case health
+    case science
 }
 
 // MARK: - News Category
@@ -339,9 +304,9 @@ enum NewsCategory: String, CaseIterable, Identifiable {
     case sports = "Sports"
     case health = "Health"
     case science = "Science"
-    
+
     var id: String { rawValue }
-    
+
     var icon: String {
         switch self {
         case .topHeadlines: return "newspaper"
@@ -350,6 +315,17 @@ enum NewsCategory: String, CaseIterable, Identifiable {
         case .sports: return "sportscourt"
         case .health: return "heart"
         case .science: return "flask"
+        }
+    }
+
+    var query: NewsCategoryQuery? {
+        switch self {
+        case .topHeadlines: return nil
+        case .tech: return .technology
+        case .business: return .business
+        case .sports: return .sports
+        case .health: return .health
+        case .science: return .science
         }
     }
 }
