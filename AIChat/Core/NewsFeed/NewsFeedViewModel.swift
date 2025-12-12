@@ -68,7 +68,7 @@ final class NewsFeedViewModel {
     }
 
     // Helper to track current query context
-    private var currentCountry: String? = "us"
+    private var currentCountry: String? = "eg"
     private var currentCategory: String? = nil
 
     // Loading guard
