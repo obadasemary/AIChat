@@ -35,6 +35,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     var paywallBuilder: PaywallBuilder!
 
     var newsFeedBuilder: NewsFeedBuilder!
+    var newsDetailsBuilder: NewsDetailsBuilder!
 
     var profileBuilder: ProfileBuilder!
     var settingsBuilder: SettingsBuilder!
@@ -97,6 +98,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         paywallBuilder = PaywallBuilder(container: dependencies.container)
 
         newsFeedBuilder = NewsFeedBuilder(container: dependencies.container)
+        newsDetailsBuilder = NewsDetailsBuilder(container: dependencies.container)
 
         profileBuilder = ProfileBuilder(container: dependencies.container)
         settingsBuilder = SettingsBuilder(container: dependencies.container)

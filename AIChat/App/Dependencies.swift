@@ -47,6 +47,7 @@ struct Dependencies {
     let purchaseManager: PurchaseManager
     let newsFeedManager: NewsFeedManager
     let networkMonitor: NetworkMonitor
+    let bookmarkManager: BookmarkManager
     let appState: AppState
     
     // swiftlint:disable function_body_length
@@ -101,6 +102,7 @@ struct Dependencies {
                 networkMonitor: networkMonitor,
                 logManager: logManager
             )
+            bookmarkManager = BookmarkManager()
             appState = AppState(showTabBar: isSignedIn)
         case .dev:
             logManager = LogManager(
@@ -142,6 +144,7 @@ struct Dependencies {
                 networkMonitor: networkMonitor,
                 logManager: logManager
             )
+            bookmarkManager = BookmarkManager()
             appState = AppState()
         case .prod:
             logManager = LogManager(
@@ -182,6 +185,7 @@ struct Dependencies {
                 networkMonitor: networkMonitor,
                 logManager: logManager
             )
+            bookmarkManager = BookmarkManager()
             appState = AppState()
         }
 
@@ -199,6 +203,7 @@ struct Dependencies {
         container.register(PurchaseManager.self, purchaseManager)
         container.register(NewsFeedManager.self, newsFeedManager)
         container.register(NetworkMonitor.self, networkMonitor)
+        container.register(BookmarkManager.self, bookmarkManager)
         container.register(AppState.self, appState)
 
         self.container = container
@@ -265,6 +270,9 @@ extension View {
             )
             .environment(
                 NewsFeedBuilder(container: DevPreview.shared.container)
+            )
+            .environment(
+                NewsDetailsBuilder(container: DevPreview.shared.container)
             )
     }
 }
