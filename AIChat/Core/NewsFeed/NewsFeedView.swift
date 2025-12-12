@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct NewsFeedView: View {
-    
+
     @State var viewModel: NewsFeedViewModel
     @Environment(\.colorScheme) var colorScheme
+    @Environment(NewsDetailsBuilder.self) var newsDetailsBuilder
     @State private var selectedCategory: NewsCategory = .topHeadlines
     @State private var selectedCountry: NewsCountry = .egypt
     @State private var selectedLanguage: NewsLanguage = .arabic
@@ -55,12 +56,17 @@ struct NewsFeedView: View {
                                 .padding(.vertical, 100)
                             } else {
                                 ForEach(viewModel.articles) { article in
-                                    NewsArticleRow(article: article)
-                                        .onAppear {
-                                            if article.id == viewModel.articles.last?.id {
-                                                viewModel.loadMoreData()
-                                            }
+                                    NavigationLink {
+                                        newsDetailsBuilder.buildNewsDetailsView(article: article)
+                                    } label: {
+                                        NewsArticleRow(article: article)
+                                    }
+                                    .buttonStyle(.plain)
+                                    .onAppear {
+                                        if article.id == viewModel.articles.last?.id {
+                                            viewModel.loadMoreData()
                                         }
+                                    }
                                     Divider()
                                 }
                                 
