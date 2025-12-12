@@ -50,64 +50,6 @@
             endingLineNumber = "33"
             landmarkName = "startMonitoring()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "4621E6AF-C8CD-4976-9C6F-EC6A47E3326C - 6cd4132f7c7d09ed"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "AIChat.NetworkMonitor.startMonitoring() -&gt; ()"
-                  moduleName = "AIChat.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/obada/Developer/AIChat/AIChat/Utilities/NetworkMonitor.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "33"
-                  endingLineNumber = "33">
-               </Location>
-               <Location
-                  uuid = "4621E6AF-C8CD-4976-9C6F-EC6A47E3326C - 9605385f4882519"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 @Sendable (Network.NWPath) -&gt; () in AIChat.NetworkMonitor.startMonitoring() -&gt; ()"
-                  moduleName = "AIChat.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/obada/Developer/AIChat/AIChat/Utilities/NetworkMonitor.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "33"
-                  endingLineNumber = "33">
-               </Location>
-               <Location
-                  uuid = "4621E6AF-C8CD-4976-9C6F-EC6A47E3326C - bec07c54c6c93077"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 @Swift.MainActor @Sendable () async -&gt; () in closure #1 @Sendable (Network.NWPath) -&gt; () in AIChat.NetworkMonitor.startMonitoring() -&gt; ()"
-                  moduleName = "AIChat.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/obada/Developer/AIChat/AIChat/Utilities/NetworkMonitor.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "33"
-                  endingLineNumber = "33">
-               </Location>
-               <Location
-                  uuid = "4621E6AF-C8CD-4976-9C6F-EC6A47E3326C - bc489d4f988b7740"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for closure #1 @Swift.MainActor @Sendable () async -&gt; () in closure #1 @Sendable (Network.NWPath) -&gt; () in AIChat.NetworkMonitor.startMonitoring() -&gt; ()"
-                  moduleName = "AIChat.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/obada/Developer/AIChat/AIChat/Utilities/NetworkMonitor.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "33"
-                  endingLineNumber = "33">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -156,36 +98,6 @@
             endingLineNumber = "28"
             landmarkName = "init()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "F70AB8C9-2267-4855-A34D-35B280AF4B42 - 73433b02c8a7b98f"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "AIChat.NetworkMonitor.__allocating_init() -&gt; AIChat.NetworkMonitor"
-                  moduleName = "AIChat.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/obada/Developer/AIChat/AIChat/Utilities/NetworkMonitor.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0">
-               </Location>
-               <Location
-                  uuid = "F70AB8C9-2267-4855-A34D-35B280AF4B42 - 91e1281f9624a792"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "AIChat.NetworkMonitor.init() -&gt; AIChat.NetworkMonitor"
-                  moduleName = "AIChat.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/obada/Developer/AIChat/AIChat/Utilities/NetworkMonitor.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "15"
-                  endingLineNumber = "15">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
