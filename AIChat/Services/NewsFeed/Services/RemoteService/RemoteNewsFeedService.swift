@@ -16,8 +16,12 @@ final class RemoteNewsFeedService: RemoteNewsFeedServiceProtocol {
         self.apiKey = apiKey
     }
 
-    func fetchNews(category: String?, page: Int, pageSize: Int) async throws -> NewsFeedResponse {
-        var urlString = "\(baseURL)/everything?apiKey=\(apiKey)&sortBy=publishedAt&page=\(page)&pageSize=\(pageSize)&language=ar"
+    func fetchNews(category: String?, language: String?, page: Int, pageSize: Int) async throws -> NewsFeedResponse {
+        var urlString = "\(baseURL)/everything?apiKey=\(apiKey)&sortBy=publishedAt&page=\(page)&pageSize=\(pageSize)"
+
+        if let language = language {
+            urlString += "&language=\(language)"
+        }
 
         if let category = category {
             urlString += "&q=\(category)"
@@ -62,11 +66,15 @@ final class RemoteNewsFeedService: RemoteNewsFeedServiceProtocol {
         )
     }
 
-    func fetchTopHeadlines(country: String?, page: Int, pageSize: Int) async throws -> NewsFeedResponse {
-        var urlString = "\(baseURL)/top-headlines?apiKey=\(apiKey)&page=\(page)&pageSize=\(pageSize)&language=ar"
+    func fetchTopHeadlines(country: String?, language: String?, page: Int, pageSize: Int) async throws -> NewsFeedResponse {
+        var urlString = "\(baseURL)/top-headlines?apiKey=\(apiKey)&page=\(page)&pageSize=\(pageSize)"
 
         if let country = country {
             urlString += "&country=\(country)"
+        }
+
+        if let language = language {
+            urlString += "&language=\(language)"
         }
 
         guard let url = URL(string: urlString) else {
