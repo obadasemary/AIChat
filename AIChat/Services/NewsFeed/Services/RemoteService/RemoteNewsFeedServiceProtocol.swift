@@ -8,8 +8,8 @@
 import Foundation
 
 protocol RemoteNewsFeedServiceProtocol: Sendable {
-    func fetchNews(category: String?, page: Int, pageSize: Int) async throws -> NewsFeedResponse
-    func fetchTopHeadlines(country: String?, page: Int, pageSize: Int) async throws -> NewsFeedResponse
+    func fetchNews(category: String?, language: String?, page: Int, pageSize: Int) async throws -> NewsFeedResponse
+    func fetchTopHeadlines(country: String?, language: String?, page: Int, pageSize: Int) async throws -> NewsFeedResponse
 }
 
 struct NewsFeedResponse {

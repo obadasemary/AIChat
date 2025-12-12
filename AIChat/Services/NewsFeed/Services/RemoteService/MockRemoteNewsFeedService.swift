@@ -38,7 +38,7 @@ final class MockRemoteNewsFeedService: RemoteNewsFeedServiceProtocol, @unchecked
         .mock(title: "Article 13", description: "Desc 13", category: "General")
     ]
 
-    func fetchNews(category: String?, page: Int, pageSize: Int) async throws -> NewsFeedResponse {
+    func fetchNews(category: String?, language: String?, page: Int, pageSize: Int) async throws -> NewsFeedResponse {
         if shouldFail {
             throw NewsFeedError.networkError
         }
@@ -53,7 +53,7 @@ final class MockRemoteNewsFeedService: RemoteNewsFeedServiceProtocol, @unchecked
         return paginateArticles(filteredArticles, page: page, pageSize: pageSize)
     }
 
-    func fetchTopHeadlines(country: String?, page: Int, pageSize: Int) async throws -> NewsFeedResponse {
+    func fetchTopHeadlines(country: String?, language: String?, page: Int, pageSize: Int) async throws -> NewsFeedResponse {
         if shouldFail {
             throw NewsFeedError.networkError
         }
