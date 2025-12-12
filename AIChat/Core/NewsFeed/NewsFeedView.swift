@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct NewsFeedView: View {
-
+    
     @State var viewModel: NewsFeedViewModel
     @Environment(\.colorScheme) var colorScheme
     @State private var selectedCategory: NewsCategory = .topHeadlines
-
+    @State private var selectedCountry: NewsCountry = .egypt
+    @State private var selectedLanguage: NewsLanguage = .arabic
+    @State private var showSettings: Bool = false
+    
     var body: some View {
         let _ = Self._printChanges()
         NavigationStack {
@@ -21,9 +24,9 @@ struct NewsFeedView: View {
                     .padding(.horizontal)
                     .padding(.vertical, 8)
                     .background(Color(uiColor: .systemBackground))
-
+                
                 Divider()
-
+                
                 ScrollView {
                     LazyVStack(spacing: 0) {
                         switch viewModel.state {
@@ -37,7 +40,7 @@ struct NewsFeedView: View {
                                 description: Text(viewModel.errorMessage ?? "An error occurred")
                             )
                             .padding(.vertical, 24)
-
+                            
                             Button("Retry") {
                                 viewModel.refreshData()
                             }
@@ -60,7 +63,7 @@ struct NewsFeedView: View {
                                         }
                                     Divider()
                                 }
-
+                                
                                 if viewModel.isLoadingMore {
                                     ProgressView()
                                         .padding(.vertical, 16)
@@ -75,9 +78,19 @@ struct NewsFeedView: View {
             }
             .navigationTitle("News Feed")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        showSettings = true
+                    } label: {
+                        Image(systemName: "gearshape")
+                    }
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     dataSourceIndicator
                 }
+            }
+            .sheet(isPresented: $showSettings) {
+                settingsSheet
             }
             .task {
                 viewModel.loadInitialData()
@@ -100,7 +113,7 @@ struct NewsFeedView: View {
         }
         .font(.caption)
     }
-
+    
     private var categoryPicker: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 12) {
@@ -112,22 +125,185 @@ struct NewsFeedView: View {
                         selectedCategory = category
                         switch category {
                         case .topHeadlines:
-                            viewModel.loadTopHeadlines(country: "eg")
+                            viewModel
+                                .loadTopHeadlines(
+                                    country: selectedCountry.code,
+                                    language: selectedLanguage.code
+                                )
                         case .tech:
-                            viewModel.loadNews(category: "technology")
+                            viewModel.loadNews(
+                                category: "technology",
+                                language: selectedLanguage.code
+                            )
                         case .business:
-                            viewModel.loadNews(category: "business")
+                            viewModel.loadNews(
+                                category: "business",
+                                language: selectedLanguage.code
+                            )
                         case .sports:
-                            viewModel.loadNews(category: "sports")
+                            viewModel.loadNews(
+                                category: "sports",
+                                language: selectedLanguage.code
+                            )
                         case .health:
-                            viewModel.loadNews(category: "health")
+                            viewModel.loadNews(
+                                category: "health",
+                                language: selectedLanguage.code
+                            )
                         case .science:
-                            viewModel.loadNews(category: "science")
+                            viewModel.loadNews(
+                                category: "science",
+                                language: selectedLanguage.code
+                            )
                         }
                     }
                 }
             }
             .padding(.vertical, 4)
+        }
+    }
+    
+    private var settingsSheet: some View {
+        NavigationStack {
+            Form {
+                Section("Language") {
+                    Picker("Language", selection: $selectedLanguage) {
+                        ForEach(NewsLanguage.allCases) { language in
+                            Text(language.displayName).tag(language)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                }
+                
+                Section("Country (for Top Headlines)") {
+                    Picker("Country", selection: $selectedCountry) {
+                        ForEach(NewsCountry.allCases) { country in
+                            Text("\(country.flag) \(country.displayName)").tag(country)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                }
+                
+                Section {
+                    Button("Apply Settings") {
+                        showSettings = false
+                        // Reload current category with new settings
+                        switch selectedCategory {
+                        case .topHeadlines:
+                            viewModel.loadTopHeadlines(
+                                country: selectedCountry.code,
+                                language: selectedLanguage.code
+                            )
+                        case .tech:
+                            viewModel.loadNews(
+                                category: "technology",
+                                language: selectedLanguage.code
+                            )
+                        case .business:
+                            viewModel.loadNews(
+                                category: "business",
+                                language: selectedLanguage.code
+                            )
+                        case .sports:
+                            viewModel.loadNews(
+                                category: "sports",
+                                language: selectedLanguage.code
+                            )
+                        case .health:
+                            viewModel.loadNews(
+                                category: "health",
+                                language: selectedLanguage.code
+                            )
+                        case .science:
+                            viewModel.loadNews(
+                                category: "science",
+                                language: selectedLanguage.code
+                            )
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            }
+            .navigationTitle("News Settings")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        showSettings = false
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium])
+    }
+}
+
+// MARK: - News Language
+enum NewsLanguage: String, CaseIterable, Identifiable {
+    case arabic = "ar"
+    case english = "en"
+    case french = "fr"
+    case german = "de"
+    case spanish = "es"
+    case italian = "it"
+    
+    var id: String { rawValue }
+    
+    var code: String { rawValue }
+    
+    var displayName: String {
+        switch self {
+        case .arabic: return "العربية (Arabic)"
+        case .english: return "English"
+        case .french: return "Français (French)"
+        case .german: return "Deutsch (German)"
+        case .spanish: return "Español (Spanish)"
+        case .italian: return "Italiano (Italian)"
+        }
+    }
+}
+
+// MARK: - News Country
+enum NewsCountry: String, CaseIterable, Identifiable {
+    case egypt = "eg"
+    case unitedStates = "us"
+    case unitedKingdom = "gb"
+    case germany = "de"
+    case france = "fr"
+    case italy = "it"
+    case spain = "es"
+    case saudiArabia = "sa"
+    case uae = "ae"
+    
+    var id: String { rawValue }
+    
+    var code: String { rawValue }
+    
+    var displayName: String {
+        switch self {
+        case .egypt: return "Egypt"
+        case .unitedStates: return "United States"
+        case .unitedKingdom: return "United Kingdom"
+        case .germany: return "Germany"
+        case .france: return "France"
+        case .italy: return "Italy"
+        case .spain: return "Spain"
+        case .saudiArabia: return "Saudi Arabia"
+        case .uae: return "United Arab Emirates"
+        }
+    }
+    
+    var flag: String {
+        switch self {
+        case .egypt: return "🇪🇬"
+        case .unitedStates: return "🇺🇸"
+        case .unitedKingdom: return "🇬🇧"
+        case .germany: return "🇩🇪"
+        case .france: return "🇫🇷"
+        case .italy: return "🇮🇹"
+        case .spain: return "🇪🇸"
+        case .saudiArabia: return "🇸🇦"
+        case .uae: return "🇦🇪"
         }
     }
 }
@@ -140,9 +316,9 @@ enum NewsCategory: String, CaseIterable, Identifiable {
     case sports = "Sports"
     case health = "Health"
     case science = "Science"
-
+    
     var id: String { rawValue }
-
+    
     var icon: String {
         switch self {
         case .topHeadlines: return "newspaper"
@@ -160,7 +336,7 @@ struct CategoryChip: View {
     let category: NewsCategory
     let isSelected: Bool
     let action: () -> Void
-
+    
     var body: some View {
         Button(action: action) {
             HStack(spacing: 6) {
@@ -183,9 +359,9 @@ struct CategoryChip: View {
 }
 
 struct NewsArticleRow: View {
-
+    
     let article: NewsArticle
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // Article Image - Full Width
@@ -213,27 +389,27 @@ struct NewsArticleRow: View {
             } else {
                 placeholderImage
             }
-
+            
             // Article Content
             VStack(alignment: .leading, spacing: 8) {
                 Text(article.title)
                     .font(.headline)
                     .lineLimit(2)
-
+                
                 if let description = article.description {
                     Text(description)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .lineLimit(3)
                 }
-
+                
                 HStack {
                     Text(article.source.name)
                         .font(.caption)
                         .foregroundStyle(.secondary)
-
+                    
                     Spacer()
-
+                    
                     Text(article.publishedAt, style: .relative)
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -243,7 +419,7 @@ struct NewsArticleRow: View {
             .padding(.vertical, 12)
         }
     }
-
+    
     private var placeholderImage: some View {
         Rectangle()
             .fill(Color.gray.opacity(0.2))
