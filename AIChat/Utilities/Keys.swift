@@ -19,4 +19,10 @@ struct Keys {
         print("🔑 Keys: Mixpanel Token loaded: \(token.isEmpty ? "EMPTY" : "\(String(token.prefix(8)))...")")
         return token
     }()
+    
+    static let newsAPIKey: String = {
+        let key = ConfigurationManager.shared.newsAPIKey
+        print("🔑 Keys: News API Key loaded: \(key.isEmpty ? "EMPTY" : "\(String(key.prefix(8)))...")")
+        return key
+    }()
 }

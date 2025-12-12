@@ -9,9 +9,9 @@ import SwiftUI
 import StoreKit
 
 struct PaywallView: View {
-
+    
     @State var viewModel: PaywallViewModel
-
+    
     var body: some View {
         Group {
             switch viewModel.option {
@@ -29,7 +29,8 @@ struct PaywallView: View {
                                 viewModel.onRestorePurchasePressed()
                             },
                             onPurchaseProductPressed: { product in
-                                viewModel.onPurchaseProductPressed(product: product)
+                                viewModel
+                                    .onPurchaseProductPressed(product: product)
                             }
                         )
                     }

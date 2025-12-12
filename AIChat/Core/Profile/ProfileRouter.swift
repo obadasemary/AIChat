@@ -26,7 +26,7 @@ struct ProfileRouter {
     let createAvatarBuilder: CreateAvatarBuilder
     let chatBuilder: ChatBuilder
 }
-    
+
 extension ProfileRouter: ProfileRouterProtocol {
     
     func showSettingsView(

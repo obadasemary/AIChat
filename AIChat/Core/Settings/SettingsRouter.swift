@@ -52,13 +52,13 @@ extension SettingsRouter: SettingsRouterProtocol {
                 }
         }
     }
-
+    
     func showAboutView() {
         router.showScreen(.push) { router in
             aboutBuilder.buildAboutView(router: router)
         }
     }
-
+    
     func showRatingsModal(
         onEnjoyingAppYesPressed: @escaping () -> Void,
         onEnjoyingAppNoPressed: @escaping () -> Void

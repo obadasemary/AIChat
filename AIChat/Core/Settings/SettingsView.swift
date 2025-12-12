@@ -121,10 +121,10 @@ private extension SettingsView {
                     isFirst: true,
                     isLast: false
                 )
-
+                
                 Divider()
                     .padding(.leading, 16)
-
+                
                 HStack(spacing: 8) {
                     Text("Version")
                     Spacer(minLength: 0)
@@ -134,10 +134,10 @@ private extension SettingsView {
                 .padding(.vertical, 14)
                 .padding(.horizontal, 16)
                 .background(Color(uiColor: .systemBackground))
-
+                
                 Divider()
                     .padding(.leading, 16)
-
+                
                 HStack(spacing: 8) {
                     Text("Build Number")
                     Spacer(minLength: 0)
@@ -147,10 +147,10 @@ private extension SettingsView {
                 .padding(.vertical, 14)
                 .padding(.horizontal, 16)
                 .background(Color(uiColor: .systemBackground))
-
+                
                 Divider()
                     .padding(.leading, 16)
-
+                
                 SettingRowButton(
                     title: "About",
                     textColor: .primary,
@@ -158,10 +158,10 @@ private extension SettingsView {
                     isFirst: false,
                     isLast: false
                 )
-
+                
                 Divider()
                     .padding(.leading, 16)
-
+                
                 SettingRowButton(
                     title: "Contact Support",
                     textColor: .blue,

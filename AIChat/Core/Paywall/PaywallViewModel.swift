@@ -11,14 +11,14 @@ import StoreKit
 @Observable
 @MainActor
 class PaywallViewModel {
-
+    
     private let paywallUseCase: PaywallUseCaseProtocol
     private let router: PaywallRouterProtocol
-
+    
     private(set) var products: [AnyProduct] = []
     private(set) var productIds: [String] = EntitlementOption.allProductIds
     let option: PaywallOptional = PaywallConfiguration.shared.currentOption
-
+    
     init(
         paywallUseCase: PaywallUseCaseProtocol,
         router: PaywallRouterProtocol
@@ -47,12 +47,12 @@ extension PaywallViewModel {
     
     func onRestorePurchasePressed() {
         paywallUseCase.trackEvent(event: Event.restorePurchaseStart)
-
+        
         Task { [weak self] in
             guard let self else { return }
             do {
                 let entitlements = try await self.paywallUseCase.restorePurchase()
-
+                
                 if entitlements.hasActiveEntitlement {
                     self.router.dismissScreen()
                 }
@@ -64,13 +64,13 @@ extension PaywallViewModel {
     
     func onPurchaseProductPressed(product: AnyProduct) {
         paywallUseCase.trackEvent(event: Event.purchaseStart(product: product))
-
+        
         Task { [weak self] in
             guard let self else { return }
             do {
                 let entitlements = try await self.paywallUseCase.purchaseProduct(productId: product.id)
                 self.paywallUseCase.trackEvent(event: Event.purchaseSuccess(product: product))
-
+                
                 if entitlements.hasActiveEntitlement {
                     self.router.dismissScreen()
                 }
@@ -91,7 +91,7 @@ extension PaywallViewModel {
         result: Result<Product.PurchaseResult, any Error>
     ) {
         let product = AnyProduct(storeKitProduct: product)
-
+        
         switch result {
         case .success(let vlaue):
             switch vlaue {

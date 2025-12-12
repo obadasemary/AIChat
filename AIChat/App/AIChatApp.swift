@@ -40,6 +40,7 @@ struct AIChatApp: App {
                 .environment(delegate.paywallBuilder)
                 .environment(delegate.profileBuilder)
                 .environment(delegate.settingsBuilder)
+                .environment(delegate.newsFeedBuilder)
                 .environment(delegate.createAvatarBuilder)
                 .environment(delegate.dependencies.logManager)
         }

@@ -8,11 +8,12 @@
 import SwiftUI
 
 struct TabBarView: View {
-    
+
     @Environment(ExploreBuilder.self) private var exploreBuilder
     @Environment(ChatsBuilder.self) private var chatsBuilder
+    @Environment(NewsFeedBuilder.self) private var newsFeedBuilder
     @Environment(ProfileBuilder.self) private var profileBuilder
-    
+
     var body: some View {
         TabView {
             RouterView { router in
@@ -29,6 +30,12 @@ struct TabBarView: View {
                     "Chats",
                     systemImage: "bubble.left.and.bubble.right"
                 )
+            }
+            RouterView { router in
+                newsFeedBuilder.buildNewsFeedView()
+            }
+            .tabItem {
+                Label("News", systemImage: "newspaper")
             }
             RouterView { router in
                 profileBuilder.buildProfileView(router: router)

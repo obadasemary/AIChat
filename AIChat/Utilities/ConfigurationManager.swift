@@ -107,6 +107,23 @@ struct ConfigurationManager {
         return ""
     }
     
+    var newsAPIKey: String {
+        if let envKey = ProcessInfo.processInfo.environment["NEWSAPI_API_KEY"], !envKey.isEmpty {
+            print("📱 ConfigurationManager: Using NewsAPI key from environment variable")
+            return envKey
+        }
+        
+        if let config = configuration,
+           let token = config["NewsAPIKey"] as? String,
+           !token.isEmpty && token != "YOUR_NEWSAPI_API_KEY_HERE" {
+            print("📱 ConfigurationManager: Using NewsAPI token from Config.plist")
+            return token
+        }
+        
+        print("❌ ConfigurationManager: No valid NewsAPI token found")
+        return ""
+    }
+    
     // MARK: - Validation
     var isConfigurationValid: Bool {
         let isValid = !openAIAPIKey.isEmpty && !mixpanelToken.isEmpty

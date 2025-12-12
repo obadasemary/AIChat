@@ -143,7 +143,7 @@ extension SettingsViewModel {
     
     func onRatingsPressed() {
         settingsUseCase.trackEvent(event: Event.ratingPressed)
-
+        
         func onEnjoyingAppYesPressed() {
             settingsUseCase.trackEvent(event: Event.ratingYesPressed)
             router.dismissModal()
@@ -165,7 +165,7 @@ extension SettingsViewModel {
     func onManagePurchase() {
         isPremium.toggle()
     }
-
+    
     func onAboutPressed() {
         settingsUseCase.trackEvent(event: Event.aboutPressed)
         router.showAboutView()
@@ -199,7 +199,7 @@ private extension SettingsViewModel {
         case ratingYesPressed
         case ratingNoPressed
         case aboutPressed
-
+        
         var eventName: String {
             switch self {
             case .signOutStart: "SettingsView_SignOut_Start"
