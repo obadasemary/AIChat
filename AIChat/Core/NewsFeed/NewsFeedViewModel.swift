@@ -69,6 +69,7 @@ final class NewsFeedViewModel {
 
     // Helper to track current query context
     private var currentCountry: String? = "eg"
+    private var currentLanguage: String? = "ar"
     private var currentCategory: String? = nil
 
     // Loading guard
@@ -144,16 +145,18 @@ final class NewsFeedViewModel {
         wasDisconnected = !isNowConnected
     }
     
-    func loadTopHeadlines(country: String? = "eg") {
-        print("🔍 ViewModel: loadTopHeadlines called. Country: \(String(describing: country))")
+    func loadTopHeadlines(country: String? = "eg", language: String? = "ar") {
+        print("🔍 ViewModel: loadTopHeadlines called. Country: \(String(describing: country)), Language: \(String(describing: language))")
         currentCountry = country
+        currentLanguage = language
         currentCategory = nil
         resetAndFetch()
     }
-    
-    func loadNews(category: String?) {
-        print("🔍 ViewModel: loadNews called. Category: \(String(describing: category))")
+
+    func loadNews(category: String?, language: String? = "ar") {
+        print("🔍 ViewModel: loadNews called. Category: \(String(describing: category)), Language: \(String(describing: language))")
         currentCategory = category
+        currentLanguage = language
         resetAndFetch()
     }
     
@@ -185,11 +188,11 @@ final class NewsFeedViewModel {
         do {
             let result: NewsFeedResult
             if let category = currentCategory {
-                print("🔍 ViewModel: Fetching News (Category: \(category))")
-                result = try await newsFeedUseCase.loadNews(category: category, page: page, pageSize: pageSize)
+                print("🔍 ViewModel: Fetching News (Category: \(category), Language: \(currentLanguage ?? "nil"))")
+                result = try await newsFeedUseCase.loadNews(category: category, language: currentLanguage, page: page, pageSize: pageSize)
             } else {
-                print("🔍 ViewModel: Fetching Top Headlines (Country: \(currentCountry ?? "nil"))")
-                result = try await newsFeedUseCase.loadTopHeadlines(country: currentCountry, page: page, pageSize: pageSize)
+                print("🔍 ViewModel: Fetching Top Headlines (Country: \(currentCountry ?? "nil"), Language: \(currentLanguage ?? "nil"))")
+                result = try await newsFeedUseCase.loadTopHeadlines(country: currentCountry, language: currentLanguage, page: page, pageSize: pageSize)
             }
             
             print("🔍 ViewModel: Success. Got \(result.articles.count) articles. Source: \(result.source). TotalResults: \(result.totalResults ?? -1)")
