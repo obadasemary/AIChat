@@ -31,12 +31,12 @@ final class NewsFeedManager {
 
 extension NewsFeedManager: NewsFeedManagerProtocol {
 
-    func fetchNews(category: String?, page: Int, pageSize: Int) async throws -> NewsFeedResult {
+    func fetchNews(category: String?, language: String?, page: Int, pageSize: Int) async throws -> NewsFeedResult {
         logManager?.trackEvent(event: Event.fetchNewsStart(category: category))
 
         if networkMonitor.isConnected {
             do {
-                let response = try await remoteService.fetchNews(category: category, page: page, pageSize: pageSize)
+                let response = try await remoteService.fetchNews(category: category, language: language, page: page, pageSize: pageSize)
                 logManager?.trackEvent(event: Event.fetchNewsRemoteSuccess(count: response.articles.count))
 
                 try localStorage.saveNews(response.articles)
@@ -58,12 +58,12 @@ extension NewsFeedManager: NewsFeedManagerProtocol {
         }
     }
 
-    func fetchTopHeadlines(country: String?, page: Int, pageSize: Int) async throws -> NewsFeedResult {
+    func fetchTopHeadlines(country: String?, language: String?, page: Int, pageSize: Int) async throws -> NewsFeedResult {
         logManager?.trackEvent(event: Event.fetchTopHeadlinesStart(country: country))
 
         if networkMonitor.isConnected {
             do {
-                let response = try await remoteService.fetchTopHeadlines(country: country, page: page, pageSize: pageSize)
+                let response = try await remoteService.fetchTopHeadlines(country: country, language: language, page: page, pageSize: pageSize)
                 logManager?.trackEvent(event: Event.fetchTopHeadlinesRemoteSuccess(count: response.articles.count))
 
                 try localStorage.saveNews(response.articles)
