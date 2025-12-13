@@ -2,7 +2,7 @@
 //  BookmarkManagerTests.swift
 //  AIChat
 //
-//  Created by Claude Code on 12.12.2025.
+//  Created by Abdelrahman Mohamed on 12.12.2025.
 //
 
 import Foundation
