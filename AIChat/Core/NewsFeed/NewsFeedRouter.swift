@@ -2,7 +2,7 @@
 //  NewsFeedRouter.swift
 //  AIChat
 //
-//  Created by Claude Code on 13.12.2025.
+//  Created by Abdelrahman Mohamed on 13.12.2025.
 //
 
 import SwiftUI
