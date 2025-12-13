@@ -323,7 +323,7 @@ final class MockNewsFeedUseCase: NewsFeedUseCaseProtocol {
         self.dataSource = source
     }
 
-    func loadNews(category: String?, page: Int, pageSize: Int) async throws -> NewsFeedResult {
+    func loadNews(category: String?, language: String?, page: Int, pageSize: Int) async throws -> NewsFeedResult {
         if shouldFail {
             throw failWithError ?? NewsFeedError.networkError
         }
@@ -333,7 +333,7 @@ final class MockNewsFeedUseCase: NewsFeedUseCaseProtocol {
         return paginateArticles(mockArticles, page: page, pageSize: pageSize)
     }
 
-    func loadTopHeadlines(country: String?, page: Int, pageSize: Int) async throws -> NewsFeedResult {
+    func loadTopHeadlines(country: String?, language: String?, page: Int, pageSize: Int) async throws -> NewsFeedResult {
         if shouldFail {
             throw failWithError ?? NewsFeedError.networkError
         }
