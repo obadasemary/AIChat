@@ -271,8 +271,5 @@ extension View {
             .environment(
                 NewsFeedBuilder(container: DevPreview.shared.container)
             )
-            .environment(
-                NewsDetailsBuilder(container: DevPreview.shared.container)
-            )
     }
 }

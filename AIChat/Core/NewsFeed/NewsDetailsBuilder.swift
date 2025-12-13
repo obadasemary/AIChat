@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SUIRouting
 
 @Observable
 final class NewsDetailsBuilder {
@@ -20,11 +21,12 @@ final class NewsDetailsBuilder {
 
     // MARK: - Builder Methods
     @MainActor
-    func buildNewsDetailsView(article: NewsArticle) -> some View {
+    func buildNewsDetailsView(router: Router, article: NewsArticle) -> some View {
         NewsDetailsView(
             viewModel: NewsDetailsViewModel(
                 article: article,
-                newsDetailsUseCase: NewsDetailsUseCase(container: container)
+                newsDetailsUseCase: NewsDetailsUseCase(container: container),
+                router: NewsDetailsRouter(router: router)
             )
         )
     }

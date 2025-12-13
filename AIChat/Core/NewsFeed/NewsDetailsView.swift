@@ -173,8 +173,8 @@ struct NewsDetailsView: View {
     let newsDetailsBuilder = NewsDetailsBuilder(container: container)
     let article = NewsArticle.mock()
 
-    return NavigationStack {
-        newsDetailsBuilder.buildNewsDetailsView(article: article)
+    RouterView { router in
+        newsDetailsBuilder.buildNewsDetailsView(router: router, article: article)
     }
     .previewEnvironment()
 }

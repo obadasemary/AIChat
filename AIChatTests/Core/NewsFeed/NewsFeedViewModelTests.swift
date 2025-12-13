@@ -20,7 +20,8 @@ struct NewsFeedViewModelTests {
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor
+            networkMonitor: mockNetworkMonitor,
+            router: MockNewsFeedRouter()
         )
 
         #expect(viewModel.state == .idle)
@@ -42,7 +43,8 @@ struct NewsFeedViewModelTests {
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor
+            networkMonitor: mockNetworkMonitor,
+            router: MockNewsFeedRouter()
         )
 
         await viewModel.loadInitialDataAndWait()
@@ -64,7 +66,8 @@ struct NewsFeedViewModelTests {
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor
+            networkMonitor: mockNetworkMonitor,
+            router: MockNewsFeedRouter()
         )
 
         // Load initial data
@@ -88,7 +91,8 @@ struct NewsFeedViewModelTests {
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor
+            networkMonitor: mockNetworkMonitor,
+            router: MockNewsFeedRouter()
         )
 
         // Load initial data
@@ -111,7 +115,8 @@ struct NewsFeedViewModelTests {
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor
+            networkMonitor: mockNetworkMonitor,
+            router: MockNewsFeedRouter()
         )
 
         // Load initial data (pageSize=20, but only 10 total)
@@ -136,7 +141,8 @@ struct NewsFeedViewModelTests {
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor
+            networkMonitor: mockNetworkMonitor,
+            router: MockNewsFeedRouter()
         )
 
         // Load initial data
@@ -158,7 +164,8 @@ struct NewsFeedViewModelTests {
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor
+            networkMonitor: mockNetworkMonitor,
+            router: MockNewsFeedRouter()
         )
 
         await viewModel.loadInitialDataAndWait()
@@ -174,7 +181,8 @@ struct NewsFeedViewModelTests {
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor
+            networkMonitor: mockNetworkMonitor,
+            router: MockNewsFeedRouter()
         )
 
         await viewModel.loadInitialDataAndWait()
@@ -190,7 +198,8 @@ struct NewsFeedViewModelTests {
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor
+            networkMonitor: mockNetworkMonitor,
+            router: MockNewsFeedRouter()
         )
 
         // Load initial data while offline
@@ -216,7 +225,8 @@ struct NewsFeedViewModelTests {
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor
+            networkMonitor: mockNetworkMonitor,
+            router: MockNewsFeedRouter()
         )
 
         // Load initial data while online
@@ -240,7 +250,8 @@ struct NewsFeedViewModelTests {
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor
+            networkMonitor: mockNetworkMonitor,
+            router: MockNewsFeedRouter()
         )
 
         await viewModel.loadInitialDataAndWait()
@@ -256,7 +267,8 @@ struct NewsFeedViewModelTests {
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor
+            networkMonitor: mockNetworkMonitor,
+            router: MockNewsFeedRouter()
         )
 
         await viewModel.loadInitialDataAndWait()
@@ -274,7 +286,8 @@ struct NewsFeedViewModelTests {
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor
+            networkMonitor: mockNetworkMonitor,
+            router: MockNewsFeedRouter()
         )
 
         // Initial state
@@ -291,6 +304,17 @@ struct NewsFeedViewModelTests {
 }
 
 // MARK: - Mock NewsFeedUseCase
+
+@MainActor
+final class MockNewsFeedRouter: NewsFeedRouterProtocol {
+    private(set) var showNewsDetailsViewCalled = false
+    private(set) var lastArticle: NewsArticle?
+
+    func showNewsDetailsView(article: NewsArticle) {
+        showNewsDetailsViewCalled = true
+        lastArticle = article
+    }
+}
 
 @MainActor
 final class MockNewsFeedUseCase: NewsFeedUseCaseProtocol {

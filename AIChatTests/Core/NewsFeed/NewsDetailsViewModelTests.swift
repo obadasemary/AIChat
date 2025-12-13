@@ -20,7 +20,8 @@ struct NewsDetailsViewModelTests {
 
         let viewModel = NewsDetailsViewModel(
             article: article,
-            newsDetailsUseCase: mockUseCase
+            newsDetailsUseCase: mockUseCase,
+            router: MockNewsDetailsRouter()
         )
 
         #expect(viewModel.article.id == article.id)
@@ -37,7 +38,8 @@ struct NewsDetailsViewModelTests {
 
         let viewModel = NewsDetailsViewModel(
             article: article,
-            newsDetailsUseCase: mockUseCase
+            newsDetailsUseCase: mockUseCase,
+            router: MockNewsDetailsRouter()
         )
 
         #expect(viewModel.isBookmarked == true)
@@ -50,7 +52,8 @@ struct NewsDetailsViewModelTests {
 
         let viewModel = NewsDetailsViewModel(
             article: article,
-            newsDetailsUseCase: mockUseCase
+            newsDetailsUseCase: mockUseCase,
+            router: MockNewsDetailsRouter()
         )
 
         #expect(viewModel.isBookmarked == false)
@@ -65,7 +68,8 @@ struct NewsDetailsViewModelTests {
 
         let viewModel = NewsDetailsViewModel(
             article: article,
-            newsDetailsUseCase: mockUseCase
+            newsDetailsUseCase: mockUseCase,
+            router: MockNewsDetailsRouter()
         )
 
         #expect(viewModel.isBookmarked == false)
@@ -86,7 +90,8 @@ struct NewsDetailsViewModelTests {
 
         let viewModel = NewsDetailsViewModel(
             article: article,
-            newsDetailsUseCase: mockUseCase
+            newsDetailsUseCase: mockUseCase,
+            router: MockNewsDetailsRouter()
         )
 
         #expect(viewModel.isBookmarked == true)
@@ -104,7 +109,8 @@ struct NewsDetailsViewModelTests {
 
         let viewModel = NewsDetailsViewModel(
             article: article,
-            newsDetailsUseCase: mockUseCase
+            newsDetailsUseCase: mockUseCase,
+            router: MockNewsDetailsRouter()
         )
 
         #expect(viewModel.isBookmarked == false)
@@ -134,7 +140,8 @@ struct NewsDetailsViewModelTests {
 
         let viewModel = NewsDetailsViewModel(
             article: article,
-            newsDetailsUseCase: mockUseCase
+            newsDetailsUseCase: mockUseCase,
+            router: MockNewsDetailsRouter()
         )
 
         #expect(viewModel.article.title == "Important Breaking News")
@@ -151,7 +158,8 @@ struct NewsDetailsViewModelTests {
 
         let viewModel = NewsDetailsViewModel(
             article: article,
-            newsDetailsUseCase: mockUseCase
+            newsDetailsUseCase: mockUseCase,
+            router: MockNewsDetailsRouter()
         )
 
         #expect(viewModel.article.content == "Full article content here")
@@ -168,7 +176,8 @@ struct NewsDetailsViewModelTests {
 
         let viewModel = NewsDetailsViewModel(
             article: article,
-            newsDetailsUseCase: mockUseCase
+            newsDetailsUseCase: mockUseCase,
+            router: MockNewsDetailsRouter()
         )
 
         #expect(viewModel.article.source.name == "BBC News")
@@ -192,5 +201,14 @@ final class MockNewsDetailsUseCase: NewsDetailsUseCaseProtocol {
 
     func removeBookmark(_ article: NewsArticle) {
         bookmarkedArticleIds.remove(article.id)
+    }
+}
+
+@MainActor
+final class MockNewsDetailsRouter: NewsDetailsRouterProtocol {
+    private(set) var dismissScreenCalled = false
+
+    func dismissScreen() {
+        dismissScreenCalled = true
     }
 }
