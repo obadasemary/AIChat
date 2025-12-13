@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SUIRouting
 
 @MainActor
 @Observable
@@ -17,7 +18,7 @@ final class NewsFeedBuilder {
         self.container = container
     }
 
-    func buildNewsFeedView() -> some View {
+    func buildNewsFeedView(router: Router) -> some View {
         // swiftlint:disable:next force_unwrapping
         let networkMonitor = container.resolve(NetworkMonitor.self)!
 
@@ -26,7 +27,11 @@ final class NewsFeedBuilder {
                 newsFeedUseCase: NewsFeedUseCase(
                     container: container
                 ),
-                networkMonitor: networkMonitor
+                networkMonitor: networkMonitor,
+                router: NewsFeedRouter(
+                    router: router,
+                    newsDetailsBuilder: NewsDetailsBuilder(container: container)
+                )
             )
         )
     }
