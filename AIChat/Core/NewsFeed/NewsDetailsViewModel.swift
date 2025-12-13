@@ -17,10 +17,17 @@ final class NewsDetailsViewModel {
 
     var isBookmarked: Bool = false
 
+    private let router: NewsDetailsRouterProtocol
+
     // MARK: - Initialization
-    init(article: NewsArticle, newsDetailsUseCase: NewsDetailsUseCaseProtocol) {
+    init(
+        article: NewsArticle,
+        newsDetailsUseCase: NewsDetailsUseCaseProtocol,
+        router: NewsDetailsRouterProtocol
+    ) {
         self.article = article
         self.newsDetailsUseCase = newsDetailsUseCase
+        self.router = router
         self.isBookmarked = newsDetailsUseCase.isArticleBookmarked(article)
     }
 
