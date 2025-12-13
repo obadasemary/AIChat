@@ -26,7 +26,7 @@ struct NewsFeedManagerTests {
             logManager: nil
         )
 
-        let result = try await manager.fetchNews(category: nil, page: 1, pageSize: 20)
+        let result = try await manager.fetchNews(category: nil, language: nil, page: 1, pageSize: 20)
 
         #expect(result.source == .remote)
         #expect(result.articles.count > 0)
@@ -52,7 +52,7 @@ struct NewsFeedManagerTests {
             logManager: nil
         )
 
-        let result = try await manager.fetchNews(category: nil, page: 1, pageSize: 20)
+        let result = try await manager.fetchNews(category: nil, language: nil, page: 1, pageSize: 20)
 
         #expect(result.source == .local)
         #expect(result.articles.count == 2)
@@ -78,7 +78,7 @@ struct NewsFeedManagerTests {
             logManager: nil
         )
 
-        let result = try await manager.fetchNews(category: nil, page: 1, pageSize: 20)
+        let result = try await manager.fetchNews(category: nil, language: nil, page: 1, pageSize: 20)
 
         #expect(result.source == .local)
         #expect(result.articles.count == 1)
@@ -97,7 +97,7 @@ struct NewsFeedManagerTests {
             logManager: nil
         )
 
-        _ = try await manager.fetchNews(category: nil, page: 1, pageSize: 20)
+        _ = try await manager.fetchNews(category: nil, language: nil, page: 1, pageSize: 20)
 
         // Verify articles were saved to local storage
         let cachedArticles = try mockLocalService.fetchCachedNews()
@@ -117,7 +117,7 @@ struct NewsFeedManagerTests {
             logManager: nil
         )
 
-        let result = try await manager.fetchNews(category: "Technology", page: 1, pageSize: 20)
+        let result = try await manager.fetchNews(category: "Technology", language: nil, page: 1, pageSize: 20)
 
         #expect(result.source == .remote)
         #expect(result.articles.allSatisfy { $0.category == "Technology" })
@@ -138,7 +138,7 @@ struct NewsFeedManagerTests {
             logManager: nil
         )
 
-        let result = try await manager.fetchTopHeadlines(country: "us", page: 1, pageSize: 20)
+        let result = try await manager.fetchTopHeadlines(country: "us", language: nil, page: 1, pageSize: 20)
 
         #expect(result.source == .remote)
         #expect(result.articles.count > 0)
@@ -162,7 +162,7 @@ struct NewsFeedManagerTests {
             logManager: nil
         )
 
-        let result = try await manager.fetchTopHeadlines(country: "us", page: 1, pageSize: 20)
+        let result = try await manager.fetchTopHeadlines(country: "us", language: nil, page: 1, pageSize: 20)
 
         #expect(result.source == .local)
         #expect(result.articles.count == 1)
@@ -181,7 +181,7 @@ struct NewsFeedManagerTests {
             logManager: nil
         )
 
-        let result = try await manager.fetchNews(category: nil, page: 1, pageSize: 5)
+        let result = try await manager.fetchNews(category: nil, language: nil, page: 1, pageSize: 5)
 
         #expect(result.articles.count <= 5)
     }
@@ -200,7 +200,7 @@ struct NewsFeedManagerTests {
         )
 
         // Mock service has 13 articles, fetch page 10 with pageSize 20
-        let result = try await manager.fetchNews(category: nil, page: 10, pageSize: 20)
+        let result = try await manager.fetchNews(category: nil, language: nil, page: 10, pageSize: 20)
 
         #expect(result.articles.isEmpty)
     }

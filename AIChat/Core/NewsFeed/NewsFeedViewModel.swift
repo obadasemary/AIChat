@@ -46,6 +46,7 @@ final class NewsFeedViewModel {
     // MARK: - Dependencies
     private let newsFeedUseCase: NewsFeedUseCaseProtocol
     private let networkMonitor: NetworkMonitorProtocol
+    private let router: NewsFeedRouterProtocol
 
     // MARK: - Published Properties
     private(set) var articles: [NewsArticle] = []
@@ -80,9 +81,19 @@ final class NewsFeedViewModel {
     private var wasDisconnected: Bool = false
 
     // MARK: - Initialization
-    init(newsFeedUseCase: NewsFeedUseCaseProtocol, networkMonitor: NetworkMonitorProtocol) {
+    init(
+        newsFeedUseCase: NewsFeedUseCaseProtocol,
+        networkMonitor: NetworkMonitorProtocol,
+        router: NewsFeedRouterProtocol
+    ) {
         self.newsFeedUseCase = newsFeedUseCase
         self.networkMonitor = networkMonitor
+        self.router = router
+    }
+
+    // MARK: - Navigation
+    func onArticleTapped(_ article: NewsArticle) {
+        router.showNewsDetailsView(article: article)
     }
     
     // MARK: - Public Methods

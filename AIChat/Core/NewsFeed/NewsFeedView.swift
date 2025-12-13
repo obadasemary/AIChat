@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct NewsFeedView: View {
-    
+
     @State var viewModel: NewsFeedViewModel
     @Environment(\.colorScheme) var colorScheme
     @State private var selectedCategory: NewsCategory = .topHeadlines
@@ -18,86 +18,87 @@ struct NewsFeedView: View {
     
     var body: some View {
         let _ = Self._printChanges()
-        NavigationStack {
-            VStack(spacing: 0) {
-                categoryPicker
-                    .padding(.horizontal)
-                    .padding(.vertical, 8)
-                    .background(Color(uiColor: .systemBackground))
-                
-                Divider()
-                
-                ScrollView {
-                    LazyVStack(spacing: 0) {
-                        switch viewModel.state {
-                        case .idle, .loading:
-                            ProgressView()
-                                .padding(.vertical, 24)
-                        case .error:
-                            ContentUnavailableView(
-                                "Error",
-                                systemImage: "exclamationmark.triangle",
-                                description: Text(viewModel.errorMessage ?? "An error occurred")
-                            )
+        VStack(spacing: 0) {
+            categoryPicker
+                .padding(.horizontal)
+                .padding(.vertical, 8)
+                .background(Color(uiColor: .systemBackground))
+
+            Divider()
+
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    switch viewModel.state {
+                    case .idle, .loading:
+                        ProgressView()
                             .padding(.vertical, 24)
-                            
-                            Button("Retry") {
-                                viewModel.refreshData()
-                            }
-                            .buttonStyle(.borderedProminent)
-                        case .loaded, .loadingMore:
-                            if viewModel.articles.isEmpty {
-                                ContentUnavailableView(
-                                    "No News Available",
-                                    systemImage: "newspaper",
-                                    description: Text("Pull to refresh")
-                                )
-                                .padding(.vertical, 100)
-                            } else {
-                                ForEach(viewModel.articles) { article in
-                                    NewsArticleRow(article: article)
-                                        .onAppear {
-                                            if article.id == viewModel.articles.last?.id {
-                                                viewModel.loadMoreData()
-                                            }
+                    case .error:
+                        ContentUnavailableView(
+                            "Error",
+                            systemImage: "exclamationmark.triangle",
+                            description: Text(viewModel.errorMessage ?? "An error occurred")
+                        )
+                        .padding(.vertical, 24)
+
+                        Button("Retry") {
+                            viewModel.refreshData()
+                        }
+                        .buttonStyle(.borderedProminent)
+                    case .loaded, .loadingMore:
+                        if viewModel.articles.isEmpty {
+                            ContentUnavailableView(
+                                "No News Available",
+                                systemImage: "newspaper",
+                                description: Text("Pull to refresh")
+                            )
+                            .padding(.vertical, 100)
+                        } else {
+                            ForEach(viewModel.articles) { article in
+                                NewsArticleRow(article: article)
+                                    .onTapGesture {
+                                        viewModel.onArticleTapped(article)
+                                    }
+                                    .onAppear {
+                                        if article.id == viewModel.articles.last?.id {
+                                            viewModel.loadMoreData()
                                         }
-                                    Divider()
-                                }
-                                
-                                if viewModel.isLoadingMore {
-                                    ProgressView()
-                                        .padding(.vertical, 16)
-                                }
+                                    }
+                                Divider()
+                            }
+
+                            if viewModel.isLoadingMore {
+                                ProgressView()
+                                    .padding(.vertical, 16)
                             }
                         }
                     }
                 }
-                .refreshable {
-                    viewModel.refreshData()
+            }
+            .refreshable {
+                viewModel.refreshData()
+            }
+        }
+        .navigationTitle("News Feed")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    showSettings = true
+                } label: {
+                    Image(systemName: "gearshape")
                 }
             }
-            .navigationTitle("News Feed")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        showSettings = true
-                    } label: {
-                        Image(systemName: "gearshape")
-                    }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    dataSourceIndicator
-                }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                dataSourceIndicator
             }
-            .sheet(isPresented: $showSettings) {
-                settingsSheet
-            }
-            .task {
-                viewModel.loadInitialData()
-            }
-            .onChange(of: viewModel.isConnected) { _, _ in
-                viewModel.handleConnectivityChange()
-            }
+        }
+        .sheet(isPresented: $showSettings) {
+            settingsSheet
+        }
+        .task {
+            viewModel.loadInitialData()
+        }
+        .onChange(of: viewModel.isConnected) { _, _ in
+            viewModel.handleConnectivityChange()
         }
     }
     
@@ -434,11 +435,11 @@ struct NewsArticleRow: View {
 
 #Preview {
     let container = DevPreview.shared.container
-    
+
     let newsFeedBuilder = NewsFeedBuilder(container: container)
-    
+
     return RouterView { router in
-        newsFeedBuilder.buildNewsFeedView()
+        newsFeedBuilder.buildNewsFeedView(router: router)
     }
     .previewEnvironment()
 }

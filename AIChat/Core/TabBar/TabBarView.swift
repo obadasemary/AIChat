@@ -32,7 +32,7 @@ struct TabBarView: View {
                 )
             }
             RouterView { router in
-                newsFeedBuilder.buildNewsFeedView()
+                newsFeedBuilder.buildNewsFeedView(router: router)
             }
             .tabItem {
                 Label("News", systemImage: "newspaper")
