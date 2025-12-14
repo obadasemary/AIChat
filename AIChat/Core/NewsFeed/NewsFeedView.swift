@@ -438,7 +438,7 @@ struct NewsArticleRow: View {
 
     let newsFeedBuilder = NewsFeedBuilder(container: container)
 
-    return RouterView { router in
+    RouterView { router in
         newsFeedBuilder.buildNewsFeedView(router: router)
     }
     .previewEnvironment()
