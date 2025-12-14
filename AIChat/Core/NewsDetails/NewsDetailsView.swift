@@ -138,6 +138,8 @@ struct NewsDetailsView: View {
                         ShareLink(item: url) {
                             Label("Share Article", systemImage: "square.and.arrow.up")
                         }
+                        .accessibilityLabel("Share article")
+                        .accessibilityHint("Opens share sheet to share this article")
                     }
 
                     Button {
@@ -148,9 +150,13 @@ struct NewsDetailsView: View {
                             systemImage: viewModel.isBookmarked ? "bookmark.fill" : "bookmark"
                         )
                     }
+                    .accessibilityLabel(viewModel.isBookmarked ? "Remove bookmark" : "Bookmark article")
+                    .accessibilityHint(viewModel.isBookmarked ? "Removes this article from your bookmarks" : "Saves this article to your bookmarks")
                 } label: {
                     Image(systemName: "ellipsis.circle")
                 }
+                .accessibilityLabel("Article options")
+                .accessibilityHint("Opens menu with sharing and bookmark options")
             }
         }
     }
