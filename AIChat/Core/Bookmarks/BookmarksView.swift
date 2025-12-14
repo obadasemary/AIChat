@@ -141,9 +141,15 @@ private struct ArticleRowView: View {
 
 #Preview("With Bookmarks") {
     let container = DevPreview.shared.container
+    let bookmarkManager = BookmarkManager()
+    NewsArticle.mocks.forEach { article in
+        bookmarkManager.addBookmark(article)
+    }
+    container.register(BookmarkManager.self, bookmarkManager)
+
     let bookmarksBuilder = BookmarksBuilder(container: container)
 
-    RouterView { router in
+    return RouterView { router in
         bookmarksBuilder.buildBookmarksView(router: router)
     }
     .previewEnvironment()
@@ -151,13 +157,17 @@ private struct ArticleRowView: View {
 
 #Preview("Empty State") {
     let container = DevPreview.shared.container
-    container.register(
-        BookmarkManagerProtocol.self,
-        MockBookmarkManager(initialBookmarks: [])
-    )
+    let bookmarkManager = BookmarkManager()
+    
+    NewsArticle.mocks.forEach { article in
+        bookmarkManager.removeBookmark(articleId: article.id)
+    }
+
+    container.register(BookmarkManager.self, bookmarkManager)
+
     let bookmarksBuilder = BookmarksBuilder(container: container)
 
-    RouterView { router in
+    return RouterView { router in
         bookmarksBuilder.buildBookmarksView(router: router)
     }
     .previewEnvironment()
