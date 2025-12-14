@@ -16,14 +16,18 @@ protocol BookmarksUseCaseProtocol {
 
 @MainActor
 final class BookmarksUseCase {
-    
+
     // MARK: - Properties
     private let bookmarkManager: BookmarkManager
     private let logManager: LogManager
-    
+
     init(container: DependencyContainer) {
-        bookmarkManager = container.resolve(BookmarkManager.self)!
-        logManager = container.resolve(LogManager.self)!
+        guard let bookmarkManager = container.resolve(BookmarkManager.self),
+              let logManager = container.resolve(LogManager.self) else {
+            fatalError("Required dependencies not registered in container")
+        }
+        self.bookmarkManager = bookmarkManager
+        self.logManager = logManager
     }
 }
 
