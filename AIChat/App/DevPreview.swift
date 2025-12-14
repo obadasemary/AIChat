@@ -26,6 +26,7 @@ class DevPreview {
         container.register(PurchaseManager.self, purchaseManager)
         container.register(NewsFeedManager.self, newsFeedManager)
         container.register(NetworkMonitor.self, networkMonitor)
+        container.register(BookmarkManager.self, bookmarkManager)
         container.register(AppState.self, AppState())
 
         return container
@@ -42,6 +43,7 @@ class DevPreview {
     private let purchaseManager: PurchaseManager
     private let newsFeedManager: NewsFeedManager
     private let networkMonitor: NetworkMonitor
+    private let bookmarkManager: BookmarkManager
     private let appState: AppState
     
     init(isSignedIn: Bool = true) {
@@ -73,6 +75,7 @@ class DevPreview {
             networkMonitor: networkMonitor,
             logManager: logManager
         )
+        self.bookmarkManager = BookmarkManager()
         self.appState = AppState()
     }
 }

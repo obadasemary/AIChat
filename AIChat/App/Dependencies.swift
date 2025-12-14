@@ -47,7 +47,7 @@ struct Dependencies {
     let purchaseManager: PurchaseManager
     let newsFeedManager: NewsFeedManager
     let networkMonitor: NetworkMonitor
-    let bookmarkManager: BookmarkManagerProtocol
+    let bookmarkManager: BookmarkManager
     let appState: AppState
     
     // swiftlint:disable function_body_length
@@ -102,7 +102,7 @@ struct Dependencies {
                 networkMonitor: networkMonitor,
                 logManager: logManager
             )
-            bookmarkManager = MockBookmarkManager(initialBookmarks: NewsArticle.mocks)
+            bookmarkManager = BookmarkManager()
             appState = AppState(showTabBar: isSignedIn)
         case .dev:
             logManager = LogManager(
@@ -203,7 +203,7 @@ struct Dependencies {
         container.register(PurchaseManager.self, purchaseManager)
         container.register(NewsFeedManager.self, newsFeedManager)
         container.register(NetworkMonitor.self, networkMonitor)
-        container.register(BookmarkManagerProtocol.self, bookmarkManager)
+        container.register(BookmarkManager.self, bookmarkManager)
         container.register(AppState.self, appState)
 
         self.container = container
