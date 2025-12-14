@@ -180,7 +180,8 @@ struct NewsDetailsView: View {
     let article = NewsArticle.mock()
 
     RouterView { router in
-        newsDetailsBuilder.buildNewsDetailsView(router: router, article: article)
+        newsDetailsBuilder
+            .buildNewsDetailsView(router: router, article: article)
     }
     .previewEnvironment()
 }
