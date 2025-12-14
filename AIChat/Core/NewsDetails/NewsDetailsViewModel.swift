@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 @MainActor
 @Observable
@@ -33,6 +34,10 @@ final class NewsDetailsViewModel {
 
     // MARK: - Public Methods
     func toggleBookmark() {
+        // Provide haptic feedback
+        let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+        feedbackGenerator.impactOccurred()
+
         if isBookmarked {
             newsDetailsUseCase.removeBookmark(article)
             isBookmarked = false
