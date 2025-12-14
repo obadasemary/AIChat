@@ -62,7 +62,9 @@ final class BookmarkManager: BookmarkManagerProtocol {
                 decoder.dateDecodingStrategy = .iso8601
                 bookmarkedArticlesData = try decoder.decode([String: NewsArticle].self, from: articlesData)
             } catch {
+                #if DEBUG
                 print("Failed to decode bookmarked articles: \(error)")
+                #endif
                 bookmarkedArticlesData = [:]
             }
         }
@@ -77,7 +79,9 @@ final class BookmarkManager: BookmarkManagerProtocol {
             let articlesData = try encoder.encode(bookmarkedArticlesData)
             userDefaults.set(articlesData, forKey: articlesDataKey)
         } catch {
+            #if DEBUG
             print("Failed to encode bookmarked articles: \(error)")
+            #endif
         }
     }
 }
