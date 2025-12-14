@@ -45,7 +45,7 @@ struct NewsDetailsUseCaseTests {
         let useCase = NewsDetailsUseCase(container: container)
         let article = NewsArticle.mock(title: "New Bookmark")
 
-        guard let bookmarkManager = container.resolve(BookmarkManagerProtocol.self) else {
+        guard let bookmarkManager = container.resolve(BookmarkManager.self) else {
             Issue.record("BookmarkManager not found in container")
             return
         }
@@ -145,7 +145,7 @@ struct NewsDetailsUseCaseTests {
         let useCase = NewsDetailsUseCase(container: container)
         let article = NewsArticle.mock(title: "Registered Manager Test")
 
-        guard let bookmarkManager = container.resolve(BookmarkManagerProtocol.self) else {
+        guard let bookmarkManager = container.resolve(BookmarkManager.self) else {
             Issue.record("BookmarkManager not found in container")
             return
         }
@@ -167,8 +167,8 @@ struct NewsDetailsUseCaseTests {
 
     private func createTestContainer() -> DependencyContainer {
         let container = DependencyContainer()
-        let bookmarkManager: BookmarkManagerProtocol = BookmarkManager()
-        container.register(BookmarkManagerProtocol.self, bookmarkManager)
+        let bookmarkManager = BookmarkManager()
+        container.register(BookmarkManager.self, bookmarkManager)
         return container
     }
 }
