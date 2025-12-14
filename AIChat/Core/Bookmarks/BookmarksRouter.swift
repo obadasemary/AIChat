@@ -6,33 +6,27 @@
 //
 
 import SwiftUI
+import SUIRouting
 
 @MainActor
 protocol BookmarksRouterProtocol {
     func showNewsDetailsView(article: NewsArticle)
 }
 
+struct BookmarksRouter {
+    let router: Router
+    let newsDetailsBuilder: NewsDetailsBuilder
+}
+
 @MainActor
-@Observable
-final class BookmarksRouter: BookmarksRouterProtocol {
-
-    private let router: Router
-    private let newsDetailsBuilder: NewsDetailsBuilder
-
-    init(
-        router: Router,
-        newsDetailsBuilder: NewsDetailsBuilder
-    ) {
-        self.router = router
-        self.newsDetailsBuilder = newsDetailsBuilder
-    }
+extension BookmarksRouter: BookmarksRouterProtocol {
 
     func showNewsDetailsView(article: NewsArticle) {
-        router.push(
+        router.showScreen(.push) { router in
             newsDetailsBuilder.buildNewsDetailsView(
                 router: router,
                 article: article
             )
-        )
+        }
     }
 }
