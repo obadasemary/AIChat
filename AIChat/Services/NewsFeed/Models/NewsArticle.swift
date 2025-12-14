@@ -59,4 +59,30 @@ extension NewsArticle {
             category: category
         )
     }
+
+    static var mocks: [NewsArticle] {
+        [
+            mock(
+                id: "1",
+                title: "AI Revolution: New Breakthroughs in Machine Learning",
+                description: "Scientists achieve unprecedented results in neural network training",
+                content: "A team of researchers has developed a new approach to machine learning...",
+                category: "Technology"
+            ),
+            mock(
+                id: "2",
+                title: "Climate Summit Reaches Historic Agreement",
+                description: "World leaders commit to ambitious carbon reduction targets",
+                content: "At the international climate summit, representatives from 195 countries...",
+                category: "Environment"
+            ),
+            mock(
+                id: "3",
+                title: "Space Exploration Milestone Achieved",
+                description: "First successful test of new propulsion system",
+                content: "NASA announces a major breakthrough in spacecraft propulsion technology...",
+                category: "Science"
+            )
+        ]
+    }
 }

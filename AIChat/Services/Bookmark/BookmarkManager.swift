@@ -9,12 +9,14 @@ import Foundation
 
 @MainActor
 @Observable
-final class BookmarkManager {
+final class BookmarkManager: BookmarkManagerProtocol {
 
     // MARK: - Properties
-    private var bookmarkedArticles: Set<String> = []
+    private var bookmarkedArticleIds: Set<String> = []
+    private var bookmarkedArticlesData: [String: NewsArticle] = [:]
     private let userDefaults = UserDefaults.standard
     private let bookmarksKey = "bookmarked_articles"
+    private let articlesDataKey = "bookmarked_articles_data"
 
     // MARK: - Initialization
     init() {
@@ -23,31 +25,59 @@ final class BookmarkManager {
 
     // MARK: - Public Methods
     func isBookmarked(articleId: String) -> Bool {
-        return bookmarkedArticles.contains(articleId)
+        return bookmarkedArticleIds.contains(articleId)
     }
 
     func addBookmark(_ article: NewsArticle) {
-        bookmarkedArticles.insert(article.id)
+        bookmarkedArticleIds.insert(article.id)
+        bookmarkedArticlesData[article.id] = article
         saveBookmarks()
     }
 
     func removeBookmark(articleId: String) {
-        bookmarkedArticles.remove(articleId)
+        bookmarkedArticleIds.remove(articleId)
+        bookmarkedArticlesData.removeValue(forKey: articleId)
         saveBookmarks()
     }
 
     func getAllBookmarks() -> Set<String> {
-        return bookmarkedArticles
+        return bookmarkedArticleIds
+    }
+
+    func getBookmarkedArticles() -> [NewsArticle] {
+        return Array(bookmarkedArticlesData.values).sorted { article1, article2 in
+            article1.publishedAt > article2.publishedAt
+        }
     }
 
     // MARK: - Private Methods
     private func loadBookmarks() {
-        if let bookmarks = userDefaults.stringArray(forKey: bookmarksKey) {
-            bookmarkedArticles = Set(bookmarks)
+        if let bookmarkIds = userDefaults.stringArray(forKey: bookmarksKey) {
+            bookmarkedArticleIds = Set(bookmarkIds)
+        }
+
+        if let articlesData = userDefaults.data(forKey: articlesDataKey) {
+            do {
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .iso8601
+                bookmarkedArticlesData = try decoder.decode([String: NewsArticle].self, from: articlesData)
+            } catch {
+                print("Failed to decode bookmarked articles: \(error)")
+                bookmarkedArticlesData = [:]
+            }
         }
     }
 
     private func saveBookmarks() {
-        userDefaults.set(Array(bookmarkedArticles), forKey: bookmarksKey)
+        userDefaults.set(Array(bookmarkedArticleIds), forKey: bookmarksKey)
+
+        do {
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
+            let articlesData = try encoder.encode(bookmarkedArticlesData)
+            userDefaults.set(articlesData, forKey: articlesDataKey)
+        } catch {
+            print("Failed to encode bookmarked articles: \(error)")
+        }
     }
 }
