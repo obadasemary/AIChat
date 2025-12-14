@@ -15,31 +15,21 @@ protocol BookmarksUseCaseProtocol {
 }
 
 @MainActor
-final class BookmarksUseCase: BookmarksUseCaseProtocol {
-
+final class BookmarksUseCase {
+    
     // MARK: - Properties
-    private let container: DependencyContainer
-
-    private var bookmarkManager: BookmarkManagerProtocol {
-        guard let manager = container.resolve(BookmarkManagerProtocol.self) else {
-            fatalError("BookmarkManager not registered in container")
-        }
-        return manager
-    }
-
-    private var logManager: LogManager {
-        guard let manager = container.resolve(LogManager.self) else {
-            fatalError("LogManager not registered in container")
-        }
-        return manager
-    }
-
-    // MARK: - Initialization
+    private let bookmarkManager: BookmarkManager
+    private let logManager: LogManager
+    
     init(container: DependencyContainer) {
-        self.container = container
+        bookmarkManager = container.resolve(BookmarkManager.self)!
+        logManager = container.resolve(LogManager.self)!
     }
+}
 
-    // MARK: - Public Methods
+@MainActor
+extension BookmarksUseCase: BookmarksUseCaseProtocol {
+
     func getBookmarkedArticles() -> [NewsArticle] {
         return bookmarkManager.getBookmarkedArticles()
     }
@@ -49,6 +39,6 @@ final class BookmarksUseCase: BookmarksUseCaseProtocol {
     }
 
     func trackEvent(event: any LoggableEvent) {
-        logManager.log(event: event)
+        logManager.trackEvent(event: event)
     }
 }
