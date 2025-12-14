@@ -12,6 +12,12 @@ import Testing
 @MainActor
 struct BookmarksUseCaseTests {
 
+    // MARK: - Setup/Teardown
+
+    init() {
+        clearBookmarks()
+    }
+
     // MARK: - Get Bookmarked Articles Tests
 
     @Test("Get Bookmarked Articles Returns Empty Array When No Bookmarks")
@@ -27,7 +33,10 @@ struct BookmarksUseCaseTests {
     @Test("Get Bookmarked Articles Returns All Bookmarked Articles")
     func testGetBookmarkedArticlesReturnsAllBookmarkedArticles() {
         let container = createTestContainer()
-        let bookmarkManager = container.resolve(BookmarkManager.self)!
+        guard let bookmarkManager = container.resolve(BookmarkManager.self) else {
+            Issue.record("BookmarkManager not found in container")
+            return
+        }
 
         let article1 = NewsArticle.mock(title: "Article 1")
         let article2 = NewsArticle.mock(title: "Article 2")
@@ -49,7 +58,10 @@ struct BookmarksUseCaseTests {
     @Test("Get Bookmarked Articles Returns Correct Data")
     func testGetBookmarkedArticlesReturnsCorrectData() {
         let container = createTestContainer()
-        let bookmarkManager = container.resolve(BookmarkManager.self)!
+        guard let bookmarkManager = container.resolve(BookmarkManager.self) else {
+            Issue.record("BookmarkManager not found in container")
+            return
+        }
 
         let article = NewsArticle.mock(
             title: "Breaking News",
@@ -73,7 +85,10 @@ struct BookmarksUseCaseTests {
     @Test("Remove Bookmark Removes Article from Manager")
     func testRemoveBookmarkRemovesArticleFromManager() {
         let container = createTestContainer()
-        let bookmarkManager = container.resolve(BookmarkManager.self)!
+        guard let bookmarkManager = container.resolve(BookmarkManager.self) else {
+            Issue.record("BookmarkManager not found in container")
+            return
+        }
         let useCase = BookmarksUseCase(container: container)
 
         let article = NewsArticle.mock(title: "Remove Test")
@@ -90,7 +105,10 @@ struct BookmarksUseCaseTests {
     @Test("Remove Bookmark Removes Only Specified Article")
     func testRemoveBookmarkRemovesOnlySpecifiedArticle() {
         let container = createTestContainer()
-        let bookmarkManager = container.resolve(BookmarkManager.self)!
+        guard let bookmarkManager = container.resolve(BookmarkManager.self) else {
+            Issue.record("BookmarkManager not found in container")
+            return
+        }
         let useCase = BookmarksUseCase(container: container)
 
         let article1 = NewsArticle.mock(title: "Article 1")
@@ -155,7 +173,10 @@ struct BookmarksUseCaseTests {
     @Test("UseCase Reflects Changes Made to BookmarkManager")
     func testUseCaseReflectsChangesMadeToBookmarkManager() {
         let container = createTestContainer()
-        let bookmarkManager = container.resolve(BookmarkManager.self)!
+        guard let bookmarkManager = container.resolve(BookmarkManager.self) else {
+            Issue.record("BookmarkManager not found in container")
+            return
+        }
         let useCase = BookmarksUseCase(container: container)
 
         let article = NewsArticle.mock(title: "Test Article")
@@ -175,10 +196,13 @@ struct BookmarksUseCaseTests {
 
     // MARK: - Helper Methods
 
-    private func createTestContainer() -> DependencyContainer {
-        // Clear UserDefaults before each test
+    private func clearBookmarks() {
         UserDefaults.standard.removeObject(forKey: "bookmarked_articles")
         UserDefaults.standard.removeObject(forKey: "bookmarked_articles_data")
+    }
+
+    private func createTestContainer() -> DependencyContainer {
+        clearBookmarks()
 
         let container = DependencyContainer()
         let bookmarkManager = BookmarkManager()
