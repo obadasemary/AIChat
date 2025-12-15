@@ -32,7 +32,7 @@ final class NewsDetailsUseCase: NewsDetailsUseCaseProtocol {
 
     // MARK: - Public Methods
     func isArticleBookmarked(_ article: NewsArticle) -> Bool {
-        return bookmarkManager.isBookmarked(articleId: article.id)
+        bookmarkManager.isBookmarked(articleId: article.id)
     }
 
     func addBookmark(_ article: NewsArticle) {

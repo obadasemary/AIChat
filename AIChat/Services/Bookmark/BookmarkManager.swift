@@ -9,49 +9,57 @@ import Foundation
 
 @MainActor
 @Observable
-final class BookmarkManager: BookmarkManagerProtocol {
-
+final class BookmarkManager {
+    
     // MARK: - Properties
     private var bookmarkedArticleIds: Set<String> = []
     private var bookmarkedArticlesData: [String: NewsArticle] = [:]
     private let userDefaults = UserDefaults.standard
     private let bookmarksKey = "bookmarked_articles"
     private let articlesDataKey = "bookmarked_articles_data"
-
+    
     // MARK: - Initialization
     init() {
         loadBookmarks()
     }
+}
 
-    // MARK: - Public Methods
+// MARK: - Public Methods
+
+extension BookmarkManager: BookmarkManagerProtocol {
+    
     func isBookmarked(articleId: String) -> Bool {
-        return bookmarkedArticleIds.contains(articleId)
+        bookmarkedArticleIds.contains(articleId)
     }
-
+    
     func addBookmark(_ article: NewsArticle) {
         bookmarkedArticleIds.insert(article.id)
         bookmarkedArticlesData[article.id] = article
         saveBookmarks()
     }
-
+    
     func removeBookmark(articleId: String) {
         bookmarkedArticleIds.remove(articleId)
         bookmarkedArticlesData.removeValue(forKey: articleId)
         saveBookmarks()
     }
-
+    
     func getAllBookmarks() -> Set<String> {
-        return bookmarkedArticleIds
+        bookmarkedArticleIds
     }
-
+    
     func getBookmarkedArticles() -> [NewsArticle] {
         return Array(bookmarkedArticlesData.values).sorted { article1, article2 in
             article1.publishedAt > article2.publishedAt
         }
     }
+}
+    
+// MARK: - Private Methods
 
-    // MARK: - Private Methods
-    private func loadBookmarks() {
+private extension BookmarkManager {
+
+    func loadBookmarks() {
         if let bookmarkIds = userDefaults.stringArray(forKey: bookmarksKey) {
             bookmarkedArticleIds = Set(bookmarkIds)
         }
@@ -70,7 +78,7 @@ final class BookmarkManager: BookmarkManagerProtocol {
         }
     }
 
-    private func saveBookmarks() {
+    func saveBookmarks() {
         userDefaults.set(Array(bookmarkedArticleIds), forKey: bookmarksKey)
 
         do {
