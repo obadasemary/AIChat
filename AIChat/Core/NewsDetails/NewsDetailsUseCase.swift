@@ -18,32 +18,26 @@ protocol NewsDetailsUseCaseProtocol {
 final class NewsDetailsUseCase: NewsDetailsUseCaseProtocol {
 
     // MARK: - Properties
-    private let container: DependencyContainer
+    private let bookmarkManager: BookmarkManager
 
     // MARK: - Initialization
     init(container: DependencyContainer) {
-        self.container = container
+        guard let bookmarkManager = container.resolve(BookmarkManager.self) else {
+            fatalError("Required dependencies not registered in container")
+        }
+        self.bookmarkManager = bookmarkManager
     }
 
     // MARK: - Public Methods
     func isArticleBookmarked(_ article: NewsArticle) -> Bool {
-        guard let bookmarkManager = container.resolve(BookmarkManager.self) else {
-            return false
-        }
         return bookmarkManager.isBookmarked(articleId: article.id)
     }
 
     func addBookmark(_ article: NewsArticle) {
-        guard let bookmarkManager = container.resolve(BookmarkManager.self) else {
-            return
-        }
         bookmarkManager.addBookmark(article)
     }
 
     func removeBookmark(_ article: NewsArticle) {
-        guard let bookmarkManager = container.resolve(BookmarkManager.self) else {
-            return
-        }
         bookmarkManager.removeBookmark(articleId: article.id)
     }
 }
