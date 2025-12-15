@@ -5,6 +5,7 @@
 //  Created by Abdelrahman Mohamed on 12.12.2025.
 //
 
+import Foundation
 import Testing
 import Observation
 @testable import AIChat
@@ -193,6 +194,10 @@ final class MockNewsDetailsUseCase: NewsDetailsUseCaseProtocol {
     let bookmarkManager: BookmarkManager
 
     init() {
+        // Clear UserDefaults before creating manager to ensure clean state
+        let userDefaults = UserDefaults.standard
+        userDefaults.removeObject(forKey: "bookmarked_articles")
+        userDefaults.removeObject(forKey: "bookmarked_articles_data")
         self.bookmarkManager = BookmarkManager()
     }
 
