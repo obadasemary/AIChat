@@ -30,8 +30,10 @@ final class NewsFeedUseCase: NewsFeedUseCaseProtocol {
     private let newsFeedManager: NewsFeedManagerProtocol
 
     init(container: DependencyContainer) {
-        // swiftlint:disable:next force_unwrapping
-        self.newsFeedManager = container.resolve(NewsFeedManager.self)!
+        guard let newsFeedManager = container.resolve(NewsFeedManager.self) else {
+            fatalError("Required dependencies not registered in container")
+        }
+        self.newsFeedManager = newsFeedManager
     }
 
     func loadNews(
