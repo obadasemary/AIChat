@@ -14,7 +14,7 @@ final class NewsDetailsViewModel {
 
     // MARK: - Properties
     let article: NewsArticle
-    private let newsDetailsUseCase: NewsDetailsUseCaseProtocol
+    let newsDetailsUseCase: NewsDetailsUseCaseProtocol
 
     var isBookmarked: Bool {
         newsDetailsUseCase.isArticleBookmarked(article)
