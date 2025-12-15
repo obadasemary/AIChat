@@ -16,6 +16,7 @@ protocol NewsDetailsUseCaseProtocol {
 }
 
 @MainActor
+@Observable
 final class NewsDetailsUseCase: NewsDetailsUseCaseProtocol {
 
     // MARK: - Properties
