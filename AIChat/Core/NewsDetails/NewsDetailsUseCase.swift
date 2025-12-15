@@ -9,6 +9,7 @@ import Foundation
 
 @MainActor
 protocol NewsDetailsUseCaseProtocol {
+    var bookmarkManager: BookmarkManager { get }
     func isArticleBookmarked(_ article: NewsArticle) -> Bool
     func addBookmark(_ article: NewsArticle)
     func removeBookmark(_ article: NewsArticle)
@@ -18,7 +19,7 @@ protocol NewsDetailsUseCaseProtocol {
 final class NewsDetailsUseCase: NewsDetailsUseCaseProtocol {
 
     // MARK: - Properties
-    private let bookmarkManager: BookmarkManager
+    let bookmarkManager: BookmarkManager
 
     // MARK: - Initialization
     init(container: DependencyContainer) {
