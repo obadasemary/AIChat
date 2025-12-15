@@ -188,7 +188,6 @@ struct NewsDetailsViewModelTests {
 // MARK: - Mock NewsDetailsUseCase
 
 @MainActor
-@Observable
 final class MockNewsDetailsUseCase: NewsDetailsUseCaseProtocol {
 
     let bookmarkManager: BookmarkManager
