@@ -15,9 +15,10 @@ final class NewsDetailsViewModel {
     // MARK: - Properties
     let article: NewsArticle
     private let newsDetailsUseCase: NewsDetailsUseCaseProtocol
+    private let bookmarkManager: BookmarkManager
 
     var isBookmarked: Bool {
-        newsDetailsUseCase.bookmarkManager.isBookmarked(articleId: article.id)
+        bookmarkManager.isBookmarked(articleId: article.id)
     }
 
     private let router: NewsDetailsRouterProtocol
@@ -30,6 +31,7 @@ final class NewsDetailsViewModel {
     ) {
         self.article = article
         self.newsDetailsUseCase = newsDetailsUseCase
+        self.bookmarkManager = newsDetailsUseCase.bookmarkManager
         self.router = router
     }
 
