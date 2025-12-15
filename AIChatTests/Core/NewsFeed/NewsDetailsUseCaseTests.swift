@@ -5,6 +5,7 @@
 //  Created by Abdelrahman Mohamed on 12.12.2025.
 //
 
+import Foundation
 import Testing
 @testable import AIChat
 
@@ -166,6 +167,11 @@ struct NewsDetailsUseCaseTests {
     // MARK: - Helper Methods
 
     private func createTestContainer() -> DependencyContainer {
+        // Clear UserDefaults before creating manager to ensure clean state
+        let userDefaults = UserDefaults.standard
+        userDefaults.removeObject(forKey: "bookmarked_articles")
+        userDefaults.removeObject(forKey: "bookmarked_articles_data")
+
         let container = DependencyContainer()
         let bookmarkManager = BookmarkManager()
         container.register(BookmarkManager.self, bookmarkManager)

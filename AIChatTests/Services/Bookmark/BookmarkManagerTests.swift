@@ -12,11 +12,21 @@ import Testing
 @MainActor
 struct BookmarkManagerTests {
 
+    // MARK: - Helper Methods
+
+    private func createCleanManager() -> BookmarkManager {
+        // Clear UserDefaults before creating manager
+        let userDefaults = UserDefaults.standard
+        userDefaults.removeObject(forKey: "bookmarked_articles")
+        userDefaults.removeObject(forKey: "bookmarked_articles_data")
+        return BookmarkManager()
+    }
+
     // MARK: - Add Bookmark Tests
 
     @Test("Add Bookmark Adds Article ID")
     func testAddBookmarkAddsArticleID() {
-        let manager = BookmarkManager()
+        let manager = createCleanManager()
         let article = NewsArticle.mock(title: "Test Article")
 
         // Clean state
@@ -35,7 +45,7 @@ struct BookmarkManagerTests {
 
     @Test("Add Duplicate Bookmark Does Not Create Duplicate")
     func testAddDuplicateBookmarkDoesNotCreateDuplicate() {
-        let manager = BookmarkManager()
+        let manager = createCleanManager()
         let article = NewsArticle.mock(title: "Duplicate Article")
 
         // Clean state
@@ -56,7 +66,7 @@ struct BookmarkManagerTests {
 
     @Test("Remove Bookmark Removes Article ID")
     func testRemoveBookmarkRemovesArticleID() {
-        let manager = BookmarkManager()
+        let manager = createCleanManager()
         let article = NewsArticle.mock(title: "Remove Test")
 
         manager.addBookmark(article)
@@ -69,7 +79,7 @@ struct BookmarkManagerTests {
 
     @Test("Remove Non-Existent Bookmark Does Not Crash")
     func testRemoveNonExistentBookmarkDoesNotCrash() {
-        let manager = BookmarkManager()
+        let manager = createCleanManager()
 
         // Should not crash
         manager.removeBookmark(articleId: "non-existent-id-12345")
@@ -82,7 +92,7 @@ struct BookmarkManagerTests {
 
     @Test("Is Bookmarked Returns Correct Status")
     func testIsBookmarkedReturnsCorrectStatus() {
-        let manager = BookmarkManager()
+        let manager = createCleanManager()
         let bookmarkedArticle = NewsArticle.mock(title: "Bookmarked")
         let notBookmarkedArticle = NewsArticle.mock(title: "Not Bookmarked")
 
@@ -103,7 +113,7 @@ struct BookmarkManagerTests {
 
     @Test("Toggle Bookmark Lifecycle")
     func testToggleBookmarkLifecycle() {
-        let manager = BookmarkManager()
+        let manager = createCleanManager()
         let article = NewsArticle.mock(title: "Toggle Test")
 
         // Clean state
@@ -132,7 +142,7 @@ struct BookmarkManagerTests {
 
     @Test("Get Bookmarked Articles Returns Empty Array Initially")
     func testGetBookmarkedArticlesReturnsEmptyArrayInitially() {
-        let manager = BookmarkManager()
+        let manager = createCleanManager()
 
         let articles = manager.getBookmarkedArticles()
 
@@ -141,7 +151,7 @@ struct BookmarkManagerTests {
 
     @Test("Get Bookmarked Articles Returns All Bookmarked Articles")
     func testGetBookmarkedArticlesReturnsAllBookmarkedArticles() {
-        let manager = BookmarkManager()
+        let manager = createCleanManager()
         let article1 = NewsArticle.mock(id: "test-1", title: "Article 1")
         let article2 = NewsArticle.mock(id: "test-2", title: "Article 2")
         let article3 = NewsArticle.mock(id: "test-3", title: "Article 3")
@@ -171,7 +181,7 @@ struct BookmarkManagerTests {
 
     @Test("Get Bookmarked Articles Returns Articles Sorted by Date")
     func testGetBookmarkedArticlesReturnsArticlesSortedByDate() {
-        let manager = BookmarkManager()
+        let manager = createCleanManager()
         let now = Date()
         let oldArticle = NewsArticle.mock(
             id: "old",
@@ -205,7 +215,7 @@ struct BookmarkManagerTests {
 
     @Test("Get Bookmarked Articles After Removing One")
     func testGetBookmarkedArticlesAfterRemovingOne() {
-        let manager = BookmarkManager()
+        let manager = createCleanManager()
         let article1 = NewsArticle.mock(id: "keep-1", title: "Keep 1")
         let article2 = NewsArticle.mock(id: "remove", title: "Remove")
         let article3 = NewsArticle.mock(id: "keep-2", title: "Keep 2")
