@@ -6,6 +6,7 @@
 //
 
 import Testing
+import Observation
 @testable import AIChat
 
 @MainActor
@@ -187,20 +188,25 @@ struct NewsDetailsViewModelTests {
 // MARK: - Mock NewsDetailsUseCase
 
 @MainActor
+@Observable
 final class MockNewsDetailsUseCase: NewsDetailsUseCaseProtocol {
 
-    private var bookmarkedArticleIds: Set<String> = []
+    let bookmarkManager: BookmarkManager
+
+    init() {
+        self.bookmarkManager = BookmarkManager()
+    }
 
     func isArticleBookmarked(_ article: NewsArticle) -> Bool {
-        return bookmarkedArticleIds.contains(article.id)
+        return bookmarkManager.isBookmarked(articleId: article.id)
     }
 
     func addBookmark(_ article: NewsArticle) {
-        bookmarkedArticleIds.insert(article.id)
+        bookmarkManager.addBookmark(article)
     }
 
     func removeBookmark(_ article: NewsArticle) {
-        bookmarkedArticleIds.remove(article.id)
+        bookmarkManager.removeBookmark(articleId: article.id)
     }
 }
 
