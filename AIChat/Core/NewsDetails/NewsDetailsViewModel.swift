@@ -14,11 +14,9 @@ final class NewsDetailsViewModel {
 
     // MARK: - Properties
     let article: NewsArticle
-    let newsDetailsUseCase: NewsDetailsUseCaseProtocol
+    private let newsDetailsUseCase: NewsDetailsUseCaseProtocol
 
-    var isBookmarked: Bool {
-        newsDetailsUseCase.isArticleBookmarked(article)
-    }
+    var isBookmarked: Bool
 
     private let router: NewsDetailsRouterProtocol
 
@@ -31,6 +29,7 @@ final class NewsDetailsViewModel {
         self.article = article
         self.newsDetailsUseCase = newsDetailsUseCase
         self.router = router
+        self.isBookmarked = newsDetailsUseCase.isArticleBookmarked(article)
     }
 
     // MARK: - Public Methods
@@ -41,8 +40,10 @@ final class NewsDetailsViewModel {
 
         if isBookmarked {
             newsDetailsUseCase.removeBookmark(article)
+            isBookmarked = false
         } else {
             newsDetailsUseCase.addBookmark(article)
+            isBookmarked = true
         }
     }
 }
