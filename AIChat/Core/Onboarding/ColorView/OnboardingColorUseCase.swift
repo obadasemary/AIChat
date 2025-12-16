@@ -19,7 +19,7 @@ final class OnboardingColorUseCase {
     
     init(container: DependencyContainer) {
         guard let logManager = container.resolve(LogManager.self) else {
-            fatalError("Required dependencies not registered in container")
+            fatalError("Failed to resolve LogManager for OnboardingColorUseCase")
         }
         self.logManager = logManager
     }
