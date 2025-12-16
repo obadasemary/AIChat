@@ -18,7 +18,10 @@ final class OnboardingIntroUseCase {
     private let abTestManager: ABTestManager
     
     init(container: DependencyContainer) {
-        self.abTestManager = container.resolve(ABTestManager.self)!
+        guard let abTestManager = container.resolve(ABTestManager.self) else {
+            fatalError("Required dependencies not registered in container")
+        }
+        self.abTestManager = abTestManager
     }
 }
 
