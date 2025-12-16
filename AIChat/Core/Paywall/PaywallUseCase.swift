@@ -23,8 +23,12 @@ final class PaywallUseCase {
     private let purchaseManager: PurchaseManager
     
     init(container: DependencyContainer) {
-        self.logManager = container.resolve(LogManager.self)!
-        self.purchaseManager = container.resolve(PurchaseManager.self)!
+        guard let purchaseManager = container.resolve(PurchaseManager.self),
+                let logManager = container.resolve(LogManager.self) else {
+            fatalError("Required dependencies not registered in container")
+        }
+        self.logManager = logManager
+        self.purchaseManager = purchaseManager
     }
 }
 
