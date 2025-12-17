@@ -23,9 +23,19 @@ final class DevSettingsUseCase {
     private let abTestManager: ABTestManager
     
     init(container: DependencyContainer) {
-        self.authManager = container.resolve(AuthManager.self)!
-        self.userManager = container.resolve(UserManager.self)!
-        self.abTestManager = container.resolve(ABTestManager.self)!
+        guard let authManager = container.resolve(AuthManager.self) else {
+            fatalError("Failed to resolve AuthManager for DevSettingsUseCase")
+        }
+        guard let userManager = container.resolve(UserManager.self) else {
+            fatalError("Failed to resolve UserManager for DevSettingsUseCase")
+        }
+        guard let abTestManager = container.resolve(ABTestManager.self) else {
+            fatalError("Failed to resolve ABTestManager for DevSettingsUseCase")
+        }
+        
+        self.authManager = authManager
+        self.userManager = userManager
+        self.abTestManager = abTestManager
     }
 }
 
