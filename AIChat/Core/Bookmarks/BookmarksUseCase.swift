@@ -22,9 +22,11 @@ final class BookmarksUseCase {
     private let logManager: LogManager
 
     init(container: DependencyContainer) {
-        guard let bookmarkManager = container.resolve(BookmarkManager.self),
-              let logManager = container.resolve(LogManager.self) else {
-            fatalError("Required dependencies not registered in container")
+        guard let bookmarkManager = container.resolve(BookmarkManager.self) else {
+            fatalError("Failed to resolve BookmarkManager for BookmarksUseCase")
+        }
+        guard let logManager = container.resolve(LogManager.self) else {
+            fatalError("Failed to resolve LogManager for BookmarksUseCase")
         }
         self.bookmarkManager = bookmarkManager
         self.logManager = logManager
