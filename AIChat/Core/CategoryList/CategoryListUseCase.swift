@@ -20,8 +20,14 @@ final class CategoryListUseCase {
     private let logManager: LogManager
     
     init(container: DependencyContainer) {
-        self.avatarManager = container.resolve(AvatarManager.self)!
-        self.logManager = container.resolve(LogManager.self)!
+        guard let avatarManager = container.resolve(AvatarManager.self) else {
+            fatalError("Failed to resolve AvatarManager for CategoryListUseCase")
+        }
+        guard let logManager = container.resolve(LogManager.self) else {
+            fatalError("Failed to resolve LogManager for CategoryListUseCase")
+        }
+        self.avatarManager = avatarManager
+        self.logManager = logManager
     }
 }
 
