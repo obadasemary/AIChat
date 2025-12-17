@@ -291,10 +291,27 @@ Tests/
 
 ## CI/CD
 
-GitHub Actions workflow (`.github/workflows/CI.yml`):
+### GitHub Actions Workflow
+File: `.github/workflows/CI.yml`
+
+**Workflow Configuration:**
 - Runs on every push to `main` and all pull requests
 - Uses `macos-26` runner with Xcode 26
 - Builds with "AIChat - Development" scheme
 - Runs unit tests on all branches
 - Runs UI tests only on `main` branch (with retry logic)
 - Creates mock Firebase config files for CI builds
+
+**Environment Variables:**
+- Uses GitHub Secrets for API keys (OPENAI_API_KEY, MIXPANEL_TOKEN, NEWSAPI_API_KEY)
+- Secrets are injected as environment variables in all build and test steps
+- See [GITHUB_SECRETS_SETUP.md](GITHUB_SECRETS_SETUP.md) for complete setup instructions
+- Swift Configuration reads these environment variables on iOS 18.0+
+
+**Required GitHub Secrets:**
+Configure these in Settings → Secrets and variables → Actions:
+- `OPENAI_API_KEY`: OpenAI API key for chat functionality
+- `MIXPANEL_TOKEN`: Mixpanel project token for analytics
+- `NEWSAPI_API_KEY`: NewsAPI key for news articles
+
+For detailed setup instructions, see [GITHUB_SECRETS_SETUP.md](GITHUB_SECRETS_SETUP.md)
