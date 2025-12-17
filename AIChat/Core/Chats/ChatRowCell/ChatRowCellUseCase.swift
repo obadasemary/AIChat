@@ -16,10 +16,23 @@ final class ChatRowCellUseCase {
     private let logManager: LogManager
     
     init(container: DependencyContainer) {
-        self.authManager = container.resolve(AuthManager.self)!
-        self.avatarManager = container.resolve(AvatarManager.self)!
-        self.chatManager = container.resolve(ChatManager.self)!
-        self.logManager = container.resolve(LogManager.self)!
+        guard let authManager = container.resolve(AuthManager.self) else {
+            fatalError("Failed to resolve AuthManager for ChatRowCellUseCase")
+        }
+        guard let avatarManager = container.resolve(AvatarManager.self) else {
+            fatalError("Failed to resolve AvatarManager for ChatRowCellUseCase")
+        }
+        guard let chatManager = container.resolve(ChatManager.self) else {
+            fatalError("Failed to resolve ChatManager for ChatRowCellUseCase")
+        }
+        guard let logManager = container.resolve(LogManager.self) else {
+            fatalError("Failed to resolve LogManager for ChatRowCellUseCase")
+        }
+        
+        self.authManager = authManager
+        self.avatarManager = avatarManager
+        self.chatManager = chatManager
+        self.logManager = logManager
     }
 }
 
