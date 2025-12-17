@@ -31,7 +31,7 @@ final class NewsFeedUseCase: NewsFeedUseCaseProtocol {
 
     init(container: DependencyContainer) {
         guard let newsFeedManager = container.resolve(NewsFeedManager.self) else {
-            fatalError("Required dependencies not registered in container")
+            fatalError("Failed to resolve NewsFeedManager for NewsFeedUseCase")
         }
         self.newsFeedManager = newsFeedManager
     }
