@@ -23,9 +23,19 @@ final class CreateAccountUseCase {
     private let logManager: LogManager
     
     init(container: DependencyContainer) {
-        self.authManager = container.resolve(AuthManager.self)!
-        self.userManager = container.resolve(UserManager.self)!
-        self.logManager = container.resolve(LogManager.self)!
+        guard let authManager = container.resolve(AuthManager.self) else {
+            fatalError("Failed to resolve AuthManager for CreateAccountUseCase")
+        }
+        guard let userManager = container.resolve(UserManager.self) else {
+            fatalError("Failed to resolve UserManager for CreateAccountUseCase")
+        }
+        guard let logManager = container.resolve(LogManager.self) else {
+            fatalError("Failed to resolve LogManager for CreateAccountUseCase")
+        }
+        
+        self.authManager = authManager
+        self.userManager = userManager
+        self.logManager = logManager
     }
 }
 
