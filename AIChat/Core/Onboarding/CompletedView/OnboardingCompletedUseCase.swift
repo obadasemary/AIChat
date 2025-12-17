@@ -22,9 +22,19 @@ final class OnboardingCompletedUseCase {
     private let logManager: LogManager
     
     init(container: DependencyContainer) {
-        self.userManager = container.resolve(UserManager.self)!
-        self.appState = container.resolve(AppState.self)!
-        self.logManager = container.resolve(LogManager.self)!
+        guard let userManager = container.resolve(UserManager.self) else {
+            fatalError("Failed to resolve UserManager for OnboardingCompletedUseCase")
+        }
+        guard let appState = container.resolve(AppState.self) else {
+            fatalError("Failed to resolve AppState for OnboardingCompletedUseCase")
+        }
+        guard let logManager = container.resolve(LogManager.self) else {
+            fatalError("Failed to resolve LogManager for OnboardingCompletedUseCase")
+        }
+        
+        self.userManager = userManager
+        self.appState = appState
+        self.logManager = logManager
     }
 }
 
