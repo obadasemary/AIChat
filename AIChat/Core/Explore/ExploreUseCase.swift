@@ -39,13 +39,35 @@ final class ExploreUseCase {
     private let appState: AppState
     
     init(container: DependencyContainer) {
-        self.authManager = container.resolve(AuthManager.self)!
-        self.userManager = container.resolve(UserManager.self)!
-        self.avatarManager = container.resolve(AvatarManager.self)!
-        self.logManager = container.resolve(LogManager.self)!
-        self.pushManager = container.resolve(PushManager.self)!
-        self.abTestManager = container.resolve(ABTestManager.self)!
-        self.appState = container.resolve(AppState.self)!
+        guard let authManager = container.resolve(AuthManager.self) else {
+            fatalError("Failed to resolve AuthManager for ExploreUseCase")
+        }
+        guard let userManager = container.resolve(UserManager.self) else {
+            fatalError("Failed to resolve UserManager for ExploreUseCase")
+        }
+        guard let avatarManager = container.resolve(AvatarManager.self) else {
+            fatalError("Failed to resolve AvatarManager for ExploreUseCase")
+        }
+        guard let logManager = container.resolve(LogManager.self) else {
+            fatalError("Failed to resolve LogManager for ExploreUseCase")
+        }
+        guard let pushManager = container.resolve(PushManager.self) else {
+            fatalError("Failed to resolve PushManager for ExploreUseCase")
+        }
+        guard let abTestManager = container.resolve(ABTestManager.self) else {
+            fatalError("Failed to resolve ABTestManager for ExploreUseCase")
+        }
+        guard let appState = container.resolve(AppState.self) else {
+            fatalError("Failed to resolve AppState for ExploreUseCase")
+        }
+        
+        self.authManager = authManager
+        self.userManager = userManager
+        self.avatarManager = avatarManager
+        self.logManager = logManager
+        self.pushManager = pushManager
+        self.abTestManager = abTestManager
+        self.appState = appState
     }
 }
 
