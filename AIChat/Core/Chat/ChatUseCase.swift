@@ -46,13 +46,35 @@ final class ChatUseCase {
     private let purchaseManager: PurchaseManager
     
     init(container: DependencyContainer) {
-        self.authManager = container.resolve(AuthManager.self)!
-        self.userManager = container.resolve(UserManager.self)!
-        self.aiManager = container.resolve(AIManager.self)!
-        self.avatarManager = container.resolve(AvatarManager.self)!
-        self.chatManager = container.resolve(ChatManager.self)!
-        self.logManager = container.resolve(LogManager.self)!
-        self.purchaseManager = container.resolve(PurchaseManager.self)!
+        guard let authManager = container.resolve(AuthManager.self) else {
+            fatalError("Failed to resolve AuthManager for ChatUseCase")
+        }
+        guard let userManager = container.resolve(UserManager.self) else {
+            fatalError("Failed to resolve UserManager for ChatUseCase")
+        }
+        guard let aiManager = container.resolve(AIManager.self) else {
+            fatalError("Failed to resolve AIManager for ChatUseCase")
+        }
+        guard let avatarManager = container.resolve(AvatarManager.self) else {
+            fatalError("Failed to resolve AvatarManager for ChatUseCase")
+        }
+        guard let chatManager = container.resolve(ChatManager.self) else {
+            fatalError("Failed to resolve ChatManager for ChatUseCase")
+        }
+        guard let logManager = container.resolve(LogManager.self) else {
+            fatalError("Failed to resolve LogManager for ChatUseCase")
+        }
+        guard let purchaseManager = container.resolve(PurchaseManager.self) else {
+            fatalError("Failed to resolve PurchaseManager for ChatUseCase")
+        }
+        
+        self.authManager = authManager
+        self.userManager = userManager
+        self.aiManager = aiManager
+        self.avatarManager = avatarManager
+        self.chatManager = chatManager
+        self.logManager = logManager
+        self.purchaseManager = purchaseManager
     }
 }
 
