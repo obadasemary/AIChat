@@ -24,10 +24,10 @@ final class PaywallUseCase {
     
     init(container: DependencyContainer) {
         guard let logManager = container.resolve(LogManager.self) else {
-            fatalError("Failed to resolve LogManager for PaywallUseCase")
+            preconditionFailure("Failed to resolve LogManager for PaywallUseCase")
         }
         guard let purchaseManager = container.resolve(PurchaseManager.self) else {
-            fatalError("Failed to resolve PurchaseManager for PaywallUseCase")
+            preconditionFailure("Failed to resolve PurchaseManager for PaywallUseCase")
         }
         self.logManager = logManager
         self.purchaseManager = purchaseManager

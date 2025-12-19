@@ -28,22 +28,22 @@ final class SettingsUseCase {
     
     init(container: DependencyContainer) {
         guard let authManager = container.resolve(AuthManager.self) else {
-            fatalError("Failed to resolve AuthManager for SettingsUseCase")
+            preconditionFailure("Failed to resolve AuthManager for SettingsUseCase")
         }
         guard let userManager = container.resolve(UserManager.self) else {
-            fatalError("Failed to resolve UserManager for SettingsUseCase")
+            preconditionFailure("Failed to resolve UserManager for SettingsUseCase")
         }
         guard let avatarManager = container.resolve(AvatarManager.self) else {
-            fatalError("Failed to resolve AvatarManager for SettingsUseCase")
+            preconditionFailure("Failed to resolve AvatarManager for SettingsUseCase")
         }
         guard let chatManager = container.resolve(ChatManager.self) else {
-            fatalError("Failed to resolve ChatManager for SettingsUseCase")
+            preconditionFailure("Failed to resolve ChatManager for SettingsUseCase")
         }
         guard let appState = container.resolve(AppState.self) else {
-            fatalError("Failed to resolve AppState for SettingsUseCase")
+            preconditionFailure("Failed to resolve AppState for SettingsUseCase")
         }
         guard let logManager = container.resolve(LogManager.self) else {
-            fatalError("Failed to resolve LogManager for SettingsUseCase")
+            preconditionFailure("Failed to resolve LogManager for SettingsUseCase")
         }
         
         self.authManager = authManager

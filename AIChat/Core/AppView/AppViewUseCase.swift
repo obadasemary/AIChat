@@ -27,16 +27,16 @@ final class AppViewUseCase {
     
     init(container: DependencyContainer) {
         guard let authManager = container.resolve(AuthManager.self) else {
-            fatalError("Failed to resolve AuthManager for AppViewUseCase")
+            preconditionFailure("Failed to resolve AuthManager for AppViewUseCase")
         }
         guard let userManager = container.resolve(UserManager.self) else {
-            fatalError("Failed to resolve UserManager for AppViewUseCase")
+            preconditionFailure("Failed to resolve UserManager for AppViewUseCase")
         }
         guard let appState = container.resolve(AppState.self) else {
-            fatalError("Failed to resolve AppState for AppViewUseCase")
+            preconditionFailure("Failed to resolve AppState for AppViewUseCase")
         }
         guard let logManager = container.resolve(LogManager.self) else {
-            fatalError("Failed to resolve LogManager for AppViewUseCase")
+            preconditionFailure("Failed to resolve LogManager for AppViewUseCase")
         }
         
         self.authManager = authManager

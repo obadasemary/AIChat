@@ -28,16 +28,16 @@ final class ProfileUseCase {
     
     init(container: DependencyContainer) {
         guard let authManager = container.resolve(AuthManager.self) else {
-            fatalError("Failed to resolve AuthManager for ProfileUseCase")
+            preconditionFailure("Failed to resolve AuthManager for ProfileUseCase")
         }
         guard let userManager = container.resolve(UserManager.self) else {
-            fatalError("Failed to resolve UserManager for ProfileUseCase")
+            preconditionFailure("Failed to resolve UserManager for ProfileUseCase")
         }
         guard let avatarManager = container.resolve(AvatarManager.self) else {
-            fatalError("Failed to resolve AvatarManager for ProfileUseCase")
+            preconditionFailure("Failed to resolve AvatarManager for ProfileUseCase")
         }
         guard let logManager = container.resolve(LogManager.self) else {
-            fatalError("Failed to resolve LogManager for ProfileUseCase")
+            preconditionFailure("Failed to resolve LogManager for ProfileUseCase")
         }
         
         self.authManager = authManager

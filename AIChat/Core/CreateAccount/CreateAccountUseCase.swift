@@ -24,13 +24,13 @@ final class CreateAccountUseCase {
     
     init(container: DependencyContainer) {
         guard let authManager = container.resolve(AuthManager.self) else {
-            fatalError("Failed to resolve AuthManager for CreateAccountUseCase")
+            preconditionFailure("Failed to resolve AuthManager for CreateAccountUseCase")
         }
         guard let userManager = container.resolve(UserManager.self) else {
-            fatalError("Failed to resolve UserManager for CreateAccountUseCase")
+            preconditionFailure("Failed to resolve UserManager for CreateAccountUseCase")
         }
         guard let logManager = container.resolve(LogManager.self) else {
-            fatalError("Failed to resolve LogManager for CreateAccountUseCase")
+            preconditionFailure("Failed to resolve LogManager for CreateAccountUseCase")
         }
         
         self.authManager = authManager

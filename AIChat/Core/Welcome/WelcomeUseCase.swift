@@ -21,10 +21,10 @@ final class WelcomeUseCase {
     
     init(container: DependencyContainer) {
         guard let appState = container.resolve(AppState.self) else {
-            fatalError("Failed to resolve AppState for WelcomeUseCase")
+            preconditionFailure("Failed to resolve AppState for WelcomeUseCase")
         }
         guard let logManager = container.resolve(LogManager.self) else {
-            fatalError("Failed to resolve LogManager for WelcomeUseCase")
+            preconditionFailure("Failed to resolve LogManager for WelcomeUseCase")
         }
         self.appState = appState
         self.logManager = logManager

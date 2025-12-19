@@ -26,16 +26,16 @@ final class CreateAvatarUseCase {
     
     init(container: DependencyContainer) {
         guard let authManager = container.resolve(AuthManager.self) else {
-            fatalError("Failed to resolve AuthManager for CreateAvatarUseCase")
+            preconditionFailure("Failed to resolve AuthManager for CreateAvatarUseCase")
         }
         guard let aiManager = container.resolve(AIManager.self) else {
-            fatalError("Failed to resolve AIManager for CreateAvatarUseCase")
+            preconditionFailure("Failed to resolve AIManager for CreateAvatarUseCase")
         }
         guard let avatarManager = container.resolve(AvatarManager.self) else {
-            fatalError("Failed to resolve AvatarManager for CreateAvatarUseCase")
+            preconditionFailure("Failed to resolve AvatarManager for CreateAvatarUseCase")
         }
         guard let logManager = container.resolve(LogManager.self) else {
-            fatalError("Failed to resolve LogManager for CreateAvatarUseCase")
+            preconditionFailure("Failed to resolve LogManager for CreateAvatarUseCase")
         }
         
         self.authManager = authManager

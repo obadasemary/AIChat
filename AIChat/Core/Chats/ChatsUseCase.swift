@@ -25,16 +25,16 @@ final class ChatsUseCase {
     
     init(container: DependencyContainer) {
         guard let authManager = container.resolve(AuthManager.self) else {
-            fatalError("Failed to resolve AuthManager for ChatsUseCase")
+            preconditionFailure("Failed to resolve AuthManager for ChatsUseCase")
         }
         guard let avatarManager = container.resolve(AvatarManager.self) else {
-            fatalError("Failed to resolve AvatarManager for ChatsUseCase")
+            preconditionFailure("Failed to resolve AvatarManager for ChatsUseCase")
         }
         guard let chatManager = container.resolve(ChatManager.self) else {
-            fatalError("Failed to resolve ChatManager for ChatsUseCase")
+            preconditionFailure("Failed to resolve ChatManager for ChatsUseCase")
         }
         guard let logManager = container.resolve(LogManager.self) else {
-            fatalError("Failed to resolve LogManager for ChatsUseCase")
+            preconditionFailure("Failed to resolve LogManager for ChatsUseCase")
         }
         
         self.authManager = authManager
