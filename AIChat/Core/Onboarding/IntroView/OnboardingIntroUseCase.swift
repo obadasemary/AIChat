@@ -19,7 +19,7 @@ final class OnboardingIntroUseCase {
     
     init(container: DependencyContainer) {
         guard let abTestManager = container.resolve(ABTestManager.self) else {
-            fatalError("Failed to resolve ABTestManager for OnboardingIntroUseCase")
+            preconditionFailure("Failed to resolve ABTestManager for OnboardingIntroUseCase")
         }
         self.abTestManager = abTestManager
     }

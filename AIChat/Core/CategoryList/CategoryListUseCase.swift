@@ -21,10 +21,10 @@ final class CategoryListUseCase {
     
     init(container: DependencyContainer) {
         guard let avatarManager = container.resolve(AvatarManager.self) else {
-            fatalError("Failed to resolve AvatarManager for CategoryListUseCase")
+            preconditionFailure("Failed to resolve AvatarManager for CategoryListUseCase")
         }
         guard let logManager = container.resolve(LogManager.self) else {
-            fatalError("Failed to resolve LogManager for CategoryListUseCase")
+            preconditionFailure("Failed to resolve LogManager for CategoryListUseCase")
         }
         self.avatarManager = avatarManager
         self.logManager = logManager
