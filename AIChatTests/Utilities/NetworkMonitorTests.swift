@@ -14,7 +14,8 @@ struct NetworkMonitorTests {
 
     @Test("Initial Connection State Detection")
     func testInitialConnectionStateDetection() async throws {
-        let monitor = NetworkMonitor()
+        let mockLogManager = LogManager(services: [MockLogService()])
+        let monitor = NetworkMonitor(logManager: mockLogManager)
 
         // Note: This test will pass or fail based on actual network connectivity
         // In a real environment, the monitor should detect the current state
@@ -68,7 +69,8 @@ struct NetworkMonitorTests {
 
     @Test("NetworkMonitor Protocol Conformance")
     func testNetworkMonitorProtocolConformance() async throws {
-        let realMonitor: NetworkMonitorProtocol = NetworkMonitor()
+        let mockLogManager = LogManager(services: [MockLogService()])
+        let realMonitor: NetworkMonitorProtocol = NetworkMonitor(logManager: mockLogManager)
         let mockMonitor: NetworkMonitorProtocol = MockNetworkMonitor(isConnected: true)
 
         // Both should conform to the protocol

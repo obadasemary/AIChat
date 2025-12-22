@@ -137,7 +137,7 @@ struct Dependencies {
                 service: StoreKitPurchaseService(),
                 logManager: logManager
             )
-            networkMonitor = NetworkMonitor()
+            networkMonitor = NetworkMonitor(logManager: logManager)
             newsFeedManager = NewsFeedManager(
                 remoteService: RemoteNewsFeedService(),
                 localStorage: FileManagerNewsFeedService(),
@@ -178,7 +178,7 @@ struct Dependencies {
                 service: StoreKitPurchaseService(),
                 logManager: logManager
             )
-            networkMonitor = NetworkMonitor()
+            networkMonitor = NetworkMonitor(logManager: logManager)
             newsFeedManager = NewsFeedManager(
                 remoteService: RemoteNewsFeedService(),
                 localStorage: FileManagerNewsFeedService(),
