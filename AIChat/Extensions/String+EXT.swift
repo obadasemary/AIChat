@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CryptoKit
 
 extension String {
     
@@ -51,5 +52,11 @@ extension String {
     var stableHashValue: Int {
         let unicodeScalars = self.unicodeScalars.map { $0.value }
         return unicodeScalars.reduce(5381) { ($0 << 5) &+ $0 &+ Int($1) }
+    }
+
+    func sha256() -> String {
+        let inputData = Data(utf8)
+        let hashed = SHA256.hash(data: inputData)
+        return hashed.compactMap { String(format: "%02x", $0) }.joined()
     }
 }
