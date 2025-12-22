@@ -47,7 +47,7 @@ final class RemoteNewsFeedService: RemoteNewsFeedServiceProtocol {
 
         let articles = apiResponse.articles.map { apiArticle in
             NewsArticle(
-                id: UUID().uuidString,
+                id: apiArticle.url.sha256(),
                 title: apiArticle.title,
                 description: apiArticle.description,
                 content: apiArticle.content,
@@ -101,7 +101,7 @@ final class RemoteNewsFeedService: RemoteNewsFeedServiceProtocol {
 
         let articles = apiResponse.articles.map { apiArticle in
             NewsArticle(
-                id: UUID().uuidString,
+                id: apiArticle.url.sha256(),
                 title: apiArticle.title,
                 description: apiArticle.description,
                 content: apiArticle.content,

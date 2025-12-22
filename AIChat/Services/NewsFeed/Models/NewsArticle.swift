@@ -35,7 +35,7 @@ struct NewsArticle: Identifiable, Codable, Equatable {
 
 extension NewsArticle {
     static func mock(
-        id: String = UUID().uuidString,
+        id: String? = nil,
         title: String = "Sample News Article",
         description: String? = "This is a sample news description",
         content: String? = "This is the full content of the news article",
@@ -47,7 +47,7 @@ extension NewsArticle {
         category: String? = "Technology"
     ) -> NewsArticle {
         NewsArticle(
-            id: id,
+            id: id ?? url.sha256(),
             title: title,
             description: description,
             content: content,
