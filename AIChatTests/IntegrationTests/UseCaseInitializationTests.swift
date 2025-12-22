@@ -18,87 +18,106 @@ struct UseCaseInitializationTests {
         self.container = deps.container
     }
 
-    @Test func test_AboutUseCase_initialization() {
-        let _ = AboutUseCase(container: container)
+    @Test func test_AboutUseCase() {
+        let useCase = AboutUseCase(container: container)
+        #expect(useCase.appVersion != "Unknown")
     }
 
-    @Test func test_AppViewUseCase_initialization() {
-        let _ = AppViewUseCase(container: container)
+    @Test func test_AppViewUseCase() {
+        let useCase = AppViewUseCase(container: container)
+        #expect(useCase.showTabBar == true)
     }
 
-    @Test func test_BookmarksUseCase_initialization() {
-        let _ = BookmarksUseCase(container: container)
+    @Test func test_BookmarksUseCase() {
+        let useCase = BookmarksUseCase(container: container)
+        #expect(useCase.getBookmarkedArticles().isEmpty)
     }
 
-    @Test func test_CategoryListUseCase_initialization() {
-        let _ = CategoryListUseCase(container: container)
+    @Test func test_CategoryListUseCase() async throws {
+        let useCase = CategoryListUseCase(container: container)
+        let avatars = try await useCase.getAvatarsForCategory(category: .default)
+        #expect(!avatars.isEmpty)
     }
 
-    @Test func test_ChatUseCase_initialization() {
-        let _ = ChatUseCase(container: container)
+    @Test func test_ChatUseCase() {
+        let useCase = ChatUseCase(container: container)
+        #expect(useCase.auth != nil)
     }
 
-    @Test func test_ChatRowCellUseCase_initialization() {
-        let _ = ChatRowCellUseCase(container: container)
+    @Test func test_ChatRowCellUseCase() {
+        let useCase = ChatRowCellUseCase(container: container)
+        #expect(useCase.auth != nil)
     }
 
-    @Test func test_ChatsUseCase_initialization() {
-        let _ = ChatsUseCase(container: container)
+    @Test func test_ChatsUseCase() throws {
+        let useCase = ChatsUseCase(container: container)
+        let avatars = try useCase.getRecentAvatars()
+        #expect(!avatars.isEmpty)
     }
 
-    @Test func test_CreateAccountUseCase_initialization() {
+    @Test func test_CreateAccountUseCase() {
         let _ = CreateAccountUseCase(container: container)
     }
 
-    @Test func test_CreateAvatarUseCase_initialization() {
-        let _ = CreateAvatarUseCase(container: container)
+    @Test func test_CreateAvatarUseCase() throws {
+        let useCase = CreateAvatarUseCase(container: container)
+        #expect(try useCase.getAuthId() != "")
     }
 
-    @Test func test_DevSettingsUseCase_initialization() {
-        let _ = DevSettingsUseCase(container: container)
+    @Test func test_DevSettingsUseCase() {
+        let useCase = DevSettingsUseCase(container: container)
+        #expect(useCase.auth != nil)
     }
 
-    @Test func test_ExploreUseCase_initialization() {
-        let _ = ExploreUseCase(container: container)
+    @Test func test_ExploreUseCase() async throws {
+        let useCase = ExploreUseCase(container: container)
+        #expect(useCase.auth != nil)
+        let avatars = try await useCase.getFeaturedAvatars()
+        #expect(!avatars.isEmpty)
     }
 
-    @Test func test_NewsDetailsUseCase_initialization() {
+    @Test func test_NewsDetailsUseCase() {
         let _ = NewsDetailsUseCase(container: container)
     }
 
-    @Test func test_NewsFeedUseCase_initialization() {
-        let _ = NewsFeedUseCase(container: container)
+    @Test func test_NewsFeedUseCase() async throws {
+        let useCase = NewsFeedUseCase(container: container)
+        let results = try await useCase.loadNews(page: 1, pageSize: 10)
+        #expect(!results.articles.isEmpty)
     }
 
-    @Test func test_OnboardingColorUseCase_initialization() {
-        let _ = OnboardingColorUseCase(container: container)
+    @Test func test_OnboardingColorUseCase() {
+        let useCase = OnboardingColorUseCase(container: container)
     }
 
-    @Test func test_OnboardingCommunityUseCase_initialization() {
-        let _ = OnboardingCommunityUseCase(container: container)
+    @Test func test_OnboardingCommunityUseCase() {
+        let useCase = OnboardingCommunityUseCase(container: container)
     }
 
-    @Test func test_OnboardingCompletedUseCase_initialization() {
-        let _ = OnboardingCompletedUseCase(container: container)
+    @Test func test_OnboardingCompletedUseCase() {
+        let useCase = OnboardingCompletedUseCase(container: container)
     }
 
-    @Test func test_OnboardingIntroUseCase_initialization() {
-        let _ = OnboardingIntroUseCase(container: container)
+    @Test func test_OnboardingIntroUseCase() {
+        let useCase = OnboardingIntroUseCase(container: container)
+        #expect(useCase.onboardingCommunityTest == false)
     }
 
-    @Test func test_PaywallUseCase_initialization() {
+    @Test func test_PaywallUseCase() {
         let _ = PaywallUseCase(container: container)
     }
 
-    @Test func test_ProfileUseCase_initialization() {
-        let _ = ProfileUseCase(container: container)
+    @Test func test_ProfileUseCase() {
+        let useCase = ProfileUseCase(container: container)
+        #expect(useCase.currentUser != nil)
     }
 
-    @Test func test_SettingsUseCase_initialization() {
-        let _ = SettingsUseCase(container: container)
+    @Test func test_SettingsUseCase() {
+        let useCase = SettingsUseCase(container: container)
+        #expect(useCase.auth != nil)
     }
 
-    @Test func test_WelcomeUseCase_initialization() {
+    @Test func test_WelcomeUseCase() {
         let _ = WelcomeUseCase(container: container)
     }
 }
