@@ -27,11 +27,14 @@ final class NetworkMonitor: NetworkMonitorProtocol {
 
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue(label: "NetworkMonitor")
+    private let logManager: LogManagerProtocol
 
     private(set) var isConnected: Bool = false
     private(set) var connectionType: NetworkConnectionType = .unknown
 
-    init() {
+    init(logManager: LogManagerProtocol) {
+        self.logManager = logManager
+
         // Get initial network state synchronously
         let currentPath = monitor.currentPath
         isConnected = currentPath.status == .satisfied
@@ -44,7 +47,13 @@ final class NetworkMonitor: NetworkMonitorProtocol {
         monitor.pathUpdateHandler = { [weak self] path in
             Task { @MainActor [weak self] in
                 guard let self else { return }
-                print("🌐 NetworkMonitor: Connection changed - \(path.status == .satisfied ? "Connected" : "Disconnected")")
+                let status = path.status == .satisfied ? "Connected" : "Disconnected"
+                let event = AnyLoggableEvent(
+                    eventName: "network_connection_changed",
+                    parameters: ["status": status],
+                    type: .info
+                )
+                self.logManager.trackEvent(event: event)
                 self.isConnected = path.status == .satisfied
                 self.updateConnectionType(from: path)
             }
@@ -53,19 +62,27 @@ final class NetworkMonitor: NetworkMonitorProtocol {
     }
 
     private func updateConnectionType(from path: NWPath) {
+        let type: String
         if path.usesInterfaceType(.wifi) {
             connectionType = .wifi
-            print("🌐 NetworkMonitor: Connection type - WiFi")
+            type = "wifi"
         } else if path.usesInterfaceType(.cellular) {
             connectionType = .cellular
-            print("🌐 NetworkMonitor: Connection type - Cellular")
+            type = "cellular"
         } else if path.usesInterfaceType(.wiredEthernet) {
             connectionType = .ethernet
-            print("🌐 NetworkMonitor: Connection type - Ethernet")
+            type = "ethernet"
         } else {
             connectionType = .unknown
-            print("🌐 NetworkMonitor: Connection type - Unknown")
+            type = "unknown"
         }
+
+        let event = AnyLoggableEvent(
+            eventName: "network_connection_type_updated",
+            parameters: ["type": type],
+            type: .info
+        )
+        logManager.trackEvent(event: event)
     }
 
     deinit {
