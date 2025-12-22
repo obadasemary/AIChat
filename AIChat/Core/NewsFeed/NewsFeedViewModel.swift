@@ -45,7 +45,6 @@ final class NewsFeedViewModel {
     
     // MARK: - Dependencies
     private let newsFeedUseCase: NewsFeedUseCaseProtocol
-    private let networkMonitor: NetworkMonitorProtocol
     private let router: NewsFeedRouterProtocol
 
     // MARK: - Published Properties
@@ -65,7 +64,7 @@ final class NewsFeedViewModel {
     }
 
     var isConnected: Bool {
-        networkMonitor.isConnected
+        newsFeedUseCase.isConnected
     }
 
     // Helper to track current query context
@@ -83,11 +82,9 @@ final class NewsFeedViewModel {
     // MARK: - Initialization
     init(
         newsFeedUseCase: NewsFeedUseCaseProtocol,
-        networkMonitor: NetworkMonitorProtocol,
         router: NewsFeedRouterProtocol
     ) {
         self.newsFeedUseCase = newsFeedUseCase
-        self.networkMonitor = networkMonitor
         self.router = router
     }
 
@@ -146,7 +143,7 @@ final class NewsFeedViewModel {
     }
 
     func handleConnectivityChangeAndWait() async {
-        let isNowConnected = networkMonitor.isConnected
+        let isNowConnected = newsFeedUseCase.isConnected
 
         if isNowConnected && wasDisconnected && isDataFromLocal {
             print("🔍 ViewModel: Connectivity restored! Auto-refreshing from remote...")

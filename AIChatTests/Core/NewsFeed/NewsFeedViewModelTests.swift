@@ -16,11 +16,9 @@ struct NewsFeedViewModelTests {
     @Test("Initial Data Load Success")
     func testInitialDataLoadSuccess() async throws {
         let mockUseCase = MockNewsFeedUseCase(shouldFail: false)
-        let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor,
             router: MockNewsFeedRouter()
         )
 
@@ -39,11 +37,9 @@ struct NewsFeedViewModelTests {
     @Test("Initial Data Load Failure")
     func testInitialDataLoadFailure() async throws {
         let mockUseCase = MockNewsFeedUseCase(shouldFail: true, failWithError: NewsFeedError.networkError)
-        let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor,
             router: MockNewsFeedRouter()
         )
 
@@ -62,11 +58,9 @@ struct NewsFeedViewModelTests {
     @Test("Refresh Data Resets Page and Articles")
     func testRefreshDataResetsPageAndArticles() async throws {
         let mockUseCase = MockNewsFeedUseCase(shouldFail: false)
-        let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor,
             router: MockNewsFeedRouter()
         )
 
@@ -87,11 +81,9 @@ struct NewsFeedViewModelTests {
     @Test("Load More Data Increments Page")
     func testLoadMoreDataIncrementsPage() async throws {
         let mockUseCase = MockNewsFeedUseCase(shouldFail: false, totalResults: 100)
-        let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor,
             router: MockNewsFeedRouter()
         )
 
@@ -111,11 +103,9 @@ struct NewsFeedViewModelTests {
     @Test("Load More Data Stops When No More Pages")
     func testLoadMoreDataStopsWhenNoMorePages() async throws {
         let mockUseCase = MockNewsFeedUseCase(shouldFail: false, totalResults: 10)
-        let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor,
             router: MockNewsFeedRouter()
         )
 
@@ -137,11 +127,9 @@ struct NewsFeedViewModelTests {
     @Test("isLoadingMore Flag During Pagination")
     func testIsLoadingMoreFlagDuringPagination() async throws {
         let mockUseCase = MockNewsFeedUseCase(shouldFail: false)
-        let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor,
             router: MockNewsFeedRouter()
         )
 
@@ -159,12 +147,10 @@ struct NewsFeedViewModelTests {
 
     @Test("Data Source Indicator Shows Remote")
     func testDataSourceIndicatorShowsRemote() async throws {
-        let mockUseCase = MockNewsFeedUseCase(shouldFail: false, dataSource: .remote)
-        let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
+        let mockUseCase = MockNewsFeedUseCase(shouldFail: false, dataSource: .remote, isConnected: true)
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor,
             router: MockNewsFeedRouter()
         )
 
@@ -176,12 +162,10 @@ struct NewsFeedViewModelTests {
 
     @Test("Data Source Indicator Shows Local")
     func testDataSourceIndicatorShowsLocal() async throws {
-        let mockUseCase = MockNewsFeedUseCase(shouldFail: false, dataSource: .local)
-        let mockNetworkMonitor = MockNetworkMonitor(isConnected: false)
+        let mockUseCase = MockNewsFeedUseCase(shouldFail: false, dataSource: .local, isConnected: false)
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor,
             router: MockNewsFeedRouter()
         )
 
@@ -193,12 +177,10 @@ struct NewsFeedViewModelTests {
 
     @Test("Auto-Refresh on Connectivity Restored")
     func testAutoRefreshOnConnectivityRestored() async throws {
-        let mockUseCase = MockNewsFeedUseCase(shouldFail: false, dataSource: .local)
-        let mockNetworkMonitor = MockNetworkMonitor(isConnected: false)
+        let mockUseCase = MockNewsFeedUseCase(shouldFail: false, dataSource: .local, isConnected: false)
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor,
             router: MockNewsFeedRouter()
         )
 
@@ -212,7 +194,7 @@ struct NewsFeedViewModelTests {
 
         // Restore connectivity and change data source to remote
         mockUseCase.setDataSource(.remote)
-        mockNetworkMonitor.isConnected = true
+        mockUseCase.isConnected = true
         await viewModel.handleConnectivityChangeAndWait()
 
         #expect(viewModel.isDataFromRemote == true)
@@ -220,12 +202,10 @@ struct NewsFeedViewModelTests {
 
     @Test("No Auto-Refresh When Already Remote")
     func testNoAutoRefreshWhenAlreadyRemote() async throws {
-        let mockUseCase = MockNewsFeedUseCase(shouldFail: false, dataSource: .remote)
-        let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
+        let mockUseCase = MockNewsFeedUseCase(shouldFail: false, dataSource: .remote, isConnected: true)
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor,
             router: MockNewsFeedRouter()
         )
 
@@ -246,11 +226,9 @@ struct NewsFeedViewModelTests {
     @Test("Network Error Mapping")
     func testNetworkErrorMapping() async throws {
         let mockUseCase = MockNewsFeedUseCase(shouldFail: true, failWithError: NewsFeedError.networkError)
-        let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor,
             router: MockNewsFeedRouter()
         )
 
@@ -263,11 +241,9 @@ struct NewsFeedViewModelTests {
     @Test("Invalid Response Error Mapping")
     func testInvalidResponseErrorMapping() async throws {
         let mockUseCase = MockNewsFeedUseCase(shouldFail: true, failWithError: NewsFeedError.invalidResponse)
-        let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor,
             router: MockNewsFeedRouter()
         )
 
@@ -282,11 +258,9 @@ struct NewsFeedViewModelTests {
     @Test("State Transitions During Load")
     func testStateTransitionsDuringLoad() async throws {
         let mockUseCase = MockNewsFeedUseCase(shouldFail: false)
-        let mockNetworkMonitor = MockNetworkMonitor(isConnected: true)
 
         let viewModel = NewsFeedViewModel(
             newsFeedUseCase: mockUseCase,
-            networkMonitor: mockNetworkMonitor,
             router: MockNewsFeedRouter()
         )
 
@@ -322,6 +296,7 @@ final class MockNewsFeedUseCase: NewsFeedUseCaseProtocol {
     var failWithError: Error?
     var totalResults: Int
     var dataSource: NewsFeedResult.DataSource
+    var isConnected: Bool
 
     private var mockArticles: [NewsArticle] = [
         .mock(title: "Article 1", description: "Description 1", category: "Tech"),
@@ -336,11 +311,12 @@ final class MockNewsFeedUseCase: NewsFeedUseCaseProtocol {
         .mock(title: "Article 10", description: "Description 10", category: "General")
     ]
 
-    init(shouldFail: Bool = false, failWithError: Error? = nil, totalResults: Int? = nil, dataSource: NewsFeedResult.DataSource = .remote) {
+    init(shouldFail: Bool = false, failWithError: Error? = nil, totalResults: Int? = nil, dataSource: NewsFeedResult.DataSource = .remote, isConnected: Bool = true) {
         self.shouldFail = shouldFail
         self.failWithError = failWithError
         self.totalResults = totalResults ?? mockArticles.count
         self.dataSource = dataSource
+        self.isConnected = isConnected
     }
 
     func setDataSource(_ source: NewsFeedResult.DataSource) {
