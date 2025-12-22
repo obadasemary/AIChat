@@ -17,7 +17,7 @@ final class RemoteNewsFeedService: RemoteNewsFeedServiceProtocol {
     }
 
     func fetchNews(category: String?, language: String?, page: Int, pageSize: Int) async throws -> NewsFeedResponse {
-        var urlString = "\(baseURL)/everything?apiKey=\(apiKey)&sortBy=publishedAt&page=\(page)&pageSize=\(pageSize)"
+        var urlString = "\(baseURL)/everything?sortBy=publishedAt&page=\(page)&pageSize=\(pageSize)"
 
         if let language = language {
             urlString += "&language=\(language)"
@@ -31,7 +31,10 @@ final class RemoteNewsFeedService: RemoteNewsFeedServiceProtocol {
             throw NewsFeedError.invalidURL
         }
 
-        let (data, response) = try await URLSession.shared.data(from: url)
+        var request = URLRequest(url: url)
+        request.setValue(apiKey, forHTTPHeaderField: "X-Api-Key")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse,
               (200...299).contains(httpResponse.statusCode) else {
@@ -67,7 +70,7 @@ final class RemoteNewsFeedService: RemoteNewsFeedServiceProtocol {
     }
 
     func fetchTopHeadlines(country: String?, language: String?, page: Int, pageSize: Int) async throws -> NewsFeedResponse {
-        var urlString = "\(baseURL)/top-headlines?apiKey=\(apiKey)&page=\(page)&pageSize=\(pageSize)"
+        var urlString = "\(baseURL)/top-headlines?page=\(page)&pageSize=\(pageSize)"
 
         // Note: News API doesn't support both country and language together for top-headlines
         // Country takes precedence as it returns news in that country's primary language
@@ -82,7 +85,10 @@ final class RemoteNewsFeedService: RemoteNewsFeedServiceProtocol {
             throw NewsFeedError.invalidURL
         }
 
-        let (data, response) = try await URLSession.shared.data(from: url)
+        var request = URLRequest(url: url)
+        request.setValue(apiKey, forHTTPHeaderField: "X-Api-Key")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse,
               (200...299).contains(httpResponse.statusCode) else {
