@@ -47,7 +47,8 @@ extension NewsArticle {
         category: String? = "Technology"
     ) -> NewsArticle {
         // Generate unique URL based on title if not provided
-        let finalUrl = url ?? "https://example.com/\(title.replacingOccurrences(of: " ", with: "-").lowercased())"
+        let slug = title.replacingOccurrences(of: " ", with: "-").lowercased()
+        let finalUrl = url ?? "https://example.com/\(slug.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? slug)"
 
         return NewsArticle(
             id: id ?? finalUrl.sha256(),
