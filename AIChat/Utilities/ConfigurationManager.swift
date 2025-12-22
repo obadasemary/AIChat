@@ -148,7 +148,8 @@ struct ConfigurationManager {
     Alternatively, you can set environment variables:
     - OPENAI_API_KEY
     - MIXPANEL_TOKEN
-    
+    - NEWSAPI_API_KEY
+
     Note: All configuration plist files are already added to .gitignore to prevent committing sensitive data.
     
     For new developers: See README.md for detailed setup instructions.
