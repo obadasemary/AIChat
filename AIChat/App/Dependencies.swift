@@ -46,7 +46,7 @@ struct Dependencies {
     let abTestManager: ABTestManager
     let purchaseManager: PurchaseManager
     let newsFeedManager: NewsFeedManager
-    let networkMonitor: NetworkMonitor
+    let networkMonitor: NetworkMonitorProtocol
     let bookmarkManager: BookmarkManager
     let appState: AppState
     
@@ -95,7 +95,7 @@ struct Dependencies {
                 service: MockPurchaseService(),
                 logManager: logManager
             )
-            networkMonitor = NetworkMonitor()
+            networkMonitor = MockNetworkMonitor(isConnected: true)
             newsFeedManager = NewsFeedManager(
                 remoteService: MockRemoteNewsFeedService(),
                 localStorage: MockLocalNewsFeedService(),
@@ -202,7 +202,7 @@ struct Dependencies {
         container.register(ABTestManager.self, abTestManager)
         container.register(PurchaseManager.self, purchaseManager)
         container.register(NewsFeedManager.self, newsFeedManager)
-        container.register(NetworkMonitor.self, networkMonitor)
+        container.register(NetworkMonitorProtocol.self, networkMonitor)
         container.register(BookmarkManager.self, bookmarkManager)
         container.register(AppState.self, appState)
 
