@@ -73,13 +73,84 @@ struct NetworkMonitorTests {
         let realMonitor: NetworkMonitorProtocol = NetworkMonitor(logManager: mockLogManager)
         let mockMonitor: NetworkMonitorProtocol = MockNetworkMonitor(isConnected: true)
 
-        // Both should conform to the protocol
-        _ = realMonitor.isConnected
-        _ = realMonitor.connectionType
-        _ = mockMonitor.isConnected
-        _ = mockMonitor.connectionType
+        // Both should conform to the protocol and provide required properties
+        #expect(realMonitor.isConnected == true || realMonitor.isConnected == false)
+        #expect(realMonitor.connectionType != nil)
+        #expect(mockMonitor.isConnected == true)
+        #expect(mockMonitor.connectionType != nil)
+    }
 
-        // Test passes if compilation succeeds
-        #expect(true)
+    // MARK: - Edge Case Tests
+
+    @Test("Mock NetworkMonitor Default Initialization")
+    func testMockNetworkMonitorDefaultInitialization() async throws {
+        let mockMonitor = MockNetworkMonitor()
+
+        // Default should be connected with WiFi
+        #expect(mockMonitor.isConnected == true)
+        #expect(mockMonitor.connectionType == .wifi)
+    }
+
+    @Test("Mock NetworkMonitor Disconnected With Different Connection Types")
+    func testMockNetworkMonitorDisconnectedWithDifferentConnectionTypes() async throws {
+        // Test that disconnected state can coexist with any connection type
+        let wifiDisconnected = MockNetworkMonitor(isConnected: false, connectionType: .wifi)
+        #expect(wifiDisconnected.isConnected == false)
+        #expect(wifiDisconnected.connectionType == .wifi)
+
+        let cellularDisconnected = MockNetworkMonitor(isConnected: false, connectionType: .cellular)
+        #expect(cellularDisconnected.isConnected == false)
+        #expect(cellularDisconnected.connectionType == .cellular)
+
+        let unknownDisconnected = MockNetworkMonitor(isConnected: false, connectionType: .unknown)
+        #expect(unknownDisconnected.isConnected == false)
+        #expect(unknownDisconnected.connectionType == .unknown)
+    }
+
+    @Test("Mock NetworkMonitor Multiple State Transitions")
+    func testMockNetworkMonitorMultipleStateTransitions() async throws {
+        let mockMonitor = MockNetworkMonitor(isConnected: true, connectionType: .wifi)
+
+        // Initial state
+        #expect(mockMonitor.isConnected == true)
+        #expect(mockMonitor.connectionType == .wifi)
+
+        // Disconnect
+        mockMonitor.isConnected = false
+        #expect(mockMonitor.isConnected == false)
+
+        // Reconnect
+        mockMonitor.isConnected = true
+        #expect(mockMonitor.isConnected == true)
+
+        // Change to cellular
+        mockMonitor.connectionType = .cellular
+        #expect(mockMonitor.connectionType == .cellular)
+
+        // Disconnect again
+        mockMonitor.isConnected = false
+        #expect(mockMonitor.isConnected == false)
+        #expect(mockMonitor.connectionType == .cellular)
+    }
+
+    @Test("Mock NetworkMonitor Connection Type Changes While Connected")
+    func testMockNetworkMonitorConnectionTypeChangesWhileConnected() async throws {
+        let mockMonitor = MockNetworkMonitor(isConnected: true, connectionType: .wifi)
+
+        // Switch between connection types while remaining connected
+        #expect(mockMonitor.isConnected == true)
+        #expect(mockMonitor.connectionType == .wifi)
+
+        mockMonitor.connectionType = .cellular
+        #expect(mockMonitor.isConnected == true)
+        #expect(mockMonitor.connectionType == .cellular)
+
+        mockMonitor.connectionType = .ethernet
+        #expect(mockMonitor.isConnected == true)
+        #expect(mockMonitor.connectionType == .ethernet)
+
+        mockMonitor.connectionType = .unknown
+        #expect(mockMonitor.isConnected == true)
+        #expect(mockMonitor.connectionType == .unknown)
     }
 }

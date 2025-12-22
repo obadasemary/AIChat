@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 final class MockNetworkMonitor: NetworkMonitorProtocol {
     var isConnected: Bool
     var connectionType: NetworkConnectionType
