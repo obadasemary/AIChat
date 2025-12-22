@@ -9,13 +9,15 @@ import Foundation
 
 @MainActor
 protocol NewsFeedUseCaseProtocol {
+    var isConnected: Bool { get }
+
     func loadNews(
         category: String?,
         language: String?,
         page: Int,
         pageSize: Int
     ) async throws -> NewsFeedResult
-    
+
     func loadTopHeadlines(
         country: String?,
         language: String?,
@@ -28,12 +30,21 @@ protocol NewsFeedUseCaseProtocol {
 final class NewsFeedUseCase: NewsFeedUseCaseProtocol {
 
     private let newsFeedManager: NewsFeedManagerProtocol
+    private let networkMonitor: NetworkMonitorProtocol
+
+    var isConnected: Bool {
+        networkMonitor.isConnected
+    }
 
     init(container: DependencyContainer) {
         guard let newsFeedManager = container.resolve(NewsFeedManager.self) else {
             preconditionFailure("Failed to resolve NewsFeedManager for NewsFeedUseCase")
         }
+        guard let networkMonitor = container.resolve(NetworkMonitorProtocol.self) else {
+            preconditionFailure("Failed to resolve NetworkMonitorProtocol for NewsFeedUseCase")
+        }
         self.newsFeedManager = newsFeedManager
+        self.networkMonitor = networkMonitor
     }
 
     func loadNews(

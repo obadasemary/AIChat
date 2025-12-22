@@ -25,7 +25,7 @@ class DevPreview {
         container.register(ABTestManager.self, abTestManager)
         container.register(PurchaseManager.self, purchaseManager)
         container.register(NewsFeedManager.self, newsFeedManager)
-        container.register(NetworkMonitor.self, networkMonitor)
+        container.register(NetworkMonitorProtocol.self, networkMonitor)
         container.register(BookmarkManager.self, bookmarkManager)
         container.register(AppState.self, AppState())
 
@@ -42,7 +42,7 @@ class DevPreview {
     private let abTestManager: ABTestManager
     private let purchaseManager: PurchaseManager
     private let newsFeedManager: NewsFeedManager
-    private let networkMonitor: NetworkMonitor
+    private let networkMonitor: NetworkMonitorProtocol
     private let bookmarkManager: BookmarkManager
     private let appState: AppState
     
@@ -68,7 +68,7 @@ class DevPreview {
             service: MockPurchaseService(),
             logManager: logManager
         )
-        self.networkMonitor = NetworkMonitor()
+        self.networkMonitor = MockNetworkMonitor(isConnected: true)
         self.newsFeedManager = NewsFeedManager(
             remoteService: MockRemoteNewsFeedService(),
             localStorage: MockLocalNewsFeedService(),
