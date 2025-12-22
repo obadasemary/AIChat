@@ -2,7 +2,7 @@
 //  MockNetworkMonitor.swift
 //  AIChat
 //
-//  Created by Antigravity on 21.12.2025.
+//  Created by Abdelrahman Mohamed on 21.12.2025.
 //
 
 import Foundation
