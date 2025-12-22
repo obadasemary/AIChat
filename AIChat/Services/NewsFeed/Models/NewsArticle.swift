@@ -41,19 +41,22 @@ extension NewsArticle {
         content: String? = "This is the full content of the news article",
         author: String? = "John Doe",
         source: NewsSource = .mock(),
-        url: String = "https://example.com/article",
+        url: String? = nil,
         imageUrl: String? = "https://example.com/image.jpg",
         publishedAt: Date = Date(),
         category: String? = "Technology"
     ) -> NewsArticle {
-        NewsArticle(
-            id: id ?? url.sha256(),
+        // Generate unique URL based on title if not provided
+        let finalUrl = url ?? "https://example.com/\(title.replacingOccurrences(of: " ", with: "-").lowercased())"
+
+        return NewsArticle(
+            id: id ?? finalUrl.sha256(),
             title: title,
             description: description,
             content: content,
             author: author,
             source: source,
-            url: url,
+            url: finalUrl,
             imageUrl: imageUrl,
             publishedAt: publishedAt,
             category: category
