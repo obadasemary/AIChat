@@ -205,15 +205,3 @@ struct NewsFeedManagerTests {
         #expect(result.articles.isEmpty)
     }
 }
-
-// MARK: - Mock NetworkMonitor
-
-@MainActor
-final class MockNetworkMonitor: NetworkMonitorProtocol {
-    var isConnected: Bool
-    var connectionType: NetworkConnectionType = .unknown
-
-    init(isConnected: Bool) {
-        self.isConnected = isConnected
-    }
-}
