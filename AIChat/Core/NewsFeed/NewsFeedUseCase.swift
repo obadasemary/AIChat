@@ -7,8 +7,18 @@
 
 import Foundation
 
+/// Protocol defining the business logic interface for NewsFeed feature.
+///
+/// Architectural Note on Network Connectivity:
+/// The `isConnected` property is exposed through this UseCase protocol to maintain proper
+/// separation of concerns in Clean Architecture. The ViewModel needs network status to show
+/// appropriate UI states (loading, error, offline), but should not directly access NetworkMonitor.
+/// By exposing connectivity through the UseCase, we maintain the proper data flow:
+/// View → ViewModel → UseCase → Manager/Service
 @MainActor
 protocol NewsFeedUseCaseProtocol {
+    /// Current network connectivity status.
+    /// Exposed to enable ViewModel to show appropriate UI states without directly accessing NetworkMonitor.
     var isConnected: Bool { get }
 
     func loadNews(
@@ -32,6 +42,8 @@ final class NewsFeedUseCase: NewsFeedUseCaseProtocol {
     private let newsFeedManager: NewsFeedManagerProtocol
     private let networkMonitor: NetworkMonitorProtocol
 
+    /// Delegates to NetworkMonitor to provide current connectivity status.
+    /// NetworkMonitor is resolved from DependencyContainer, enabling test injection of MockNetworkMonitor.
     var isConnected: Bool {
         networkMonitor.isConnected
     }
@@ -40,6 +52,7 @@ final class NewsFeedUseCase: NewsFeedUseCaseProtocol {
         guard let newsFeedManager = container.resolve(NewsFeedManager.self) else {
             preconditionFailure("Failed to resolve NewsFeedManager for NewsFeedUseCase")
         }
+        // Resolve NetworkMonitorProtocol to enable mock injection during testing
         guard let networkMonitor = container.resolve(NetworkMonitorProtocol.self) else {
             preconditionFailure("Failed to resolve NetworkMonitorProtocol for NewsFeedUseCase")
         }
