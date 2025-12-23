@@ -237,4 +237,14 @@ class CoreBuilder {
             )
         )
     }
+
+    func newsFeedView(router: Router) -> some View {
+        NewsFeedBuilder(container: container)
+            .buildNewsFeedView(router: router)
+    }
+
+    func bookmarksView(router: Router) -> some View {
+        BookmarksBuilder(container: container)
+            .buildBookmarksView(router: router)
+    }
 }
