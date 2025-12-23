@@ -239,4 +239,16 @@ struct CoreRouter {
                 .onboardingCompletedView(router: router, delegate: delegate)
         }
     }
+
+    func showNewsFeedView() {
+        router.showScreen(.push) { router in
+            builder.newsFeedView(router: router)
+        }
+    }
+
+    func showBookmarksView() {
+        router.showScreen(.push) { router in
+            builder.bookmarksView(router: router)
+        }
+    }
 }
