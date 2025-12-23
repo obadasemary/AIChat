@@ -163,7 +163,7 @@ AIChat/
 
 ### Prerequisites
 
-- **Xcode 26.0 - 26.2** (tested range)
+- **Xcode 16.0 - 26.2** (tested range)
 - **iOS 17.6 - 26.2** (deployment target to current SDK)
 - **Swift 5.9 - 6.2** (compatible range)
 - **Apple Developer Account** (for device testing)
