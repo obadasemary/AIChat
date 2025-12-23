@@ -3,7 +3,7 @@
 [![iOS Build & Test](https://github.com/obadasemary/AIChat/actions/workflows/CI.yml/badge.svg)](https://github.com/obadasemary/AIChat/actions/workflows/CI.yml)
 [![Swift](https://img.shields.io/badge/Swift-5.9--6.2-orange.svg)](https://swift.org)
 [![iOS](https://img.shields.io/badge/iOS-17.6--26.2-blue.svg)](https://developer.apple.com/ios/)
-[![Xcode](https://img.shields.io/badge/Xcode-26.0--26.2-blue.svg)](https://developer.apple.com/xcode/)
+[![Xcode](https://img.shields.io/badge/Xcode-16.0--26.2-blue.svg)](https://developer.apple.com/xcode/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 <div align="center">
