@@ -11,8 +11,6 @@ struct TabBarView: View {
 
     @Environment(ExploreBuilder.self) private var exploreBuilder
     @Environment(ChatsBuilder.self) private var chatsBuilder
-    @Environment(NewsFeedBuilder.self) private var newsFeedBuilder
-    @Environment(BookmarksBuilder.self) private var bookmarksBuilder
     @Environment(ProfileBuilder.self) private var profileBuilder
 
     var body: some View {
@@ -31,18 +29,6 @@ struct TabBarView: View {
                     "Chats",
                     systemImage: "bubble.left.and.bubble.right"
                 )
-            }
-            RouterView { router in
-                newsFeedBuilder.buildNewsFeedView(router: router)
-            }
-            .tabItem {
-                Label("News", systemImage: "newspaper")
-            }
-            RouterView { router in
-                bookmarksBuilder.buildBookmarksView(router: router)
-            }
-            .tabItem {
-                Label("Bookmarks", systemImage: "bookmark.fill")
             }
             RouterView { router in
                 profileBuilder.buildProfileView(router: router)
