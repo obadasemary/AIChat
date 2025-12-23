@@ -170,6 +170,16 @@ extension SettingsViewModel {
         settingsUseCase.trackEvent(event: Event.aboutPressed)
         router.showAboutView()
     }
+
+    func onNewsFeedPressed() {
+        settingsUseCase.trackEvent(event: Event.newsFeedPressed)
+        router.showNewsFeedView()
+    }
+
+    func onBookmarksPressed() {
+        settingsUseCase.trackEvent(event: Event.bookmarksPressed)
+        router.showBookmarksView()
+    }
 }
 
 // MARK: - Helper
@@ -199,7 +209,9 @@ private extension SettingsViewModel {
         case ratingYesPressed
         case ratingNoPressed
         case aboutPressed
-        
+        case newsFeedPressed
+        case bookmarksPressed
+
         var eventName: String {
             switch self {
             case .signOutStart: "SettingsView_SignOut_Start"
@@ -215,6 +227,8 @@ private extension SettingsViewModel {
             case .ratingYesPressed: "SettingsView_Rating_Yes_Pressed"
             case .ratingNoPressed: "SettingsView_Rating_No_Pressed"
             case .aboutPressed: "SettingsView_About_Pressed"
+            case .newsFeedPressed: "SettingsView_NewsFeed_Pressed"
+            case .bookmarksPressed: "SettingsView_Bookmarks_Pressed"
             }
         }
         

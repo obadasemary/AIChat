@@ -15,6 +15,8 @@ protocol SettingsRouterProtocol {
         onDisappear: (() -> Void)?
     )
     func showAboutView()
+    func showNewsFeedView()
+    func showBookmarksView()
     func showRatingsModal(
         onEnjoyingAppYesPressed: @escaping () -> Void,
         onEnjoyingAppNoPressed: @escaping () -> Void
@@ -35,6 +37,8 @@ struct SettingsRouter {
     let router: Router
     let createAccountBuilder: CreateAccountBuilder
     let aboutBuilder: AboutBuilder
+    let newsFeedBuilder: NewsFeedBuilder
+    let bookmarksBuilder: BookmarksBuilder
 }
 
 extension SettingsRouter: SettingsRouterProtocol {
@@ -58,7 +62,19 @@ extension SettingsRouter: SettingsRouterProtocol {
             aboutBuilder.buildAboutView(router: router)
         }
     }
-    
+
+    func showNewsFeedView() {
+        router.showScreen(.push) { router in
+            newsFeedBuilder.buildNewsFeedView(router: router)
+        }
+    }
+
+    func showBookmarksView() {
+        router.showScreen(.push) { router in
+            bookmarksBuilder.buildBookmarksView(router: router)
+        }
+    }
+
     func showRatingsModal(
         onEnjoyingAppYesPressed: @escaping () -> Void,
         onEnjoyingAppNoPressed: @escaping () -> Void

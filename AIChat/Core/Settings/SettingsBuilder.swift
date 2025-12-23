@@ -41,6 +41,12 @@ final class SettingsBuilder {
                     ),
                     aboutBuilder: AboutBuilder(
                         container: container
+                    ),
+                    newsFeedBuilder: NewsFeedBuilder(
+                        container: container
+                    ),
+                    bookmarksBuilder: BookmarksBuilder(
+                        container: container
                     )
                 ),
                 onSignedIn: onSignedIn

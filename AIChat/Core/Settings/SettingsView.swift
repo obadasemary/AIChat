@@ -17,8 +17,9 @@ struct SettingsView: View {
             VStack(spacing: 16) {
                 accountSection
                 purchaseSection
+                contentSection
                 applicationSection
-                
+
                 Spacer()
             }
             .padding(.horizontal, 16)
@@ -86,12 +87,12 @@ private extension SettingsView {
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 16)
-            
+
             HStack(spacing: 8) {
                 Text("Account Status: \(viewModel.isPremium ? "PREMIUM" : "FREE")")
-                
+
                 Spacer(minLength: 0)
-                
+
                 Button {
                     viewModel.onManagePurchase()
                 } label: {
@@ -105,7 +106,39 @@ private extension SettingsView {
             .cornerRadius(12)
         }
     }
-    
+
+    var contentSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Content")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 16)
+
+            VStack(spacing: 0) {
+                SettingRowButton(
+                    title: "News",
+                    textColor: .primary,
+                    action: viewModel.onNewsFeedPressed,
+                    isFirst: true,
+                    isLast: false
+                )
+
+                Divider()
+                    .padding(.leading, 16)
+
+                SettingRowButton(
+                    title: "Bookmarks",
+                    textColor: .primary,
+                    action: viewModel.onBookmarksPressed,
+                    isFirst: false,
+                    isLast: true
+                )
+            }
+            .background(Color(uiColor: .systemBackground))
+            .cornerRadius(12)
+        }
+    }
+
     var applicationSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Application")
