@@ -9,7 +9,7 @@ import SwiftUI
 
 struct OnboardingColorView: View {
     
-    @State var viewModel: OnboardingColorViewModel
+    @State var presenter: OnboardingColorPresenter
     let delegate: OnboardingColorDelegate
     
     var body: some View {
@@ -23,7 +23,7 @@ struct OnboardingColorView: View {
             spacing: 16,
             content: {
                 ZStack {
-                    if let selectedColor = viewModel.selectedColor {
+                    if let selectedColor = presenter.selectedColor {
                         ctaButton(selectedColor: selectedColor)
                             .transition(AnyTransition.move(edge: .bottom))
                     }
@@ -32,7 +32,7 @@ struct OnboardingColorView: View {
                 .background(Color(uiColor: .systemBackground))
             }
         )
-        .animation(.bouncy, value: viewModel.selectedColor)
+        .animation(.bouncy, value: presenter.selectedColor)
         .toolbar(.hidden, for: .navigationBar)
         .screenAppearAnalytics(name: "OnboardingColorView")
     }
@@ -54,16 +54,16 @@ private extension OnboardingColorView {
             pinnedViews: [.sectionHeaders],
             content: {
                 Section {
-                    ForEach(viewModel.profileColors, id: \.self) { color in
+                    ForEach(presenter.profileColors, id: \.self) { color in
                         Circle()
                             .fill(.accent)
                             .overlay(
                                 color
                                     .clipShape(Circle())
-                                    .padding(viewModel.selectedColor == color ? 10 : 0)
+                                    .padding(presenter.selectedColor == color ? 10 : 0)
                             )
                             .onTapGesture {
-                                viewModel.onColorPressed(color: color)
+                                presenter.onColorPressed(color: color)
                             }
                             .accessibilityIdentifier("ColorCircle")
                     }
@@ -82,7 +82,7 @@ private extension OnboardingColorView {
         Text("Continue")
             .callToActionButton()
             .anyButton(.press) {
-                viewModel.onContinuePress()
+                presenter.onContinuePress()
             }
             .accessibilityIdentifier("ContinueButton")
     }

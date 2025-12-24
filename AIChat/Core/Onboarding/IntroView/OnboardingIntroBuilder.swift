@@ -22,8 +22,8 @@ final class OnboardingIntroBuilder {
         delegate: OnboardingIntroDelegate
     ) -> some View {
         OnboardingIntroView(
-            viewModel: OnboardingIntroViewModel(
-                OnboardingIntroUseCase: OnboardingIntroUseCase(
+            presenter: OnboardingIntroPresenter(
+                OnboardingIntroInteractor: OnboardingIntroInteractor(
                     container: container
                 ),
                 router: OnboardingIntroRouter(

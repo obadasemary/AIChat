@@ -9,36 +9,36 @@ import SwiftUI
 
 @Observable
 @MainActor
-class OnboardingCompletedViewModel {
+class OnboardingCompletedPresenter {
     
-    private let onboardingCompletedUseCase: OnboardingCompletedUseCaseProtocol
+    private let onboardingCompletedInteractor: OnboardingCompletedInteractorProtocol
     private let router: OnboardingCompletedRouterProtocol
     
     private(set) var isCompletingProfileSetup: Bool = false
     
     init(
-        onboardingCompletedUseCase: OnboardingCompletedUseCaseProtocol,
+        onboardingCompletedInteractor: OnboardingCompletedInteractorProtocol,
         router: OnboardingCompletedRouterProtocol
     ) {
-        self.onboardingCompletedUseCase = onboardingCompletedUseCase
+        self.onboardingCompletedInteractor = onboardingCompletedInteractor
         self.router = router
     }
 }
 
 // MARK: - Action
-extension OnboardingCompletedViewModel {
+extension OnboardingCompletedPresenter {
     
     func onFinishButtonPressed(selectedColor: Color) {
         isCompletingProfileSetup = true
-        onboardingCompletedUseCase.trackEvent(event: Event.finishStart)
+        onboardingCompletedInteractor.trackEvent(event: Event.finishStart)
         Task {
             do {
                 let hex = selectedColor.asHex()
-                try await onboardingCompletedUseCase
+                try await onboardingCompletedInteractor
                     .markOnboardingCompleteForCurrentUser(
                         profileColorHex: hex
                     )
-                onboardingCompletedUseCase
+                onboardingCompletedInteractor
                     .trackEvent(
                         event: Event.finishSuccess(
                             hex: hex
@@ -47,11 +47,11 @@ extension OnboardingCompletedViewModel {
                 
                 isCompletingProfileSetup = false
                 
-                onboardingCompletedUseCase.updateAppState(showTabBarView: true)
+                onboardingCompletedInteractor.updateAppState(showTabBarView: true)
             } catch {
                 isCompletingProfileSetup = false
                 router.showAlert(error: error)
-                onboardingCompletedUseCase
+                onboardingCompletedInteractor
                     .trackEvent(
                         event: Event.finishFail(
                             error: error
@@ -63,7 +63,7 @@ extension OnboardingCompletedViewModel {
 }
 
 // MARK: - Event
-private extension OnboardingCompletedViewModel {
+private extension OnboardingCompletedPresenter {
     
     enum Event: LoggableEvent {
         case finishStart
