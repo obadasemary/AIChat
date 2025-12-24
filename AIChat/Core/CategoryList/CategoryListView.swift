@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CategoryListView: View {
     
-    @State var viewModel: CategoryListViewModel
+    @State var presenter: CategoryListPresenter
     let delegate: CategoryListDelegate
     
     var body: some View {
@@ -22,19 +22,19 @@ struct CategoryListView: View {
             )
             .removeListRowFormatting()
             
-            if viewModel.isLoading {
+            if presenter.isLoading {
                 loadingIndicator
-            } else if viewModel.avatars.isEmpty {
+            } else if presenter.avatars.isEmpty {
                 contentUnavailableView
             } else {
-                ForEach(viewModel.avatars, id: \.self) { avatar in
+                ForEach(presenter.avatars, id: \.self) { avatar in
                     CustomListCellView(
                         imageName: avatar.profileImageName,
                         title: avatar.name,
                         subtitle: avatar.characterDescription
                     )
                     .anyButton(.highlight) {
-                        viewModel.onAvatarTapped(
+                        presenter.onAvatarTapped(
                             avatar: avatar
                         )
                     }
@@ -47,7 +47,7 @@ struct CategoryListView: View {
         .ignoresSafeArea(edges: .top)
         .listStyle(.plain)
         .task {
-            await viewModel.loadAvatars(category: delegate.category)
+            await presenter.loadAvatars(category: delegate.category)
         }
     }
 }

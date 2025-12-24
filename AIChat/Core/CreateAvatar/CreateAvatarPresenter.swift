@@ -9,9 +9,9 @@ import SwiftUI
 
 @Observable
 @MainActor
-final class CreateAvatarViewModel {
+final class CreateAvatarPresenter {
     
-    private let createAvatarUseCase: CreateAvatarUseCaseProtocol
+    private let createAvatarInteractor: CreateAvatarInteractorProtocol
     private let router: CreateAvatarRouterProtocol
     
     private(set) var isGenerating: Bool = false
@@ -25,26 +25,26 @@ final class CreateAvatarViewModel {
     var avatarName: String = ""
     
     init(
-        createAvatarUseCase: CreateAvatarUseCaseProtocol,
+        createAvatarInteractor: CreateAvatarInteractorProtocol,
         router: CreateAvatarRouterProtocol
     ) {
-        self.createAvatarUseCase = createAvatarUseCase
+        self.createAvatarInteractor = createAvatarInteractor
         self.router = router
     }
 }
 
 // MARK: - Action
-extension CreateAvatarViewModel {
+extension CreateAvatarPresenter {
     
     func onDismissButtonTapped() {
-        createAvatarUseCase.trackEvent(event: Event.backButtonPressed)
+        createAvatarInteractor.trackEvent(event: Event.backButtonPressed)
         router.dismissScreen()
     }
     
     // swiftlint:disable force_unwrapping
     func onGenerateImageTapped() {
         isGenerating = true
-        createAvatarUseCase.trackEvent(event: Event.generateImageStart)
+        createAvatarInteractor.trackEvent(event: Event.generateImageStart)
         Task { [weak self] in
             guard let self else { return }
             do {
@@ -54,17 +54,17 @@ extension CreateAvatarViewModel {
                     characterLocation: self.characterLocation
                 )
                 
-                self.generatedImage = try await self.createAvatarUseCase.generateImage()
+                self.generatedImage = try await self.createAvatarInteractor.generateImage()
 //                let prompt = avatarDescriptionBuilder.characterDescription
-//                generatedImage = try await createAvatarUseCase.generateImage(input: prompt)
-                self.createAvatarUseCase
+//                generatedImage = try await createAvatarInteractor.generateImage(input: prompt)
+                self.createAvatarInteractor
                     .trackEvent(
                         event: Event.generateImageSuccess(
                             avatarDescriptionBuilder: avatarDescriptionBuilder
                         )
                     )
             } catch {
-                self.createAvatarUseCase
+                self.createAvatarInteractor
                     .trackEvent(event: Event.generateImageFail(error: error))
             }
             self.isGenerating = false
@@ -73,14 +73,14 @@ extension CreateAvatarViewModel {
     // swiftlint:enable force_unwrapping
     
     func onSaveTapped() {
-        createAvatarUseCase.trackEvent(event: Event.saveAvatarStart)
+        createAvatarInteractor.trackEvent(event: Event.saveAvatarStart)
         guard let generatedImage else { return }
         isSaving = true
         Task { [weak self] in
             guard let self else { return }
             do {
                 try TextValidationHelper.checkIfTextIsValid(text: self.avatarName)
-                let userId = try self.createAvatarUseCase.getAuthId()
+                let userId = try self.createAvatarInteractor.getAuthId()
                 
                 let avatar = AvatarModel.newAvatar(
                     name: self.avatarName,
@@ -90,9 +90,9 @@ extension CreateAvatarViewModel {
                     authorId: userId
                 )
                 
-                try await self.createAvatarUseCase
+                try await self.createAvatarInteractor
                     .createAvatar(avatar: avatar, image: generatedImage)
-                self.createAvatarUseCase
+                self.createAvatarInteractor
                     .trackEvent(
                         event: Event.saveAvatarSuccess(
                             avatar: avatar
@@ -104,7 +104,7 @@ extension CreateAvatarViewModel {
             } catch {
                 self.isSaving = false
                 self.router.showAlert(error: error)
-                self.createAvatarUseCase
+                self.createAvatarInteractor
                     .trackEvent(
                         event: Event.saveAvatarFail(
                             error: error
@@ -116,7 +116,7 @@ extension CreateAvatarViewModel {
 }
 
 // MARK: - Event
-private extension CreateAvatarViewModel {
+private extension CreateAvatarPresenter {
     
     enum Event: LoggableEvent {
         case backButtonPressed

@@ -10,9 +10,9 @@ import SwiftUI
 
 @Observable
 @MainActor
-class DevSettingsViewModel {
+class DevSettingsPresenter {
 
-    private let devSettingsUseCase: DevSettingsUseCaseProtocol
+    private let devSettingsInteractor: DevSettingsInteractorProtocol
     private let router: DevSettingsRouterProtocol
 
     var createAccountTest: Bool = false
@@ -22,14 +22,14 @@ class DevSettingsViewModel {
     var colorSchemePreference: ColorSchemePreference = .light
 
     var authData: [(key: String, value: Any)] {
-        devSettingsUseCase
+        devSettingsInteractor
             .auth?
             .eventParameters
             .asAlphabeticalArray ?? []
     }
 
     var userData: [(key: String, value: Any)] {
-        devSettingsUseCase
+        devSettingsInteractor
             .currentUser?
             .eventParameters
             .asAlphabeticalArray ?? []
@@ -42,22 +42,22 @@ class DevSettingsViewModel {
     }
 
     init(
-        devSettingsUseCase: DevSettingsUseCaseProtocol,
+        devSettingsInteractor: DevSettingsInteractorProtocol,
         router: DevSettingsRouterProtocol
     ) {
-        self.devSettingsUseCase = devSettingsUseCase
+        self.devSettingsInteractor = devSettingsInteractor
         self.router = router
     }
 }
 
 // MARK: - Load
-extension DevSettingsViewModel {
+extension DevSettingsPresenter {
     
     func loadABTest() {
-        createAccountTest = devSettingsUseCase.activeTests.createAccountTest
-        onboardingCommunityTest = devSettingsUseCase.activeTests.onboardingCommunityTest
-        categoryRowTest = devSettingsUseCase.activeTests.categoryRowTest
-        paywallOption = devSettingsUseCase.activeTests.paywallOption
+        createAccountTest = devSettingsInteractor.activeTests.createAccountTest
+        onboardingCommunityTest = devSettingsInteractor.activeTests.onboardingCommunityTest
+        categoryRowTest = devSettingsInteractor.activeTests.categoryRowTest
+        paywallOption = devSettingsInteractor.activeTests.paywallOption
         colorSchemePreference = ColorSchemeManager.shared.currentPreference
 
         // Sync PaywallConfiguration with saved value
@@ -66,7 +66,7 @@ extension DevSettingsViewModel {
 }
 
 // MARK: - Action
-extension DevSettingsViewModel {
+extension DevSettingsPresenter {
 
     func onBackButtonTap() {
         router.dismissScreen()
@@ -76,7 +76,7 @@ extension DevSettingsViewModel {
         updateTest(
             property: &createAccountTest,
             newValue: newValue,
-            savedValue: devSettingsUseCase.activeTests.createAccountTest
+            savedValue: devSettingsInteractor.activeTests.createAccountTest
         ) { tests in
             tests.update(createAccountTest: newValue)
         }
@@ -86,7 +86,7 @@ extension DevSettingsViewModel {
         updateTest(
             property: &onboardingCommunityTest,
             newValue: newValue,
-            savedValue: devSettingsUseCase.activeTests.onboardingCommunityTest
+            savedValue: devSettingsInteractor.activeTests.onboardingCommunityTest
         ) { tests in
             tests.update(onboardingCommunityTest: newValue)
         }
@@ -99,7 +99,7 @@ extension DevSettingsViewModel {
         updateTest(
             property: &categoryRowTest,
             newValue: newValue,
-            savedValue: devSettingsUseCase.activeTests.categoryRowTest
+            savedValue: devSettingsInteractor.activeTests.categoryRowTest
         ) { tests in
             tests.update(categoryRowTest: newValue)
         }
@@ -112,7 +112,7 @@ extension DevSettingsViewModel {
         updateTest(
             property: &paywallOption,
             newValue: newValue,
-            savedValue: devSettingsUseCase.activeTests.paywallOption
+            savedValue: devSettingsInteractor.activeTests.paywallOption
         ) { tests in
             tests.update(paywallOption: newValue)
         }
@@ -133,7 +133,7 @@ extension DevSettingsViewModel {
     }
 }
 
-private extension DevSettingsViewModel {
+private extension DevSettingsPresenter {
     
     func updateTest<T: Equatable>(
         property: inout T,
@@ -143,9 +143,9 @@ private extension DevSettingsViewModel {
     ) {
         if newValue != savedValue {
             do {
-                var tests = devSettingsUseCase.activeTests
+                var tests = devSettingsInteractor.activeTests
                 updateAction(&tests)
-                try devSettingsUseCase.override(updateTests: tests)
+                try devSettingsInteractor.override(updateTests: tests)
             } catch {
                 property = savedValue
             }

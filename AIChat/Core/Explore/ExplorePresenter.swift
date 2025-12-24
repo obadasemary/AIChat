@@ -9,9 +9,9 @@ import Foundation
 
 @Observable
 @MainActor
-final class ExploreViewModel {
+final class ExplorePresenter {
     
-    private let exploreUseCase: ExploreUseCaseProtocol
+    private let exploreInteractor: ExploreInteractorProtocol
     private let router: ExploreRouterProtocol
     
     private(set) var categories: [CharacterOption] = CharacterOption.allCases
@@ -31,35 +31,35 @@ final class ExploreViewModel {
     }
     
     var categoryRowTest: CategoryRowTestOption {
-        exploreUseCase.categoryRowTest
+        exploreInteractor.categoryRowTest
     }
     
     init(
-        exploreUseCase: ExploreUseCaseProtocol,
+        exploreInteractor: ExploreInteractorProtocol,
         router: ExploreRouterProtocol
     ) {
-        self.exploreUseCase = exploreUseCase
+        self.exploreInteractor = exploreInteractor
         self.router = router
     }
 }
 
 // MARK: - Load
 
-extension ExploreViewModel {
+extension ExplorePresenter {
     
     func loadFeaturedAvatars(force: Bool = false) async {
         guard featuredAvatars.isEmpty || force else { return }
-        exploreUseCase.trackEvent(event: Event.loadFeaturedAvatarsStart)
+        exploreInteractor.trackEvent(event: Event.loadFeaturedAvatarsStart)
         do {
-            featuredAvatars = try await exploreUseCase.getFeaturedAvatars()
-            exploreUseCase
+            featuredAvatars = try await exploreInteractor.getFeaturedAvatars()
+            exploreInteractor
                 .trackEvent(
                     event: Event.loadFeaturedAvatarsSuccess(
                         count: featuredAvatars.count
                     )
                 )
         } catch {
-            exploreUseCase
+            exploreInteractor
                 .trackEvent(
                     event: Event.loadFeaturedAvatarsFail(
                         error: error
@@ -74,18 +74,18 @@ extension ExploreViewModel {
         guard popularAvatars.isEmpty || force else {
             return
         }
-        exploreUseCase.trackEvent(event: Event.loadPopularAvatarsStart)
+        exploreInteractor.trackEvent(event: Event.loadPopularAvatarsStart)
         
         do {
-            popularAvatars = try await exploreUseCase.getPopularAvatars()
-            exploreUseCase
+            popularAvatars = try await exploreInteractor.getPopularAvatars()
+            exploreInteractor
                 .trackEvent(
                     event: Event.loadPopularAvatarsSuccess(
                         count: popularAvatars.count
                     )
                 )
         } catch {
-            exploreUseCase
+            exploreInteractor
                 .trackEvent(
                     event: Event.loadPopularAvatarsFail(
                         error: error
@@ -103,21 +103,21 @@ extension ExploreViewModel {
     }
     
     func handleShowPushNotificationButton() async {
-        showNotificationButton = await exploreUseCase.canRequestAuthorization()
+        showNotificationButton = await exploreInteractor.canRequestAuthorization()
     }
     
     func schedulePushNotifications() {
-        exploreUseCase.schedulePushNotificationForTheNextWeek()
+        exploreInteractor.schedulePushNotificationForTheNextWeek()
     }
     
     func handleDeepLink(_ url: URL) {
-        exploreUseCase.trackEvent(event: Event.deepLinkStart)
+        exploreInteractor.trackEvent(event: Event.deepLinkStart)
         
         guard
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
             let queryItems = components.queryItems
         else {
-            exploreUseCase.trackEvent(event: Event.deepLinkNoQueryItems)
+            exploreInteractor.trackEvent(event: Event.deepLinkNoQueryItems)
             return
         }
         
@@ -131,12 +131,12 @@ extension ExploreViewModel {
                 )
                 router.showCategoryListView(delegate: delegate)
                 
-                exploreUseCase.trackEvent(event: Event.deepLinkCategory(category: category))
+                exploreInteractor.trackEvent(event: Event.deepLinkCategory(category: category))
             }
             return
         }
         
-        exploreUseCase.trackEvent(event: Event.deepLinkUnknown)
+        exploreInteractor.trackEvent(event: Event.deepLinkUnknown)
     }
     
     func showCreateAccountScreenIfNeeded() {
@@ -145,8 +145,8 @@ extension ExploreViewModel {
             try? await Task.sleep(for: .seconds(1))
             
             guard
-                self.exploreUseCase.auth?.isAnonymous == true &&
-                    self.exploreUseCase.createAccountTest == true
+                self.exploreInteractor.auth?.isAnonymous == true &&
+                    self.exploreInteractor.createAccountTest == true
             else {
                 return
             }
@@ -161,10 +161,10 @@ extension ExploreViewModel {
 }
 
 // MARK: - Action
-extension ExploreViewModel {
+extension ExplorePresenter {
     
     func onDevSettingsButtonTapped() {
-        exploreUseCase
+        exploreInteractor
             .trackEvent(
                 event: Event.devSettingsPressed
             )
@@ -177,8 +177,8 @@ extension ExploreViewModel {
             router.dismissModal()
             Task { [weak self] in
                 guard let self else { return }
-                let isAuthorized = try await self.exploreUseCase.reuestAuthorization()
-                self.exploreUseCase
+                let isAuthorized = try await self.exploreInteractor.reuestAuthorization()
+                self.exploreInteractor
                     .trackEvent(
                         event: Event
                             .pushNotificationEnabled(isAuthorized: isAuthorized)
@@ -189,13 +189,13 @@ extension ExploreViewModel {
         
         func onCancelPushNotificationTapped() {
             router.dismissModal()
-            exploreUseCase
+            exploreInteractor
                 .trackEvent(
                     event: Event.pushNotificationCancel
                 )
         }
         
-        exploreUseCase
+        exploreInteractor
             .trackEvent(
                 event: Event.pushNotificationStart
             )
@@ -213,7 +213,7 @@ extension ExploreViewModel {
     
     
     func onAvaterSelected(avatar: AvatarModel) {
-        exploreUseCase
+        exploreInteractor
             .trackEvent(
                 event: Event.avatarPressed(
                     avatar: avatar
@@ -227,7 +227,7 @@ extension ExploreViewModel {
         category: CharacterOption,
         imageName: String
     ) {
-        exploreUseCase
+        exploreInteractor
             .trackEvent(
                 event: Event.categoryPressed(
                     category: category
@@ -241,15 +241,15 @@ extension ExploreViewModel {
     }
     
     func onLogoutButtonPressed() {
-        if (exploreUseCase.auth != nil) {
-            try? exploreUseCase.signOut()
+        if (exploreInteractor.auth != nil) {
+            try? exploreInteractor.signOut()
         }
-        exploreUseCase.updateAppState(showTabBarView: false)
+        exploreInteractor.updateAppState(showTabBarView: false)
     }
 }
 
 // MARK: - Event
-private extension ExploreViewModel {
+private extension ExplorePresenter {
     
     enum Event: LoggableEvent {
         case devSettingsPressed

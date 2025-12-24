@@ -1,5 +1,5 @@
 //
-//  DevSettingsUseCase.swift
+//  DevSettingsInteractor.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 28.07.2025.
@@ -8,7 +8,7 @@
 import Foundation
 
 @MainActor
-protocol DevSettingsUseCaseProtocol {
+protocol DevSettingsInteractorProtocol {
     var auth: UserAuthInfo? { get }
     var currentUser: UserModel? { get }
     var activeTests: ActiveABTests { get }
@@ -16,7 +16,7 @@ protocol DevSettingsUseCaseProtocol {
 }
 
 @MainActor
-final class DevSettingsUseCase {
+final class DevSettingsInteractor {
     
     private let authManager: AuthManager
     private let userManager: UserManager
@@ -24,13 +24,13 @@ final class DevSettingsUseCase {
     
     init(container: DependencyContainer) {
         guard let authManager = container.resolve(AuthManager.self) else {
-            preconditionFailure("Failed to resolve AuthManager for DevSettingsUseCase")
+            preconditionFailure("Failed to resolve AuthManager for DevSettingsInteractor")
         }
         guard let userManager = container.resolve(UserManager.self) else {
-            preconditionFailure("Failed to resolve UserManager for DevSettingsUseCase")
+            preconditionFailure("Failed to resolve UserManager for DevSettingsInteractor")
         }
         guard let abTestManager = container.resolve(ABTestManager.self) else {
-            preconditionFailure("Failed to resolve ABTestManager for DevSettingsUseCase")
+            preconditionFailure("Failed to resolve ABTestManager for DevSettingsInteractor")
         }
         
         self.authManager = authManager
@@ -39,7 +39,7 @@ final class DevSettingsUseCase {
     }
 }
 
-extension DevSettingsUseCase: DevSettingsUseCaseProtocol {
+extension DevSettingsInteractor: DevSettingsInteractorProtocol {
     
     var auth: UserAuthInfo? {
         authManager.auth

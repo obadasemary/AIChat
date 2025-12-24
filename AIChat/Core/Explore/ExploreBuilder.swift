@@ -21,8 +21,8 @@ final class ExploreBuilder {
     
     func buildExploreView(router: Router) -> some View {
         ExploreView(
-            viewModel: ExploreViewModel(
-                exploreUseCase: ExploreUseCase(container: container),
+            presenter: ExplorePresenter(
+                exploreInteractor: ExploreInteractor(container: container),
                 router: ExploreRouter(
                     router: router,
                     categoryListBuilder: CategoryListBuilder(
