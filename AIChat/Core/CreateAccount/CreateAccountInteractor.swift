@@ -1,5 +1,5 @@
 //
-//  CreateAccountUseCase.swift
+//  CreateAccountInteractor.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 28.07.2025.
@@ -8,7 +8,7 @@
 import Foundation
 
 @MainActor
-protocol CreateAccountUseCaseProtocol {
+protocol CreateAccountInteractorProtocol {
     func signInWithApple() async throws -> (user: UserAuthInfo, isNewUser: Bool)
     func signInWithGoogle() async throws -> (user: UserAuthInfo, isNewUser: Bool)
     func logIn(auth: UserAuthInfo, isNewUser: Bool) async throws
@@ -16,7 +16,7 @@ protocol CreateAccountUseCaseProtocol {
 }
 
 @MainActor
-final class CreateAccountUseCase {
+final class CreateAccountInteractor {
     
     private let authManager: AuthManager
     private let userManager: UserManager
@@ -24,13 +24,13 @@ final class CreateAccountUseCase {
     
     init(container: DependencyContainer) {
         guard let authManager = container.resolve(AuthManager.self) else {
-            preconditionFailure("Failed to resolve AuthManager for CreateAccountUseCase")
+            preconditionFailure("Failed to resolve AuthManager for CreateAccountInteractor")
         }
         guard let userManager = container.resolve(UserManager.self) else {
-            preconditionFailure("Failed to resolve UserManager for CreateAccountUseCase")
+            preconditionFailure("Failed to resolve UserManager for CreateAccountInteractor")
         }
         guard let logManager = container.resolve(LogManager.self) else {
-            preconditionFailure("Failed to resolve LogManager for CreateAccountUseCase")
+            preconditionFailure("Failed to resolve LogManager for CreateAccountInteractor")
         }
         
         self.authManager = authManager
@@ -39,7 +39,7 @@ final class CreateAccountUseCase {
     }
 }
 
-extension CreateAccountUseCase: CreateAccountUseCaseProtocol {
+extension CreateAccountInteractor: CreateAccountInteractorProtocol {
     
     func signInWithApple() async throws -> (
         user: UserAuthInfo,

@@ -9,33 +9,33 @@ import Foundation
 
 @Observable
 @MainActor
-class WelcomeViewModel {
+class WelcomePresenter {
     
-    private let welcomeUseCase: WelcomeUseCaseProtocol
+    private let welcomeInteractor: WelcomeInteractorProtocol
     private let router: WelcomeRouterProtocol
     
     private(set) var imageName: String = Constants.randomImage
     var showSignInView: Bool = false
     
     init(
-        welcomeUseCase: WelcomeUseCaseProtocol,
+        welcomeInteractor: WelcomeInteractorProtocol,
         router: WelcomeRouterProtocol
     ) {
-        self.welcomeUseCase = welcomeUseCase
+        self.welcomeInteractor = welcomeInteractor
         self.router = router
     }
 }
 
 // MARK: - Action
-extension WelcomeViewModel {
+extension WelcomePresenter {
     
     func onGetStartedPressed() {
         router.showOnboardingIntroView(delegate: OnboardingIntroDelegate())
-        welcomeUseCase.trackEvent(event: Event.getStartedPressed)
+        welcomeInteractor.trackEvent(event: Event.getStartedPressed)
     }
     
     func handleDidSignIn(isNewUser: Bool) {
-        welcomeUseCase
+        welcomeInteractor
             .trackEvent(
                 event: Event.didSignIn(
                     isNewUser: isNewUser
@@ -45,12 +45,12 @@ extension WelcomeViewModel {
         if isNewUser {
             
         } else {
-            welcomeUseCase.updateAppState(showTabBarView: true)
+            welcomeInteractor.updateAppState(showTabBarView: true)
         }
     }
     
     func onSignInPressed() {
-        welcomeUseCase.trackEvent(event: Event.signInPressed)
+        welcomeInteractor.trackEvent(event: Event.signInPressed)
         
         let delegate = CreateAccountDelegate(
             title: "Sign In",
@@ -64,7 +64,7 @@ extension WelcomeViewModel {
 }
 
 // MARK: - Event
-private extension WelcomeViewModel {
+private extension WelcomePresenter {
     
     enum Event: LoggableEvent {
         case getStartedPressed
