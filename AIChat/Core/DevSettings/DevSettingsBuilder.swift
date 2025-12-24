@@ -19,8 +19,8 @@ final class DevSettingsBuilder {
 
     func buildDevSettingsView(router: Router) -> some View {
         DevSettingsView(
-            viewModel: DevSettingsViewModel(
-                devSettingsUseCase: DevSettingsUseCase(container: container),
+            presenter: DevSettingsPresenter(
+                devSettingsInteractor: DevSettingsInteractor(container: container),
                 router: DevSettingsRouter(router: router)
             )
         )
