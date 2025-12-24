@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ChatView: View {
     
-    @State var viewModel: ChatViewModel
+    @State var presenter: ChatPresenter
     @FocusState private var isTextFieldFocused: Bool
     
     let delegate: ChatDelegate
@@ -19,18 +19,18 @@ struct ChatView: View {
             scrollViewSection
             textFieldSection
         }
-        .navigationTitle(viewModel.avatar?.name ?? "")
+        .navigationTitle(presenter.avatar?.name ?? "")
         .toolbarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack {
-                    if viewModel.isGeneratingResponse {
+                    if presenter.isGeneratingResponse {
                         ProgressView()
                     } else {
                         Image(systemName: "ellipsis")
                             .padding(8)
                             .anyButton {
-                                viewModel.onChatSettingsTapped()
+                                presenter.onChatSettingsTapped()
                             }
                     }
                 }
@@ -38,17 +38,17 @@ struct ChatView: View {
         }
         .screenAppearAnalytics(name: ScreenName.from(Self.self))
         .task {
-            await viewModel.loadAvatar(avatarId: delegate.avatarId)
+            await presenter.loadAvatar(avatarId: delegate.avatarId)
         }
         .task {
-            await viewModel.loadChat(avatarId: delegate.avatarId)
-            await viewModel.listenToChatMessages()
+            await presenter.loadChat(avatarId: delegate.avatarId)
+            await presenter.listenToChatMessages()
         }
         .onFirstAppear {
-            viewModel.onViewFirstAppear(chat: delegate.chat)
+            presenter.onViewFirstAppear(chat: delegate.chat)
         }
         .onDisappear {
-            viewModel.onDisappear()
+            presenter.onDisappear()
         }
     }
 }
@@ -58,25 +58,25 @@ private extension ChatView {
     var scrollViewSection: some View {
         ScrollView {
             LazyVStack(spacing: 24) {
-                ForEach(viewModel.chatMessages + (viewModel.typingIndicatorMessage.map { [$0] } ?? [])) { message in
+                ForEach(presenter.chatMessages + (presenter.typingIndicatorMessage.map { [$0] } ?? [])) { message in
                     
-                    if viewModel.messageIsDelayed(message: message) {
+                    if presenter.messageIsDelayed(message: message) {
                         timestampView(date: message.dateCreatedCalculated)
                     }
-                    
-                    let isCurrentUser = viewModel
+
+                    let isCurrentUser = presenter
                         .messageIsCurrentUser(message: message)
                     ChatBubbleViewBuilder(
                         message: message,
                         isCurrentUser: isCurrentUser,
-                        currentUserProfileColor: viewModel.currentUser?.profileColorCalculated ?? .accent,
-                        imageName: isCurrentUser ? nil : viewModel.avatar?.profileImageName,
+                        currentUserProfileColor: presenter.currentUser?.profileColorCalculated ?? .accent,
+                        imageName: isCurrentUser ? nil : presenter.avatar?.profileImageName,
                         onImageTapped: {
-                            viewModel.onAvatarImageTapped()
+                            presenter.onAvatarImageTapped()
                         }
                     )
                     .onAppear {
-                        viewModel.onMessageDidAppear(message: message)
+                        presenter.onMessageDidAppear(message: message)
                     }
                     .id(message.id)
                     .transition(.opacity)
@@ -87,9 +87,9 @@ private extension ChatView {
             .rotationEffect(.degrees(180))
         }
         .rotationEffect(.degrees(180))
-        .scrollPosition(id: $viewModel.scrollPosition, anchor: .center)
-        .animation(.easeInOut, value: viewModel.chatMessages.count)
-        .animation(.easeInOut, value: viewModel.scrollPosition)
+        .scrollPosition(id: $presenter.scrollPosition, anchor: .center)
+        .animation(.easeInOut, value: presenter.chatMessages.count)
+        .animation(.easeInOut, value: presenter.scrollPosition)
     }
     
     func timestampView(date: Date) -> some View {
@@ -109,7 +109,7 @@ private extension ChatView {
     var textFieldSection: some View {
         TextField(
             "Type your message...",
-            text: $viewModel.textFieldText,
+            text: $presenter.textFieldText,
             axis: .vertical
         )
         .keyboardType(.default)
@@ -117,8 +117,8 @@ private extension ChatView {
         .focused($isTextFieldFocused)
         .onSubmit {
             isTextFieldFocused = false
-            if !viewModel.textFieldText.isEmpty {
-                viewModel.onSendMessageTapped(avatarId: delegate.avatarId)
+            if !presenter.textFieldText.isEmpty {
+                presenter.onSendMessageTapped(avatarId: delegate.avatarId)
             }
         }
         .padding(12)
@@ -130,9 +130,9 @@ private extension ChatView {
                 .padding(.trailing, 4)
                 .foregroundStyle(.accent)
                 .anyButton(.plain) {
-                    viewModel.onSendMessageTapped(avatarId: delegate.avatarId)
+                    presenter.onSendMessageTapped(avatarId: delegate.avatarId)
                 }
-                .disabled(viewModel.textFieldText.isEmpty)
+                .disabled(presenter.textFieldText.isEmpty)
         }
         .background {
             ZStack {
