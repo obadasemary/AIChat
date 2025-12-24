@@ -9,9 +9,9 @@ import Foundation
 
 @Observable
 @MainActor
-final class ChatRowCellViewModel {
+final class ChatRowCellPresenter {
     
-    private let chatRowCellUseCase: ChatRowCellUseCaseProtocol
+    private let chatRowCellInteractor: ChatRowCellInteractorProtocol
     
     private(set) var avatar: AvatarModel?
     private(set) var lastChatMessage: ChatMessageModel?
@@ -23,7 +23,7 @@ final class ChatRowCellViewModel {
     }
     
     var hasNewChat: Bool {
-        guard let lastChatMessage, let currentUserId = chatRowCellUseCase.auth?.uid else {
+        guard let lastChatMessage, let currentUserId = chatRowCellInteractor.auth?.uid else {
             return false
         }
         return !lastChatMessage.hasBeenSeenBy(userId: currentUserId)
@@ -41,20 +41,20 @@ final class ChatRowCellViewModel {
         return lastChatMessage?.content?.message
     }
     
-    init(chatRowCellUseCase: ChatRowCellUseCaseProtocol) {
-        self.chatRowCellUseCase = chatRowCellUseCase
+    init(chatRowCellInteractor: ChatRowCellInteractorProtocol) {
+        self.chatRowCellInteractor = chatRowCellInteractor
     }
 }
 
-extension ChatRowCellViewModel {
+extension ChatRowCellPresenter {
     
     func loadAvatar(chat: ChatModel) async {
-        avatar = try? await chatRowCellUseCase.getAvatar(id: chat.avatarId)
+        avatar = try? await chatRowCellInteractor.getAvatar(id: chat.avatarId)
         didLoadAvatar = true
     }
     
     func loadLastChatMessage(chat: ChatModel) async {
-        lastChatMessage = try? await chatRowCellUseCase
+        lastChatMessage = try? await chatRowCellInteractor
             .getLastChatMessage(chatId: chat.id)
         didLoadLastChatMessage = true
     }
