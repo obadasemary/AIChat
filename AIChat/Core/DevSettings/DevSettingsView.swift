@@ -10,7 +10,7 @@ import SwiftfulUtilities
 
 struct DevSettingsView: View {
 
-    @State var viewModel: DevSettingsViewModel
+    @State var presenter: DevSettingsPresenter
     @StateObject private var colorSchemeManager = ColorSchemeManager.shared
 
     var body: some View {
@@ -30,7 +30,7 @@ struct DevSettingsView: View {
             }
             .screenAppearAnalytics(name: "DevSettings")
             .onFirstAppear {
-                viewModel.loadABTest()
+                presenter.loadABTest()
             }
         }
         .preferredColorScheme(colorSchemeManager.currentColorScheme)
@@ -44,7 +44,7 @@ private extension DevSettingsView {
         Section {
             Picker(
                 "Appearance",
-                selection: $viewModel.colorSchemePreference
+                selection: $presenter.colorSchemePreference
             ) {
                 ForEach(ColorSchemePreference.allCases, id: \.self) { preference in
                     Text(preference.rawValue)
@@ -52,8 +52,8 @@ private extension DevSettingsView {
                 }
             }
             .onChange(
-                of: viewModel.colorSchemePreference,
-                viewModel.handleColorSchemeChange
+                of: presenter.colorSchemePreference,
+                presenter.handleColorSchemeChange
             )
         } header: {
             Text("Appearance")
@@ -64,7 +64,7 @@ private extension DevSettingsView {
     var backButtonView: some View {
         if #available(iOS 26.0, *) {
             return Button(role: .close) {
-                viewModel.onBackButtonTap()
+                presenter.onBackButtonTap()
             }
             .tint(.accent)
         } else {
@@ -72,45 +72,45 @@ private extension DevSettingsView {
                 .font(.subheadline)
                 .padding(4)
                 .anyButton {
-                    viewModel.onBackButtonTap()
+                    presenter.onBackButtonTap()
                 }
         }
     }
     
     var abTestSection: some View {
         Section {
-            Toggle("Create Account Test", isOn: $viewModel.createAccountTest)
+            Toggle("Create Account Test", isOn: $presenter.createAccountTest)
                 .onChange(
-                    of: viewModel.createAccountTest,
-                    viewModel.handleCreateAccountChange
+                    of: presenter.createAccountTest,
+                    presenter.handleCreateAccountChange
                 )
             
-            Toggle("Onboarding Community Test", isOn: $viewModel.onboardingCommunityTest)
+            Toggle("Onboarding Community Test", isOn: $presenter.onboardingCommunityTest)
                 .onChange(
-                    of: viewModel.onboardingCommunityTest,
-                    viewModel.handleOnboardingCommunityChange
+                    of: presenter.onboardingCommunityTest,
+                    presenter.handleOnboardingCommunityChange
                 )
 
-            Picker("Category Row Test", selection: $viewModel.categoryRowTest) {
+            Picker("Category Row Test", selection: $presenter.categoryRowTest) {
                 ForEach(CategoryRowTestOption.allCases, id: \.self) { option in
                     Text(option.rawValue)
                         .id(option)
                 }
             }
             .onChange(
-                of: viewModel.categoryRowTest,
-                viewModel.handleOnCategoryRowOptionChange
+                of: presenter.categoryRowTest,
+                presenter.handleOnCategoryRowOptionChange
             )
 
-            Picker("Paywall Option", selection: $viewModel.paywallOption) {
+            Picker("Paywall Option", selection: $presenter.paywallOption) {
                 ForEach(PaywallOptional.allCases, id: \.self) { option in
                     Text(option.rawValue)
                         .id(option)
                 }
             }
             .onChange(
-                of: viewModel.paywallOption,
-                viewModel.handlePaywallOptionChange
+                of: presenter.paywallOption,
+                presenter.handlePaywallOptionChange
             )
 
         } header: {
@@ -121,7 +121,7 @@ private extension DevSettingsView {
     
     var authInfoSection: some View {
         Section {
-            ForEach(viewModel.authData, id: \.key) { item in
+            ForEach(presenter.authData, id: \.key) { item in
                 itemRow(item: item)
             }
         } header: {
@@ -131,7 +131,7 @@ private extension DevSettingsView {
     
     var userInfoSection: some View {
         Section {
-            ForEach(viewModel.userData, id: \.key) { item in
+            ForEach(presenter.userData, id: \.key) { item in
                 itemRow(item: item)
             }
         } header: {
@@ -141,7 +141,7 @@ private extension DevSettingsView {
     
     var deviceInfoSection: some View {
         Section {
-            ForEach(viewModel.utilities, id: \.key) { item in
+            ForEach(presenter.utilities, id: \.key) { item in
                 itemRow(item: item)
             }
         } header: {

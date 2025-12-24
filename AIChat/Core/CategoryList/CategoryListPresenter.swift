@@ -11,36 +11,36 @@ import SwiftUI
 
 @Observable
 @MainActor
-final class CategoryListViewModel {
+final class CategoryListPresenter {
     
-    private let categoryListUseCase: CategoryListUseCaseProtocol
+    private let categoryListInteractor: CategoryListInteractorProtocol
     private let router: CategoryListRouterProtocol
     
     private(set) var avatars: [AvatarModel] = []
     private(set) var isLoading: Bool = true
     
     init(
-        categoryListUseCase: CategoryListUseCaseProtocol,
+        categoryListInteractor: CategoryListInteractorProtocol,
         router: CategoryListRouterProtocol
     ) {
-        self.categoryListUseCase = categoryListUseCase
+        self.categoryListInteractor = categoryListInteractor
         self.router = router
     }
 }
 
 // MARK: - Load
-extension CategoryListViewModel {
+extension CategoryListPresenter {
     
     func loadAvatars(category: CharacterOption) async {
-        categoryListUseCase.trackEvent(event: Event.loadAvatarsStart)
+        categoryListInteractor.trackEvent(event: Event.loadAvatarsStart)
         do {
-            avatars = try await categoryListUseCase
+            avatars = try await categoryListInteractor
                 .getAvatarsForCategory(category: category)
-            categoryListUseCase
+            categoryListInteractor
                 .trackEvent(event: Event.loadAvatarsSuccess)
         } catch {
             router.showAlert(error: error)
-            categoryListUseCase
+            categoryListInteractor
                 .trackEvent(event: Event.loadAvatarsFail(error: error))
         }
         isLoading = false
@@ -48,17 +48,17 @@ extension CategoryListViewModel {
 }
 
 // MARK: - Action
-extension CategoryListViewModel {
+extension CategoryListPresenter {
     
     func onAvatarTapped(avatar: AvatarModel) {
-        categoryListUseCase.trackEvent(event: Event.avatarTapped(avatar: avatar))
+        categoryListInteractor.trackEvent(event: Event.avatarTapped(avatar: avatar))
         let delegate = ChatDelegate(avatarId: avatar.avatarId)
         router.showChatView(delegate: delegate)
     }
 }
 
 // MARK: - Event
-private extension CategoryListViewModel {
+private extension CategoryListPresenter {
     
     enum Event: LoggableEvent {
         case loadAvatarsStart
