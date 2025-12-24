@@ -19,8 +19,8 @@ final class ProfileBuilder {
     
     func buildProfileView(router: Router) -> some View {
         ProfileView(
-            viewModel: ProfileViewModel(
-                profileUseCase: ProfileUseCase(container: container),
+            presenter: ProfilePresenter(
+                profileInteractor: ProfileInteractor(container: container),
                 router: ProfileRouter(
                     router: router,
                     settingsBuilder: SettingsBuilder(container: container),
