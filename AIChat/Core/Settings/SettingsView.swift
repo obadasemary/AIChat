@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     
-    @State var viewModel: SettingsViewModel
+    @State var presenter: SettingsPresenter
     @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
@@ -30,7 +30,7 @@ struct SettingsView: View {
         .minimumScaleFactor(0.5)
         .navigationTitle("Settings")
         .onAppear {
-            viewModel.setAnonymousAccountStatus()
+            presenter.setAnonymousAccountStatus()
         }
         .screenAppearAnalytics(name: "SettingsView")
     }
@@ -47,11 +47,11 @@ private extension SettingsView {
                 .padding(.horizontal, 16)
             
             VStack(spacing: 0) {
-                if viewModel.isAnonymousUser {
+                if presenter.isAnonymousUser {
                     SettingRowButton(
                         title: "Save & Backup Account",
                         textColor: .primary,
-                        action: viewModel.onCreateAccountPressed,
+                        action: presenter.onCreateAccountPressed,
                         isFirst: true,
                         isLast: false
                     )
@@ -59,7 +59,7 @@ private extension SettingsView {
                     SettingRowButton(
                         title: "Sign Out",
                         textColor: .primary,
-                        action: viewModel.onSignOutPressed,
+                        action: presenter.onSignOutPressed,
                         isFirst: true,
                         isLast: false
                     )
@@ -71,7 +71,7 @@ private extension SettingsView {
                 SettingRowButton(
                     title: "Delete Account",
                     textColor: .red,
-                    action: viewModel.onDeleteAccountPressed,
+                    action: presenter.onDeleteAccountPressed,
                     isFirst: false,
                     isLast: true
                 )
@@ -89,12 +89,12 @@ private extension SettingsView {
                 .padding(.horizontal, 16)
 
             HStack(spacing: 8) {
-                Text("Account Status: \(viewModel.isPremium ? "PREMIUM" : "FREE")")
+                Text("Account Status: \(presenter.isPremium ? "PREMIUM" : "FREE")")
 
                 Spacer(minLength: 0)
 
                 Button {
-                    viewModel.onManagePurchase()
+                    presenter.onManagePurchase()
                 } label: {
                     Text("MANAGE")
                         .badgeButton()
@@ -118,7 +118,7 @@ private extension SettingsView {
                 SettingRowButton(
                     title: "News",
                     textColor: .primary,
-                    action: viewModel.onNewsFeedPressed,
+                    action: presenter.onNewsFeedPressed,
                     isFirst: true,
                     isLast: false
                 )
@@ -129,7 +129,7 @@ private extension SettingsView {
                 SettingRowButton(
                     title: "Bookmarks",
                     textColor: .primary,
-                    action: viewModel.onBookmarksPressed,
+                    action: presenter.onBookmarksPressed,
                     isFirst: false,
                     isLast: true
                 )
@@ -150,7 +150,7 @@ private extension SettingsView {
                 SettingRowButton(
                     title: "Rate us on the App Store",
                     textColor: .blue,
-                    action: viewModel.onRatingsPressed,
+                    action: presenter.onRatingsPressed,
                     isFirst: true,
                     isLast: false
                 )
@@ -187,7 +187,7 @@ private extension SettingsView {
                 SettingRowButton(
                     title: "About",
                     textColor: .primary,
-                    action: viewModel.onAboutPressed,
+                    action: presenter.onAboutPressed,
                     isFirst: false,
                     isLast: false
                 )
@@ -209,7 +209,7 @@ private extension SettingsView {
                 SettingRowButton(
                     title: "Contact Support",
                     textColor: .blue,
-                    action: viewModel.onContactUsPressed,
+                    action: presenter.onContactUsPressed,
                     isFirst: false,
                     isLast: true
                 )

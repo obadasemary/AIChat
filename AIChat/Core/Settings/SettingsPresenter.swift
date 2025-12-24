@@ -10,9 +10,9 @@ import SwiftfulUtilities
 
 @Observable
 @MainActor
-class SettingsViewModel {
+class SettingsPresenter {
     
-    private let settingsUseCase: SettingsUseCaseProtocol
+    private let settingsInteractor: SettingsInteractorProtocol
     private let router: SettingsRouterProtocol
     private let onSignedIn: (() -> Void)?
     
@@ -20,42 +20,42 @@ class SettingsViewModel {
     private(set) var isAnonymousUser: Bool = true
     
     init(
-        settingsUseCase: SettingsUseCaseProtocol,
+        settingsInteractor: SettingsInteractorProtocol,
         router: SettingsRouterProtocol,
         onSignedIn: (() -> Void)? = nil
     ) {
-        self.settingsUseCase = settingsUseCase
+        self.settingsInteractor = settingsInteractor
         self.router = router
         self.onSignedIn = onSignedIn
     }
 }
 
 // MARK: - Load
-extension SettingsViewModel {
+extension SettingsPresenter {
     
     func setAnonymousAccountStatus() {
-        isAnonymousUser = settingsUseCase.auth?.isAnonymous == true
+        isAnonymousUser = settingsInteractor.auth?.isAnonymous == true
     }
 }
 
 // MARK: - Action
-extension SettingsViewModel {
+extension SettingsPresenter {
     
     func onSignOutPressed() {
-        settingsUseCase.trackEvent(event: Event.signOutStart)
+        settingsInteractor.trackEvent(event: Event.signOutStart)
         
         Task { [weak self] in
             guard let self else { return }
             do {
-                try self.settingsUseCase.signOut()
-                self.settingsUseCase
+                try self.settingsInteractor.signOut()
+                self.settingsInteractor
                     .trackEvent(
                         event: Event.signOutSuccess
                     )
                 
                 await self.dismissScreen()
             } catch {
-                self.settingsUseCase
+                self.settingsInteractor
                     .trackEvent(
                         event: Event.signOutFail(
                             error: error
@@ -67,7 +67,7 @@ extension SettingsViewModel {
     }
     
     func onDeleteAccountPressed() {
-        settingsUseCase.trackEvent(event: Event.deleteAccountStart)
+        settingsInteractor.trackEvent(event: Event.deleteAccountStart)
         router
             .showAlert(
                 .alert,
@@ -84,21 +84,21 @@ extension SettingsViewModel {
     }
     
     func onDeleteAccountConfirmationPressed() {
-        settingsUseCase.trackEvent(event: Event.deleteAccountStartConfirm)
+        settingsInteractor.trackEvent(event: Event.deleteAccountStartConfirm)
         
         Task { [weak self] in
             guard let self else { return }
             do {
-                try await self.settingsUseCase.deleteAccount()
+                try await self.settingsInteractor.deleteAccount()
                 
-                self.settingsUseCase
+                self.settingsInteractor
                     .trackEvent(
                         event: Event.deleteAccountSuccess
                     )
                 
                 await self.dismissScreen()
             } catch {
-                self.settingsUseCase
+                self.settingsInteractor
                     .trackEvent(
                         event: Event.deleteAccountFail(
                             error: error
@@ -110,7 +110,7 @@ extension SettingsViewModel {
     }
     
     func onCreateAccountPressed() {
-        settingsUseCase
+        settingsInteractor
             .trackEvent(
                 event: Event.createAccountPressed
             )
@@ -127,7 +127,7 @@ extension SettingsViewModel {
     }
     
     func onContactUsPressed() {
-        settingsUseCase.trackEvent(event: Event.contactUsPressed)
+        settingsInteractor.trackEvent(event: Event.contactUsPressed)
         
         let email = "obada.semary@gmail.com"
         let emailString = "mailto:\(email)"
@@ -142,16 +142,16 @@ extension SettingsViewModel {
     }
     
     func onRatingsPressed() {
-        settingsUseCase.trackEvent(event: Event.ratingPressed)
+        settingsInteractor.trackEvent(event: Event.ratingPressed)
         
         func onEnjoyingAppYesPressed() {
-            settingsUseCase.trackEvent(event: Event.ratingYesPressed)
+            settingsInteractor.trackEvent(event: Event.ratingYesPressed)
             router.dismissModal()
             AppStoreRatingsHelper.requestRatingsReview()
         }
         
         func onEnjoyingAppNoPressed() {
-            settingsUseCase.trackEvent(event: Event.ratingNoPressed)
+            settingsInteractor.trackEvent(event: Event.ratingNoPressed)
             router.dismissModal()
         }
         
@@ -167,7 +167,7 @@ extension SettingsViewModel {
     }
     
     func onAboutPressed() {
-        settingsUseCase.trackEvent(event: Event.aboutPressed)
+        settingsInteractor.trackEvent(event: Event.aboutPressed)
         router.showAboutView()
     }
 
@@ -177,28 +177,28 @@ extension SettingsViewModel {
     }
 
     func onNewsFeedPressed() {
-        settingsUseCase.trackEvent(event: Event.newsFeedPressed)
+        settingsInteractor.trackEvent(event: Event.newsFeedPressed)
         router.showNewsFeedView()
     }
 
     func onBookmarksPressed() {
-        settingsUseCase.trackEvent(event: Event.bookmarksPressed)
+        settingsInteractor.trackEvent(event: Event.bookmarksPressed)
         router.showBookmarksView()
     }
 }
 
 // MARK: - Helper
-private extension SettingsViewModel {
+private extension SettingsPresenter {
     
     func dismissScreen() async {
         router.dismissScreen()
         try? await Task.sleep(for: .seconds(1))
-        settingsUseCase.updateAppState(showTabBarView: false)
+        settingsInteractor.updateAppState(showTabBarView: false)
     }
 }
 
 // MARK: - Event
-private extension SettingsViewModel {
+private extension SettingsPresenter {
     
     enum Event: LoggableEvent {
         case signOutStart
