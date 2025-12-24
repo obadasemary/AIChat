@@ -9,11 +9,11 @@ import SwiftUI
 
 struct BookmarksView: View {
 
-    @State var viewModel: BookmarksViewModel
+    @State var presenter: BookmarksPresenter
 
     var body: some View {
         Group {
-            if viewModel.bookmarkedArticles.isEmpty {
+            if presenter.bookmarkedArticles.isEmpty {
                 emptyStateView
             } else {
                 bookmarksList
@@ -22,10 +22,10 @@ struct BookmarksView: View {
         .navigationTitle("Bookmarks")
         .screenAppearAnalytics(name: "BookmarksView")
         .task {
-            viewModel.loadBookmarks()
+            presenter.loadBookmarks()
         }
         .refreshable {
-            viewModel.loadBookmarks()
+            presenter.loadBookmarks()
         }
     }
 
@@ -41,14 +41,14 @@ struct BookmarksView: View {
 
     private var bookmarksList: some View {
         List {
-            ForEach(viewModel.bookmarkedArticles) { article in
+            ForEach(presenter.bookmarkedArticles) { article in
                 ArticleRowView(article: article)
                     .anyButton(.highlight) {
-                        viewModel.onArticleSelected(article: article)
+                        presenter.onArticleSelected(article: article)
                     }
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button(role: .destructive) {
-                            viewModel.removeBookmark(article: article)
+                            presenter.removeBookmark(article: article)
                         } label: {
                             Label("Remove", systemImage: "bookmark.slash")
                         }
