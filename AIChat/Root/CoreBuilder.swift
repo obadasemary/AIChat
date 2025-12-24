@@ -20,8 +20,8 @@ class CoreBuilder {
     
     func appView() -> some View {
         AppView(
-            viewModel: AppViewModel(
-                appViewUseCase: AppViewUseCase(
+            presenter: AppPresenter(
+                appViewInteractor: AppViewInteractor(
                     container: container
                 )
             )
@@ -34,8 +34,8 @@ class CoreBuilder {
     
     func welcomeView(router: Router,) -> some View {
         WelcomeView(
-            viewModel: WelcomeViewModel(
-                welcomeUseCase: WelcomeUseCase(container: container),
+            presenter: WelcomePresenter(
+                welcomeInteractor: WelcomeInteractor(container: container),
                 router: CoreRouter(router: router, builder: self)
             )
         )
@@ -46,8 +46,8 @@ class CoreBuilder {
         delegate: OnboardingIntroDelegate
     ) -> some View {
         OnboardingIntroView(
-            viewModel: OnboardingIntroViewModel(
-                OnboardingIntroUseCase: OnboardingIntroUseCase(
+            presenter: OnboardingIntroPresenter(
+                OnboardingIntroInteractor: OnboardingIntroInteractor(
                     container: container
                 ),
                 router: CoreRouter(router: router, builder: self)
@@ -61,8 +61,8 @@ class CoreBuilder {
         delegate: OnboardingCommunityDelegate
     ) -> some View {
         OnboardingCommunityView(
-            viewModel: OnboardingCommunityViewModel(
-                onboardingCommunityUseCase: OnboardingCommunityUseCase(
+            presenter: OnboardingCommunityPresenter(
+                onboardingCommunityInteractor: OnboardingCommunityInteractor(
                     container: container
                 ),
                 router: CoreRouter(router: router, builder: self)
@@ -76,8 +76,8 @@ class CoreBuilder {
         delegate: OnboardingColorDelegate
     ) -> some View {
         OnboardingColorView(
-            viewModel: OnboardingColorViewModel(
-                onboardingColorUseCase: OnboardingColorUseCase(
+            presenter: OnboardingColorPresenter(
+                onboardingColorInteractor: OnboardingColorInteractor(
                     container: container
                 ),
                 router: CoreRouter(router: router, builder: self)
@@ -91,8 +91,8 @@ class CoreBuilder {
         delegate: OnboardingCompletedDelegate
     ) -> some View {
         OnboardingCompletedView(
-            viewModel: OnboardingCompletedViewModel(
-                onboardingCompletedUseCase: OnboardingCompletedUseCase(
+            presenter: OnboardingCompletedPresenter(
+                onboardingCompletedInteractor: OnboardingCompletedInteractor(
                     container: container
                 ),
                 router: CoreRouter(router: router, builder: self)
@@ -103,8 +103,8 @@ class CoreBuilder {
     
     func exploreView(router: Router) -> some View {
         ExploreView(
-            viewModel: ExploreViewModel(
-                exploreUseCase: ExploreUseCase(container: container),
+            presenter: ExplorePresenter(
+                exploreInteractor: ExploreInteractor(container: container),
                 router: CoreRouter(
                     router: router,
                     builder: self
@@ -118,8 +118,8 @@ class CoreBuilder {
         delegate: CreateAccountDelegate = CreateAccountDelegate()
     ) -> some View {
         CreateAccountView(
-            viewModel: CreateAccountViewModel(
-                createAccountUseCase: CreateAccountUseCase(
+            presenter: CreateAccountPresenter(
+                createAccountInteractor: CreateAccountInteractor(
                     container: container
                 ),
                 router: CoreRouter(router: router, builder: self)
@@ -130,8 +130,8 @@ class CoreBuilder {
     
     func devSettingsView(router: Router) -> some View {
         DevSettingsView(
-            viewModel: DevSettingsViewModel(
-                devSettingsUseCase: DevSettingsUseCase(container: container),
+            presenter: DevSettingsPresenter(
+                devSettingsInteractor: DevSettingsInteractor(container: container),
                 router: CoreRouter(router: router, builder: self)
             )
         )
@@ -142,8 +142,8 @@ class CoreBuilder {
         delegate: CategoryListDelegate
     ) -> some View {
         CategoryListView(
-            viewModel: CategoryListViewModel(
-                categoryListUseCase: CategoryListUseCase(
+            presenter: CategoryListPresenter(
+                categoryListInteractor: CategoryListInteractor(
                     container: container
                 ),
                 router: CoreRouter(router: router, builder: self)
@@ -154,8 +154,8 @@ class CoreBuilder {
     
     func chatsView(router: Router) -> some View {
         ChatsView(
-            viewModel: ChatsViewModel(
-                chatsUseCase: ChatsUseCase(container: container),
+            presenter: ChatsPresenter(
+                chatsInteractor: ChatsInteractor(container: container),
                 router: CoreRouter(router: router, builder: self)
             )
         )
@@ -165,8 +165,8 @@ class CoreBuilder {
         delegate: ChatRowCellDelegate = ChatRowCellDelegate()
     ) -> some View {
         ChatRowCellViewBuilder(
-            viewModel: ChatRowCellViewModel(
-                chatRowCellUseCase: ChatRowCellUseCase(
+            presenter: ChatRowCellPresenter(
+                chatRowCellInteractor: ChatRowCellInteractor(
                     container: container
                 )
             ),
@@ -176,8 +176,8 @@ class CoreBuilder {
     
     func chatView(router: Router, delegate: ChatDelegate) -> some View {
         ChatView(
-            viewModel: ChatViewModel(
-                chatUseCase: ChatUseCase(container: container),
+            presenter: ChatPresenter(
+                chatInteractor: ChatInteractor(container: container),
                 router: CoreRouter(router: router, builder: self)
             ),
             delegate: delegate
@@ -186,8 +186,8 @@ class CoreBuilder {
     
     func paywallView(router: Router) -> some View {
         PaywallView(
-            viewModel: PaywallViewModel(
-                paywallUseCase: PaywallUseCase(container: container),
+            presenter: PaywallPresenter(
+                paywallInteractor: PaywallInteractor(container: container),
                 router: CoreRouter(router: router, builder: self)
             )
         )
@@ -195,8 +195,8 @@ class CoreBuilder {
     
     func profileView(router: Router) -> some View {
         ProfileView(
-            viewModel: ProfileViewModel(
-                profileUseCase: ProfileUseCase(container: container),
+            presenter: ProfilePresenter(
+                profileInteractor: ProfileInteractor(container: container),
                 router: CoreRouter(
                     router: router,
                     builder: self
@@ -210,8 +210,8 @@ class CoreBuilder {
         onSignedIn: @escaping () -> Void = {}
     ) -> some View {
         SettingsView(
-            viewModel: SettingsViewModel(
-                settingsUseCase: SettingsUseCase(container: container),
+            presenter: SettingsPresenter(
+                settingsInteractor: SettingsInteractor(container: container),
                 router: CoreRouter(router: router, builder: self),
                 onSignedIn: onSignedIn
             )
@@ -220,8 +220,8 @@ class CoreBuilder {
     
     func aboutView(router: Router) -> some View {
         AboutView(
-            viewModel: AboutViewModel(
-                aboutUseCase: AboutUseCase(container: container),
+            presenter: AboutPresenter(
+                aboutInteractor: AboutInteractor(container: container),
                 router: CoreRouter(router: router, builder: self)
             )
         )
@@ -238,8 +238,8 @@ class CoreBuilder {
     
     func createAvatarView(router: Router) -> some View {
         CreateAvatarView(
-            viewModel: CreateAvatarViewModel(
-                createAvatarUseCase: CreateAvatarUseCase(
+            presenter: CreateAvatarPresenter(
+                createAvatarInteractor: CreateAvatarInteractor(
                     container: container
                 ),
                 router: CoreRouter(router: router, builder: self)

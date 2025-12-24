@@ -12,7 +12,7 @@ struct AppView: View {
     @Environment(AppBuilder.self) private var appBuilder
     @Environment(TabBarBuilder.self) private var tabBarBuilder
     @Environment(WelcomeBuilder.self) private var welcomeBuilder
-    @State var viewModel: AppViewModel
+    @State var presenter: AppPresenter
     @StateObject private var colorSchemeManager = ColorSchemeManager.shared
     
     var body: some View {
@@ -21,7 +21,7 @@ struct AppView: View {
                 onApplicationDidAppear: nil,
                 onApplicationWillEnterForeground: { _ in
                     Task {
-                        await viewModel.checkUserStatus()
+                        await presenter.checkUserStatus()
                     }
                 },
                 onApplicationDidBecomeActive: nil,
@@ -31,7 +31,7 @@ struct AppView: View {
             )
         ) {
             AppViewBuilder(
-                showTabBar: viewModel.showTabBar,
+                showTabBar: presenter.showTabBar,
                 tabBarView: {
                     tabBarBuilder.buildTabBarView()
                 },
@@ -44,16 +44,16 @@ struct AppView: View {
             .preferredColorScheme(colorSchemeManager.currentColorScheme)
             .screenAppearAnalytics(name: Self.screenName)
             .task {
-                await viewModel.checkUserStatus()
+                await presenter.checkUserStatus()
             }
             .task {
                 try? await Task.sleep(for: .seconds(2))
-                await viewModel.showATTPromptIfNeeded()
+                await presenter.showATTPromptIfNeeded()
             }
-            .onChange(of: viewModel.showTabBar) { _, showTabBar in
+            .onChange(of: presenter.showTabBar) { _, showTabBar in
                 if !showTabBar {
                     Task {
-                        await viewModel.checkUserStatus()
+                        await presenter.checkUserStatus()
                     }
                 }
             }

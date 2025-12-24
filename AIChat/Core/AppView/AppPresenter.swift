@@ -10,42 +10,42 @@ import SwiftfulUtilities
 
 @Observable
 @MainActor
-class AppViewModel {
+class AppPresenter {
     
-    private let appViewUseCase: AppViewUseCaseProtocol
+    private let appViewInteractor: AppViewInteractorProtocol
     
     var showTabBar: Bool {
-        appViewUseCase.showTabBar
+        appViewInteractor.showTabBar
     }
     
-    init(appViewUseCase: AppViewUseCaseProtocol) {
-        self.appViewUseCase = appViewUseCase
+    init(appViewInteractor: AppViewInteractorProtocol) {
+        self.appViewInteractor = appViewInteractor
     }
 }
 
 // MARK: - Action
-extension AppViewModel {
+extension AppPresenter {
     
     func checkUserStatus() async {
-        if let user = appViewUseCase.auth {
-            appViewUseCase.trackEvent(event: Event.existingAuthStart)
+        if let user = appViewInteractor.auth {
+            appViewInteractor.trackEvent(event: Event.existingAuthStart)
             do {
-                try await appViewUseCase.logIn(auth: user, isNewUser: false)
+                try await appViewInteractor.logIn(auth: user, isNewUser: false)
             } catch {
-                appViewUseCase
+                appViewInteractor
                     .trackEvent(event: Event.existingAuthFail(error: error))
                 try? await Task.sleep(for: .seconds(5))
                 await checkUserStatus()
             }
         } else {
-            appViewUseCase.trackEvent(event: Event.anonymousAuthStart)
+            appViewInteractor.trackEvent(event: Event.anonymousAuthStart)
             do {
-                let result = try await appViewUseCase.signInAnonymously()
-                appViewUseCase.trackEvent(event: Event.anonymousAuthSuccess)
-                try await appViewUseCase
+                let result = try await appViewInteractor.signInAnonymously()
+                appViewInteractor.trackEvent(event: Event.anonymousAuthSuccess)
+                try await appViewInteractor
                     .logIn(auth: result.user, isNewUser: result.isNewUser)
             } catch {
-                appViewUseCase
+                appViewInteractor
                     .trackEvent(event: Event.anonymousAuthFail(error: error))
                 try? await Task.sleep(for: .seconds(5))
                 await checkUserStatus()
@@ -58,7 +58,7 @@ extension AppViewModel {
         let status = await AppTrackingTransparencyHelper
             .requestTrackingAuthorization()
         
-        appViewUseCase
+        appViewInteractor
             .trackEvent(
                 event: Event.attStatus(
                     dict: status.eventParameters
@@ -69,7 +69,7 @@ extension AppViewModel {
 }
 
 // MARK: - Event
-private extension AppViewModel {
+private extension AppPresenter {
     
     enum Event: LoggableEvent {
         case existingAuthStart
