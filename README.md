@@ -35,7 +35,7 @@
 
 ## 🏗️ Architecture Overview
 
-AIChat follows **Clean Architecture** principles with **MVVM** pattern, ensuring maintainability, testability, and scalability.
+AIChat follows **Clean Architecture** principles with **VIPER** pattern, ensuring maintainability, testability, and scalability.
 
 ### 📁 Project Structure
 
@@ -66,7 +66,7 @@ AIChat/
 
 ### 🎯 Architecture Patterns
 
-- **MVVM (Model-View-ViewModel)** - Clean separation of concerns
+- **VIPER (View-Interactor-Presenter-Entity-Router)** - Clean separation of concerns
 - **Builder Pattern** - Dependency injection and view construction
 - **Repository Pattern** - Data access abstraction
 - **Service Layer** - External API integrations
