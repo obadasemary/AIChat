@@ -20,8 +20,8 @@ final class ChatRowCellBuilder {
         delegate: ChatRowCellDelegate = ChatRowCellDelegate()
     ) -> some View {
         ChatRowCellViewBuilder(
-            viewModel: ChatRowCellViewModel(
-                chatRowCellUseCase: ChatRowCellUseCase(
+            presenter: ChatRowCellPresenter(
+                chatRowCellInteractor: ChatRowCellInteractor(
                     container: container
                 )
             ),
