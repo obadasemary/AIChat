@@ -8,7 +8,7 @@
 import SwiftUI
 
 @MainActor
-protocol CreateAvatarUseCaseProtocol {
+protocol CreateAvatarInteractorProtocol {
     func getAuthId() throws -> String
     func generateImage(input: String) async throws -> UIImage
     func generateImage() async throws -> UIImage
@@ -17,7 +17,7 @@ protocol CreateAvatarUseCaseProtocol {
 }
 
 @MainActor
-final class CreateAvatarUseCase {
+final class CreateAvatarInteractor {
     
     private let authManager: AuthManager
     private let aiManager: AIManager
@@ -45,7 +45,7 @@ final class CreateAvatarUseCase {
     }
 }
 
-extension CreateAvatarUseCase: CreateAvatarUseCaseProtocol {
+extension CreateAvatarInteractor: CreateAvatarInteractorProtocol {
     
     func getAuthId() throws -> String {
         try authManager.getAuthId()
