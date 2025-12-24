@@ -26,10 +26,10 @@ final class ChatBuilder {
 
     func buildChatView(router: Router, delegate: ChatDelegate) -> some View {
         ChatView(
-            viewModel: ChatViewModel(
+            presenter: ChatPresenter(
                 // UseCase handles its own dependency resolution from container
                 // This keeps builder logic simple while maintaining testability
-                chatUseCase: ChatUseCase(container: container),
+                chatInteractor: ChatInteractor(container: container),
                 router: ChatRouter(
                     router: router,
                     // Nested builder enables router to navigate to paywall when needed
