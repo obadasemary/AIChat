@@ -19,8 +19,8 @@ final class AboutBuilder {
 
     func buildAboutView(router: Router) -> some View {
         AboutView(
-            viewModel: AboutViewModel(
-                aboutUseCase: AboutUseCase(container: container),
+            presenter: AboutPresenter(
+                aboutInteractor: AboutInteractor(container: container),
                 router: AboutRouter(router: router)
             )
         )

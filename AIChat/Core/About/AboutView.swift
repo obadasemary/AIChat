@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AboutView: View {
 
-    @State var viewModel: AboutViewModel
+    @State var presenter: AboutPresenter
 
     var body: some View {
         ScrollView {
@@ -44,11 +44,11 @@ private extension AboutView {
                 .font(.title)
                 .fontWeight(.bold)
 
-            Text("Version \(viewModel.appVersion)")
+            Text("Version \(presenter.appVersion)")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
-            Text("Build \(viewModel.buildNumber)")
+            Text("Build \(presenter.buildNumber)")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -111,7 +111,7 @@ private extension AboutView {
                     .padding(.leading, 16)
 
                 Button {
-                    viewModel.onContactSupportPressed()
+                    presenter.onContactSupportPressed()
                 } label: {
                     HStack {
                         Text("Contact Support")
@@ -139,7 +139,7 @@ private extension AboutView {
 
             VStack(spacing: 0) {
                 Button {
-                    viewModel.onPrivacyPolicyPressed()
+                    presenter.onPrivacyPolicyPressed()
                 } label: {
                     HStack {
                         Text("Privacy Policy")
@@ -157,7 +157,7 @@ private extension AboutView {
                     .padding(.leading, 16)
 
                 Button {
-                    viewModel.onTermsOfServicePressed()
+                    presenter.onTermsOfServicePressed()
                 } label: {
                     HStack {
                         Text("Terms of Service")

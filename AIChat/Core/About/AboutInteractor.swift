@@ -1,5 +1,5 @@
 //
-//  AboutUseCase.swift
+//  AboutInteractor.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 01.12.2025.
@@ -9,14 +9,14 @@ import Foundation
 import SwiftfulUtilities
 
 @MainActor
-protocol AboutUseCaseProtocol {
+protocol AboutInteractorProtocol {
     var appVersion: String { get }
     var buildNumber: String { get }
     func trackEvent(event: any LoggableEvent)
 }
 
 @MainActor
-final class AboutUseCase {
+final class AboutInteractor {
 
     private let logManager: LogManager?
 
@@ -25,7 +25,7 @@ final class AboutUseCase {
     }
 }
 
-extension AboutUseCase: AboutUseCaseProtocol {
+extension AboutInteractor: AboutInteractorProtocol {
 
     var appVersion: String {
         Utilities.appVersion ?? "Unknown"

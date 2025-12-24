@@ -10,33 +10,33 @@ import SwiftfulUtilities
 
 @Observable
 @MainActor
-class AboutViewModel {
+class AboutPresenter {
 
-    private let aboutUseCase: AboutUseCaseProtocol
+    private let aboutInteractor: AboutInteractorProtocol
     private let router: AboutRouterProtocol
 
     var appVersion: String {
-        aboutUseCase.appVersion
+        aboutInteractor.appVersion
     }
 
     var buildNumber: String {
-        aboutUseCase.buildNumber
+        aboutInteractor.buildNumber
     }
 
     init(
-        aboutUseCase: AboutUseCaseProtocol,
+        aboutInteractor: AboutInteractorProtocol,
         router: AboutRouterProtocol
     ) {
-        self.aboutUseCase = aboutUseCase
+        self.aboutInteractor = aboutInteractor
         self.router = router
     }
 }
 
 // MARK: - Actions
-extension AboutViewModel {
+extension AboutPresenter {
 
     func onContactSupportPressed() {
-        aboutUseCase.trackEvent(event: Event.contactSupportPressed)
+        aboutInteractor.trackEvent(event: Event.contactSupportPressed)
 
         let email = "obada.semary@gmail.com"
         let subject = "AIChat Support Request"
@@ -53,7 +53,7 @@ extension AboutViewModel {
         guard let url = URL(string: emailString),
               UIApplication.shared.canOpenURL(url)
         else {
-            aboutUseCase.trackEvent(event: Event.contactSupportFailed)
+            aboutInteractor.trackEvent(event: Event.contactSupportFailed)
             return
         }
 
@@ -61,20 +61,20 @@ extension AboutViewModel {
     }
 
     func onPrivacyPolicyPressed() {
-        aboutUseCase.trackEvent(event: Event.privacyPolicyPressed)
+        aboutInteractor.trackEvent(event: Event.privacyPolicyPressed)
         
         guard let url = URL(string: "https://SamuraiStudios.com/privacy") else {
-            aboutUseCase.trackEvent(event: Event.privacyPolicyFailed)
+            aboutInteractor.trackEvent(event: Event.privacyPolicyFailed)
             return
         }
         UIApplication.shared.open(url)
     }
 
     func onTermsOfServicePressed() {
-        aboutUseCase.trackEvent(event: Event.termsOfServicePressed)
+        aboutInteractor.trackEvent(event: Event.termsOfServicePressed)
         
         guard let url = URL(string: "https://SamuraiStudios.com/terms") else {
-            aboutUseCase.trackEvent(event: Event.termsOfServiceFailed)
+            aboutInteractor.trackEvent(event: Event.termsOfServiceFailed)
             return
         }
         UIApplication.shared.open(url)
@@ -82,7 +82,7 @@ extension AboutViewModel {
 }
 
 // MARK: - Event
-private extension AboutViewModel {
+private extension AboutPresenter {
 
     enum Event: LoggableEvent {
         case contactSupportPressed
