@@ -1,5 +1,5 @@
 //
-//  AppViewUseCase.swift
+//  AppViewInteractor.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 28.07.2025.
@@ -8,7 +8,7 @@
 import Foundation
 
 @MainActor
-protocol AppViewUseCaseProtocol {
+protocol AppViewInteractorProtocol {
     var showTabBar: Bool { get }
     var auth: UserAuthInfo? { get }
     func logIn(auth: UserAuthInfo, isNewUser: Bool) async throws
@@ -17,7 +17,7 @@ protocol AppViewUseCaseProtocol {
 }
 
 @MainActor
-final class AppViewUseCase {
+final class AppViewInteractor {
     
     private let authManager: AuthManager
     private let userManager: UserManager
@@ -27,16 +27,16 @@ final class AppViewUseCase {
     
     init(container: DependencyContainer) {
         guard let authManager = container.resolve(AuthManager.self) else {
-            preconditionFailure("Failed to resolve AuthManager for AppViewUseCase")
+            preconditionFailure("Failed to resolve AuthManager for AppViewInteractor")
         }
         guard let userManager = container.resolve(UserManager.self) else {
-            preconditionFailure("Failed to resolve UserManager for AppViewUseCase")
+            preconditionFailure("Failed to resolve UserManager for AppViewInteractor")
         }
         guard let appState = container.resolve(AppState.self) else {
-            preconditionFailure("Failed to resolve AppState for AppViewUseCase")
+            preconditionFailure("Failed to resolve AppState for AppViewInteractor")
         }
         guard let logManager = container.resolve(LogManager.self) else {
-            preconditionFailure("Failed to resolve LogManager for AppViewUseCase")
+            preconditionFailure("Failed to resolve LogManager for AppViewInteractor")
         }
         
         self.authManager = authManager
@@ -46,7 +46,7 @@ final class AppViewUseCase {
     }
 }
 
-extension AppViewUseCase: AppViewUseCaseProtocol {
+extension AppViewInteractor: AppViewInteractorProtocol {
     
     var showTabBar: Bool {
         appState.showTabBar
