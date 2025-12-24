@@ -18,7 +18,7 @@ import SwiftUI
 // swiftlint:disable file_length
 struct ChatView: View {
 
-    @State var viewModel: ChatViewModel
+    @State var presenter: ChatPresenter
     @FocusState private var isTextFieldFocused: Bool
 
     let delegate: ChatDelegate
@@ -53,17 +53,17 @@ struct ChatView: View {
         }
         .screenAppearAnalytics(name: ScreenName.from(Self.self))
         .task {
-            await viewModel.loadAvatar(avatarId: delegate.avatarId)
+            await presenter.loadAvatar(avatarId: delegate.avatarId)
         }
         .task {
-            await viewModel.loadChat(avatarId: delegate.avatarId)
-            await viewModel.listenToChatMessages()
+            await presenter.loadChat(avatarId: delegate.avatarId)
+            await presenter.listenToChatMessages()
         }
         .onFirstAppear {
-            viewModel.onViewFirstAppear(chat: delegate.chat)
+            presenter.onViewFirstAppear(chat: delegate.chat)
         }
         .onDisappear {
-            viewModel.onDisappear()
+            presenter.onDisappear()
         }
     }
 }
@@ -73,31 +73,31 @@ private extension ChatView {
 
     var navigationTitleView: some View {
         ChatNavigationTitleView(
-            name: viewModel.avatar?.name ?? "Chat",
-            avatarImageUrl: viewModel.avatar?.profileImageName,
+            name: presenter.avatar?.name ?? "Chat",
+            avatarImageUrl: presenter.avatar?.profileImageName,
             isOnline: true,
-            isTyping: viewModel.isGeneratingResponse,
+            isTyping: presenter.isGeneratingResponse,
             onTapped: {
-                viewModel.onAvatarImageTapped()
+                presenter.onAvatarImageTapped()
             }
         )
     }
 
     @ViewBuilder
     var settingsButton: some View {
-        if viewModel.isGeneratingResponse {
+        if presenter.isGeneratingResponse {
             ProgressView()
                 .controlSize(.small)
         } else {
             Menu {
                 Button(role: .destructive) {
-                    viewModel.onReportChatTapped()
+                    presenter.onReportChatTapped()
                 } label: {
                     Label("Report Chat", systemImage: "exclamationmark.triangle")
                 }
 
                 Button(role: .destructive) {
-                    viewModel.onDeleteChatTapped()
+                    presenter.onDeleteChatTapped()
                 } label: {
                     Label("Delete Chat", systemImage: "trash")
                 }
@@ -132,7 +132,7 @@ private extension ChatView {
                     }
 
                     // Typing indicator
-                    if viewModel.typingIndicatorMessage != nil {
+                    if presenter.typingIndicatorMessage != nil {
                         typingIndicator
                             .id("typing")
                             .transition(.opacity.combined(with: .move(edge: .bottom)))
@@ -148,14 +148,14 @@ private extension ChatView {
                 .padding(.bottom, 4)
             }
             .scrollDismissesKeyboard(.interactively)
-            .onChange(of: viewModel.scrollPosition) { _, newValue in
+            .onChange(of: presenter.scrollPosition) { _, newValue in
                 if let newValue {
                     withAnimation(.easeOut(duration: 0.3)) {
                         proxy.scrollTo(newValue, anchor: .bottom)
                     }
                 }
             }
-            .onChange(of: viewModel.typingIndicatorMessage) { _, newValue in
+            .onChange(of: presenter.typingIndicatorMessage) { _, newValue in
                 if newValue != nil {
                     withAnimation(.easeOut(duration: 0.3)) {
                         proxy.scrollTo("typing", anchor: .bottom)
@@ -166,7 +166,7 @@ private extension ChatView {
     }
 
     var messageGroups: [MessageGroup] {
-        viewModel.chatMessages.groupedByDate()
+        presenter.chatMessages.groupedByDate()
     }
 
     func dateHeader(for date: Date) -> some View {
@@ -179,62 +179,62 @@ private extension ChatView {
         for message: ChatMessageModel,
         in messages: [ChatMessageModel]
     ) -> some View {
-        let isCurrentUser = viewModel.messageIsCurrentUser(message: message)
+        let isCurrentUser = presenter.messageIsCurrentUser(message: message)
         let showAvatar = messages.shouldShowAvatar(
             for: message,
-            currentUserId: viewModel.currentUser?.userId
+            currentUserId: presenter.currentUser?.userId
         )
         let showTail = false
         let replyToMessage = message.replyToMessageId.flatMap { replyId in
-            viewModel.chatMessages.first { $0.id == replyId }
+            presenter.chatMessages.first { $0.id == replyId }
         }
 
         return MessageRowView(
             message: message,
             isCurrentUser: isCurrentUser,
-            currentUserId: viewModel.currentUser?.userId,
-            avatarImageUrl: isCurrentUser ? nil : viewModel.avatar?.profileImageName,
-            currentUserProfileColor: viewModel.currentUser?.profileColorCalculated ?? .blue,
+            currentUserId: presenter.currentUser?.userId,
+            avatarImageUrl: isCurrentUser ? nil : presenter.avatar?.profileImageName,
+            currentUserProfileColor: presenter.currentUser?.profileColorCalculated ?? .blue,
             showAvatar: showAvatar && !isCurrentUser,
             showTail: showTail,
             replyToMessage: replyToMessage,
             onAvatarTapped: {
                 triggerHaptic(.light)
-                viewModel.onAvatarImageTapped()
+                presenter.onAvatarImageTapped()
             },
             onLongPress: {
                 triggerHaptic(.medium)
                 selectedMessageForReaction = message
             },
             onReactionTapped: { reaction in
-                viewModel.onMessageReactionTapped(message: message, reaction: reaction)
+                presenter.onMessageReactionTapped(message: message, reaction: reaction)
             },
             onCopyTapped: {
-                viewModel.onMessageCopyTapped(message: message)
+                presenter.onMessageCopyTapped(message: message)
             },
             onShareTapped: {
-                viewModel.onMessageShareTapped(message: message)
+                presenter.onMessageShareTapped(message: message)
             },
             onReplyTapped: {
                 triggerHaptic(.light)
-                viewModel.onMessageReplyTapped(message: message)
+                presenter.onMessageReplyTapped(message: message)
             },
             onEditTapped: {
                 triggerHaptic(.light)
-                viewModel.onMessageEditTapped(message: message)
+                presenter.onMessageEditTapped(message: message)
             },
             onTranslateTapped: {
                 triggerHaptic(.light)
-                viewModel.onMessageTranslateTapped(message: message)
+                presenter.onMessageTranslateTapped(message: message)
             },
             onSelectTapped: {
                 triggerHaptic(.light)
-                viewModel.onMessageSelectTapped(message: message)
+                presenter.onMessageSelectTapped(message: message)
             },
-            translatedText: viewModel.translatedMessages[message.id]
+            translatedText: presenter.translatedMessages[message.id]
         )
         .onAppear {
-            viewModel.onMessageDidAppear(message: message)
+            presenter.onMessageDidAppear(message: message)
         }
         .padding(.vertical, showTail ? 4 : 1)
     }
@@ -242,7 +242,7 @@ private extension ChatView {
 
     var typingIndicator: some View {
         TypingIndicatorView(
-            avatarImageUrl: viewModel.avatar?.profileImageName,
+            avatarImageUrl: presenter.avatar?.profileImageName,
             showAvatar: true
         )
         .padding(.vertical, 4)
@@ -251,11 +251,11 @@ private extension ChatView {
     // swiftlint:disable superfluous_disable_command
     // swiftlint:disable function_body_length
     func reactionOverlay(for message: ChatMessageModel) -> some View {
-        let isCurrentUser = viewModel.messageIsCurrentUser(message: message)
-        let backgroundColor = isCurrentUser ? (viewModel.currentUser?.profileColorCalculated ?? .blue) : Color(uiColor: .systemGray5)
+        let isCurrentUser = presenter.messageIsCurrentUser(message: message)
+        let backgroundColor = isCurrentUser ? (presenter.currentUser?.profileColorCalculated ?? .blue) : Color(uiColor: .systemGray5)
         let textColor = isCurrentUser ? Color.white : Color.primary
         let replyToMessage = message.replyToMessageId.flatMap { replyId in
-            viewModel.chatMessages.first { $0.id == replyId }
+            presenter.chatMessages.first { $0.id == replyId }
         }
 
         return Color.black.opacity(0.001)
@@ -269,7 +269,7 @@ private extension ChatView {
                 VStack(alignment: .center, spacing: 10) {
                     // Reactions at top
                     ReactionPickerView { reaction in
-                        viewModel.onMessageReactionTapped(message: message, reaction: reaction)
+                        presenter.onMessageReactionTapped(message: message, reaction: reaction)
                         withAnimation {
                             selectedMessageForReaction = nil
                         }
@@ -310,7 +310,7 @@ private extension ChatView {
             // Message content
             HStack(alignment: .bottom, spacing: 4) {
                 VStack(alignment: .leading, spacing: 4) {
-                    if let translatedText = viewModel.translatedMessages[message.id] {
+                    if let translatedText = presenter.translatedMessages[message.id] {
                         Text(translatedText)
                             .font(.body)
                             .foregroundStyle(textColor)
@@ -364,7 +364,7 @@ private extension ChatView {
     func messageActionsView(for message: ChatMessageModel, isCurrentUser: Bool) -> some View {
         VStack(spacing: 0) {
             actionButton(icon: "arrowshape.turn.up.left", label: "Reply") {
-                viewModel.onMessageReplyTapped(message: message)
+                presenter.onMessageReplyTapped(message: message)
                 withAnimation {
                     selectedMessageForReaction = nil
                 }
@@ -375,7 +375,7 @@ private extension ChatView {
                     .padding(.leading, 44)
 
                 actionButton(icon: "pencil", label: "Edit") {
-                    viewModel.onMessageEditTapped(message: message)
+                    presenter.onMessageEditTapped(message: message)
                     withAnimation {
                         selectedMessageForReaction = nil
                     }
@@ -386,7 +386,7 @@ private extension ChatView {
                 .padding(.leading, 44)
 
             actionButton(icon: "doc.on.doc", label: "Copy") {
-                viewModel.onMessageCopyTapped(message: message)
+                presenter.onMessageCopyTapped(message: message)
                 withAnimation {
                     selectedMessageForReaction = nil
                 }
@@ -396,7 +396,7 @@ private extension ChatView {
                 .padding(.leading, 44)
 
             actionButton(icon: "character.bubble", label: "Translate") {
-                viewModel.onMessageTranslateTapped(message: message)
+                presenter.onMessageTranslateTapped(message: message)
                 withAnimation {
                     selectedMessageForReaction = nil
                 }
@@ -439,22 +439,22 @@ private extension ChatView {
 
     var inputBarSection: some View {
         SimpleChatInputBar(
-            text: $viewModel.textFieldText,
+            text: $presenter.textFieldText,
             isFocused: $isTextFieldFocused,
-            isLoading: viewModel.isGeneratingResponse,
+            isLoading: presenter.isGeneratingResponse,
             placeholder: "Type your message...",
-            accentColor: viewModel.currentUser?.profileColorCalculated ?? .blue,
+            accentColor: presenter.currentUser?.profileColorCalculated ?? .blue,
             onSendTapped: {
                 triggerHaptic(.medium)
-                viewModel.onSendMessageTapped(avatarId: delegate.avatarId)
+                presenter.onSendMessageTapped(avatarId: delegate.avatarId)
             },
-            replyingToMessage: viewModel.replyingToMessage,
-            editingMessage: viewModel.editingMessage,
+            replyingToMessage: presenter.replyingToMessage,
+            editingMessage: presenter.editingMessage,
             onCancelReply: {
-                viewModel.cancelReply()
+                presenter.cancelReply()
             },
             onCancelEdit: {
-                viewModel.cancelEdit()
+                presenter.cancelEdit()
             }
         )
     }

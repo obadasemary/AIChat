@@ -1,5 +1,5 @@
 //
-//  ChatUseCase.swift
+//  ChatInteractor.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 28.07.2025.
@@ -8,7 +8,7 @@
 import Foundation
 
 @MainActor
-protocol ChatUseCaseProtocol {
+protocol ChatInteractorProtocol {
     
     var currentUser: UserModel? { get }
     var auth: UserAuthInfo? { get }
@@ -37,7 +37,7 @@ protocol ChatUseCaseProtocol {
 }
 
 @MainActor
-final class ChatUseCase {
+final class ChatInteractor {
     
     private let authManager: AuthManager
     private let userManager: UserManager
@@ -49,25 +49,25 @@ final class ChatUseCase {
     
     init(container: DependencyContainer) {
         guard let authManager = container.resolve(AuthManager.self) else {
-            preconditionFailure("Failed to resolve AuthManager for ChatUseCase")
+            preconditionFailure("Failed to resolve AuthManager for ChatInteractor")
         }
         guard let userManager = container.resolve(UserManager.self) else {
-            preconditionFailure("Failed to resolve UserManager for ChatUseCase")
+            preconditionFailure("Failed to resolve UserManager for ChatInteractor")
         }
         guard let aiManager = container.resolve(AIManager.self) else {
-            preconditionFailure("Failed to resolve AIManager for ChatUseCase")
+            preconditionFailure("Failed to resolve AIManager for ChatInteractor")
         }
         guard let avatarManager = container.resolve(AvatarManager.self) else {
-            preconditionFailure("Failed to resolve AvatarManager for ChatUseCase")
+            preconditionFailure("Failed to resolve AvatarManager for ChatInteractor")
         }
         guard let chatManager = container.resolve(ChatManager.self) else {
-            preconditionFailure("Failed to resolve ChatManager for ChatUseCase")
+            preconditionFailure("Failed to resolve ChatManager for ChatInteractor")
         }
         guard let logManager = container.resolve(LogManager.self) else {
-            preconditionFailure("Failed to resolve LogManager for ChatUseCase")
+            preconditionFailure("Failed to resolve LogManager for ChatInteractor")
         }
         guard let purchaseManager = container.resolve(PurchaseManager.self) else {
-            preconditionFailure("Failed to resolve PurchaseManager for ChatUseCase")
+            preconditionFailure("Failed to resolve PurchaseManager for ChatInteractor")
         }
         
         self.authManager = authManager
@@ -80,7 +80,7 @@ final class ChatUseCase {
     }
 }
 
-extension ChatUseCase: ChatUseCaseProtocol {
+extension ChatInteractor: ChatInteractorProtocol {
     
     var currentUser: UserModel? {
         userManager.currentUser
