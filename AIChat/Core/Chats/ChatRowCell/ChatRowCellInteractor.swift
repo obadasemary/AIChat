@@ -1,5 +1,5 @@
 //
-//  ChatRowCellUseCase.swift
+//  ChatRowCellInteractor.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 28.07.2025.
@@ -8,7 +8,7 @@
 import Foundation
 
 @MainActor
-final class ChatRowCellUseCase {
+final class ChatRowCellInteractor {
     
     private let authManager: AuthManager
     private let avatarManager: AvatarManager
@@ -17,16 +17,16 @@ final class ChatRowCellUseCase {
     
     init(container: DependencyContainer) {
         guard let authManager = container.resolve(AuthManager.self) else {
-            preconditionFailure("Failed to resolve AuthManager for ChatRowCellUseCase")
+            preconditionFailure("Failed to resolve AuthManager for ChatRowCellInteractor")
         }
         guard let avatarManager = container.resolve(AvatarManager.self) else {
-            preconditionFailure("Failed to resolve AvatarManager for ChatRowCellUseCase")
+            preconditionFailure("Failed to resolve AvatarManager for ChatRowCellInteractor")
         }
         guard let chatManager = container.resolve(ChatManager.self) else {
-            preconditionFailure("Failed to resolve ChatManager for ChatRowCellUseCase")
+            preconditionFailure("Failed to resolve ChatManager for ChatRowCellInteractor")
         }
         guard let logManager = container.resolve(LogManager.self) else {
-            preconditionFailure("Failed to resolve LogManager for ChatRowCellUseCase")
+            preconditionFailure("Failed to resolve LogManager for ChatRowCellInteractor")
         }
         
         self.authManager = authManager
@@ -36,7 +36,7 @@ final class ChatRowCellUseCase {
     }
 }
 
-extension ChatRowCellUseCase: ChatRowCellUseCaseProtocol {
+extension ChatRowCellInteractor: ChatRowCellInteractorProtocol {
     
     var auth: UserAuthInfo? {
         authManager.auth

@@ -19,8 +19,8 @@ final class ChatsBuilder {
     
     func buildChatsView(router: Router) -> some View {
         ChatsView(
-            viewModel: ChatsViewModel(
-                chatsUseCase: ChatsUseCase(container: container),
+            presenter: ChatsPresenter(
+                chatsInteractor: ChatsInteractor(container: container),
                 router: ChatsRouter(
                     router: router,
                     chatBuilder: ChatBuilder(container: container)
