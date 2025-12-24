@@ -9,7 +9,7 @@ import Foundation
 @testable import AIChat
 
 @MainActor
-struct AnyProfileInteractor: ProfileUseCaseProtocol {
+struct AnyProfileInteractor: ProfileInteractorProtocol {
     
     let anyCurrentUser: UserModel?
     let anyGetAuthId: () throws -> String
@@ -40,14 +40,6 @@ struct AnyProfileInteractor: ProfileUseCaseProtocol {
     }
     
     init(interactor: MockProfileInteractor) {
-        anyCurrentUser = interactor.currentUser
-        anyGetAuthId = interactor.getAuthId
-        anyGetAvatarsForAuthor = interactor.getAvatarsForAuthor
-        anyRemoveAuthorIdFromAvatar = interactor.removeAuthorIdFromAvatar
-        anyTrackEvent = interactor.trackEvent
-    }
-    
-    init(interactor: ProdProfileInteractor) {
         anyCurrentUser = interactor.currentUser
         anyGetAuthId = interactor.getAuthId
         anyGetAvatarsForAuthor = interactor.getAvatarsForAuthor
