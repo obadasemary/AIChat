@@ -29,10 +29,10 @@ final class SettingsBuilder {
         onSignedIn: @escaping () -> Void = {}
     ) -> some View {
         SettingsView(
-            viewModel: SettingsViewModel(
+            presenter: SettingsPresenter(
                 // UseCase handles its own dependency resolution from container
                 // This keeps builder logic simple while maintaining testability
-                settingsUseCase: SettingsUseCase(container: container),
+                settingsInteractor: SettingsInteractor(container: container),
                 router: SettingsRouter(
                     router: router,
                     // Multiple nested builders enable navigation to different child views

@@ -1,5 +1,5 @@
 //
-//  SettingsUseCase.swift
+//  SettingsInteractor.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 28.07.2025.
@@ -8,7 +8,7 @@
 import Foundation
 
 @MainActor
-protocol SettingsUseCaseProtocol {
+protocol SettingsInteractorProtocol {
     var auth: UserAuthInfo? { get }
     func signOut() throws
     func deleteAccount() async throws
@@ -17,7 +17,7 @@ protocol SettingsUseCaseProtocol {
 }
 
 @MainActor
-final class SettingsUseCase {
+final class SettingsInteractor {
     
     private let authManager: AuthManager
     private let userManager: UserManager
@@ -28,22 +28,22 @@ final class SettingsUseCase {
     
     init(container: DependencyContainer) {
         guard let authManager = container.resolve(AuthManager.self) else {
-            preconditionFailure("Failed to resolve AuthManager for SettingsUseCase")
+            preconditionFailure("Failed to resolve AuthManager for SettingsInteractor")
         }
         guard let userManager = container.resolve(UserManager.self) else {
-            preconditionFailure("Failed to resolve UserManager for SettingsUseCase")
+            preconditionFailure("Failed to resolve UserManager for SettingsInteractor")
         }
         guard let avatarManager = container.resolve(AvatarManager.self) else {
-            preconditionFailure("Failed to resolve AvatarManager for SettingsUseCase")
+            preconditionFailure("Failed to resolve AvatarManager for SettingsInteractor")
         }
         guard let chatManager = container.resolve(ChatManager.self) else {
-            preconditionFailure("Failed to resolve ChatManager for SettingsUseCase")
+            preconditionFailure("Failed to resolve ChatManager for SettingsInteractor")
         }
         guard let appState = container.resolve(AppState.self) else {
-            preconditionFailure("Failed to resolve AppState for SettingsUseCase")
+            preconditionFailure("Failed to resolve AppState for SettingsInteractor")
         }
         guard let logManager = container.resolve(LogManager.self) else {
-            preconditionFailure("Failed to resolve LogManager for SettingsUseCase")
+            preconditionFailure("Failed to resolve LogManager for SettingsInteractor")
         }
         
         self.authManager = authManager
@@ -55,7 +55,7 @@ final class SettingsUseCase {
     }
 }
 
-extension SettingsUseCase: SettingsUseCaseProtocol {
+extension SettingsInteractor: SettingsInteractorProtocol {
     
     var auth: UserAuthInfo? {
         authManager.auth
