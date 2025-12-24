@@ -9,9 +9,9 @@ import SwiftUI
 
 @Observable
 @MainActor
-final class ChatViewModel {
+final class ChatPresenter {
     
-    private let chatUseCase: ChatUseCaseProtocol
+    private let chatInteractor: ChatInteractorProtocol
     private let router: ChatRouterProtocol
     
     private(set) var chat: ChatModel?
@@ -26,27 +26,27 @@ final class ChatViewModel {
     var scrollPosition: String?
     
     init(
-        chatUseCase: ChatUseCaseProtocol,
+        chatInteractor: ChatInteractorProtocol,
         router: ChatRouterProtocol
     ) {
-        self.chatUseCase = chatUseCase
+        self.chatInteractor = chatInteractor
         self.router = router
     }
 }
 
 // MARK: - Load
-extension ChatViewModel {
+extension ChatPresenter {
     
     func loadAvatar(avatarId: String) async {
-        chatUseCase.trackEvent(event: Event.loadAvatarStart)
+        chatInteractor.trackEvent(event: Event.loadAvatarStart)
         do {
-            avatar = try await chatUseCase.getAvatar(id: avatarId)
+            avatar = try await chatInteractor.getAvatar(id: avatarId)
             guard let avatar else { return }
-            chatUseCase
+            chatInteractor
                 .trackEvent(event: Event.loadAvatarSuccess(avatar: avatar))
-            try? await chatUseCase.addRecentAvatar(avatar: avatar)
+            try? await chatInteractor.addRecentAvatar(avatar: avatar)
         } catch {
-            chatUseCase
+            chatInteractor
                 .trackEvent(
                     event: Event.loadAvatarFail(error: error)
                 )
@@ -54,37 +54,37 @@ extension ChatViewModel {
     }
     
     func loadChat(avatarId: String) async {
-        chatUseCase.trackEvent(event: Event.loadChatStart)
+        chatInteractor.trackEvent(event: Event.loadChatStart)
         do {
-            let userId = try chatUseCase.getAuthId()
-            chat = try await chatUseCase
+            let userId = try chatInteractor.getAuthId()
+            chat = try await chatInteractor
                 .getChat(userId: userId, avatarId: avatarId)
-            chatUseCase
+            chatInteractor
                 .trackEvent(event: Event.loadChatSuccess(chat: chat))
         } catch {
-            chatUseCase
+            chatInteractor
                 .trackEvent(event: Event.loadAvatarFail(error: error))
         }
     }
     
     func listenToChatMessages() async {
-        chatUseCase.trackEvent(event: Event.loadMessagesStart)
+        chatInteractor.trackEvent(event: Event.loadMessagesStart)
         do {
             let chatId = try getChatId()
             
-            for try await value in chatUseCase.streamChatMessages(chatId: chatId) {
+            for try await value in chatInteractor.streamChatMessages(chatId: chatId) {
                 chatMessages = value
                     .sortedByKeyPath(keyPath: \.dateCreatedCalculated)
                 scrollPosition = chatMessages.last?.id
             }
         } catch {
-            chatUseCase
+            chatInteractor
                 .trackEvent(event: Event.loadMessagesFail(error: error))
         }
     }
     
     func onViewFirstAppear(chat: ChatModel?) {
-        currentUser = chatUseCase.currentUser
+        currentUser = chatInteractor.currentUser
         self.chat = chat
     }
     
@@ -95,19 +95,19 @@ extension ChatViewModel {
     func onMessageDidAppear(message: ChatMessageModel) {
         Task {
             do {
-                let userId = try chatUseCase.getAuthId()
+                let userId = try chatInteractor.getAuthId()
                 let chatId = try getChatId()
                 
                 guard !message.hasBeenSeenBy(userId: userId) else { return }
                 
-                try await chatUseCase
+                try await chatInteractor
                     .markChatMessagesAsSeen(
                         chatId: chatId,
                         messageId: message.id,
                         userId: userId
                     )
             } catch {
-                chatUseCase
+                chatInteractor
                     .trackEvent(event: Event.messageSeenFail(error: error))
             }
         }
@@ -115,13 +115,13 @@ extension ChatViewModel {
 }
 
 // MARK: - Action
-extension ChatViewModel {
+extension ChatPresenter {
     // swiftlint:disable function_body_length
     func onSendMessageTapped(avatarId: String) {
         guard !textFieldText.isEmpty else { return }
         
         let content = textFieldText
-        chatUseCase
+        chatInteractor
             .trackEvent(
                 event: Event.sendMessageStart(chat: chat, avatar: avatar)
             )
@@ -129,13 +129,13 @@ extension ChatViewModel {
         Task {
             do {
                 // Show paywall if needed
-                if !chatUseCase.isPremium && chatMessages.count >= 3 {
+                if !chatInteractor.isPremium && chatMessages.count >= 3 {
                     router.showPaywallView()
                     return
                 }
                 
                 // Get userId
-                let userId = try chatUseCase.getAuthId()
+                let userId = try chatInteractor.getAuthId()
                 
                 // Validate textField text
                 try TextValidationHelper.checkIfTextIsValid(text: content)
@@ -162,11 +162,11 @@ extension ChatViewModel {
                 )
                 
                 // upload user chat
-                try await chatUseCase
+                try await chatInteractor
                     .addChatMessage(
                         message: message
                     )
-                chatUseCase
+                chatInteractor
                     .trackEvent(
                         event: Event
                             .sendMessageSent(
@@ -200,7 +200,7 @@ extension ChatViewModel {
                     )
                     aiChats.insert(systemMessage, at: 0)
                 }
-                let response = try await chatUseCase.generateText(
+                let response = try await chatInteractor.generateText(
                     chats: aiChats
                 )
                 typingIndicatorMessage = nil
@@ -211,7 +211,7 @@ extension ChatViewModel {
                     avatarId: avatarId,
                     message: response
                 )
-                chatUseCase
+                chatInteractor
                     .trackEvent(
                         event: Event
                             .sendMessageResponse(
@@ -222,11 +222,11 @@ extension ChatViewModel {
                     )
                 
                 // upload AI chat
-                try await chatUseCase
+                try await chatInteractor
                     .addChatMessage(
                         message: newAIMessage
                     )
-                chatUseCase
+                chatInteractor
                     .trackEvent(
                         event: Event
                             .sendMessageResponseSent(
@@ -238,7 +238,7 @@ extension ChatViewModel {
                 isGeneratingResponse = false
                 
             } catch let error {
-                chatUseCase
+                chatInteractor
                     .trackEvent(event: Event.sendMessageFail(error: error))
                 router.showAlert(error: error)
             }
@@ -249,7 +249,7 @@ extension ChatViewModel {
     // swiftlint:enable function_body_length
     
     func onChatSettingsTapped() {
-        chatUseCase.trackEvent(event: Event.chatSettingsTapped)
+        chatInteractor.trackEvent(event: Event.chatSettingsTapped)
         router
             .showAlert(
                 .confirmationDialog,
@@ -271,13 +271,13 @@ extension ChatViewModel {
     }
     
     func onReportChatTapped() {
-        chatUseCase.trackEvent(event: Event.reportChatStart)
+        chatInteractor.trackEvent(event: Event.reportChatStart)
         Task {
             do {
                 let chatId = try getChatId()
-                let userId = try chatUseCase.getAuthId()
-                try await chatUseCase.reportChat(chatId: chatId, userId: userId)
-                chatUseCase.trackEvent(event: Event.reportChatSuccess)
+                let userId = try chatInteractor.getAuthId()
+                try await chatInteractor.reportChat(chatId: chatId, userId: userId)
+                chatInteractor.trackEvent(event: Event.reportChatSuccess)
                 router
                     .showAlert(
                         .alert,
@@ -286,7 +286,7 @@ extension ChatViewModel {
                         buttons: nil
                     )
             } catch {
-                chatUseCase
+                chatInteractor
                     .trackEvent(event: Event.reportChatFail(error: error))
                 router
                     .showAlert(
@@ -300,12 +300,12 @@ extension ChatViewModel {
     }
     
     func onDeleteChatTapped() {
-        chatUseCase.trackEvent(event: Event.deleteChatStart)
+        chatInteractor.trackEvent(event: Event.deleteChatStart)
         Task {
             do {
                 let chatId = try getChatId()
-                try await chatUseCase.deleteChat(chatId: chatId)
-                chatUseCase.trackEvent(event: Event.deleteChatSuccess)
+                try await chatInteractor.deleteChat(chatId: chatId)
+                chatInteractor.trackEvent(event: Event.deleteChatSuccess)
                 router.dismissModal()
                 Task { @MainActor [weak self] in
                     try? await Task.sleep(for: .seconds(3))
@@ -313,7 +313,7 @@ extension ChatViewModel {
                     self.router.dismissScreen()
                 }
             } catch {
-                chatUseCase
+                chatInteractor
                     .trackEvent(event: Event.deleteChatFail(error: error))
                 router
                     .showAlert(
@@ -328,7 +328,7 @@ extension ChatViewModel {
     
     func onAvatarImageTapped() {
         guard let avatar else { return }
-        chatUseCase
+        chatInteractor
             .trackEvent(event: Event.avatarImageTapped(avatar: avatar))
         router.showProfileModal(avatar: avatar) { [weak self] in
             self?.onProfileModalXmarksTapped()
@@ -341,7 +341,7 @@ extension ChatViewModel {
 }
 
 // MARK: - helper func
-extension ChatViewModel {
+extension ChatPresenter {
     
     func getChatId() throws -> String {
         guard let chat else {
@@ -355,12 +355,12 @@ extension ChatViewModel {
     }
     
     func createNewChat(userId: String, avatarId: String) async throws -> ChatModel {
-        chatUseCase.trackEvent(event: Event.createChatStart)
+        chatInteractor.trackEvent(event: Event.createChatStart)
         let newChat = ChatModel.new(
             userId: userId,
             avatarId: avatarId
         )
-        try await chatUseCase.createNewChat(chat: newChat)
+        try await chatInteractor.createNewChat(chat: newChat)
         
         defer {
             Task {
@@ -389,12 +389,12 @@ extension ChatViewModel {
     }
     
     func messageIsCurrentUser(message: ChatMessageModel) -> Bool {
-        message.authorId == chatUseCase.auth?.uid
+        message.authorId == chatInteractor.auth?.uid
     }
 }
 
 // MARK: - Event
-private extension ChatViewModel {
+private extension ChatPresenter {
     
     enum Event: LoggableEvent {
         case loadAvatarStart
