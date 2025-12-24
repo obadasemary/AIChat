@@ -9,9 +9,9 @@ import Foundation
 
 @Observable
 @MainActor
-final class ChatsViewModel {
+final class ChatsPresenter {
     
-    private let chatsUseCase: ChatsUseCaseProtocol
+    private let chatsInteractor: ChatsInteractorProtocol
     private let router: ChatsRouterProtocol
     
     private(set) var currentUserId: String?
@@ -20,59 +20,59 @@ final class ChatsViewModel {
     private(set) var isLoadingChats: Bool = true
     
     init(
-        chatsUseCase: ChatsUseCaseProtocol,
+        chatsInteractor: ChatsInteractorProtocol,
         router: ChatsRouterProtocol
     ) {
-        self.chatsUseCase = chatsUseCase
+        self.chatsInteractor = chatsInteractor
         self.router = router
     }
 }
 
 // MARK: - Load
-extension ChatsViewModel {
+extension ChatsPresenter {
     
     func loadRecentAvatars() {
-        chatsUseCase.trackEvent(event: Event.loadAvatarsStart)
+        chatsInteractor.trackEvent(event: Event.loadAvatarsStart)
         
         do {
-            recentAvatars = try chatsUseCase.getRecentAvatars()
-            chatsUseCase
+            recentAvatars = try chatsInteractor.getRecentAvatars()
+            chatsInteractor
                 .trackEvent(
                     event: Event.loadAvatarsSuccess(
                         avatarCount: recentAvatars.count
                     )
                 )
         } catch {
-            chatsUseCase.trackEvent(event: Event.loadAvatarsFail(error: error))
+            chatsInteractor.trackEvent(event: Event.loadAvatarsFail(error: error))
         }
     }
     
     func loadChats() async {
-        chatsUseCase.trackEvent(event: Event.loadChatsStart)
+        chatsInteractor.trackEvent(event: Event.loadChatsStart)
         do {
-            let uesrId = try await chatsUseCase.getAuthId()
+            let uesrId = try await chatsInteractor.getAuthId()
             currentUserId = uesrId
-            chats = try await chatsUseCase
+            chats = try await chatsInteractor
                 .getAllChats(userId: uesrId)
                 .sortedByKeyPath(keyPath: \.dateModified, ascending: false)
-            chatsUseCase
+            chatsInteractor
                 .trackEvent(
                     event: Event.loadChatsSuccess(
                         chatsCount: chats.count
                     )
                 )
         } catch {
-            chatsUseCase.trackEvent(event: Event.loadChatsFail(error: error))
+            chatsInteractor.trackEvent(event: Event.loadChatsFail(error: error))
         }
         isLoadingChats = false
     }
 }
 
 // MARK: - Action
-extension ChatsViewModel {
+extension ChatsPresenter {
     
     func onChatSelected(chat: ChatModel) {
-        chatsUseCase.trackEvent(event: Event.chatPressed(chat: chat))
+        chatsInteractor.trackEvent(event: Event.chatPressed(chat: chat))
         router.showChatView(
             delegate: ChatDelegate(
                 avatarId: chat.avatarId,
@@ -82,7 +82,7 @@ extension ChatsViewModel {
     }
     
     func onRecentsAvatarsTapped(avatar: AvatarModel) {
-        chatsUseCase.trackEvent(event: Event.avatarPressed(avatar: avatar))
+        chatsInteractor.trackEvent(event: Event.avatarPressed(avatar: avatar))
         router.showChatView(
             delegate: ChatDelegate(
                 avatarId: avatar.avatarId,
@@ -93,7 +93,7 @@ extension ChatsViewModel {
 }
 
 // MARK: - Event
-private extension ChatsViewModel {
+private extension ChatsPresenter {
     
     enum Event: LoggableEvent {
         case loadAvatarsStart

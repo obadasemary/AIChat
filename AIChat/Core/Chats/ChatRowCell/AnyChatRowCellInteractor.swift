@@ -1,5 +1,5 @@
 //
-//  AnyChatRowCellUseCase.swift
+//  AnyChatRowCellInteractor.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 28.07.2025.
@@ -8,7 +8,7 @@
 import Foundation
 
 @MainActor
-struct AnyChatRowCellUseCase: ChatRowCellUseCaseProtocol {
+struct AnyChatRowCellInteractor: ChatRowCellInteractorProtocol {
     
     let anyAuth: UserAuthInfo?
     let anyGetAvatar: (_ id: String) async throws -> AvatarModel?
@@ -27,7 +27,7 @@ struct AnyChatRowCellUseCase: ChatRowCellUseCaseProtocol {
         self.anyTrackEvent = trackEvent
     }
     
-    init(useCase: ChatRowCellUseCaseProtocol) {
+    init(useCase: ChatRowCellInteractorProtocol) {
         self.anyAuth = useCase.auth
         self.anyGetAvatar = useCase.getAvatar
         self.anyGetLastChatMessage = useCase.getLastChatMessage
