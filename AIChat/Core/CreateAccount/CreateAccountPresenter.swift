@@ -9,41 +9,41 @@ import Foundation
 
 @Observable
 @MainActor
-final class CreateAccountViewModel {
+final class CreateAccountPresenter {
     
-    private let createAccountUseCase: CreateAccountUseCaseProtocol
+    private let createAccountInteractor: CreateAccountInteractorProtocol
     private let router: CreateAccountRouterProtocol
     
     init(
-        createAccountUseCase: CreateAccountUseCaseProtocol,
+        createAccountInteractor: CreateAccountInteractorProtocol,
         router: CreateAccountRouterProtocol
     ) {
-        self.createAccountUseCase = createAccountUseCase
+        self.createAccountInteractor = createAccountInteractor
         self.router = router
     }
 }
 
 // MARK: - Action
-extension CreateAccountViewModel {
+extension CreateAccountPresenter {
     
     func onSignInWithAppleTapped(
         delegate: CreateAccountDelegate
     ) {
-        createAccountUseCase.trackEvent(event: Event.appleAuthStart)
+        createAccountInteractor.trackEvent(event: Event.appleAuthStart)
         
         Task { [weak self] in
             guard let self else { return }
             do {
-                let result = try await self.createAccountUseCase.signInWithApple()
-                self.createAccountUseCase.trackEvent(
+                let result = try await self.createAccountInteractor.signInWithApple()
+                self.createAccountInteractor.trackEvent(
                     event: Event.appleAuthSuccess(
                         user: result.user,
                         isNewUser: result.isNewUser
                     )
                 )
-                try await self.createAccountUseCase
+                try await self.createAccountInteractor
                     .logIn(auth: result.user, isNewUser: result.isNewUser)
-                self.createAccountUseCase
+                self.createAccountInteractor
                     .trackEvent(
                         event: Event.appleAuthLoginSuccess(
                             user: result.user,
@@ -54,7 +54,7 @@ extension CreateAccountViewModel {
                 delegate.onDidSignIn?(result.isNewUser)
                 self.router.dismissScreen()
             } catch {
-                self.createAccountUseCase.trackEvent(event: Event.appleAuthFail(error: error))
+                self.createAccountInteractor.trackEvent(event: Event.appleAuthFail(error: error))
             }
         }
     }
@@ -62,21 +62,21 @@ extension CreateAccountViewModel {
     func onSignInWithGoogleTapped(
         delegate: CreateAccountDelegate
     ) {
-        createAccountUseCase.trackEvent(event: Event.googleAuthStart)
+        createAccountInteractor.trackEvent(event: Event.googleAuthStart)
         
         Task { [weak self] in
             guard let self else { return }
             do {
-                let result = try await self.createAccountUseCase.signInWithGoogle()
-                self.createAccountUseCase.trackEvent(
+                let result = try await self.createAccountInteractor.signInWithGoogle()
+                self.createAccountInteractor.trackEvent(
                     event: Event.googleAuthSuccess(
                         user: result.user,
                         isNewUser: result.isNewUser
                     )
                 )
-                try await self.createAccountUseCase
+                try await self.createAccountInteractor
                     .logIn(auth: result.user, isNewUser: result.isNewUser)
-                self.createAccountUseCase
+                self.createAccountInteractor
                     .trackEvent(
                         event: Event.googleAuthLoginSuccess(
                             user: result.user,
@@ -87,14 +87,14 @@ extension CreateAccountViewModel {
                 delegate.onDidSignIn?(result.isNewUser)
                 self.router.dismissScreen()
             } catch {
-                self.createAccountUseCase.trackEvent(event: Event.googleAuthFail(error: error))
+                self.createAccountInteractor.trackEvent(event: Event.googleAuthFail(error: error))
             }
         }
     }
 }
 
 // MARK: - Event
-private extension CreateAccountViewModel {
+private extension CreateAccountPresenter {
     
     enum Event: LoggableEvent {
         case appleAuthStart
