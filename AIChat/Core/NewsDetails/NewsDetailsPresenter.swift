@@ -10,11 +10,11 @@ import UIKit
 
 @MainActor
 @Observable
-final class NewsDetailsViewModel {
+final class NewsDetailsPresenter {
 
     // MARK: - Properties
     let article: NewsArticle
-    private let newsDetailsUseCase: NewsDetailsUseCaseProtocol
+    private let newsDetailsInteractor: NewsDetailsInteractorProtocol
 
     var isBookmarked: Bool
 
@@ -23,13 +23,13 @@ final class NewsDetailsViewModel {
     // MARK: - Initialization
     init(
         article: NewsArticle,
-        newsDetailsUseCase: NewsDetailsUseCaseProtocol,
+        newsDetailsInteractor: NewsDetailsInteractorProtocol,
         router: NewsDetailsRouterProtocol
     ) {
         self.article = article
-        self.newsDetailsUseCase = newsDetailsUseCase
+        self.newsDetailsInteractor = newsDetailsInteractor
         self.router = router
-        self.isBookmarked = newsDetailsUseCase.isArticleBookmarked(article)
+        self.isBookmarked = newsDetailsInteractor.isArticleBookmarked(article)
     }
 
     // MARK: - Public Methods
@@ -39,10 +39,10 @@ final class NewsDetailsViewModel {
         feedbackGenerator.impactOccurred()
 
         if isBookmarked {
-            newsDetailsUseCase.removeBookmark(article)
+            newsDetailsInteractor.removeBookmark(article)
             isBookmarked = false
         } else {
-            newsDetailsUseCase.addBookmark(article)
+            newsDetailsInteractor.addBookmark(article)
             isBookmarked = true
         }
     }

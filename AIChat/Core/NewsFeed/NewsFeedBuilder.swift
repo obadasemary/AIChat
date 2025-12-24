@@ -27,10 +27,10 @@ final class NewsFeedBuilder {
 
     func buildNewsFeedView(router: Router) -> some View {
         return NewsFeedView(
-            viewModel: NewsFeedViewModel(
+            presenter: NewsFeedPresenter(
                 // UseCase handles its own dependency resolution from container
                 // This keeps builder logic simple while maintaining testability
-                newsFeedUseCase: NewsFeedUseCase(container: container),
+                newsFeedInteractor: NewsFeedInteractor(container: container),
                 router: NewsFeedRouter(
                     router: router,
                     // Nested builder enables router to construct child views for navigation
