@@ -10,9 +10,9 @@ import SwiftUI
 
 @Observable
 @MainActor
-final class ProfileViewModel {
+final class ProfilePresenter {
     
-    private let profileUseCase: ProfileUseCaseProtocol
+    private let profileInteractor: ProfileInteractorProtocol
     private let router: ProfileRouterProtocol
     
     private(set) var currentUser: UserModel?
@@ -20,32 +20,32 @@ final class ProfileViewModel {
     private(set) var isLoading: Bool = true
     
     init(
-        profileUseCase: ProfileUseCaseProtocol,
+        profileInteractor: ProfileInteractorProtocol,
         router: ProfileRouterProtocol
     ) {
-        self.profileUseCase = profileUseCase
+        self.profileInteractor = profileInteractor
         self.router = router
     }
 }
 
 // MARK: - Load
-extension ProfileViewModel {
+extension ProfilePresenter {
     
     func loadData() async {
-        currentUser = profileUseCase.currentUser
-        profileUseCase.trackEvent(event: Event.loadAvatarsStart)
+        currentUser = profileInteractor.currentUser
+        profileInteractor.trackEvent(event: Event.loadAvatarsStart)
         
         do {
-            let userId = try profileUseCase.getAuthId()
-            myAvatars = try await profileUseCase
+            let userId = try profileInteractor.getAuthId()
+            myAvatars = try await profileInteractor
                 .getAvatarsForAuthor(userId: userId)
-            profileUseCase.trackEvent(
+            profileInteractor.trackEvent(
                 event: Event.loadAvatarsSuccess(
                     count: myAvatars.count
                 )
             )
         } catch {
-            profileUseCase
+            profileInteractor
                 .trackEvent(
                     event: Event.loadAvatarsFail(
                         error: error
@@ -58,10 +58,10 @@ extension ProfileViewModel {
 }
 
 // MARK: - Action
-extension ProfileViewModel {
+extension ProfilePresenter {
     
     func onSettingsButtonPressed() {
-        profileUseCase.trackEvent(event: Event.settingsPressed)
+        profileInteractor.trackEvent(event: Event.settingsPressed)
         router.showSettingsView(
             onSignedIn: { [weak self] in
                 Task { [weak self] in
@@ -71,7 +71,7 @@ extension ProfileViewModel {
             },
             onDisappear: { [weak self] in
                 guard let self else { return }
-                self.currentUser = self.profileUseCase.currentUser
+                self.currentUser = self.profileInteractor.currentUser
                 if self.currentUser == nil {
                     self.myAvatars = []
                     self.isLoading = false
@@ -81,18 +81,18 @@ extension ProfileViewModel {
     }
     
     func onNewAvatarButtonPressed() {
-        profileUseCase.trackEvent(event: Event.newAvatarPressed)
+        profileInteractor.trackEvent(event: Event.newAvatarPressed)
         router.showCreateAvatarView {
             Task { [weak self] in
                 guard let self else { return }
-                guard self.profileUseCase.currentUser != nil else { return }
+                guard self.profileInteractor.currentUser != nil else { return }
                 await self.loadData()
             }
         }
     }
     
     func onAvatarSelected(avatar: AvatarModel) {
-        profileUseCase
+        profileInteractor
             .trackEvent(
                 event: Event.avatarPressed(
                     avatar: avatar
@@ -105,7 +105,7 @@ extension ProfileViewModel {
     func onDeleteAvatar(indexSet: IndexSet) {
         guard let index = indexSet.first else { return }
         let avatar = myAvatars[index]
-        profileUseCase
+        profileInteractor
             .trackEvent(
                 event: Event.deleteAvatarStart(
                     avatar: avatar
@@ -115,12 +115,12 @@ extension ProfileViewModel {
         Task { @MainActor [weak self] in
             guard let self else { return }
             do {
-                try await self.profileUseCase
+                try await self.profileInteractor
                     .removeAuthorIdFromAvatar(avatarId: avatar.id)
                 if let removalIndex = self.myAvatars
                     .firstIndex(where: { $0.id == avatar.id }) {
                     self.myAvatars.remove(at: removalIndex)
-                    self.profileUseCase
+                    self.profileInteractor
                         .trackEvent(
                             event: Event.deleteAvatarSuccess(
                                 avatar: avatar
@@ -129,7 +129,7 @@ extension ProfileViewModel {
                 } else {
                     // Avatar not found locally despite server deletion success
                     // This indicates a state inconsistency - log as failure
-                    self.profileUseCase
+                    self.profileInteractor
                         .trackEvent(
                             event: Event.deleteAvatarFail(
                                 error: NSError(
@@ -147,7 +147,7 @@ extension ProfileViewModel {
                     title: "Unable to delete avatar",
                     subtitle: "Please try again later."
                 )
-                self.profileUseCase
+                self.profileInteractor
                     .trackEvent(
                         event: Event.deleteAvatarFail(
                             error: error
@@ -178,7 +178,7 @@ extension ProfileViewModel {
 }
 
 // MARK: - Event
-extension ProfileViewModel {
+extension ProfilePresenter {
     
     enum Event: LoggableEvent {
         case loadAvatarsStart
