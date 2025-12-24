@@ -9,7 +9,7 @@ import Foundation
 
 @MainActor
 @Observable
-final class NewsFeedViewModel {
+final class NewsFeedPresenter {
     
     // MARK: - State
     enum State: Equatable {
@@ -44,7 +44,7 @@ final class NewsFeedViewModel {
     }
     
     // MARK: - Dependencies
-    private let newsFeedUseCase: NewsFeedUseCaseProtocol
+    private let newsFeedInteractor: NewsFeedInteractorProtocol
     private let router: NewsFeedRouterProtocol
 
     // MARK: - Published Properties
@@ -64,7 +64,7 @@ final class NewsFeedViewModel {
     }
 
     var isConnected: Bool {
-        newsFeedUseCase.isConnected
+        newsFeedInteractor.isConnected
     }
 
     // Helper to track current query context
@@ -81,10 +81,10 @@ final class NewsFeedViewModel {
 
     // MARK: - Initialization
     init(
-        newsFeedUseCase: NewsFeedUseCaseProtocol,
+        newsFeedInteractor: NewsFeedInteractorProtocol,
         router: NewsFeedRouterProtocol
     ) {
-        self.newsFeedUseCase = newsFeedUseCase
+        self.newsFeedInteractor = newsFeedInteractor
         self.router = router
     }
 
@@ -143,7 +143,7 @@ final class NewsFeedViewModel {
     }
 
     func handleConnectivityChangeAndWait() async {
-        let isNowConnected = newsFeedUseCase.isConnected
+        let isNowConnected = newsFeedInteractor.isConnected
 
         if isNowConnected && wasDisconnected && isDataFromLocal {
             print("🔍 ViewModel: Connectivity restored! Auto-refreshing from remote...")
@@ -197,10 +197,10 @@ final class NewsFeedViewModel {
             let result: NewsFeedResult
             if let category = currentCategory {
                 print("🔍 ViewModel: Fetching News (Category: \(category), Language: \(currentLanguage ?? "nil"))")
-                result = try await newsFeedUseCase.loadNews(category: category, language: currentLanguage, page: page, pageSize: pageSize)
+                result = try await newsFeedInteractor.loadNews(category: category, language: currentLanguage, page: page, pageSize: pageSize)
             } else {
                 print("🔍 ViewModel: Fetching Top Headlines (Country: \(currentCountry ?? "nil"), Language: \(currentLanguage ?? "nil"))")
-                result = try await newsFeedUseCase.loadTopHeadlines(country: currentCountry, language: currentLanguage, page: page, pageSize: pageSize)
+                result = try await newsFeedInteractor.loadTopHeadlines(country: currentCountry, language: currentLanguage, page: page, pageSize: pageSize)
             }
             
             print("🔍 ViewModel: Success. Got \(result.articles.count) articles. Source: \(result.source). TotalResults: \(result.totalResults ?? -1)")
@@ -274,7 +274,7 @@ final class NewsFeedViewModel {
     }
 }
 
-extension NewsFeedViewModel {
+extension NewsFeedPresenter {
     var errorMessage: String? {
         guard case .error(let error) = state else { return nil }
         return error.errorDescription

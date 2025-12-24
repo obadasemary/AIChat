@@ -9,43 +9,43 @@ import Foundation
 
 @Observable
 @MainActor
-final class BookmarksViewModel {
+final class BookmarksPresenter {
 
-    private let bookmarksUseCase: BookmarksUseCaseProtocol
+    private let bookmarksInteractor: BookmarksInteractorProtocol
     private let router: BookmarksRouterProtocol
 
     private(set) var bookmarkedArticles: [NewsArticle] = []
 
     init(
-        bookmarksUseCase: BookmarksUseCaseProtocol,
+        bookmarksInteractor: BookmarksInteractorProtocol,
         router: BookmarksRouterProtocol
     ) {
-        self.bookmarksUseCase = bookmarksUseCase
+        self.bookmarksInteractor = bookmarksInteractor
         self.router = router
     }
 
     func loadBookmarks() {
-        bookmarksUseCase.trackEvent(event: Event.loadBookmarksStart)
-        bookmarkedArticles = bookmarksUseCase.getBookmarkedArticles()
-        bookmarksUseCase.trackEvent(
+        bookmarksInteractor.trackEvent(event: Event.loadBookmarksStart)
+        bookmarkedArticles = bookmarksInteractor.getBookmarkedArticles()
+        bookmarksInteractor.trackEvent(
             event: Event.loadBookmarksSuccess(count: bookmarkedArticles.count)
         )
     }
 
     func onArticleSelected(article: NewsArticle) {
-        bookmarksUseCase.trackEvent(event: Event.articlePressed(article: article))
+        bookmarksInteractor.trackEvent(event: Event.articlePressed(article: article))
         router.showNewsDetailsView(article: article)
     }
 
     func removeBookmark(article: NewsArticle) {
-        bookmarksUseCase.trackEvent(event: Event.removeBookmarkPressed(article: article))
-        bookmarksUseCase.removeBookmark(articleId: article.id)
+        bookmarksInteractor.trackEvent(event: Event.removeBookmarkPressed(article: article))
+        bookmarksInteractor.removeBookmark(articleId: article.id)
         loadBookmarks()
     }
 }
 
 // MARK: - Event
-private extension BookmarksViewModel {
+private extension BookmarksPresenter {
 
     enum Event: LoggableEvent {
         case loadBookmarksStart

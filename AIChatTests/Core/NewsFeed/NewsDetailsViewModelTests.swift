@@ -18,47 +18,47 @@ struct NewsDetailsViewModelTests {
     @Test("ViewModel Initializes With Article")
     func testViewModelInitializesWithArticle() {
         let article = NewsArticle.mock(title: "Test Article")
-        let mockUseCase = MockNewsDetailsUseCase()
+        let mockUseCase = MockNewsDetailsInteractor()
 
-        let viewModel = NewsDetailsViewModel(
+        let presenter = NewsDetailsPresenter(
             article: article,
-            newsDetailsUseCase: mockUseCase,
+            newsDetailsInteractor: mockUseCase,
             router: MockNewsDetailsRouter()
         )
 
-        #expect(viewModel.article.id == article.id)
-        #expect(viewModel.article.title == article.title)
+        #expect(presenter.article.id == article.id)
+        #expect(presenter.article.title == article.title)
     }
 
     @Test("ViewModel Loads Bookmark Status on Init")
     func testViewModelLoadsBookmarkStatusOnInit() {
         let article = NewsArticle.mock(title: "Bookmarked Article")
-        let mockUseCase = MockNewsDetailsUseCase()
+        let mockUseCase = MockNewsDetailsInteractor()
 
         // Pre-bookmark the article
         mockUseCase.addBookmark(article)
 
-        let viewModel = NewsDetailsViewModel(
+        let presenter = NewsDetailsPresenter(
             article: article,
-            newsDetailsUseCase: mockUseCase,
+            newsDetailsInteractor: mockUseCase,
             router: MockNewsDetailsRouter()
         )
 
-        #expect(viewModel.isBookmarked == true)
+        #expect(presenter.isBookmarked == true)
     }
 
     @Test("ViewModel Shows Not Bookmarked When Article Not Bookmarked")
     func testViewModelShowsNotBookmarkedWhenArticleNotBookmarked() {
         let article = NewsArticle.mock(title: "Not Bookmarked Article")
-        let mockUseCase = MockNewsDetailsUseCase()
+        let mockUseCase = MockNewsDetailsInteractor()
 
-        let viewModel = NewsDetailsViewModel(
+        let presenter = NewsDetailsPresenter(
             article: article,
-            newsDetailsUseCase: mockUseCase,
+            newsDetailsInteractor: mockUseCase,
             router: MockNewsDetailsRouter()
         )
 
-        #expect(viewModel.isBookmarked == false)
+        #expect(presenter.isBookmarked == false)
     }
 
     // MARK: - Toggle Bookmark Tests
@@ -66,68 +66,68 @@ struct NewsDetailsViewModelTests {
     @Test("Toggle Bookmark Adds Bookmark When Not Bookmarked")
     func testToggleBookmarkAddsBookmarkWhenNotBookmarked() {
         let article = NewsArticle.mock(title: "Toggle Add Test")
-        let mockUseCase = MockNewsDetailsUseCase()
+        let mockUseCase = MockNewsDetailsInteractor()
 
-        let viewModel = NewsDetailsViewModel(
+        let presenter = NewsDetailsPresenter(
             article: article,
-            newsDetailsUseCase: mockUseCase,
+            newsDetailsInteractor: mockUseCase,
             router: MockNewsDetailsRouter()
         )
 
-        #expect(viewModel.isBookmarked == false)
+        #expect(presenter.isBookmarked == false)
 
-        viewModel.toggleBookmark()
+        presenter.toggleBookmark()
 
-        #expect(viewModel.isBookmarked == true)
+        #expect(presenter.isBookmarked == true)
         #expect(mockUseCase.isArticleBookmarked(article) == true)
     }
 
     @Test("Toggle Bookmark Removes Bookmark When Bookmarked")
     func testToggleBookmarkRemovesBookmarkWhenBookmarked() {
         let article = NewsArticle.mock(title: "Toggle Remove Test")
-        let mockUseCase = MockNewsDetailsUseCase()
+        let mockUseCase = MockNewsDetailsInteractor()
 
         // Pre-bookmark the article
         mockUseCase.addBookmark(article)
 
-        let viewModel = NewsDetailsViewModel(
+        let presenter = NewsDetailsPresenter(
             article: article,
-            newsDetailsUseCase: mockUseCase,
+            newsDetailsInteractor: mockUseCase,
             router: MockNewsDetailsRouter()
         )
 
-        #expect(viewModel.isBookmarked == true)
+        #expect(presenter.isBookmarked == true)
 
-        viewModel.toggleBookmark()
+        presenter.toggleBookmark()
 
-        #expect(viewModel.isBookmarked == false)
+        #expect(presenter.isBookmarked == false)
         #expect(mockUseCase.isArticleBookmarked(article) == false)
     }
 
     @Test("Toggle Bookmark Multiple Times")
     func testToggleBookmarkMultipleTimes() {
         let article = NewsArticle.mock(title: "Toggle Multiple Test")
-        let mockUseCase = MockNewsDetailsUseCase()
+        let mockUseCase = MockNewsDetailsInteractor()
 
-        let viewModel = NewsDetailsViewModel(
+        let presenter = NewsDetailsPresenter(
             article: article,
-            newsDetailsUseCase: mockUseCase,
+            newsDetailsInteractor: mockUseCase,
             router: MockNewsDetailsRouter()
         )
 
-        #expect(viewModel.isBookmarked == false)
+        #expect(presenter.isBookmarked == false)
 
         // Toggle on
-        viewModel.toggleBookmark()
-        #expect(viewModel.isBookmarked == true)
+        presenter.toggleBookmark()
+        #expect(presenter.isBookmarked == true)
 
         // Toggle off
-        viewModel.toggleBookmark()
-        #expect(viewModel.isBookmarked == false)
+        presenter.toggleBookmark()
+        #expect(presenter.isBookmarked == false)
 
         // Toggle on again
-        viewModel.toggleBookmark()
-        #expect(viewModel.isBookmarked == true)
+        presenter.toggleBookmark()
+        #expect(presenter.isBookmarked == true)
     }
 
     // MARK: - Article Data Tests
@@ -138,15 +138,15 @@ struct NewsDetailsViewModelTests {
             title: "Important Breaking News",
             description: "This is a test description"
         )
-        let mockUseCase = MockNewsDetailsUseCase()
+        let mockUseCase = MockNewsDetailsInteractor()
 
-        let viewModel = NewsDetailsViewModel(
+        let presenter = NewsDetailsPresenter(
             article: article,
-            newsDetailsUseCase: mockUseCase,
+            newsDetailsInteractor: mockUseCase,
             router: MockNewsDetailsRouter()
         )
 
-        #expect(viewModel.article.title == "Important Breaking News")
+        #expect(presenter.article.title == "Important Breaking News")
     }
 
     @Test("ViewModel Preserves Article Content")
@@ -156,16 +156,16 @@ struct NewsDetailsViewModelTests {
             description: "Description text",
             content: "Full article content here"
         )
-        let mockUseCase = MockNewsDetailsUseCase()
+        let mockUseCase = MockNewsDetailsInteractor()
 
-        let viewModel = NewsDetailsViewModel(
+        let presenter = NewsDetailsPresenter(
             article: article,
-            newsDetailsUseCase: mockUseCase,
+            newsDetailsInteractor: mockUseCase,
             router: MockNewsDetailsRouter()
         )
 
-        #expect(viewModel.article.content == "Full article content here")
-        #expect(viewModel.article.description == "Description text")
+        #expect(presenter.article.content == "Full article content here")
+        #expect(presenter.article.description == "Description text")
     }
 
     @Test("ViewModel Preserves Article Source")
@@ -174,22 +174,22 @@ struct NewsDetailsViewModelTests {
             title: "News Article",
             source: NewsSource(id: "bbc", name: "BBC News")
         )
-        let mockUseCase = MockNewsDetailsUseCase()
+        let mockUseCase = MockNewsDetailsInteractor()
 
-        let viewModel = NewsDetailsViewModel(
+        let presenter = NewsDetailsPresenter(
             article: article,
-            newsDetailsUseCase: mockUseCase,
+            newsDetailsInteractor: mockUseCase,
             router: MockNewsDetailsRouter()
         )
 
-        #expect(viewModel.article.source.name == "BBC News")
+        #expect(presenter.article.source.name == "BBC News")
     }
 }
 
 // MARK: - Mock NewsDetailsUseCase
 
 @MainActor
-final class MockNewsDetailsUseCase: NewsDetailsUseCaseProtocol {
+final class MockNewsDetailsInteractor: NewsDetailsInteractorProtocol {
 
     let bookmarkManager: BookmarkManager
 

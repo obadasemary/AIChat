@@ -15,19 +15,19 @@ struct NewsFeedViewModelTests {
 
     @Test("Initial Data Load Success")
     func testInitialDataLoadSuccess() async throws {
-        let mockUseCase = MockNewsFeedUseCase(shouldFail: false)
+        let mockUseCase = MockNewsFeedInteractor(shouldFail: false)
 
-        let viewModel = NewsFeedViewModel(
-            newsFeedUseCase: mockUseCase,
+        let presenter = NewsFeedPresenter(
+            newsFeedInteractor: mockUseCase,
             router: MockNewsFeedRouter()
         )
 
-        #expect(viewModel.state == .idle)
+        #expect(presenter.state == .idle)
 
-        await viewModel.loadInitialDataAndWait()
+        await presenter.loadInitialDataAndWait()
 
-        #expect(!viewModel.articles.isEmpty)
-        if case .loaded = viewModel.state {
+        #expect(presenter.articles.count > 0)
+        if case .loaded = presenter.state {
             // Success
         } else {
             Issue.record("Expected state to be .loaded")
@@ -36,240 +36,240 @@ struct NewsFeedViewModelTests {
 
     @Test("Initial Data Load Failure")
     func testInitialDataLoadFailure() async throws {
-        let mockUseCase = MockNewsFeedUseCase(shouldFail: true, failWithError: NewsFeedError.networkError)
+        let mockUseCase = MockNewsFeedInteractor(shouldFail: true, failWithError: NewsFeedError.networkError)
 
-        let viewModel = NewsFeedViewModel(
-            newsFeedUseCase: mockUseCase,
+        let presenter = NewsFeedPresenter(
+            newsFeedInteractor: mockUseCase,
             router: MockNewsFeedRouter()
         )
 
-        await viewModel.loadInitialDataAndWait()
+        await presenter.loadInitialDataAndWait()
 
-        if case .error = viewModel.state {
+        if case .error = presenter.state {
             // Success
         } else {
             Issue.record("Expected state to be .error")
         }
-        #expect(viewModel.errorMessage != nil)
+        #expect(presenter.errorMessage != nil)
     }
 
     // MARK: - Refresh Tests
 
     @Test("Refresh Data Resets Page and Articles")
     func testRefreshDataResetsPageAndArticles() async throws {
-        let mockUseCase = MockNewsFeedUseCase(shouldFail: false)
+        let mockUseCase = MockNewsFeedInteractor(shouldFail: false)
 
-        let viewModel = NewsFeedViewModel(
-            newsFeedUseCase: mockUseCase,
+        let presenter = NewsFeedPresenter(
+            newsFeedInteractor: mockUseCase,
             router: MockNewsFeedRouter()
         )
 
         // Load initial data
-        await viewModel.loadInitialDataAndWait()
+        await presenter.loadInitialDataAndWait()
 
-        _ = viewModel.articles.count
+        let initialCount = presenter.articles.count
 
         // Refresh
-        await viewModel.refreshDataAndWait()
+        await presenter.refreshDataAndWait()
 
-        #expect(viewModel.currentPage == 1)
-        #expect(!viewModel.articles.isEmpty)
+        #expect(presenter.currentPage == 1)
+        #expect(presenter.articles.count > 0)
     }
 
     // MARK: - Pagination Tests
 
     @Test("Load More Data Increments Page")
     func testLoadMoreDataIncrementsPage() async throws {
-        let mockUseCase = MockNewsFeedUseCase(shouldFail: false, totalResults: 100)
+        let mockUseCase = MockNewsFeedInteractor(shouldFail: false, totalResults: 100)
 
-        let viewModel = NewsFeedViewModel(
-            newsFeedUseCase: mockUseCase,
+        let presenter = NewsFeedPresenter(
+            newsFeedInteractor: mockUseCase,
             router: MockNewsFeedRouter()
         )
 
         // Load initial data
-        await viewModel.loadInitialDataAndWait()
+        await presenter.loadInitialDataAndWait()
 
-        let initialCount = viewModel.articles.count
-        #expect(viewModel.currentPage == 1)
+        let initialCount = presenter.articles.count
+        #expect(presenter.currentPage == 1)
 
         // Load more
-        await viewModel.loadMoreDataAndWait()
+        await presenter.loadMoreDataAndWait()
 
-        #expect(viewModel.currentPage == 2)
-        #expect(viewModel.articles.count > initialCount)
+        #expect(presenter.currentPage == 2)
+        #expect(presenter.articles.count > initialCount)
     }
 
     @Test("Load More Data Stops When No More Pages")
     func testLoadMoreDataStopsWhenNoMorePages() async throws {
-        let mockUseCase = MockNewsFeedUseCase(shouldFail: false, totalResults: 10)
+        let mockUseCase = MockNewsFeedInteractor(shouldFail: false, totalResults: 10)
 
-        let viewModel = NewsFeedViewModel(
-            newsFeedUseCase: mockUseCase,
+        let presenter = NewsFeedPresenter(
+            newsFeedInteractor: mockUseCase,
             router: MockNewsFeedRouter()
         )
 
         // Load initial data (pageSize=20, but only 10 total)
-        await viewModel.loadInitialDataAndWait()
+        await presenter.loadInitialDataAndWait()
 
-        #expect(viewModel.hasMorePages == false)
+        #expect(presenter.hasMorePages == false)
 
-        let articleCountBeforeLoadMore = viewModel.articles.count
+        let articleCountBeforeLoadMore = presenter.articles.count
 
         // Try to load more
-        await viewModel.loadMoreDataAndWait()
+        await presenter.loadMoreDataAndWait()
 
         // Should not have loaded more
-        #expect(viewModel.articles.count == articleCountBeforeLoadMore)
-        #expect(viewModel.currentPage == 1)
+        #expect(presenter.articles.count == articleCountBeforeLoadMore)
+        #expect(presenter.currentPage == 1)
     }
 
     @Test("isLoadingMore Flag During Pagination")
     func testIsLoadingMoreFlagDuringPagination() async throws {
-        let mockUseCase = MockNewsFeedUseCase(shouldFail: false)
+        let mockUseCase = MockNewsFeedInteractor(shouldFail: false)
 
-        let viewModel = NewsFeedViewModel(
-            newsFeedUseCase: mockUseCase,
+        let presenter = NewsFeedPresenter(
+            newsFeedInteractor: mockUseCase,
             router: MockNewsFeedRouter()
         )
 
         // Load initial data
-        await viewModel.loadInitialDataAndWait()
+        await presenter.loadInitialDataAndWait()
 
-        #expect(viewModel.isLoadingMore == false)
+        #expect(presenter.isLoadingMore == false)
 
         // Start loading more
-        await viewModel.loadMoreDataAndWait()
-        #expect(viewModel.isLoadingMore == false)
+        await presenter.loadMoreDataAndWait()
+        #expect(presenter.isLoadingMore == false)
     }
 
     // MARK: - Connectivity Tests
 
     @Test("Data Source Indicator Shows Remote")
     func testDataSourceIndicatorShowsRemote() async throws {
-        let mockUseCase = MockNewsFeedUseCase(shouldFail: false, dataSource: .remote, isConnected: true)
+        let mockUseCase = MockNewsFeedInteractor(shouldFail: false, dataSource: .remote, isConnected: true)
 
-        let viewModel = NewsFeedViewModel(
-            newsFeedUseCase: mockUseCase,
+        let presenter = NewsFeedPresenter(
+            newsFeedInteractor: mockUseCase,
             router: MockNewsFeedRouter()
         )
 
-        await viewModel.loadInitialDataAndWait()
+        await presenter.loadInitialDataAndWait()
 
-        #expect(viewModel.isDataFromRemote == true)
-        #expect(viewModel.isDataFromLocal == false)
+        #expect(presenter.isDataFromRemote == true)
+        #expect(presenter.isDataFromLocal == false)
     }
 
     @Test("Data Source Indicator Shows Local")
     func testDataSourceIndicatorShowsLocal() async throws {
-        let mockUseCase = MockNewsFeedUseCase(shouldFail: false, dataSource: .local, isConnected: false)
+        let mockUseCase = MockNewsFeedInteractor(shouldFail: false, dataSource: .local, isConnected: false)
 
-        let viewModel = NewsFeedViewModel(
-            newsFeedUseCase: mockUseCase,
+        let presenter = NewsFeedPresenter(
+            newsFeedInteractor: mockUseCase,
             router: MockNewsFeedRouter()
         )
 
-        await viewModel.loadInitialDataAndWait()
+        await presenter.loadInitialDataAndWait()
 
-        #expect(viewModel.isDataFromRemote == false)
-        #expect(viewModel.isDataFromLocal == true)
+        #expect(presenter.isDataFromRemote == false)
+        #expect(presenter.isDataFromLocal == true)
     }
 
     @Test("Auto-Refresh on Connectivity Restored")
     func testAutoRefreshOnConnectivityRestored() async throws {
-        let mockUseCase = MockNewsFeedUseCase(shouldFail: false, dataSource: .local, isConnected: false)
+        let mockUseCase = MockNewsFeedInteractor(shouldFail: false, dataSource: .local, isConnected: false)
 
-        let viewModel = NewsFeedViewModel(
-            newsFeedUseCase: mockUseCase,
+        let presenter = NewsFeedPresenter(
+            newsFeedInteractor: mockUseCase,
             router: MockNewsFeedRouter()
         )
 
         // Load initial data while offline
-        await viewModel.loadInitialDataAndWait()
+        await presenter.loadInitialDataAndWait()
 
-        #expect(viewModel.isDataFromLocal == true)
+        #expect(presenter.isDataFromLocal == true)
 
         // First handleConnectivityChange to set wasDisconnected = true
-        await viewModel.handleConnectivityChangeAndWait()
+        await presenter.handleConnectivityChangeAndWait()
 
         // Restore connectivity and change data source to remote
         mockUseCase.setDataSource(.remote)
         mockUseCase.isConnected = true
-        await viewModel.handleConnectivityChangeAndWait()
+        await presenter.handleConnectivityChangeAndWait()
 
-        #expect(viewModel.isDataFromRemote == true)
+        #expect(presenter.isDataFromRemote == true)
     }
 
     @Test("No Auto-Refresh When Already Remote")
     func testNoAutoRefreshWhenAlreadyRemote() async throws {
-        let mockUseCase = MockNewsFeedUseCase(shouldFail: false, dataSource: .remote, isConnected: true)
+        let mockUseCase = MockNewsFeedInteractor(shouldFail: false, dataSource: .remote, isConnected: true)
 
-        let viewModel = NewsFeedViewModel(
-            newsFeedUseCase: mockUseCase,
+        let presenter = NewsFeedPresenter(
+            newsFeedInteractor: mockUseCase,
             router: MockNewsFeedRouter()
         )
 
         // Load initial data while online
-        await viewModel.loadInitialDataAndWait()
+        await presenter.loadInitialDataAndWait()
 
-        let initialArticleCount = viewModel.articles.count
+        let initialArticleCount = presenter.articles.count
 
         // Connectivity change (still connected)
-        await viewModel.handleConnectivityChangeAndWait()
+        await presenter.handleConnectivityChangeAndWait()
 
         // Should not have refreshed since data was already from remote
-        #expect(viewModel.articles.count == initialArticleCount)
+        #expect(presenter.articles.count == initialArticleCount)
     }
 
     // MARK: - Error Mapping Tests
 
     @Test("Network Error Mapping")
     func testNetworkErrorMapping() async throws {
-        let mockUseCase = MockNewsFeedUseCase(shouldFail: true, failWithError: NewsFeedError.networkError)
+        let mockUseCase = MockNewsFeedInteractor(shouldFail: true, failWithError: NewsFeedError.networkError)
 
-        let viewModel = NewsFeedViewModel(
-            newsFeedUseCase: mockUseCase,
+        let presenter = NewsFeedPresenter(
+            newsFeedInteractor: mockUseCase,
             router: MockNewsFeedRouter()
         )
 
-        await viewModel.loadInitialDataAndWait()
+        await presenter.loadInitialDataAndWait()
 
-        #expect(viewModel.errorMessage != nil)
-        #expect(viewModel.errorMessage?.contains("Network") == true || viewModel.errorMessage?.contains("network") == true)
+        #expect(presenter.errorMessage != nil)
+        #expect(presenter.errorMessage?.contains("Network") == true || presenter.errorMessage?.contains("network") == true)
     }
 
     @Test("Invalid Response Error Mapping")
     func testInvalidResponseErrorMapping() async throws {
-        let mockUseCase = MockNewsFeedUseCase(shouldFail: true, failWithError: NewsFeedError.invalidResponse)
+        let mockUseCase = MockNewsFeedInteractor(shouldFail: true, failWithError: NewsFeedError.invalidResponse)
 
-        let viewModel = NewsFeedViewModel(
-            newsFeedUseCase: mockUseCase,
+        let presenter = NewsFeedPresenter(
+            newsFeedInteractor: mockUseCase,
             router: MockNewsFeedRouter()
         )
 
-        await viewModel.loadInitialDataAndWait()
+        await presenter.loadInitialDataAndWait()
 
-        #expect(viewModel.errorMessage != nil)
-        #expect(viewModel.errorMessage?.contains("Invalid") == true || viewModel.errorMessage?.contains("invalid") == true)
+        #expect(presenter.errorMessage != nil)
+        #expect(presenter.errorMessage?.contains("Invalid") == true || presenter.errorMessage?.contains("invalid") == true)
     }
 
     // MARK: - State Management Tests
 
     @Test("State Transitions During Load")
     func testStateTransitionsDuringLoad() async throws {
-        let mockUseCase = MockNewsFeedUseCase(shouldFail: false)
+        let mockUseCase = MockNewsFeedInteractor(shouldFail: false)
 
-        let viewModel = NewsFeedViewModel(
-            newsFeedUseCase: mockUseCase,
+        let presenter = NewsFeedPresenter(
+            newsFeedInteractor: mockUseCase,
             router: MockNewsFeedRouter()
         )
 
         // Initial state
-        #expect(viewModel.state == .idle)
+        #expect(presenter.state == .idle)
 
         // Start loading
-        await viewModel.loadInitialDataAndWait()
-        if case .loaded = viewModel.state {
+        await presenter.loadInitialDataAndWait()
+        if case .loaded = presenter.state {
             // Success
         } else {
             Issue.record("Expected state to be .loaded")
@@ -277,7 +277,7 @@ struct NewsFeedViewModelTests {
     }
 }
 
-// MARK: - Mock NewsFeedUseCase
+// MARK: - Mock NewsFeedInteractor
 
 @MainActor
 final class MockNewsFeedRouter: NewsFeedRouterProtocol {
@@ -291,7 +291,7 @@ final class MockNewsFeedRouter: NewsFeedRouterProtocol {
 }
 
 @MainActor
-final class MockNewsFeedUseCase: NewsFeedUseCaseProtocol {
+final class MockNewsFeedInteractor: NewsFeedInteractorProtocol {
     var shouldFail: Bool
     var failWithError: Error?
     var totalResults: Int

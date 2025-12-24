@@ -9,14 +9,14 @@ import SwiftUI
 
 struct NewsDetailsView: View {
 
-    @State var viewModel: NewsDetailsViewModel
+    @State var presenter: NewsDetailsPresenter
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 // Article Image
-                if let imageUrl = viewModel.article.imageUrl, let url = URL(string: imageUrl) {
+                if let imageUrl = presenter.article.imageUrl, let url = URL(string: imageUrl) {
                     AsyncImage(url: url) { phase in
                         switch phase {
                         case .empty:
@@ -44,7 +44,7 @@ struct NewsDetailsView: View {
                 // Article Content
                 VStack(alignment: .leading, spacing: 16) {
                     // Title
-                    Text(viewModel.article.title)
+                    Text(presenter.article.title)
                         .font(.title2)
                         .fontWeight(.bold)
                         .fixedSize(horizontal: false, vertical: true)
@@ -55,7 +55,7 @@ struct NewsDetailsView: View {
                             Image(systemName: "building.2")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
-                            Text(viewModel.article.source.name)
+                            Text(presenter.article.source.name)
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }
@@ -64,17 +64,17 @@ struct NewsDetailsView: View {
                             Image(systemName: "clock")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
-                            Text(viewModel.article.publishedAt, style: .date)
+                            Text(presenter.article.publishedAt, style: .date)
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                             Text("·")
                                 .foregroundStyle(.secondary)
-                            Text(viewModel.article.publishedAt, style: .time)
+                            Text(presenter.article.publishedAt, style: .time)
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }
 
-                        if let author = viewModel.article.author {
+                        if let author = presenter.article.author {
                             HStack {
                                 Image(systemName: "person")
                                     .font(.caption)
@@ -90,7 +90,7 @@ struct NewsDetailsView: View {
                         .padding(.vertical, 8)
 
                     // Description
-                    if let description = viewModel.article.description {
+                    if let description = presenter.article.description {
                         Text(description)
                             .font(.body)
                             .foregroundStyle(.primary)
@@ -99,7 +99,7 @@ struct NewsDetailsView: View {
                     }
 
                     // Content
-                    if let content = viewModel.article.content {
+                    if let content = presenter.article.content {
                         Text(content)
                             .font(.body)
                             .foregroundStyle(.primary)
@@ -107,7 +107,7 @@ struct NewsDetailsView: View {
                     }
 
                     // Read More Button
-                    if let url = URL(string: viewModel.article.url) {
+                    if let url = URL(string: presenter.article.url) {
                         Divider()
                             .padding(.vertical, 16)
 
@@ -134,7 +134,7 @@ struct NewsDetailsView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
-                    if let url = URL(string: viewModel.article.url) {
+                    if let url = URL(string: presenter.article.url) {
                         ShareLink(item: url) {
                             Label("Share Article", systemImage: "square.and.arrow.up")
                         }
@@ -143,15 +143,15 @@ struct NewsDetailsView: View {
                     }
 
                     Button {
-                        viewModel.toggleBookmark()
+                        presenter.toggleBookmark()
                     } label: {
                         Label(
-                            viewModel.isBookmarked ? "Remove Bookmark" : "Bookmark Article",
-                            systemImage: viewModel.isBookmarked ? "bookmark.fill" : "bookmark"
+                            presenter.isBookmarked ? "Remove Bookmark" : "Bookmark Article",
+                            systemImage: presenter.isBookmarked ? "bookmark.fill" : "bookmark"
                         )
                     }
-                    .accessibilityLabel(viewModel.isBookmarked ? "Remove bookmark" : "Bookmark article")
-                    .accessibilityHint(viewModel.isBookmarked ? "Removes this article from your bookmarks" : "Saves this article to your bookmarks")
+                    .accessibilityLabel(presenter.isBookmarked ? "Remove bookmark" : "Bookmark article")
+                    .accessibilityHint(presenter.isBookmarked ? "Removes this article from your bookmarks" : "Saves this article to your bookmarks")
                 } label: {
                     Image(systemName: "ellipsis.circle")
                 }

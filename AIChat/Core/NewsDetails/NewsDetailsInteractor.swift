@@ -1,5 +1,5 @@
 //
-//  NewsDetailsUseCase.swift
+//  NewsDetailsInteractor.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 12.12.2025.
@@ -8,7 +8,7 @@
 import Foundation
 
 @MainActor
-protocol NewsDetailsUseCaseProtocol {
+protocol NewsDetailsInteractorProtocol {
     var bookmarkManager: BookmarkManager { get }
     func isArticleBookmarked(_ article: NewsArticle) -> Bool
     func addBookmark(_ article: NewsArticle)
@@ -16,7 +16,7 @@ protocol NewsDetailsUseCaseProtocol {
 }
 
 @MainActor
-final class NewsDetailsUseCase: NewsDetailsUseCaseProtocol {
+final class NewsDetailsInteractor: NewsDetailsInteractorProtocol {
 
     // MARK: - Properties
     let bookmarkManager: BookmarkManager

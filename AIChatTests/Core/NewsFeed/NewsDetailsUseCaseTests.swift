@@ -17,7 +17,7 @@ struct NewsDetailsUseCaseTests {
     @Test("Is Article Bookmarked Returns False When Not Bookmarked")
     func testIsArticleBookmarkedReturnsFalseWhenNotBookmarked() {
         let container = createTestContainer()
-        let useCase = NewsDetailsUseCase(container: container)
+        let useCase = NewsDetailsInteractor(container: container)
         let article = NewsArticle.mock(title: "Test Article")
 
         let isBookmarked = useCase.isArticleBookmarked(article)
@@ -28,7 +28,7 @@ struct NewsDetailsUseCaseTests {
     @Test("Is Article Bookmarked Returns True When Bookmarked")
     func testIsArticleBookmarkedReturnsTrueWhenBookmarked() {
         let container = createTestContainer()
-        let useCase = NewsDetailsUseCase(container: container)
+        let useCase = NewsDetailsInteractor(container: container)
         let article = NewsArticle.mock(title: "Bookmarked Article")
 
         useCase.addBookmark(article)
@@ -43,7 +43,7 @@ struct NewsDetailsUseCaseTests {
     @Test("Add Bookmark Saves Article to Manager")
     func testAddBookmarkSavesArticleToManager() {
         let container = createTestContainer()
-        let useCase = NewsDetailsUseCase(container: container)
+        let useCase = NewsDetailsInteractor(container: container)
         let article = NewsArticle.mock(title: "New Bookmark")
 
         guard let bookmarkManager = container.resolve(BookmarkManager.self) else {
@@ -61,7 +61,7 @@ struct NewsDetailsUseCaseTests {
     @Test("Add Bookmark Multiple Articles")
     func testAddBookmarkMultipleArticles() {
         let container = createTestContainer()
-        let useCase = NewsDetailsUseCase(container: container)
+        let useCase = NewsDetailsInteractor(container: container)
         let article1 = NewsArticle.mock(title: "Article 1")
         let article2 = NewsArticle.mock(title: "Article 2")
         let article3 = NewsArticle.mock(title: "Article 3")
@@ -80,7 +80,7 @@ struct NewsDetailsUseCaseTests {
     @Test("Remove Bookmark Removes Article from Manager")
     func testRemoveBookmarkRemovesArticleFromManager() {
         let container = createTestContainer()
-        let useCase = NewsDetailsUseCase(container: container)
+        let useCase = NewsDetailsInteractor(container: container)
         let article = NewsArticle.mock(title: "Remove Test")
 
         useCase.addBookmark(article)
@@ -94,7 +94,7 @@ struct NewsDetailsUseCaseTests {
     @Test("Remove Bookmark Non-Existent Article Does Not Crash")
     func testRemoveBookmarkNonExistentArticleDoesNotCrash() {
         let container = createTestContainer()
-        let useCase = NewsDetailsUseCase(container: container)
+        let useCase = NewsDetailsInteractor(container: container)
         let article = NewsArticle.mock(title: "Never Bookmarked")
 
         // Should not crash
@@ -106,7 +106,7 @@ struct NewsDetailsUseCaseTests {
     @Test("Remove Bookmark After Adding and Removing")
     func testRemoveBookmarkAfterAddingAndRemoving() {
         let container = createTestContainer()
-        let useCase = NewsDetailsUseCase(container: container)
+        let useCase = NewsDetailsInteractor(container: container)
         let article = NewsArticle.mock(title: "Toggle Test")
 
         // Add
@@ -129,7 +129,7 @@ struct NewsDetailsUseCaseTests {
         let container = DependencyContainer()
         // Don't register BookmarkManager
 
-        let useCase = NewsDetailsUseCase(container: container)
+        let useCase = NewsDetailsInteractor(container: container)
         let article = NewsArticle.mock(title: "Test Article")
 
         // Should not crash
@@ -143,7 +143,7 @@ struct NewsDetailsUseCaseTests {
     @Test("UseCase Uses Registered BookmarkManager")
     func testUseCaseUsesRegisteredBookmarkManager() {
         let container = createTestContainer()
-        let useCase = NewsDetailsUseCase(container: container)
+        let useCase = NewsDetailsInteractor(container: container)
         let article = NewsArticle.mock(title: "Registered Manager Test")
 
         guard let bookmarkManager = container.resolve(BookmarkManager.self) else {

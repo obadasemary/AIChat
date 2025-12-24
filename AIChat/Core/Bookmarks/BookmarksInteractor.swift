@@ -1,5 +1,5 @@
 //
-//  BookmarksUseCase.swift
+//  BookmarksInteractor.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 14.12.2025.
@@ -8,14 +8,14 @@
 import Foundation
 
 @MainActor
-protocol BookmarksUseCaseProtocol {
+protocol BookmarksInteractorProtocol {
     func getBookmarkedArticles() -> [NewsArticle]
     func removeBookmark(articleId: String)
     func trackEvent(event: any LoggableEvent)
 }
 
 @MainActor
-final class BookmarksUseCase {
+final class BookmarksInteractor {
 
     // MARK: - Properties
     private let bookmarkManager: BookmarkManager
@@ -23,10 +23,10 @@ final class BookmarksUseCase {
 
     init(container: DependencyContainer) {
         guard let bookmarkManager = container.resolve(BookmarkManager.self) else {
-            preconditionFailure("Failed to resolve BookmarkManager for BookmarksUseCase")
+            preconditionFailure("Failed to resolve BookmarkManager for BookmarksInteractor")
         }
         guard let logManager = container.resolve(LogManager.self) else {
-            preconditionFailure("Failed to resolve LogManager for BookmarksUseCase")
+            preconditionFailure("Failed to resolve LogManager for BookmarksInteractor")
         }
         self.bookmarkManager = bookmarkManager
         self.logManager = logManager
@@ -34,7 +34,7 @@ final class BookmarksUseCase {
 }
 
 @MainActor
-extension BookmarksUseCase: BookmarksUseCaseProtocol {
+extension BookmarksInteractor: BookmarksInteractorProtocol {
 
     func getBookmarkedArticles() -> [NewsArticle] {
         return bookmarkManager.getBookmarkedArticles()

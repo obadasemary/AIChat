@@ -1,5 +1,5 @@
 //
-//  NewsFeedUseCase.swift
+//  NewsFeedInteractor.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 10.12.2025.
@@ -16,7 +16,7 @@ import Foundation
 /// By exposing connectivity through the UseCase, we maintain the proper data flow:
 /// View → ViewModel → UseCase → Manager/Service
 @MainActor
-protocol NewsFeedUseCaseProtocol {
+protocol NewsFeedInteractorProtocol {
     /// Current network connectivity status.
     /// Exposed to enable ViewModel to show appropriate UI states without directly accessing NetworkMonitor.
     var isConnected: Bool { get }
@@ -37,7 +37,7 @@ protocol NewsFeedUseCaseProtocol {
 }
 
 @MainActor
-final class NewsFeedUseCase: NewsFeedUseCaseProtocol {
+final class NewsFeedInteractor: NewsFeedInteractorProtocol {
 
     private let newsFeedManager: NewsFeedManagerProtocol
     private let networkMonitor: NetworkMonitorProtocol
@@ -50,11 +50,11 @@ final class NewsFeedUseCase: NewsFeedUseCaseProtocol {
 
     init(container: DependencyContainer) {
         guard let newsFeedManager = container.resolve(NewsFeedManager.self) else {
-            preconditionFailure("Failed to resolve NewsFeedManager for NewsFeedUseCase")
+            preconditionFailure("Failed to resolve NewsFeedManager for NewsFeedInteractor")
         }
         // Resolve NetworkMonitorProtocol to enable mock injection during testing
         guard let networkMonitor = container.resolve(NetworkMonitorProtocol.self) else {
-            preconditionFailure("Failed to resolve NetworkMonitorProtocol for NewsFeedUseCase")
+            preconditionFailure("Failed to resolve NetworkMonitorProtocol for NewsFeedInteractor")
         }
         self.newsFeedManager = newsFeedManager
         self.networkMonitor = networkMonitor
