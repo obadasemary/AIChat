@@ -24,12 +24,12 @@ final class BookmarksBuilder {
             router: router,
             newsDetailsBuilder: newsDetailsBuilder
         )
-        let bookmarksUseCase = BookmarksUseCase(container: container)
-        let viewModel = BookmarksViewModel(
-            bookmarksUseCase: bookmarksUseCase,
+        let bookmarksInteractor = BookmarksInteractor(container: container)
+        let viewModel = BookmarksPresenter(
+            bookmarksInteractor: bookmarksInteractor,
             router: bookmarksRouter
         )
 
-        return BookmarksView(viewModel: viewModel)
+        return BookmarksView(presenter: viewModel)
     }
 }

@@ -23,7 +23,7 @@ struct BookmarksUseCaseTests {
     @Test("Get Bookmarked Articles Returns Empty Array When No Bookmarks")
     func testGetBookmarkedArticlesReturnsEmptyArrayWhenNoBookmarks() {
         let container = createTestContainer()
-        let useCase = BookmarksUseCase(container: container)
+        let useCase = BookmarksInteractor(container: container)
 
         let articles = useCase.getBookmarkedArticles()
 
@@ -46,7 +46,7 @@ struct BookmarksUseCaseTests {
         bookmarkManager.addBookmark(article2)
         bookmarkManager.addBookmark(article3)
 
-        let useCase = BookmarksUseCase(container: container)
+        let useCase = BookmarksInteractor(container: container)
         let articles = useCase.getBookmarkedArticles()
 
         #expect(articles.count == 3)
@@ -71,7 +71,7 @@ struct BookmarksUseCaseTests {
 
         bookmarkManager.addBookmark(article)
 
-        let useCase = BookmarksUseCase(container: container)
+        let useCase = BookmarksInteractor(container: container)
         let articles = useCase.getBookmarkedArticles()
 
         #expect(articles.count == 1)
@@ -89,7 +89,7 @@ struct BookmarksUseCaseTests {
             Issue.record("BookmarkManager not found in container")
             return
         }
-        let useCase = BookmarksUseCase(container: container)
+        let useCase = BookmarksInteractor(container: container)
 
         let article = NewsArticle.mock(title: "Remove Test")
         bookmarkManager.addBookmark(article)
@@ -109,7 +109,7 @@ struct BookmarksUseCaseTests {
             Issue.record("BookmarkManager not found in container")
             return
         }
-        let useCase = BookmarksUseCase(container: container)
+        let useCase = BookmarksInteractor(container: container)
 
         let article1 = NewsArticle.mock(title: "Article 1")
         let article2 = NewsArticle.mock(title: "Article 2")
@@ -131,7 +131,7 @@ struct BookmarksUseCaseTests {
     @Test("Remove Bookmark Non-Existent Article Does Not Crash")
     func testRemoveBookmarkNonExistentArticleDoesNotCrash() {
         let container = createTestContainer()
-        let useCase = BookmarksUseCase(container: container)
+        let useCase = BookmarksInteractor(container: container)
 
         // Should not crash
         useCase.removeBookmark(articleId: "non-existent-id")
@@ -144,7 +144,7 @@ struct BookmarksUseCaseTests {
     @Test("Track Event Does Not Crash")
     func testTrackEventDoesNotCrash() {
         let container = createTestContainer()
-        let useCase = BookmarksUseCase(container: container)
+        let useCase = BookmarksInteractor(container: container)
 
         let event = MockLoggableEvent(name: "test_event")
 
@@ -157,7 +157,7 @@ struct BookmarksUseCaseTests {
     @Test("Track Event With Parameters Does Not Crash")
     func testTrackEventWithParametersDoesNotCrash() {
         let container = createTestContainer()
-        let useCase = BookmarksUseCase(container: container)
+        let useCase = BookmarksInteractor(container: container)
 
         let parameters: [String: Any] = ["key1": "value1", "key2": 42]
         let event = MockLoggableEvent(name: "test_event", parameters: parameters)
@@ -177,7 +177,7 @@ struct BookmarksUseCaseTests {
             Issue.record("BookmarkManager not found in container")
             return
         }
-        let useCase = BookmarksUseCase(container: container)
+        let useCase = BookmarksInteractor(container: container)
 
         let article = NewsArticle.mock(title: "Test Article")
 
