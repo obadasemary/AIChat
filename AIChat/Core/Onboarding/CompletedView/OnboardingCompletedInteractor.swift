@@ -1,5 +1,5 @@
 //
-//  OnboardingCompletedUseCase.swift
+//  OnboardingCompletedInteractor.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 29.07.2025.
@@ -8,14 +8,14 @@
 import Foundation
 
 @MainActor
-protocol OnboardingCompletedUseCaseProtocol {
+protocol OnboardingCompletedInteractorProtocol {
     func markOnboardingCompleteForCurrentUser(profileColorHex: String) async throws
     func updateAppState(showTabBarView: Bool)
     func trackEvent(event: any LoggableEvent)
 }
 
 @MainActor
-final class OnboardingCompletedUseCase {
+final class OnboardingCompletedInteractor {
     
     private let userManager: UserManager
     private let appState: AppState
@@ -23,13 +23,13 @@ final class OnboardingCompletedUseCase {
     
     init(container: DependencyContainer) {
         guard let userManager = container.resolve(UserManager.self) else {
-            preconditionFailure("Failed to resolve UserManager for OnboardingCompletedUseCase")
+            preconditionFailure("Failed to resolve UserManager for OnboardingCompletedInteractor")
         }
         guard let appState = container.resolve(AppState.self) else {
-            preconditionFailure("Failed to resolve AppState for OnboardingCompletedUseCase")
+            preconditionFailure("Failed to resolve AppState for OnboardingCompletedInteractor")
         }
         guard let logManager = container.resolve(LogManager.self) else {
-            preconditionFailure("Failed to resolve LogManager for OnboardingCompletedUseCase")
+            preconditionFailure("Failed to resolve LogManager for OnboardingCompletedInteractor")
         }
         
         self.userManager = userManager
@@ -38,7 +38,7 @@ final class OnboardingCompletedUseCase {
     }
 }
 
-extension OnboardingCompletedUseCase: OnboardingCompletedUseCaseProtocol {
+extension OnboardingCompletedInteractor: OnboardingCompletedInteractorProtocol {
     
     func markOnboardingCompleteForCurrentUser(
         profileColorHex: String

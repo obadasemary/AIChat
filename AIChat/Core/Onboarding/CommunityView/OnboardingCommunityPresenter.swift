@@ -9,21 +9,21 @@ import SwiftUI
 
 @Observable
 @MainActor
-class OnboardingCommunityViewModel {
+class OnboardingCommunityPresenter {
     
-    private let onboardingCommunityUseCase: OnboardingCommunityUseCaseProtocol
+    private let onboardingCommunityInteractor: OnboardingCommunityInteractorProtocol
     private let router: OnboardingCommunityRouterProtocol
     
     init(
-        onboardingCommunityUseCase: OnboardingCommunityUseCaseProtocol,
+        onboardingCommunityInteractor: OnboardingCommunityInteractorProtocol,
         router: OnboardingCommunityRouterProtocol
     ) {
-        self.onboardingCommunityUseCase = onboardingCommunityUseCase
+        self.onboardingCommunityInteractor = onboardingCommunityInteractor
         self.router = router
     }
 }
 
-extension OnboardingCommunityViewModel {
+extension OnboardingCommunityPresenter {
     
     func onContinuePress() {
         router.showOnboardingColorView(delegate: OnboardingColorDelegate())
