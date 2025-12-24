@@ -19,8 +19,8 @@ final class WelcomeBuilder {
 
     func buildWelcomeView(router: Router) -> some View {
         WelcomeView(
-            viewModel: WelcomeViewModel(
-                welcomeUseCase: WelcomeUseCase(container: container),
+            presenter: WelcomePresenter(
+                welcomeInteractor: WelcomeInteractor(container: container),
                 router: WelcomeRouter(
                     router: router,
                     onboardingIntroBuilder: OnboardingIntroBuilder(
