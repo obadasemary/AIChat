@@ -9,9 +9,9 @@ import SwiftUI
 
 @Observable
 @MainActor
-class OnboardingColorViewModel {
+class OnboardingColorPresenter {
     
-    private let onboardingColorUseCase: OnboardingColorUseCaseProtocol
+    private let onboardingColorInteractor: OnboardingColorInteractorProtocol
     private let router: OnboardingColorRouterProtocol
     
     private(set) var selectedColor: Color?
@@ -31,19 +31,19 @@ class OnboardingColorViewModel {
     ]
     
     init(
-        onboardingColorUseCase: OnboardingColorUseCaseProtocol,
+        onboardingColorInteractor: OnboardingColorInteractorProtocol,
         router: OnboardingColorRouterProtocol
     ) {
-        self.onboardingColorUseCase = onboardingColorUseCase
+        self.onboardingColorInteractor = onboardingColorInteractor
         self.router = router
     }
 }
 
-extension OnboardingColorViewModel {
+extension OnboardingColorPresenter {
     
     func onColorPressed(color: Color) {
         selectedColor = color
-        onboardingColorUseCase
+        onboardingColorInteractor
             .trackEvent(event: Event.onboardingColorSelected)
     }
     
@@ -55,7 +55,7 @@ extension OnboardingColorViewModel {
 }
 
 // MARK: - Event
-private extension OnboardingColorViewModel {
+private extension OnboardingColorPresenter {
     
     enum Event: LoggableEvent {
         case onboardingColorSelected

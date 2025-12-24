@@ -10,25 +10,25 @@ import SwiftUI
 
 @Observable
 @MainActor
-final class OnboardingIntroViewModel {
+final class OnboardingIntroPresenter {
     
-    private let OnboardingIntroUseCase: OnboardingIntroUseCaseProtocol
+    private let OnboardingIntroInteractor: OnboardingIntroInteractorProtocol
     private let router: OnboardingIntroRouterProtocol
     
     var onboardingCommunityTest: Bool {
-        OnboardingIntroUseCase.onboardingCommunityTest
+        OnboardingIntroInteractor.onboardingCommunityTest
     }
     
     init(
-        OnboardingIntroUseCase: OnboardingIntroUseCaseProtocol,
+        OnboardingIntroInteractor: OnboardingIntroInteractorProtocol,
         router: OnboardingIntroRouterProtocol
     ) {
-        self.OnboardingIntroUseCase = OnboardingIntroUseCase
+        self.OnboardingIntroInteractor = OnboardingIntroInteractor
         self.router = router
     }
 }
 
-extension OnboardingIntroViewModel {
+extension OnboardingIntroPresenter {
     
     func onContinuePress() {
         if onboardingCommunityTest {
