@@ -194,11 +194,8 @@ final class MockNewsDetailsUseCase: NewsDetailsUseCaseProtocol {
     let bookmarkManager: BookmarkManager
 
     init() {
-        // Clear UserDefaults before creating manager to ensure clean state
-        let userDefaults = UserDefaults.standard
-        userDefaults.removeObject(forKey: "bookmarked_articles")
-        userDefaults.removeObject(forKey: "bookmarked_articles_data")
-        self.bookmarkManager = BookmarkManager()
+        // Use in-memory storage for faster, more reliable tests
+        self.bookmarkManager = BookmarkManager(isStoredInMemoryOnly: true)
     }
 
     func isArticleBookmarked(_ article: NewsArticle) -> Bool {
