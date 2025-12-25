@@ -1,5 +1,5 @@
 //
-//  BookmarksViewModelTests.swift
+//  BookmarksPresenterTests.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 14.12.2025.
@@ -9,7 +9,7 @@ import Testing
 @testable import AIChat
 
 @MainActor
-struct BookmarksViewModelTests {
+struct BookmarksPresenterTests {
 
     // MARK: - Initialization Tests
 

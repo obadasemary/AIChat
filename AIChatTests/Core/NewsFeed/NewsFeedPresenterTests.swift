@@ -1,5 +1,5 @@
 //
-//  NewsFeedViewModelTests.swift
+//  NewsFeedPresenterTests.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 11.12.2025.
@@ -9,7 +9,7 @@ import Testing
 @testable import AIChat
 
 @MainActor
-struct NewsFeedViewModelTests {
+struct NewsFeedPresenterTests {
 
     // MARK: - Initial Load Tests
 

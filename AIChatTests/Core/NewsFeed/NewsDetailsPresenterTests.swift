@@ -1,5 +1,5 @@
 //
-//  NewsDetailsViewModelTests.swift
+//  NewsDetailsPresenterTests.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 12.12.2025.
@@ -11,7 +11,7 @@ import Observation
 @testable import AIChat
 
 @MainActor
-struct NewsDetailsViewModelTests {
+struct NewsDetailsPresenterTests {
 
     // MARK: - Initialization Tests
 
