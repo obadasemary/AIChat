@@ -1,5 +1,5 @@
 //
-//  BookmarksViewModel.swift
+//  BookmarksPresenter.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 14.12.2025.

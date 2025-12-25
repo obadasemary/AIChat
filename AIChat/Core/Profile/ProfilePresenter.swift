@@ -1,5 +1,5 @@
 //
-//  ProfileViewModel.swift
+//  ProfilePresenter.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 22.07.2025.
@@ -133,7 +133,7 @@ extension ProfilePresenter {
                         .trackEvent(
                             event: Event.deleteAvatarFail(
                                 error: NSError(
-                                    domain: "ProfileViewModel",
+                                    domain: "ProfilePresenter",
                                     code: -1,
                                     userInfo: [
                                         NSLocalizedDescriptionKey: "Avatar not found in local state after server deletion"

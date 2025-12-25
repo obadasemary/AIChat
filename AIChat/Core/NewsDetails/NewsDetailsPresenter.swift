@@ -1,5 +1,5 @@
 //
-//  NewsDetailsViewModel.swift
+//  NewsDetailsPresenter.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 12.12.2025.

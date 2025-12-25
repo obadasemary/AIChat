@@ -13,7 +13,7 @@ import SUIRouting
 /// Architectural Pattern:
 /// - Follows Builder Pattern for view construction
 /// - Uses DependencyContainer (service locator) for dependency resolution
-/// - Creates UseCases directly, which internally resolve their own dependencies
+/// - Creates Interactors directly, which internally resolve their own dependencies
 /// - Provides nested builders to routers for child view navigation
 @MainActor
 @Observable
@@ -28,7 +28,7 @@ final class NewsFeedBuilder {
     func buildNewsFeedView(router: Router) -> some View {
         return NewsFeedView(
             presenter: NewsFeedPresenter(
-                // UseCase handles its own dependency resolution from container
+                // Interactor handles its own dependency resolution from container
                 // This keeps builder logic simple while maintaining testability
                 newsFeedInteractor: NewsFeedInteractor(container: container),
                 router: NewsFeedRouter(
