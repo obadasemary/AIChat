@@ -95,7 +95,7 @@ final class NewsFeedPresenter {
     
     // MARK: - Public Methods
     func loadInitialData() {
-        print("🔍 ViewModel: loadInitialData called. State: \(state)")
+        print("🔍 Presenter: loadInitialData called. State: \(state)")
         Task { [weak self] in
             await self?.loadInitialDataAndWait()
         }
@@ -108,14 +108,14 @@ final class NewsFeedPresenter {
     }
     
     func refreshData() {
-        print("🔍 ViewModel: refreshData called")
+        print("🔍 Presenter: refreshData called")
         Task { [weak self] in
             await self?.refreshDataAndWait()
         }
     }
     
     func loadMoreData() {
-        print("🔍 ViewModel: loadMoreData called. Page: \(currentPage), HasMore: \(hasMorePages), IsLoading: \(isLoading)")
+        print("🔍 Presenter: loadMoreData called. Page: \(currentPage), HasMore: \(hasMorePages), IsLoading: \(isLoading)")
         Task { [weak self] in
             await self?.loadMoreDataAndWait()
         }
@@ -128,7 +128,7 @@ final class NewsFeedPresenter {
     }
     
     func refreshDataAndWait() async {
-        print("🔍 ViewModel: refreshDataAndWait called")
+        print("🔍 Presenter: refreshDataAndWait called")
         currentPage = 1
         hasMorePages = true
         // Keep articles empty or keep old ones depending on preference, reference does this:
@@ -146,7 +146,7 @@ final class NewsFeedPresenter {
         let isNowConnected = newsFeedInteractor.isConnected
 
         if isNowConnected && wasDisconnected && isDataFromLocal {
-            print("🔍 ViewModel: Connectivity restored! Auto-refreshing from remote...")
+            print("🔍 Presenter: Connectivity restored! Auto-refreshing from remote...")
             await refreshDataAndWait()
         }
 
@@ -154,7 +154,7 @@ final class NewsFeedPresenter {
     }
     
     func loadTopHeadlines(country: String? = "eg", language: String? = "ar") {
-        print("🔍 ViewModel: loadTopHeadlines called. Country: \(String(describing: country)), Language: \(String(describing: language))")
+        print("🔍 Presenter: loadTopHeadlines called. Country: \(String(describing: country)), Language: \(String(describing: language))")
         currentCountry = country
         currentLanguage = language
         currentCategory = nil
@@ -162,7 +162,7 @@ final class NewsFeedPresenter {
     }
 
     func loadNews(category: String?, language: String? = "ar") {
-        print("🔍 ViewModel: loadNews called. Category: \(String(describing: category)), Language: \(String(describing: language))")
+        print("🔍 Presenter: loadNews called. Category: \(String(describing: category)), Language: \(String(describing: language))")
         currentCategory = category
         currentLanguage = language
         resetAndFetch()
@@ -180,9 +180,9 @@ final class NewsFeedPresenter {
     }
 
     private func fetchData(page: Int) async {
-        print("🔍 ViewModel: fetchData called for page \(page)")
+        print("🔍 Presenter: fetchData called for page \(page)")
         guard !isLoading else {
-            print("🔍 ViewModel: Already loading. Skipping.")
+            print("🔍 Presenter: Already loading. Skipping.")
             return
         }
         isLoading = true
@@ -196,14 +196,14 @@ final class NewsFeedPresenter {
         do {
             let result: NewsFeedResult
             if let category = currentCategory {
-                print("🔍 ViewModel: Fetching News (Category: \(category), Language: \(currentLanguage ?? "nil"))")
+                print("🔍 Presenter: Fetching News (Category: \(category), Language: \(currentLanguage ?? "nil"))")
                 result = try await newsFeedInteractor.loadNews(category: category, language: currentLanguage, page: page, pageSize: pageSize)
             } else {
-                print("🔍 ViewModel: Fetching Top Headlines (Country: \(currentCountry ?? "nil"), Language: \(currentLanguage ?? "nil"))")
+                print("🔍 Presenter: Fetching Top Headlines (Country: \(currentCountry ?? "nil"), Language: \(currentLanguage ?? "nil"))")
                 result = try await newsFeedInteractor.loadTopHeadlines(country: currentCountry, language: currentLanguage, page: page, pageSize: pageSize)
             }
             
-            print("🔍 ViewModel: Success. Got \(result.articles.count) articles. Source: \(result.source). TotalResults: \(result.totalResults ?? -1)")
+            print("🔍 Presenter: Success. Got \(result.articles.count) articles. Source: \(result.source). TotalResults: \(result.totalResults ?? -1)")
 
             if page == 1 {
                 articles = result.articles
@@ -218,20 +218,20 @@ final class NewsFeedPresenter {
             if let total = result.totalResults {
                 // Check if we have fetched all available articles
                 hasMorePages = articles.count < total
-                print("🔍 ViewModel: Pagination - Fetched \(articles.count) of \(total). HasMore: \(hasMorePages)")
+                print("🔍 Presenter: Pagination - Fetched \(articles.count) of \(total). HasMore: \(hasMorePages)")
             } else {
                 // Fallback for local storage (no totalResults)
                 // If we got fewer articles than requested, there are no more pages
                 hasMorePages = result.articles.count >= pageSize
-                print("🔍 ViewModel: Pagination - No totalResults. Got \(result.articles.count) articles (pageSize: \(pageSize)). HasMore: \(hasMorePages)")
+                print("🔍 Presenter: Pagination - No totalResults. Got \(result.articles.count) articles (pageSize: \(pageSize)). HasMore: \(hasMorePages)")
             }
 
             dataSource = result.source
             state = .loaded(articles)
-            print("🔍 ViewModel: State updated to .loaded. Articles count: \(articles.count)")
+            print("🔍 Presenter: State updated to .loaded. Articles count: \(articles.count)")
             
         } catch {
-            print("🚨 ViewModel: Error: \(error)")
+            print("🚨 Presenter: Error: \(error)")
             if page == 1 {
                 state = .error(mapError(error))
             } else {

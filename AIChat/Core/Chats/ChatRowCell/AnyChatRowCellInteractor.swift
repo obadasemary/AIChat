@@ -27,11 +27,11 @@ struct AnyChatRowCellInteractor: ChatRowCellInteractorProtocol {
         self.anyTrackEvent = trackEvent
     }
     
-    init(useCase: ChatRowCellInteractorProtocol) {
-        self.anyAuth = useCase.auth
-        self.anyGetAvatar = useCase.getAvatar
-        self.anyGetLastChatMessage = useCase.getLastChatMessage
-        self.anyTrackEvent = useCase.trackEvent
+    init(interactor: ChatRowCellInteractorProtocol) {
+        self.anyAuth = interactor.auth
+        self.anyGetAvatar = interactor.getAvatar
+        self.anyGetLastChatMessage = interactor.getLastChatMessage
+        self.anyTrackEvent = interactor.trackEvent
     }
     
     var auth: UserAuthInfo? {

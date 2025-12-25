@@ -11,14 +11,14 @@ import Foundation
 ///
 /// Architectural Note on Network Connectivity:
 /// The `isConnected` property is exposed through this Interactor protocol to maintain proper
-/// separation of concerns in Clean Architecture. The ViewModel needs network status to show
+/// separation of concerns in Clean Architecture. The Presenter needs network status to show
 /// appropriate UI states (loading, error, offline), but should not directly access NetworkMonitor.
-/// By exposing connectivity through the UseCase, we maintain the proper data flow:
-/// View → ViewModel → UseCase → Manager/Service
+/// By exposing connectivity through the Interactor, we maintain the proper data flow:
+/// View → Presenter → Interactor → Manager/Service
 @MainActor
 protocol NewsFeedInteractorProtocol {
     /// Current network connectivity status.
-    /// Exposed to enable ViewModel to show appropriate UI states without directly accessing NetworkMonitor.
+    /// Exposed to enable Presenter to show appropriate UI states without directly accessing NetworkMonitor.
     var isConnected: Bool { get }
 
     func loadNews(
