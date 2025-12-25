@@ -15,11 +15,11 @@ struct BookmarkManagerTests {
     // MARK: - Helper Methods
 
     private func createCleanManager() -> BookmarkManager {
-        // Clear UserDefaults before creating manager
+        // Clear legacy keys and use in-memory store to avoid cross-test contamination
         let userDefaults = UserDefaults.standard
         userDefaults.removeObject(forKey: "bookmarked_articles")
         userDefaults.removeObject(forKey: "bookmarked_articles_data")
-        return BookmarkManager()
+        return BookmarkManager(isStoredInMemoryOnly: true)
     }
 
     // MARK: - Add Bookmark Tests

@@ -197,6 +197,7 @@ struct BookmarksUseCaseTests {
     // MARK: - Helper Methods
 
     private func clearBookmarks() {
+        // In-memory stores do not persist, but clean legacy keys to be safe
         UserDefaults.standard.removeObject(forKey: "bookmarked_articles")
         UserDefaults.standard.removeObject(forKey: "bookmarked_articles_data")
     }
@@ -205,7 +206,7 @@ struct BookmarksUseCaseTests {
         clearBookmarks()
 
         let container = DependencyContainer()
-        let bookmarkManager = BookmarkManager()
+        let bookmarkManager = BookmarkManager(isStoredInMemoryOnly: true)
         let logManager = LogManager(services: [MockLogService()])
         container.register(BookmarkManager.self, bookmarkManager)
         container.register(LogManager.self, logManager)

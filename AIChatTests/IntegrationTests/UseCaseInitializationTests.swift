@@ -16,6 +16,11 @@ struct UseCaseInitializationTests {
     init() {
         let deps = Dependencies(configuration: .mock(isSignedIn: true))
         self.container = deps.container
+        // Override bookmark manager for tests to ensure isolated, in-memory storage
+        container.register(
+            BookmarkManager.self,
+            BookmarkManager(isStoredInMemoryOnly: true, storeName: "TestBookmarks")
+        )
     }
 
     @Test func test_AboutUseCase() {
