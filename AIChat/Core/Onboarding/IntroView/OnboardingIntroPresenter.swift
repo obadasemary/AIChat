@@ -1,5 +1,5 @@
 //
-//  OnboardingIntroViewModel.swift
+//  OnboardingIntroPresenter.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 29.07.2025.
