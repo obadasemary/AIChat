@@ -371,9 +371,16 @@ struct ProfileViewTests {
         
         // When
         await viewModel.loadData()
+        let initialCount = viewModel.myAvatars.count
         viewModel.onDeleteAvatar(indexSet: IndexSet(integer: 0))
-        try await Task.sleep(for: .seconds(1))
-        
+
+        // Wait for async delete to complete (with timeout)
+        var attempts = 0
+        while viewModel.myAvatars.count == initialCount && attempts < 50 {
+            try await Task.sleep(for: .milliseconds(100))
+            attempts += 1
+        }
+
         // Then
         #expect(viewModel.myAvatars.count == (mockAvatars.count - 1))
         #expect(
@@ -428,8 +435,21 @@ struct ProfileViewTests {
         // When
         await viewModel.loadData()
         viewModel.onDeleteAvatar(indexSet: IndexSet(integer: 0))
-        try await Task.sleep(for: .seconds(1))
-        
+
+        // Wait for async delete to fail and log the event (with timeout)
+        var attempts = 0
+        var hasDeleteFailEvent = false
+        while !hasDeleteFailEvent && attempts < 50 {
+            try await Task.sleep(for: .milliseconds(100))
+            hasDeleteFailEvent = mockLogService.trackedEvents.contains {
+                $0.eventName == ProfileViewModel
+                    .Event
+                    .deleteAvatarFail(error: URLError(.badURL))
+                    .eventName
+            }
+            attempts += 1
+        }
+
         // Then
         #expect(viewModel.myAvatars.count == mockAvatars.count)
         #expect(
@@ -479,9 +499,16 @@ struct ProfileViewTests {
         
         // When: Delete an avatar that exists in the array
         // This should succeed and log success (happy path)
+        let initialCount = viewModel.myAvatars.count
         viewModel.onDeleteAvatar(indexSet: IndexSet(integer: 0))
-        try await Task.sleep(for: .seconds(1))
-        
+
+        // Wait for async delete to complete (with timeout)
+        var attempts = 0
+        while viewModel.myAvatars.count == initialCount && attempts < 50 {
+            try await Task.sleep(for: .milliseconds(100))
+            attempts += 1
+        }
+
         // Then: Verify success is logged when avatar is found and removed
         let successEvents = trackedEvents.filter {
             if case ProfileViewModel.Event.deleteAvatarSuccess = $0 {
