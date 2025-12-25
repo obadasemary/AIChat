@@ -13,7 +13,7 @@ struct BookmarksPresenterTests {
 
     // MARK: - Initialization Tests
 
-    @Test("ViewModel Initializes With Empty Bookmarks")
+    @Test("Presenter Initializes With Empty Bookmarks")
     func testViewModelInitializesWithEmptyBookmarks() {
         let mockInteractor = MockBookmarksInteractor()
         let mockRouter = MockBookmarksRouter()

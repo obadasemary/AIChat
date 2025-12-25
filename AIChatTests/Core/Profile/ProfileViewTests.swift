@@ -230,13 +230,13 @@ struct ProfileViewTests {
     
     @Test("Settings sign-in reloads profile data")
     func testSettingsSignInReloadsProfileData() async throws {
-        let useCase = MutableProfileInteractor()
-        useCase.currentUser = nil
-        useCase.avatars = AvatarModel.mocks
+        let interactor = MutableProfileInteractor()
+        interactor.currentUser = nil
+        interactor.avatars = AvatarModel.mocks
         
         let router = MockProfileRouter()
         let presenter = ProfilePresenter(
-            profileInteractor: useCase,
+            profileInteractor: interactor,
             router: router
         )
         
@@ -245,13 +245,13 @@ struct ProfileViewTests {
         #expect(router.showSettingsViewCalled == true)
         #expect(presenter.myAvatars.isEmpty)
         
-        useCase.currentUser = UserModel.mock
+        interactor.currentUser = UserModel.mock
         router.settingsOnSignedInCallback?()
         
         try await Task.sleep(nanoseconds: 10_000_000)
         
-        #expect(presenter.currentUser?.userId == useCase.currentUser?.userId)
-        #expect(presenter.myAvatars.count == useCase.avatars.count)
+        #expect(presenter.currentUser?.userId == interactor.currentUser?.userId)
+        #expect(presenter.myAvatars.count == interactor.avatars.count)
     }
         
     @Test("onNewAvatarButtonPressed")
@@ -484,7 +484,7 @@ struct ProfileViewTests {
         }
         
         var trackedEvents: [LoggableEvent] = []
-        let useCase = AnyProfileInteractor(
+        let interactor = AnyProfileInteractor(
             currentUser: user,
             getAuthId: { user.userId },
             getAvatarsForAuthor: { _ in avatars },
@@ -500,7 +500,7 @@ struct ProfileViewTests {
         )
         
         let presenter = ProfilePresenter(
-            profileInteractor: useCase,
+            profileInteractor: interactor,
             router: MockProfileRouter()
         )
         
