@@ -15,7 +15,7 @@ struct NewsDetailsPresenterTests {
 
     // MARK: - Initialization Tests
 
-    @Test("ViewModel Initializes With Article")
+    @Test("Presenter Initializes With Article")
     func testViewModelInitializesWithArticle() {
         let article = NewsArticle.mock(title: "Test Article")
         let mockUseCase = MockNewsDetailsInteractor()
@@ -30,7 +30,7 @@ struct NewsDetailsPresenterTests {
         #expect(presenter.article.title == article.title)
     }
 
-    @Test("ViewModel Loads Bookmark Status on Init")
+    @Test("Presenter Loads Bookmark Status on Init")
     func testViewModelLoadsBookmarkStatusOnInit() {
         let article = NewsArticle.mock(title: "Bookmarked Article")
         let mockUseCase = MockNewsDetailsInteractor()
@@ -47,7 +47,7 @@ struct NewsDetailsPresenterTests {
         #expect(presenter.isBookmarked == true)
     }
 
-    @Test("ViewModel Shows Not Bookmarked When Article Not Bookmarked")
+    @Test("Presenter Shows Not Bookmarked When Article Not Bookmarked")
     func testViewModelShowsNotBookmarkedWhenArticleNotBookmarked() {
         let article = NewsArticle.mock(title: "Not Bookmarked Article")
         let mockUseCase = MockNewsDetailsInteractor()
@@ -132,7 +132,7 @@ struct NewsDetailsPresenterTests {
 
     // MARK: - Article Data Tests
 
-    @Test("ViewModel Preserves Article Title")
+    @Test("Presenter Preserves Article Title")
     func testViewModelPreservesArticleTitle() {
         let article = NewsArticle.mock(
             title: "Important Breaking News",
@@ -149,7 +149,7 @@ struct NewsDetailsPresenterTests {
         #expect(presenter.article.title == "Important Breaking News")
     }
 
-    @Test("ViewModel Preserves Article Content")
+    @Test("Presenter Preserves Article Content")
     func testViewModelPreservesArticleContent() {
         let article = NewsArticle.mock(
             title: "News Article",
@@ -168,7 +168,7 @@ struct NewsDetailsPresenterTests {
         #expect(presenter.article.description == "Description text")
     }
 
-    @Test("ViewModel Preserves Article Source")
+    @Test("Presenter Preserves Article Source")
     func testViewModelPreservesArticleSource() {
         let article = NewsArticle.mock(
             title: "News Article",

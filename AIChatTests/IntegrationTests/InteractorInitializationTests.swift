@@ -24,39 +24,39 @@ struct UseCaseInitializationTests {
     }
 
     @Test func test_AboutInteractor() {
-        let useCase = AboutInteractor(container: container)
-        #expect(useCase.appVersion != "Unknown")
+        let interactor = AboutInteractor(container: container)
+        #expect(interactor.appVersion != "Unknown")
     }
 
     @Test func test_AppViewInteractor() {
-        let useCase = AppViewInteractor(container: container)
-        #expect(useCase.showTabBar == true)
+        let interactor = AppViewInteractor(container: container)
+        #expect(interactor.showTabBar == true)
     }
 
     @Test func test_BookmarksInteractor() {
-        let useCase = BookmarksInteractor(container: container)
-        #expect(useCase.getBookmarkedArticles().isEmpty)
+        let interactor = BookmarksInteractor(container: container)
+        #expect(interactor.getBookmarkedArticles().isEmpty)
     }
 
     @Test func test_CategoryListInteractor() async throws {
-        let useCase = CategoryListInteractor(container: container)
-        let avatars = try await useCase.getAvatarsForCategory(category: .default)
+        let interactor = CategoryListInteractor(container: container)
+        let avatars = try await interactor.getAvatarsForCategory(category: .default)
         #expect(!avatars.isEmpty)
     }
 
     @Test func test_ChatInteractor() {
-        let useCase = ChatInteractor(container: container)
-        #expect(useCase.auth != nil)
+        let interactor = ChatInteractor(container: container)
+        #expect(interactor.auth != nil)
     }
 
     @Test func test_ChatRowCellInteractor() {
-        let useCase = ChatRowCellInteractor(container: container)
-        #expect(useCase.auth != nil)
+        let interactor = ChatRowCellInteractor(container: container)
+        #expect(interactor.auth != nil)
     }
 
     @Test func test_ChatsInteractor() throws {
-        let useCase = ChatsInteractor(container: container)
-        let avatars = try useCase.getRecentAvatars()
+        let interactor = ChatsInteractor(container: container)
+        let avatars = try interactor.getRecentAvatars()
         #expect(!avatars.isEmpty)
     }
 
@@ -65,19 +65,19 @@ struct UseCaseInitializationTests {
     }
 
     @Test func test_CreateAvatarInteractor() throws {
-        let useCase = CreateAvatarInteractor(container: container)
-        #expect(try useCase.getAuthId() != "")
+        let interactor = CreateAvatarInteractor(container: container)
+        #expect(try interactor.getAuthId() != "")
     }
 
     @Test func test_DevSettingsInteractor() {
-        let useCase = DevSettingsInteractor(container: container)
-        #expect(useCase.auth != nil)
+        let interactor = DevSettingsInteractor(container: container)
+        #expect(interactor.auth != nil)
     }
 
     @Test func test_ExploreInteractor() async throws {
-        let useCase = ExploreInteractor(container: container)
-        #expect(useCase.auth != nil)
-        let avatars = try await useCase.getFeaturedAvatars()
+        let interactor = ExploreInteractor(container: container)
+        #expect(interactor.auth != nil)
+        let avatars = try await interactor.getFeaturedAvatars()
         #expect(!avatars.isEmpty)
     }
 
@@ -86,26 +86,26 @@ struct UseCaseInitializationTests {
     }
 
     @Test func test_NewsFeedInteractor() async throws {
-        let useCase = NewsFeedInteractor(container: container)
-        let results = try await useCase.loadNews(page: 1, pageSize: 10)
+        let interactor = NewsFeedInteractor(container: container)
+        let results = try await interactor.loadNews(page: 1, pageSize: 10)
         #expect(!results.articles.isEmpty)
     }
 
     @Test func test_OnboardingColorInteractor() {
-        let useCase = OnboardingColorInteractor(container: container)
+        let interactor = OnboardingColorInteractor(container: container)
     }
 
     @Test func test_OnboardingCommunityInteractor() {
-        let useCase = OnboardingCommunityInteractor(container: container)
+        let interactor = OnboardingCommunityInteractor(container: container)
     }
 
     @Test func test_OnboardingCompletedInteractor() {
-        let useCase = OnboardingCompletedInteractor(container: container)
+        let interactor = OnboardingCompletedInteractor(container: container)
     }
 
     @Test func test_OnboardingIntroInteractor() {
-        let useCase = OnboardingIntroInteractor(container: container)
-        #expect(useCase.onboardingCommunityTest == false)
+        let interactor = OnboardingIntroInteractor(container: container)
+        #expect(interactor.onboardingCommunityTest == false)
     }
 
     @Test func test_PaywallInteractor() {
@@ -113,13 +113,13 @@ struct UseCaseInitializationTests {
     }
 
     @Test func test_ProfileInteractor() {
-        let useCase = ProfileInteractor(container: container)
-        #expect(useCase.currentUser != nil)
+        let interactor = ProfileInteractor(container: container)
+        #expect(interactor.currentUser != nil)
     }
 
     @Test func test_SettingsInteractor() {
-        let useCase = SettingsInteractor(container: container)
-        #expect(useCase.auth != nil)
+        let interactor = SettingsInteractor(container: container)
+        #expect(interactor.auth != nil)
     }
 
     @Test func test_WelcomeInteractor() {
