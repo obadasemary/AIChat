@@ -1,5 +1,5 @@
 //
-//  AboutViewModel.swift
+//  AboutPresenter.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 01.12.2025.

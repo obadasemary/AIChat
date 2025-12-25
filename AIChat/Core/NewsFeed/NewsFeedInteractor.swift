@@ -10,7 +10,7 @@ import Foundation
 /// Protocol defining the business logic interface for NewsFeed feature.
 ///
 /// Architectural Note on Network Connectivity:
-/// The `isConnected` property is exposed through this UseCase protocol to maintain proper
+/// The `isConnected` property is exposed through this Interactor protocol to maintain proper
 /// separation of concerns in Clean Architecture. The ViewModel needs network status to show
 /// appropriate UI states (loading, error, offline), but should not directly access NetworkMonitor.
 /// By exposing connectivity through the UseCase, we maintain the proper data flow:

@@ -1,5 +1,5 @@
 //
-//  CreateAvatarUseCase.swift
+//  CreateAvatarInteractor.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 28.07.2025.
@@ -26,16 +26,16 @@ final class CreateAvatarInteractor {
     
     init(container: DependencyContainer) {
         guard let authManager = container.resolve(AuthManager.self) else {
-            preconditionFailure("Failed to resolve AuthManager for CreateAvatarUseCase")
+            preconditionFailure("Failed to resolve AuthManager for CreateAvatarInteractor")
         }
         guard let aiManager = container.resolve(AIManager.self) else {
-            preconditionFailure("Failed to resolve AIManager for CreateAvatarUseCase")
+            preconditionFailure("Failed to resolve AIManager for CreateAvatarInteractor")
         }
         guard let avatarManager = container.resolve(AvatarManager.self) else {
-            preconditionFailure("Failed to resolve AvatarManager for CreateAvatarUseCase")
+            preconditionFailure("Failed to resolve AvatarManager for CreateAvatarInteractor")
         }
         guard let logManager = container.resolve(LogManager.self) else {
-            preconditionFailure("Failed to resolve LogManager for CreateAvatarUseCase")
+            preconditionFailure("Failed to resolve LogManager for CreateAvatarInteractor")
         }
         
         self.authManager = authManager
