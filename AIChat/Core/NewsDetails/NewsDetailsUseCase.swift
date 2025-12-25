@@ -28,7 +28,7 @@ final class NewsDetailsUseCase: NewsDetailsUseCaseProtocol {
         if let resolvedManager = container.resolve(BookmarkManager.self) {
             self.bookmarkManager = resolvedManager
         } else {
-            self.bookmarkManager = BookmarkManager()
+            self.bookmarkManager = BookmarkManager(isStoredInMemoryOnly: true)
         }
     }
 
