@@ -1,5 +1,5 @@
 //
-//  ExploreViewModel.swift
+//  ExplorePresenter.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 23.07.2025.
