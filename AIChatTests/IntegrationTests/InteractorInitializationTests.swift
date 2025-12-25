@@ -1,5 +1,5 @@
 //
-//  UseCaseInitializationTests.swift
+//  InteractorInitializationTests.swift
 //  AIChatTests
 //
 //  Created by Abdelrahman Mohamed on 21.12.2025.

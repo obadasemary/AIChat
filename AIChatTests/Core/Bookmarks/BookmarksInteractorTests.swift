@@ -1,5 +1,5 @@
 //
-//  BookmarksUseCaseTests.swift
+//  BookmarksInteractorTests.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 14.12.2025.
@@ -10,7 +10,7 @@ import Testing
 @testable import AIChat
 
 @MainActor
-struct BookmarksUseCaseTests {
+struct BookmarksInteractorTests {
 
     // MARK: - Setup/Teardown
 
