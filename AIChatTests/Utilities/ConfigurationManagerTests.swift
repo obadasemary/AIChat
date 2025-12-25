@@ -10,28 +10,41 @@ import Testing
 
 struct ConfigurationManagerTests {
 
-    @Test("Environment Variables Are Loaded In CI")
-    func testEnvironmentVariablesAreLoadedInCI() async throws {
-        let configManager = ConfigurationManager.shared
+    @Test("Keys Are Loaded From Environment Variables In CI (Production Path)")
+    func testKeysAreLoadedFromEnvironmentVariablesInCI() async throws {
+        // Keys.swift is the PRIMARY API used in production
+        // On iOS 18.0+, it uses Swift Configuration's EnvironmentVariablesProvider
+        // to read ENV vars, falling back to ConfigurationManager (Config.plist)
 
-        // Get the API keys from ConfigurationManager
-        let openAIKey = configManager.openAIAPIKey
-        let mixpanelToken = configManager.mixpanelToken
-        let newsAPIKey = configManager.newsAPIKey
+        let openAIKey = Keys.openAIAPIKey
+        let mixpanelToken = Keys.mixpanelToken
+        let newsAPIKey = Keys.newsAPIKey
 
-        // In CI, environment variables should be set
-        // These will either come from ENV vars (CI) or Config.plist (local dev)
+        // Verify all keys are loaded (from ENV in CI, or Config.plist locally)
         #expect(!openAIKey.isEmpty, "OpenAI API Key should be loaded from ENV or Config.plist")
         #expect(!mixpanelToken.isEmpty, "Mixpanel Token should be loaded from ENV or Config.plist")
         #expect(!newsAPIKey.isEmpty, "NewsAPI Key should be loaded from ENV or Config.plist")
 
-        // Print for verification in CI logs (values will be auto-redacted by GitHub)
-        print("✅ ConfigurationManager Test: OpenAI API Key loaded (length: \(openAIKey.count))")
-        print("✅ ConfigurationManager Test: Mixpanel Token loaded (length: \(mixpanelToken.count))")
-        print("✅ ConfigurationManager Test: NewsAPI Key loaded (length: \(newsAPIKey.count))")
+        // Print for verification in CI logs
+        // Keys.swift already prints with ✅ emoji when loading from ENV
+        print("✅ Test: Keys loaded successfully - OpenAI(\(openAIKey.count) chars), Mixpanel(\(mixpanelToken.count) chars), NewsAPI(\(newsAPIKey.count) chars)")
+    }
 
-        // Verify configuration is valid
-        #expect(configManager.isConfigurationValid, "Configuration should be valid with all required keys")
+    @Test("ConfigurationManager Loads Environment Variables (Fallback Path)")
+    func testConfigurationManagerLoadsEnvironmentVariables() async throws {
+        // Test the fallback ConfigurationManager directly
+        let configManager = ConfigurationManager.shared
+
+        let openAIKey = configManager.openAIAPIKey
+        let mixpanelToken = configManager.mixpanelToken
+        let newsAPIKey = configManager.newsAPIKey
+
+        #expect(!openAIKey.isEmpty, "OpenAI API Key should be loaded")
+        #expect(!mixpanelToken.isEmpty, "Mixpanel Token should be loaded")
+        #expect(!newsAPIKey.isEmpty, "NewsAPI Key should be loaded")
+        #expect(configManager.isConfigurationValid, "Configuration should be valid")
+
+        print("✅ Test: ConfigurationManager loaded successfully")
     }
 
     @Test("API Keys Are Not Default Template Values")
