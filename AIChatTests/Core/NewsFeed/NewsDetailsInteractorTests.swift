@@ -1,5 +1,5 @@
 //
-//  NewsDetailsUseCaseTests.swift
+//  NewsDetailsInteractorTests.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 12.12.2025.
@@ -10,7 +10,7 @@ import Testing
 @testable import AIChat
 
 @MainActor
-struct NewsDetailsUseCaseTests {
+struct NewsDetailsInteractorTests {
 
     // MARK: - Is Article Bookmarked Tests
 
