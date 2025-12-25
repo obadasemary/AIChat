@@ -113,6 +113,31 @@ jobs:
           </plist>
           EOF
 
+      - name: Verify Environment Variables Are Set
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
+          NEWSAPI_API_KEY: ${{ secrets.NEWSAPI_API_KEY }}
+        run: |
+          echo "Verifying GitHub Secrets are properly injected as environment variables..."
+          if [ -n "$OPENAI_API_KEY" ]; then
+            echo "✅ Keys: OpenAI API Key loaded from ENV: ${OPENAI_API_KEY:0:8}***"
+          else
+            echo "❌ Keys: OpenAI API Key NOT found in environment"
+          fi
+
+          if [ -n "$MIXPANEL_TOKEN" ]; then
+            echo "✅ Keys: Mixpanel Token loaded from ENV: ${MIXPANEL_TOKEN:0:8}***"
+          else
+            echo "❌ Keys: Mixpanel Token NOT found in environment"
+          fi
+
+          if [ -n "$NEWSAPI_API_KEY" ]; then
+            echo "✅ Keys: NewsAPI Key loaded from ENV: ${NEWSAPI_API_KEY:0:8}***"
+          else
+            echo "❌ Keys: NewsAPI Key NOT found in environment"
+          fi
+
       - name: Show environment info
         run: |
           sw_vers
