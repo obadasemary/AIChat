@@ -25,11 +25,11 @@ final class BookmarksBuilder {
             newsDetailsBuilder: newsDetailsBuilder
         )
         let bookmarksInteractor = BookmarksInteractor(container: container)
-        let viewModel = BookmarksPresenter(
+        let presenter = BookmarksPresenter(
             bookmarksInteractor: bookmarksInteractor,
             router: bookmarksRouter
         )
 
-        return BookmarksView(presenter: viewModel)
+        return BookmarksView(presenter: presenter)
     }
 }
