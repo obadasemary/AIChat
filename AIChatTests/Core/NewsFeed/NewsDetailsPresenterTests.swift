@@ -186,7 +186,7 @@ struct NewsDetailsPresenterTests {
     }
 }
 
-// MARK: - Mock NewsDetailsUseCase
+// MARK: - Mock NewsDetailsInteractor
 
 @MainActor
 final class MockNewsDetailsInteractor: NewsDetailsInteractorProtocol {
