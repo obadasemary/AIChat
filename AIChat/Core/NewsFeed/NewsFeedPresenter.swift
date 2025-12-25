@@ -1,0 +1,287 @@
+//
+//  NewsFeedPresenter.swift
+//  AIChat
+//
+//  Created by Abdelrahman Mohamed on 10.12.2025.
+//
+
+import Foundation
+
+@MainActor
+@Observable
+final class NewsFeedPresenter {
+    
+    // MARK: - State
+    enum State: Equatable {
+        case idle
+        case loading
+        case loaded([NewsArticle])
+        case error(NewsFeedError)
+        case loadingMore([NewsArticle])
+    }
+
+    enum NewsFeedError: LocalizedError, Equatable {
+        case network
+        case server(status: Int)
+        case decoding
+        case invalidResponse
+        case unknown(message: String)
+        
+        var errorDescription: String? {
+            switch self {
+            case .network:
+                return "Network connection error. Please check your internet connection."
+            case .server(let status):
+                return "Server error (Status: \(status)). Please try again later."
+            case .decoding:
+                return "Data format error. Please try again."
+            case .invalidResponse:
+                return "Invalid response from server. Please try again."
+            case .unknown(let message):
+                return message
+            }
+        }
+    }
+    
+    // MARK: - Dependencies
+    private let newsFeedInteractor: NewsFeedInteractorProtocol
+    private let router: NewsFeedRouterProtocol
+
+    // MARK: - Published Properties
+    private(set) var articles: [NewsArticle] = []
+    private(set) var currentPage: Int = 1
+    private(set) var hasMorePages: Bool = true
+    private(set) var state: State = .idle
+    private(set) var dataSource: NewsFeedResult.DataSource?
+    private(set) var totalResults: Int?
+
+    var isDataFromRemote: Bool {
+        dataSource == .remote
+    }
+
+    var isDataFromLocal: Bool {
+        dataSource == .local
+    }
+
+    var isConnected: Bool {
+        newsFeedInteractor.isConnected
+    }
+
+    // Helper to track current query context
+    private var currentCountry: String? = "eg"
+    private var currentLanguage: String? = "ar"
+    private var currentCategory: String? = nil
+
+    // Loading guard
+    private var isLoading: Bool = false
+    private let pageSize: Int = 20
+
+    // Track previous connectivity state for auto-refresh
+    private var wasDisconnected: Bool = false
+
+    // MARK: - Initialization
+    init(
+        newsFeedInteractor: NewsFeedInteractorProtocol,
+        router: NewsFeedRouterProtocol
+    ) {
+        self.newsFeedInteractor = newsFeedInteractor
+        self.router = router
+    }
+
+    // MARK: - Navigation
+    func onArticleTapped(_ article: NewsArticle) {
+        router.showNewsDetailsView(article: article)
+    }
+    
+    // MARK: - Public Methods
+    func loadInitialData() {
+        print("🔍 Presenter: loadInitialData called. State: \(state)")
+        Task { [weak self] in
+            await self?.loadInitialDataAndWait()
+        }
+    }
+
+    func handleConnectivityChange() {
+        Task { [weak self] in
+            await self?.handleConnectivityChangeAndWait()
+        }
+    }
+    
+    func refreshData() {
+        print("🔍 Presenter: refreshData called")
+        Task { [weak self] in
+            await self?.refreshDataAndWait()
+        }
+    }
+    
+    func loadMoreData() {
+        print("🔍 Presenter: loadMoreData called. Page: \(currentPage), HasMore: \(hasMorePages), IsLoading: \(isLoading)")
+        Task { [weak self] in
+            await self?.loadMoreDataAndWait()
+        }
+    }
+    
+    // MARK: - Async, test-friendly variants
+    func loadInitialDataAndWait() async {
+        guard case .idle = state else { return }
+        await fetchData(page: 1)
+    }
+    
+    func refreshDataAndWait() async {
+        print("🔍 Presenter: refreshDataAndWait called")
+        currentPage = 1
+        hasMorePages = true
+        // Keep articles empty or keep old ones depending on preference, reference does this:
+        articles = []
+        state = .loading
+        await fetchData(page: 1)
+    }
+    
+    func loadMoreDataAndWait() async {
+        guard hasMorePages && !isLoading else { return }
+        await fetchData(page: currentPage + 1)
+    }
+
+    func handleConnectivityChangeAndWait() async {
+        let isNowConnected = newsFeedInteractor.isConnected
+
+        if isNowConnected && wasDisconnected && isDataFromLocal {
+            print("🔍 Presenter: Connectivity restored! Auto-refreshing from remote...")
+            await refreshDataAndWait()
+        }
+
+        wasDisconnected = !isNowConnected
+    }
+    
+    func loadTopHeadlines(country: String? = "eg", language: String? = "ar") {
+        print("🔍 Presenter: loadTopHeadlines called. Country: \(String(describing: country)), Language: \(String(describing: language))")
+        currentCountry = country
+        currentLanguage = language
+        currentCategory = nil
+        resetAndFetch()
+    }
+
+    func loadNews(category: String?, language: String? = "ar") {
+        print("🔍 Presenter: loadNews called. Category: \(String(describing: category)), Language: \(String(describing: language))")
+        currentCategory = category
+        currentLanguage = language
+        resetAndFetch()
+    }
+    
+    // MARK: - Private Methods
+    private func resetAndFetch() {
+        currentPage = 1
+        hasMorePages = true
+        articles = []
+        state = .loading
+        Task { [weak self] in
+            await self?.fetchData(page: 1)
+        }
+    }
+
+    private func fetchData(page: Int) async {
+        print("🔍 Presenter: fetchData called for page \(page)")
+        guard !isLoading else {
+            print("🔍 Presenter: Already loading. Skipping.")
+            return
+        }
+        isLoading = true
+        
+        if page == 1 {
+            state = .loading
+        } else {
+            state = .loadingMore(articles)
+        }
+        
+        do {
+            let result: NewsFeedResult
+            if let category = currentCategory {
+                print("🔍 Presenter: Fetching News (Category: \(category), Language: \(currentLanguage ?? "nil"))")
+                result = try await newsFeedInteractor.loadNews(category: category, language: currentLanguage, page: page, pageSize: pageSize)
+            } else {
+                print("🔍 Presenter: Fetching Top Headlines (Country: \(currentCountry ?? "nil"), Language: \(currentLanguage ?? "nil"))")
+                result = try await newsFeedInteractor.loadTopHeadlines(country: currentCountry, language: currentLanguage, page: page, pageSize: pageSize)
+            }
+            
+            print("🔍 Presenter: Success. Got \(result.articles.count) articles. Source: \(result.source). TotalResults: \(result.totalResults ?? -1)")
+
+            if page == 1 {
+                articles = result.articles
+            } else {
+                articles.append(contentsOf: result.articles)
+            }
+
+            currentPage = page
+            totalResults = result.totalResults
+
+            // Calculate hasMorePages based on totalResults if available
+            if let total = result.totalResults {
+                // Check if we have fetched all available articles
+                hasMorePages = articles.count < total
+                print("🔍 Presenter: Pagination - Fetched \(articles.count) of \(total). HasMore: \(hasMorePages)")
+            } else {
+                // Fallback for local storage (no totalResults)
+                // If we got fewer articles than requested, there are no more pages
+                hasMorePages = result.articles.count >= pageSize
+                print("🔍 Presenter: Pagination - No totalResults. Got \(result.articles.count) articles (pageSize: \(pageSize)). HasMore: \(hasMorePages)")
+            }
+
+            dataSource = result.source
+            state = .loaded(articles)
+            print("🔍 Presenter: State updated to .loaded. Articles count: \(articles.count)")
+            
+        } catch {
+            print("🚨 Presenter: Error: \(error)")
+            if page == 1 {
+                state = .error(mapError(error))
+            } else {
+                state = .loaded(articles)
+            }
+        }
+        
+        isLoading = false
+    }
+    
+    private func mapError(_ error: Error) -> NewsFeedError {
+        // Network connectivity
+        if error is URLError {
+            return .network
+        }
+        
+        // JSON decoding / parsing
+        if error is DecodingError {
+            return .decoding
+        }
+        
+        let nsError = error as NSError
+        // Try to extract an HTTP status code if upstream attached it 
+        // (RemoteNewsFeedService logs it but throws standard error, 
+        // might need to cast to custom service error if it had associated value, 
+        // but here we just check NSError userInfo or general mapping)
+        if let status = nsError.userInfo["HTTPStatusCode"] as? Int {
+            return .server(status: status)
+        }
+        
+        if let newsError = error as? AIChat.NewsFeedError, newsError == .invalidResponse {
+            return .invalidResponse
+        }
+        
+        if let desc = (error as? LocalizedError)?.errorDescription, !desc.isEmpty {
+            return .unknown(message: desc)
+        }
+        
+        return .unknown(message: nsError.localizedDescription)
+    }
+}
+
+extension NewsFeedPresenter {
+    var errorMessage: String? {
+        guard case .error(let error) = state else { return nil }
+        return error.errorDescription
+    }
+    
+    var isLoadingMore: Bool {
+        guard case .loadingMore = state else { return false }
+        return true
+    }
+}

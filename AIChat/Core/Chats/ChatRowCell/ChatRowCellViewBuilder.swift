@@ -9,22 +9,22 @@ import SwiftUI
 
 struct ChatRowCellViewBuilder: View {
     
-    @State var viewModel: ChatRowCellViewModel
+    @State var presenter: ChatRowCellPresenter
     let delegate: ChatRowCellDelegate
     
     var body: some View {
         ChatRowCellView(
-            imageName: viewModel.avatar?.profileImageName,
-            headline: viewModel.isLoading ? "XXXX XXXX XXXX" : viewModel.avatar?.name,
-            subheadline: viewModel.subheadline,
-            hasNewMessages: viewModel.isLoading ? false : viewModel.hasNewChat
+            imageName: presenter.avatar?.profileImageName,
+            headline: presenter.isLoading ? "XXXX XXXX XXXX" : presenter.avatar?.name,
+            subheadline: presenter.subheadline,
+            hasNewMessages: presenter.isLoading ? false : presenter.hasNewChat
         )
-        .redacted(reason: viewModel.isLoading ? .placeholder : [])
+        .redacted(reason: presenter.isLoading ? .placeholder : [])
         .task {
-            await viewModel.loadAvatar(chat: delegate.chat)
+            await presenter.loadAvatar(chat: delegate.chat)
         }
         .task {
-            await viewModel.loadLastChatMessage(chat: delegate.chat)
+            await presenter.loadLastChatMessage(chat: delegate.chat)
         }
     }
 }
@@ -39,8 +39,8 @@ struct ChatRowCellViewBuilder: View {
             .buildChatRowCellBuilderView(delegate: delegate)
         
         ChatRowCellViewBuilder(
-            viewModel: ChatRowCellViewModel(
-                chatRowCellUseCase: AnyChatRowCellUseCase(
+            presenter: ChatRowCellPresenter(
+                chatRowCellInteractor: AnyChatRowCellInteractor(
                     getAvatar: { _ in
                         try? await Task.sleep(for: .seconds(5))
                         return .mock
@@ -53,10 +53,10 @@ struct ChatRowCellViewBuilder: View {
             ),
             delegate: ChatRowCellDelegate()
         )
-        
+
         ChatRowCellViewBuilder(
-            viewModel: ChatRowCellViewModel(
-                chatRowCellUseCase: AnyChatRowCellUseCase(
+            presenter: ChatRowCellPresenter(
+                chatRowCellInteractor: AnyChatRowCellInteractor(
                     getAvatar: { _ in
                         return .mock
                     },
@@ -67,10 +67,10 @@ struct ChatRowCellViewBuilder: View {
             ),
             delegate: ChatRowCellDelegate()
         )
-        
+
         ChatRowCellViewBuilder(
-            viewModel: ChatRowCellViewModel(
-                chatRowCellUseCase: AnyChatRowCellUseCase(
+            presenter: ChatRowCellPresenter(
+                chatRowCellInteractor: AnyChatRowCellInteractor(
                     getAvatar: { _ in
                         throw URLError(.badURL)
                     },

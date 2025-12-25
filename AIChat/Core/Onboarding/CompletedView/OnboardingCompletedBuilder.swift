@@ -22,8 +22,8 @@ final class OnboardingCompletedBuilder {
         delegate: OnboardingCompletedDelegate
     ) -> some View {
         OnboardingCompletedView(
-            viewModel: OnboardingCompletedViewModel(
-                onboardingCompletedUseCase: OnboardingCompletedUseCase(
+            presenter: OnboardingCompletedPresenter(
+                onboardingCompletedInteractor: OnboardingCompletedInteractor(
                     container: container
                 ),
                 router: OnboardingCompletedRouter(router: router)
