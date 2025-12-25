@@ -23,6 +23,7 @@
 		AFCE8E3C2E1D443900CC88C7 /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = AFCE8E3B2E1D443900CC88C7 /* FirebaseRemoteConfig */; };
 		AFEF44072DFF1489000E87DC /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = AFEF44062DFF1489000E87DC /* OpenAI */; };
 		AFEF464A2E007365000E87DC /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = AFEF46492E007365000E87DC /* FirebaseStorage */; };
+		AFSC00022E7F000000000002 /* Configuration in Frameworks */ = {isa = PBXBuildFile; productRef = AFSC00032E7F000000000003 /* Configuration */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,6 +103,7 @@
 				AFEF464A2E007365000E87DC /* FirebaseStorage in Frameworks */,
 				AF2ECC132DE7D88A00BD1602 /* SwiftfulUtilities in Frameworks */,
 				AF3986932DF8D2E5000F064C /* GoogleSignIn in Frameworks */,
+				AFSC00022E7F000000000002 /* Configuration in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -284,6 +286,7 @@
 				AFEF44052DFF1489000E87DC /* XCRemoteSwiftPackageReference "OpenAI" */,
 				AF3E88B02E0B7CA1002FAC13 /* XCRemoteSwiftPackageReference "mixpanel-swift" */,
 				AFC575A82E5E243100B3C3F0 /* XCRemoteSwiftPackageReference "SUIRouting" */,
+				AFSC00012E7F000000000001 /* XCRemoteSwiftPackageReference "swift-configuration" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = AF9034FC2DA3FDB000A35095 /* Products */;
@@ -557,7 +560,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.2;
@@ -604,7 +607,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.2;
@@ -805,7 +808,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.2;
@@ -994,6 +997,14 @@
 				version = 0.3.0;
 			};
 		};
+		AFSC00012E7F000000000001 /* XCRemoteSwiftPackageReference "swift-configuration" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-configuration";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1076,6 +1087,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AF95B1752DF38774003D5BA0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		AFSC00032E7F000000000003 /* Configuration */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AFSC00012E7F000000000001 /* XCRemoteSwiftPackageReference "swift-configuration" */;
+			productName = Configuration;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

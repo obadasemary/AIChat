@@ -75,7 +75,7 @@ class DevPreview {
             networkMonitor: networkMonitor,
             logManager: logManager
         )
-        self.bookmarkManager = BookmarkManager()
+        self.bookmarkManager = BookmarkManager(isStoredInMemoryOnly: true)
         self.appState = AppState()
     }
 }

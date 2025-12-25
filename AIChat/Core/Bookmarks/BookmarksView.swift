@@ -141,7 +141,7 @@ private struct ArticleRowView: View {
 
 #Preview("With Bookmarks") {
     let container = DevPreview.shared.container
-    let bookmarkManager = BookmarkManager()
+    let bookmarkManager = BookmarkManager(isStoredInMemoryOnly: true)
     NewsArticle.mocks.forEach { article in
         bookmarkManager.addBookmark(article)
     }
@@ -157,12 +157,7 @@ private struct ArticleRowView: View {
 
 #Preview("Empty State") {
     let container = DevPreview.shared.container
-    let bookmarkManager = BookmarkManager()
-    
-    NewsArticle.mocks.forEach { article in
-        bookmarkManager.removeBookmark(articleId: article.id)
-    }
-
+    let bookmarkManager = BookmarkManager(isStoredInMemoryOnly: true)
     container.register(BookmarkManager.self, bookmarkManager)
 
     let bookmarksBuilder = BookmarksBuilder(container: container)
