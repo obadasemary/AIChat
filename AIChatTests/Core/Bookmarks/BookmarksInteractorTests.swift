@@ -23,9 +23,9 @@ struct BookmarksInteractorTests {
     @Test("Get Bookmarked Articles Returns Empty Array When No Bookmarks")
     func testGetBookmarkedArticlesReturnsEmptyArrayWhenNoBookmarks() {
         let container = createTestContainer()
-        let useCase = BookmarksInteractor(container: container)
+        let interactor = BookmarksInteractor(container: container)
 
-        let articles = useCase.getBookmarkedArticles()
+        let articles = interactor.getBookmarkedArticles()
 
         #expect(articles.isEmpty)
     }
@@ -46,8 +46,8 @@ struct BookmarksInteractorTests {
         bookmarkManager.addBookmark(article2)
         bookmarkManager.addBookmark(article3)
 
-        let useCase = BookmarksInteractor(container: container)
-        let articles = useCase.getBookmarkedArticles()
+        let interactor = BookmarksInteractor(container: container)
+        let articles = interactor.getBookmarkedArticles()
 
         #expect(articles.count == 3)
         #expect(articles.contains { $0.id == article1.id })
@@ -71,8 +71,8 @@ struct BookmarksInteractorTests {
 
         bookmarkManager.addBookmark(article)
 
-        let useCase = BookmarksInteractor(container: container)
-        let articles = useCase.getBookmarkedArticles()
+        let interactor = BookmarksInteractor(container: container)
+        let articles = interactor.getBookmarkedArticles()
 
         #expect(articles.count == 1)
         #expect(articles[0].title == "Breaking News")
@@ -89,16 +89,16 @@ struct BookmarksInteractorTests {
             Issue.record("BookmarkManager not found in container")
             return
         }
-        let useCase = BookmarksInteractor(container: container)
+        let interactor = BookmarksInteractor(container: container)
 
         let article = NewsArticle.mock(title: "Remove Test")
         bookmarkManager.addBookmark(article)
 
-        #expect(useCase.getBookmarkedArticles().count == 1)
+        #expect(interactor.getBookmarkedArticles().count == 1)
 
-        useCase.removeBookmark(articleId: article.id)
+        interactor.removeBookmark(articleId: article.id)
 
-        #expect(useCase.getBookmarkedArticles().isEmpty)
+        #expect(interactor.getBookmarkedArticles().isEmpty)
         #expect(bookmarkManager.isBookmarked(articleId: article.id) == false)
     }
 
@@ -109,7 +109,7 @@ struct BookmarksInteractorTests {
             Issue.record("BookmarkManager not found in container")
             return
         }
-        let useCase = BookmarksInteractor(container: container)
+        let interactor = BookmarksInteractor(container: container)
 
         let article1 = NewsArticle.mock(title: "Article 1")
         let article2 = NewsArticle.mock(title: "Article 2")
@@ -119,9 +119,9 @@ struct BookmarksInteractorTests {
         bookmarkManager.addBookmark(article2)
         bookmarkManager.addBookmark(article3)
 
-        useCase.removeBookmark(articleId: article2.id)
+        interactor.removeBookmark(articleId: article2.id)
 
-        let articles = useCase.getBookmarkedArticles()
+        let articles = interactor.getBookmarkedArticles()
         #expect(articles.count == 2)
         #expect(articles.contains { $0.id == article1.id })
         #expect(articles.contains { $0.id == article3.id })
@@ -131,12 +131,12 @@ struct BookmarksInteractorTests {
     @Test("Remove Bookmark Non-Existent Article Does Not Crash")
     func testRemoveBookmarkNonExistentArticleDoesNotCrash() {
         let container = createTestContainer()
-        let useCase = BookmarksInteractor(container: container)
+        let interactor = BookmarksInteractor(container: container)
 
         // Should not crash
-        useCase.removeBookmark(articleId: "non-existent-id")
+        interactor.removeBookmark(articleId: "non-existent-id")
 
-        #expect(useCase.getBookmarkedArticles().isEmpty)
+        #expect(interactor.getBookmarkedArticles().isEmpty)
     }
 
     // MARK: - Track Event Tests
@@ -144,12 +144,12 @@ struct BookmarksInteractorTests {
     @Test("Track Event Does Not Crash")
     func testTrackEventDoesNotCrash() {
         let container = createTestContainer()
-        let useCase = BookmarksInteractor(container: container)
+        let interactor = BookmarksInteractor(container: container)
 
         let event = MockLoggableEvent(name: "test_event")
 
         // Should not crash
-        useCase.trackEvent(event: event)
+        interactor.trackEvent(event: event)
 
         #expect(true)
     }
@@ -157,13 +157,13 @@ struct BookmarksInteractorTests {
     @Test("Track Event With Parameters Does Not Crash")
     func testTrackEventWithParametersDoesNotCrash() {
         let container = createTestContainer()
-        let useCase = BookmarksInteractor(container: container)
+        let interactor = BookmarksInteractor(container: container)
 
         let parameters: [String: Any] = ["key1": "value1", "key2": 42]
         let event = MockLoggableEvent(name: "test_event", parameters: parameters)
 
         // Should not crash
-        useCase.trackEvent(event: event)
+        interactor.trackEvent(event: event)
 
         #expect(true)
     }
@@ -177,20 +177,20 @@ struct BookmarksInteractorTests {
             Issue.record("BookmarkManager not found in container")
             return
         }
-        let useCase = BookmarksInteractor(container: container)
+        let interactor = BookmarksInteractor(container: container)
 
         let article = NewsArticle.mock(title: "Test Article")
 
         // Initially empty
-        #expect(useCase.getBookmarkedArticles().isEmpty)
+        #expect(interactor.getBookmarkedArticles().isEmpty)
 
         // Add via manager
         bookmarkManager.addBookmark(article)
-        #expect(useCase.getBookmarkedArticles().count == 1)
+        #expect(interactor.getBookmarkedArticles().count == 1)
 
         // Remove via use case
-        useCase.removeBookmark(articleId: article.id)
-        #expect(useCase.getBookmarkedArticles().isEmpty)
+        interactor.removeBookmark(articleId: article.id)
+        #expect(interactor.getBookmarkedArticles().isEmpty)
         #expect(bookmarkManager.isBookmarked(articleId: article.id) == false)
     }
 
