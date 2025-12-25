@@ -384,7 +384,6 @@ struct ProfileViewTests {
             attempts += 1
         }
 
-
         // Then
         #expect(presenter.myAvatars.count == (mockAvatars.count - 1))
         #expect(
@@ -455,7 +454,6 @@ struct ProfileViewTests {
             attempts += 1
         }
 
-
         // Then
         #expect(presenter.myAvatars.count == mockAvatars.count)
         #expect(
@@ -518,7 +516,6 @@ struct ProfileViewTests {
             try await Task.sleep(for: .milliseconds(100))
             attempts += 1
         }
-
 
         // Then: Verify success is logged when avatar is found and removed
         let successEvents = trackedEvents.filter {
