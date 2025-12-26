@@ -192,6 +192,21 @@ AIChat/Services/
 - Automatically selects Firebase config based on build configuration
 - Template files are safe to commit; real config files are gitignored
 
+### Xcode Scheme Environment Variables
+
+- **Location**: `AIChat.xcodeproj/xcshareddata/xcschemes/*.xcscheme`
+- Scheme files in git do NOT contain `<EnvironmentVariables>` section
+- Each developer adds their own environment variables locally in Xcode scheme settings:
+  - `OPENAI_API_KEY`: OpenAI API key for chat functionality
+  - `MIXPANEL_TOKEN`: Mixpanel project token for analytics
+  - `NEWSAPI_API_KEY`: NewsAPI key for news articles
+- **Local changes with API keys are protected by:**
+  1. `.gitignore` entry for `*.xcscheme` files
+  2. `git update-index --skip-worktree` on scheme files (already configured)
+- Environment variables override `Config.plist` values when running from Xcode
+- On iOS 18.0+, `ConfigurationManager` reads from environment variables first, then falls back to `Config.plist`
+- **To add environment variables**: Edit scheme → Run → Arguments → Environment Variables
+
 ## Critical Development Guidelines
 
 ### SwiftLint Rules
