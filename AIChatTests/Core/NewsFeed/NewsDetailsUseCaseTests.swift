@@ -167,13 +167,9 @@ struct NewsDetailsUseCaseTests {
     // MARK: - Helper Methods
 
     private func createTestContainer() -> DependencyContainer {
-        // Clear UserDefaults before creating manager to ensure clean state
-        let userDefaults = UserDefaults.standard
-        userDefaults.removeObject(forKey: "bookmarked_articles")
-        userDefaults.removeObject(forKey: "bookmarked_articles_data")
-
         let container = DependencyContainer()
-        let bookmarkManager = BookmarkManager()
+        // Use in-memory storage for faster, more reliable tests
+        let bookmarkManager = BookmarkManager(isStoredInMemoryOnly: true)
         container.register(BookmarkManager.self, bookmarkManager)
         return container
     }
