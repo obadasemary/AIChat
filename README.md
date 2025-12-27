@@ -229,10 +229,22 @@ For comprehensive setup instructions, see our **[📖 Setup Guide](SETUP_GUIDE.m
 - `GoogleService-Info-Prod.plist` - Firebase production configuration
 
 #### Option 2: Environment Variables (Recommended for CI/CD)
+
 ```bash
 export OPENAI_API_KEY="your-openai-api-key"
 export MIXPANEL_TOKEN="your-mixpanel-token"
 ```
+
+#### Option 3: Xcode Scheme Environment Variables (Local Development)
+
+- **Location**: Xcode → Edit Scheme → Run → Arguments → Environment Variables
+- Add the following environment variables directly in Xcode:
+  - `OPENAI_API_KEY` - Your OpenAI API key
+  - `MIXPANEL_TOKEN` - Your Mixpanel project token
+  - `NEWSAPI_API_KEY` - Your NewsAPI key
+- **Security**: Scheme files are protected with `.gitignore` and `git update-index --skip-worktree`
+- **Priority**: Environment variables override `Config.plist` values (iOS 18.0+)
+- **Note**: Each developer maintains their own local environment variables
 
 ### 🔒 Security
 
@@ -240,6 +252,8 @@ export MIXPANEL_TOKEN="your-mixpanel-token"
 - ✅ Template files provide structure without exposing real data
 - ✅ Environment variable support for secure CI/CD
 - ✅ Professional configuration management system
+- ✅ Xcode scheme files protected with dual-layer security (`.gitignore` + `skip-worktree`)
+- ✅ API keys never committed to version control
 
 ---
 
