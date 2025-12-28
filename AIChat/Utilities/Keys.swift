@@ -13,51 +13,75 @@ struct Keys {
 
     static let openAIAPIKey: String = {
         if #available(iOS 18.0, *) {
+            #if DEBUG
             print("🔍 Keys: Checking environment variable OPENAI_API_KEY via Swift Configuration...")
+            #endif
             // Use Swift Configuration's ConfigReader for environment variable support
             let envReader = ConfigReader(provider: EnvironmentVariablesProvider())
             if let envKey = envReader.string(forKey: "OPENAI_API_KEY"), !envKey.isEmpty {
+                #if DEBUG
                 print("✅ Keys: OpenAI API Key loaded from ENV: \(String(envKey.prefix(8)))...")
+                #endif
                 return envKey
             }
+            #if DEBUG
             print("⚠️ Keys: OPENAI_API_KEY not found in environment, falling back to Config.plist")
+            #endif
         }
 
         // Fallback to ConfigurationManager (Config.plist)
         let key = ConfigurationManager.shared.openAIAPIKey
+        #if DEBUG
         print("🔑 Keys: OpenAI API Key loaded from Config: \(key.isEmpty ? "EMPTY" : "\(String(key.prefix(8)))...")")
+        #endif
         return key
     }()
 
     static let mixpanelToken: String = {
         if #available(iOS 18.0, *) {
+            #if DEBUG
             print("🔍 Keys: Checking environment variable MIXPANEL_TOKEN via Swift Configuration...")
+            #endif
             let envReader = ConfigReader(provider: EnvironmentVariablesProvider())
             if let envToken = envReader.string(forKey: "MIXPANEL_TOKEN"), !envToken.isEmpty {
+                #if DEBUG
                 print("✅ Keys: Mixpanel Token loaded from ENV: \(String(envToken.prefix(8)))...")
+                #endif
                 return envToken
             }
+            #if DEBUG
             print("⚠️ Keys: MIXPANEL_TOKEN not found in environment, falling back to Config.plist")
+            #endif
         }
 
         let token = ConfigurationManager.shared.mixpanelToken
+        #if DEBUG
         print("🔑 Keys: Mixpanel Token loaded from Config: \(token.isEmpty ? "EMPTY" : "\(String(token.prefix(8)))...")")
+        #endif
         return token
     }()
 
     static let newsAPIKey: String = {
         if #available(iOS 18.0, *) {
+            #if DEBUG
             print("🔍 Keys: Checking environment variable NEWSAPI_API_KEY via Swift Configuration...")
+            #endif
             let envReader = ConfigReader(provider: EnvironmentVariablesProvider())
             if let envKey = envReader.string(forKey: "NEWSAPI_API_KEY"), !envKey.isEmpty {
+                #if DEBUG
                 print("✅ Keys: News API Key loaded from ENV: \(String(envKey.prefix(8)))...")
+                #endif
                 return envKey
             }
+            #if DEBUG
             print("⚠️ Keys: NEWSAPI_API_KEY not found in environment, falling back to Config.plist")
+            #endif
         }
 
         let key = ConfigurationManager.shared.newsAPIKey
+        #if DEBUG
         print("🔑 Keys: News API Key loaded from Config: \(key.isEmpty ? "EMPTY" : "\(String(key.prefix(8)))...")")
+        #endif
         return key
     }()
 
@@ -67,7 +91,9 @@ struct Keys {
     @available(iOS 18.0, *)
     static func getOpenAIAPIKey() async -> String {
         let key = await EnhancedConfigurationManager.shared.openAIAPIKey
+        #if DEBUG
         print("🔑 Keys (Async): OpenAI API Key loaded: \(key.isEmpty ? "EMPTY" : "\(String(key.prefix(8)))...")")
+        #endif
         return key
     }
 
@@ -75,7 +101,9 @@ struct Keys {
     @available(iOS 18.0, *)
     static func getMixpanelToken() async -> String {
         let token = await EnhancedConfigurationManager.shared.mixpanelToken
+        #if DEBUG
         print("🔑 Keys (Async): Mixpanel Token loaded: \(token.isEmpty ? "EMPTY" : "\(String(token.prefix(8)))...")")
+        #endif
         return token
     }
 
@@ -83,7 +111,9 @@ struct Keys {
     @available(iOS 18.0, *)
     static func getNewsAPIKey() async -> String {
         let key = await EnhancedConfigurationManager.shared.newsAPIKey
+        #if DEBUG
         print("🔑 Keys (Async): News API Key loaded: \(key.isEmpty ? "EMPTY" : "\(String(key.prefix(8)))...")")
+        #endif
         return key
     }
 }
