@@ -4,9 +4,11 @@ This document describes the integration of Apple's Swift Configuration library i
 
 ## What Was Done
 
-### 1. Deployment Target Update
-- **Changed**: iOS deployment target from 17.6 to 18.0
-- **Reason**: Swift Configuration requires iOS 18.0+
+### 1. Deployment Target
+
+- **Current**: iOS 17.6 (maintained for broader device support)
+- **Swift Configuration Features**: Available on iOS 18.0+ via `@available` checks
+- **Graceful Degradation**: Falls back to Config.plist on iOS 17.6-17.x
 - **Files affected**: `AIChat.xcodeproj/project.pbxproj`
 
 ### 2. Package Dependency
@@ -237,8 +239,8 @@ Most popular Swift libraries (Alamofire, Kingfisher, RxSwift, etc.) don't focus 
 ## Files Modified
 
 1. `AIChat.xcodeproj/project.pbxproj`
-   - Updated deployment target to 18.0
-   - Added Swift Configuration package dependency
+   - Maintained deployment target at 17.6 (supports iOS 17.6+)
+   - Added Swift Configuration package dependency (used on iOS 18.0+ with availability checks)
 
 2. `AIChat.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`
    - Package dependency resolution
