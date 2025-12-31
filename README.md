@@ -324,7 +324,7 @@ Product → Scheme → Edit Scheme → Test → Info → Test Plan
 - **Multi-language Support**: News in Arabic, English, and more
 - **Country Selection**: Region-specific news from various countries
 - **Article Details**: Full article view with images and metadata
-- **Bookmark System**: Save and manage favorite articles with UserDefaults persistence
+- **Bookmark System**: Save and manage favorite articles with SwiftData persistence
 - **Share Integration**: Share articles with native iOS sharing
 
 ### 👤 User Management
