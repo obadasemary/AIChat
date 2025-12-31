@@ -22,14 +22,18 @@
 
 - **🤖 AI-Powered Conversations** - Engage with OpenAI's advanced language models
 - **💬 Rich Chat Interface** - Beautiful, intuitive chat experience with message history
+- **📰 News Feed** - Browse curated news articles with categories, countries, and languages
+- **🔖 Bookmarks** - Save and manage your favorite news articles
 - **👤 User Authentication** - Secure Firebase-based authentication system
 - **🎨 Avatar Creation** - Personalized user avatars and profiles
+- **🔍 Explore** - Discover categories and AI avatars
 - **📊 Analytics Integration** - Comprehensive user behavior tracking with Mixpanel
 - **🔒 Enterprise Security** - Professional-grade security and configuration management
 - **📱 Modern iOS Design** - Built with SwiftUI and following iOS design guidelines
 - **🧪 A/B Testing** - Sophisticated testing framework for feature optimization
 - **💳 Subscription Management** - Integrated in-app purchase system
 - **🔔 Push Notifications** - Real-time notifications for enhanced user engagement
+- **🌐 Network Monitoring** - Real-time connection status tracking
 
 ---
 
@@ -42,23 +46,43 @@ AIChat follows **Clean Architecture** principles with **MVVM** pattern, ensuring
 ```
 AIChat/
 ├── App/                    # Application entry points and dependencies
+│   ├── AIChatApp.swift    # Main app entry point
+│   ├── AppDelegate.swift  # App lifecycle, push notifications
+│   ├── Dependencies.swift # Central dependency configuration
+│   └── DependencyContainer.swift # Service locator pattern
 ├── Core/                   # Core business logic and features
+│   ├── About/             # About screen
 │   ├── AppView/           # Main app view and navigation
+│   ├── Bookmarks/         # Bookmarked articles management
+│   ├── CategoryList/      # Category browsing
 │   ├── Chat/              # Chat functionality and AI integration
 │   ├── Chats/             # Chat list and management
-│   ├── Profile/           # User profile and settings
+│   ├── CreateAccount/     # Account creation flow
+│   ├── CreateAvatar/      # Avatar creation interface
+│   ├── DevSettings/       # Developer settings and A/B test controls
+│   ├── Explore/           # Discovery and exploration
+│   ├── NewsDetails/       # News article detailed view
+│   ├── NewsFeed/          # News feed with categories and filters
 │   ├── Onboarding/        # User onboarding flow
 │   ├── Paywall/           # Subscription and payment handling
-│   └── Settings/          # App configuration and preferences
+│   ├── Profile/           # User profile and settings
+│   ├── Settings/          # App configuration and preferences
+│   ├── TabBar/            # Main navigation tab bar
+│   └── Welcome/           # Welcome screen
 ├── Services/               # External service integrations
+│   ├── ABTests/           # A/B testing framework
 │   ├── AI/                # OpenAI API integration
+│   ├── AppState/          # Global app state management
 │   ├── Auth/              # Firebase authentication
+│   ├── Avatar/            # Avatar creation and storage
+│   ├── Bookmark/          # Bookmark persistence service
 │   ├── Chat/              # Chat data management
-│   ├── User/              # User data and profile management
-│   ├── Avatar/            # Avatar creation and management
-│   ├── PushNotifications/ # Push notification handling
+│   ├── ImageUpload/       # Image upload and processing
+│   ├── Logs/              # Multi-service logging (Console, Mixpanel, Firebase, Crashlytics)
+│   ├── NewsFeed/          # NewsAPI integration
 │   ├── Purchases/         # In-app purchase management
-│   └── ABTests/           # A/B testing framework
+│   ├── PushNotifications/ # Push notification handling
+│   └── User/              # User data and profile management
 ├── Components/             # Reusable UI components
 ├── Utilities/              # Helper functions and extensions
 └── Assets.xcassets/        # App icons and visual assets
@@ -78,7 +102,8 @@ AIChat/
 - **Frontend**: SwiftUI, Combine
 - **Backend**: Firebase (Auth, Firestore, Storage)
 - **AI Integration**: OpenAI API
-- **Analytics**: Mixpanel
+- **News Service**: NewsAPI
+- **Analytics**: Mixpanel, Firebase Analytics, Crashlytics
 - **Testing**: XCTest, Mock services
 - **Build System**: Xcode, Swift Package Manager
 - **CI/CD**: GitHub Actions
@@ -168,6 +193,7 @@ AIChat/
 - **Swift 5.9 - 6.2** (compatible range)
 - **Apple Developer Account** (for device testing)
 - **OpenAI API Key** for AI functionality
+- **NewsAPI Key** for news feed functionality
 - **Firebase Project** for backend services
 - **Mixpanel Account** for analytics
 
@@ -188,6 +214,7 @@ AIChat/
 
 3. **Configure your API keys**
    - Get your [OpenAI API Key](https://platform.openai.com/account/api-keys)
+   - Get your [NewsAPI Key](https://newsapi.org/register)
    - Get your [Mixpanel Token](https://mixpanel.com/settings/project/token)
    - Set up [Firebase Project](https://console.firebase.google.com/)
 
@@ -218,6 +245,7 @@ For comprehensive setup instructions, see our **[📖 Setup Guide](SETUP_GUIDE.m
 | Service | Purpose | Cost |
 |---------|---------|------|
 | **OpenAI API** | AI chat functionality | Pay-per-use |
+| **NewsAPI** | News feed and article data | Free tier available (100 requests/day) |
 | **Mixpanel** | Analytics tracking | Free tier available |
 | **Firebase** | Authentication, database, storage | Generous free tier |
 
@@ -232,6 +260,7 @@ For comprehensive setup instructions, see our **[📖 Setup Guide](SETUP_GUIDE.m
 
 ```bash
 export OPENAI_API_KEY="your-openai-api-key"
+export NEWSAPI_API_KEY="your-newsapi-key"
 export MIXPANEL_TOKEN="your-mixpanel-token"
 ```
 
@@ -289,6 +318,15 @@ Product → Scheme → Edit Scheme → Test → Info → Test Plan
 - **Response Streaming**: Dynamic content generation
 - **Error Handling**: Graceful fallbacks and user feedback
 
+### 📰 News Feed System
+
+- **Category Browsing**: Multiple news categories (Top Headlines, Business, Technology, Sports, etc.)
+- **Multi-language Support**: News in Arabic, English, and more
+- **Country Selection**: Region-specific news from various countries
+- **Article Details**: Full article view with images and metadata
+- **Bookmark System**: Save and manage favorite articles with UserDefaults persistence
+- **Share Integration**: Share articles with native iOS sharing
+
 ### 👤 User Management
 - **Authentication**: Firebase-based secure login
 - **Profile Management**: Customizable user profiles
@@ -322,16 +360,18 @@ Product → Scheme → Edit Scheme → Test → Info → Test Plan
 
 - **Firebase**: Backend services and authentication
 - **OpenAI**: AI language model integration
+- **NewsAPI**: News feed and article data
 - **Mixpanel**: Analytics and user tracking
 - **SwiftUI**: Modern iOS user interface
 - **Combine**: Reactive programming framework
 
 ### Build Configurations
 
-- **Development**: Debug builds with development services
-- **Production**: Release builds with production services
-- **Mock**: Testing builds with mock services
-- **UITesting**: UI test builds with test data
+AIChat has three Xcode schemes with corresponding build configurations:
+
+- **AIChat - Development** (`.dev`): Debug builds with real services, console logging, and analytics
+- **AIChat - Production** (`.prod`): Release builds with real services, no console logging, analytics only
+- **AIChat - Mock** (`.mock`): Testing builds with mock services, no real API calls (perfect for UI testing)
 
 ---
 
