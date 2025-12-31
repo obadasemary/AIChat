@@ -10,26 +10,26 @@ import StoreKit
 
 struct PaywallView: View {
     
-    @State var viewModel: PaywallViewModel
+    @State var presenter: PaywallPresenter
     
     var body: some View {
         Group {
-            switch viewModel.option {
+            switch presenter.option {
             case .custom:
                 ZStack {
-                    if viewModel.products.isEmpty {
+                    if presenter.products.isEmpty {
                         ProgressView()
                     } else {
                         CustomPaywallView(
-                            products: viewModel.products,
+                            products: presenter.products,
                             onBackButtonPressed: {
-                                viewModel.onBackButtonPressed()
+                                presenter.onBackButtonPressed()
                             },
                             onRestorePurchasePressed: {
-                                viewModel.onRestorePurchasePressed()
+                                presenter.onRestorePurchasePressed()
                             },
                             onPurchaseProductPressed: { product in
-                                viewModel
+                                presenter
                                     .onPurchaseProductPressed(product: product)
                             }
                         )
@@ -37,10 +37,10 @@ struct PaywallView: View {
                 }
             case .storeKit:
                 StoreKitPaywallView(
-                    productIds: viewModel.productIds,
-                    onInAppPurchaseStart: viewModel.onPurchaseStart,
+                    productIds: presenter.productIds,
+                    onInAppPurchaseStart: presenter.onPurchaseStart,
                     onInAppPurchaseCompletion: { (product, result) in
-                        viewModel
+                        presenter
                             .onPurchaseComplete(
                                 product: product,
                                 result: result
@@ -51,7 +51,7 @@ struct PaywallView: View {
         }
         .screenAppearAnalytics(name: "Paywall")
         .task {
-            await viewModel.onLoadProducts()
+            await presenter.onLoadProducts()
         }
     }
 }

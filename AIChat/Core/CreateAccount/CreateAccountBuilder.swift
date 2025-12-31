@@ -22,8 +22,8 @@ final class CreateAccountBuilder {
         delegate: CreateAccountDelegate = CreateAccountDelegate()
     ) -> some View {
         CreateAccountView(
-            viewModel: CreateAccountViewModel(
-                createAccountUseCase: CreateAccountUseCase(
+            presenter: CreateAccountPresenter(
+                createAccountInteractor: CreateAccountInteractor(
                     container: container
                 ),
                 router: CreateAccountRouter(router: router)

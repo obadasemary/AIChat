@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ProfileView: View {
     
-    @State var viewModel: ProfileViewModel
+    @State var presenter: ProfilePresenter
     
     var body: some View {
         List {
@@ -24,10 +24,10 @@ struct ProfileView: View {
             }
         }
         .task {
-            await viewModel.loadData()
+            await presenter.loadData()
         }
         .refreshable {
-            await viewModel.loadData()
+            await presenter.loadData()
         }
     }
 }
@@ -40,7 +40,7 @@ private extension ProfileView {
             ZStack {
                 Circle()
                     .fill(
-                        viewModel.currentUser?.profileColorCalculated ?? .accent
+                        presenter.currentUser?.profileColorCalculated ?? .accent
                     )
             }
             .frame(width: 100, height: 100)
@@ -51,9 +51,9 @@ private extension ProfileView {
     
     var myAvatarsSection: some View {
         Section {
-            if viewModel.myAvatars.isEmpty {
+            if presenter.myAvatars.isEmpty {
                 Group {
-                    if viewModel.isLoading {
+                    if presenter.isLoading {
                         ProgressView()
                             .tint(.accent)
                     } else {
@@ -66,19 +66,19 @@ private extension ProfileView {
                 .foregroundStyle(.secondary)
                 .removeListRowFormatting()
             } else {
-                ForEach(viewModel.myAvatars, id: \.self) { avatar in
+                ForEach(presenter.myAvatars, id: \.self) { avatar in
                     CustomListCellView(
                         imageName: avatar.profileImageName,
                         title: avatar.name,
                         subtitle: nil
                     )
                     .anyButton(.highlight) {
-                        viewModel.onAvatarSelected(avatar: avatar)
+                        presenter.onAvatarSelected(avatar: avatar)
                     }
                     .removeListRowFormatting()
                 }
                 .onDelete { indexSet in
-                    viewModel.onDeleteAvatar(indexSet: indexSet)
+                    presenter.onDeleteAvatar(indexSet: indexSet)
                 }
             }
         } header: {
@@ -93,7 +93,7 @@ private extension ProfileView {
                     .font(.title)
                     .foregroundStyle(.accent)
                     .anyButton {
-                        viewModel.onNewAvatarButtonPressed()
+                        presenter.onNewAvatarButtonPressed()
                     }
             }
         }
@@ -104,7 +104,7 @@ private extension ProfileView {
             .font(.headline)
             .foregroundStyle(.accent)
             .anyButton {
-                viewModel.onSettingsButtonPressed()
+                presenter.onSettingsButtonPressed()
             }
     }
 }
