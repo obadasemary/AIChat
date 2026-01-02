@@ -2,7 +2,7 @@
 //  ConfigurationManagerExample.swift
 //  AIChat
 //
-//  Created by Claude Code on 17.12.2025.
+//  Created by Abdelrahman Mohamed on 17.12.2025.
 //
 //  This file demonstrates how to use both ConfigurationManager and EnhancedConfigurationManager
 //
