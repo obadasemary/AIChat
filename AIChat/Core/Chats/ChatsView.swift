@@ -9,14 +9,14 @@ import SwiftUI
 
 struct ChatsView: View {
     
-    @State var viewModel: ChatsViewModel
+    @State var presenter: ChatsPresenter
     @Environment(ChatRowCellBuilder.self) private var chatRowCellBuilder
     
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         List {
-            if !viewModel.recentAvatars.isEmpty {
+            if !presenter.recentAvatars.isEmpty {
                 recentsSection
             }
             chatsSection
@@ -24,13 +24,13 @@ struct ChatsView: View {
         .navigationTitle("Chats")
         .screenAppearAnalytics(name: "ChatsView")
         .onAppear {
-            viewModel.loadRecentAvatars()
+            presenter.loadRecentAvatars()
         }
         .task {
-            await viewModel.loadChats()
+            await presenter.loadChats()
         }
         .refreshable {
-            await viewModel.loadChats()
+            await presenter.loadChats()
         }
     }
 }
@@ -61,7 +61,7 @@ private extension ChatsView {
         Section {
             ScrollView(.horizontal) {
                 LazyHStack(spacing: 8) {
-                    ForEach(viewModel.recentAvatars, id: \.self) { avatar in
+                    ForEach(presenter.recentAvatars, id: \.self) { avatar in
                         if let imageName = avatar.profileImageName {
                             VStack(spacing: 8) {
                                 ImageLoaderView(urlString: imageName)
@@ -75,7 +75,7 @@ private extension ChatsView {
                                     .lineLimit(1)
                             }
                             .anyButton {
-                                viewModel
+                                presenter
                                     .onRecentsAvatarsTapped(avatar: avatar)
                             }
                         }
@@ -94,24 +94,24 @@ private extension ChatsView {
     
     var chatsSection: some View {
         Section {
-            if viewModel.isLoadingChats {
+            if presenter.isLoadingChats {
                 loadingIndicator
-            } else if viewModel.chats.isEmpty {
+            } else if presenter.chats.isEmpty {
                 contentUnavailableView
             } else {
-                ForEach(viewModel.chats) { chat in
+                ForEach(presenter.chats) { chat in
                     chatRowCellBuilder
                         .buildChatRowCellBuilderView(
                             delegate: ChatRowCellDelegate(chat: chat)
                         )
                         .anyButton(.highlight) {
-                            viewModel.onChatSelected(chat: chat)
+                            presenter.onChatSelected(chat: chat)
                         }
                         .removeListRowFormatting()
                 }
             }
         } header: {
-            Text(viewModel.chats.isEmpty ? "" : "CHATS")
+            Text(presenter.chats.isEmpty ? "" : "CHATS")
         }
     }
 }

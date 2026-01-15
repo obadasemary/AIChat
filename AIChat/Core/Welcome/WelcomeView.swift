@@ -9,11 +9,11 @@ import SwiftUI
 
 struct WelcomeView: View {
     
-    @State var viewModel: WelcomeViewModel
+    @State var presenter: WelcomePresenter
     
     var body: some View {
         VStack(spacing: 8) {
-            ImageLoaderView(urlString: viewModel.imageName)
+            ImageLoaderView(urlString: presenter.imageName)
                 .ignoresSafeArea()
             
             titleSection
@@ -54,7 +54,7 @@ private extension WelcomeView {
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
                 .anyButton(.press) {
-                    viewModel.onGetStartedPressed()
+                    presenter.onGetStartedPressed()
                 }
                 .accessibilityIdentifier("StartButton")
                 .frame(maxWidth: 500)
@@ -65,7 +65,7 @@ private extension WelcomeView {
                 .padding(8)
                 .tappableBackground()
                 .onTapGesture {
-                    viewModel.onSignInPressed()
+                    presenter.onSignInPressed()
                 }
                 .lineLimit(1)
                 .minimumScaleFactor(0.3)

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct NewsFeedView: View {
 
-    @State var viewModel: NewsFeedViewModel
+    @State var presenter: NewsFeedPresenter
     @Environment(\.colorScheme) var colorScheme
     @State private var selectedCategory: NewsCategory = .topHeadlines
     @State private var selectedCountry: NewsCountry = .egypt
@@ -28,7 +28,7 @@ struct NewsFeedView: View {
 
             ScrollView {
                 LazyVStack(spacing: 0) {
-                    switch viewModel.state {
+                    switch presenter.state {
                     case .idle, .loading:
                         ProgressView()
                             .padding(.vertical, 24)
@@ -36,16 +36,16 @@ struct NewsFeedView: View {
                         ContentUnavailableView(
                             "Error",
                             systemImage: "exclamationmark.triangle",
-                            description: Text(viewModel.errorMessage ?? "An error occurred")
+                            description: Text(presenter.errorMessage ?? "An error occurred")
                         )
                         .padding(.vertical, 24)
 
                         Button("Retry") {
-                            viewModel.refreshData()
+                            presenter.refreshData()
                         }
                         .buttonStyle(.borderedProminent)
                     case .loaded, .loadingMore:
-                        if viewModel.articles.isEmpty {
+                        if presenter.articles.isEmpty {
                             ContentUnavailableView(
                                 "No News Available",
                                 systemImage: "newspaper",
@@ -53,20 +53,20 @@ struct NewsFeedView: View {
                             )
                             .padding(.vertical, 100)
                         } else {
-                            ForEach(viewModel.articles) { article in
+                            ForEach(presenter.articles) { article in
                                 NewsArticleRow(article: article)
                                     .onTapGesture {
-                                        viewModel.onArticleTapped(article)
+                                        presenter.onArticleTapped(article)
                                     }
                                     .onAppear {
-                                        if article.id == viewModel.articles.last?.id {
-                                            viewModel.loadMoreData()
+                                        if article.id == presenter.articles.last?.id {
+                                            presenter.loadMoreData()
                                         }
                                     }
                                 Divider()
                             }
 
-                            if viewModel.isLoadingMore {
+                            if presenter.isLoadingMore {
                                 ProgressView()
                                     .padding(.vertical, 16)
                             }
@@ -75,7 +75,7 @@ struct NewsFeedView: View {
                 }
             }
             .refreshable {
-                viewModel.refreshData()
+                presenter.refreshData()
             }
         }
         .navigationTitle("News Feed")
@@ -95,19 +95,19 @@ struct NewsFeedView: View {
             settingsSheet
         }
         .task {
-            viewModel.loadInitialData()
+            presenter.loadInitialData()
         }
-        .onChange(of: viewModel.isConnected) { _, _ in
-            viewModel.handleConnectivityChange()
+        .onChange(of: presenter.isConnected) { _, _ in
+            presenter.handleConnectivityChange()
         }
     }
     
     private var dataSourceIndicator: some View {
         Group {
-            if viewModel.isDataFromRemote {
+            if presenter.isDataFromRemote {
                 Label("Live", systemImage: "wifi")
                     .foregroundStyle(.green)
-            } else if viewModel.isDataFromLocal {
+            } else if presenter.isDataFromLocal {
                 Label("Cached", systemImage: "arrow.clockwise.icloud")
                     .foregroundStyle(.orange)
             }
@@ -143,12 +143,12 @@ struct NewsFeedView: View {
 
     private func loadCategory(_ category: NewsCategory) {
         if category == .topHeadlines {
-            viewModel.loadTopHeadlines(
+            presenter.loadTopHeadlines(
                 country: selectedCountry.code,
                 language: selectedLanguage.code
             )
         } else if let query = category.query {
-            viewModel.loadNews(
+            presenter.loadNews(
                 category: query.rawValue,
                 language: selectedLanguage.code
             )

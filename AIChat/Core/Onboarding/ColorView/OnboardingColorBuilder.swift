@@ -22,8 +22,8 @@ final class OnboardingColorBuilder {
         delegate: OnboardingColorDelegate
     ) -> some View {
         OnboardingColorView(
-            viewModel: OnboardingColorViewModel(
-                onboardingColorUseCase: OnboardingColorUseCase(
+            presenter: OnboardingColorPresenter(
+                onboardingColorInteractor: OnboardingColorInteractor(
                     container: container
                 ),
                 router: OnboardingColorRouter(

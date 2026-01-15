@@ -22,8 +22,8 @@ final class CategoryListBuilder {
         delegate: CategoryListDelegate
     ) -> some View {
         CategoryListView(
-            viewModel: CategoryListViewModel(
-                categoryListUseCase: CategoryListUseCase(
+            presenter: CategoryListPresenter(
+                categoryListInteractor: CategoryListInteractor(
                     container: container
                 ),
                 router: CategoryListRouter(

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct OnboardingIntroView: View {
     
-    @State var viewModel: OnboardingIntroViewModel
+    @State var presenter: OnboardingIntroPresenter
     let delegate: OnboardingIntroDelegate
     
     var body: some View {
@@ -37,7 +37,7 @@ struct OnboardingIntroView: View {
             Text("Continue")
                 .callToActionButton()
                 .anyButton(.press) {
-                    viewModel.onContinuePress()
+                    presenter.onContinuePress()
                 }
                 .accessibilityIdentifier("ContinueButton")
         }
