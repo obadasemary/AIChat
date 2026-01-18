@@ -330,3 +330,97 @@ Configure these in Settings → Secrets and variables → Actions:
 - `NEWSAPI_API_KEY`: NewsAPI key for news articles
 
 For detailed setup instructions, see [GITHUB_SECRETS_SETUP.md](GITHUB_SECRETS_SETUP.md)
+
+### Firebase App Distribution for QA
+
+File: `.github/workflows/firebase-distribution.yml`
+
+**Purpose:**
+Automatically builds and distributes the app to QA testers via Firebase App Distribution whenever code is pushed to `main`.
+
+**Workflow Steps:**
+
+1. Builds an archive for iOS devices (not simulator)
+2. Exports an IPA file signed for ad-hoc distribution
+3. Uploads the IPA to Firebase App Distribution
+4. Notifies QA testers in the configured Firebase tester group
+
+**Required GitHub Secrets:**
+Configure these in Settings → Secrets and variables → Actions:
+
+1. **Code Signing Secrets:**
+   - `IOS_DISTRIBUTION_CERTIFICATE_BASE64`: Base64-encoded .p12 certificate file
+   - `IOS_DISTRIBUTION_CERTIFICATE_PASSWORD`: Password for the .p12 certificate
+   - `IOS_PROVISIONING_PROFILE_BASE64`: Base64-encoded .mobileprovision file
+   - `KEYCHAIN_PASSWORD`: Temporary keychain password (can be any secure string)
+   - `APPLE_TEAM_ID`: Your Apple Developer Team ID
+
+2. **Firebase Secrets:**
+   - `FIREBASE_DEV_PLIST`: Base64-encoded GoogleService-Info-Dev.plist
+   - `FIREBASE_PROD_PLIST`: Base64-encoded GoogleService-Info-Prod.plist
+   - `FIREBASE_APP_ID`: Firebase App ID (found in Firebase Console)
+   - `FIREBASE_SERVICE_CREDENTIALS`: Firebase service account JSON credentials
+
+3. **API Keys** (same as CI workflow):
+   - `OPENAI_API_KEY`: OpenAI API key
+   - `MIXPANEL_TOKEN`: Mixpanel token
+   - `NEWSAPI_API_KEY`: NewsAPI key
+
+**Setup Instructions:**
+
+1. **Create Distribution Certificate:**
+
+   ```bash
+   # Export certificate from Keychain as .p12 file
+   # Then encode to base64:
+   base64 -i YourCertificate.p12 | pbcopy
+   # Paste into IOS_DISTRIBUTION_CERTIFICATE_BASE64 secret
+   ```
+
+2. **Encode Provisioning Profile:**
+
+   ```bash
+   base64 -i YourProfile.mobileprovision | pbcopy
+   # Paste into IOS_PROVISIONING_PROFILE_BASE64 secret
+   ```
+
+3. **Encode Firebase Configuration:**
+
+   ```bash
+   base64 -i GoogleService-Info-Dev.plist | pbcopy
+   # Paste into FIREBASE_DEV_PLIST secret
+
+   base64 -i GoogleService-Info-Prod.plist | pbcopy
+   # Paste into FIREBASE_PROD_PLIST secret
+   ```
+
+4. **Get Firebase Service Credentials:**
+   - Go to Firebase Console → Project Settings → Service Accounts
+   - Click "Generate New Private Key"
+   - Save the JSON file and paste its contents into `FIREBASE_SERVICE_CREDENTIALS`
+
+5. **Get Firebase App ID:**
+   - Go to Firebase Console → Project Settings → General
+   - Under "Your apps", find your iOS app
+   - Copy the App ID (format: `1:123456789:ios:abcdef123456`)
+
+6. **Update ExportOptions.plist:**
+   Edit [ExportOptions.plist](ExportOptions.plist) with your:
+   - Team ID
+   - Bundle identifier (com.aichat.dev)
+   - Provisioning profile name
+
+7. **Configure Firebase App Distribution:**
+   - Go to Firebase Console → App Distribution
+   - Create a tester group named "qa-testers"
+   - Add QA testers' email addresses
+
+**Manual Trigger:**
+
+The workflow can be manually triggered from GitHub:
+
+- Go to Actions → Firebase App Distribution - QA → Run workflow
+
+**Build Artifacts:**
+
+Each build is saved as a GitHub artifact for 30 days, accessible from the workflow run page
