@@ -26,12 +26,14 @@ struct NewsFeedViewModelTests {
 
         await viewModel.loadInitialDataAndWait()
 
+        // swiftlint:disable empty_count
         #expect(viewModel.articles.count > 0)
         if case .loaded = viewModel.state {
             // Success
         } else {
             Issue.record("Expected state to be .loaded")
         }
+        // swiftlint:enable empty_count
     }
 
     @Test("Initial Data Load Failure")
@@ -67,13 +69,15 @@ struct NewsFeedViewModelTests {
         // Load initial data
         await viewModel.loadInitialDataAndWait()
 
-        let initialCount = viewModel.articles.count
+        _ = viewModel.articles.count
 
         // Refresh
         await viewModel.refreshDataAndWait()
 
         #expect(viewModel.currentPage == 1)
+        // swiftlint:disable empty_count
         #expect(viewModel.articles.count > 0)
+        // swiftlint:enable empty_count
     }
 
     // MARK: - Pagination Tests

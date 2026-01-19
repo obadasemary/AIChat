@@ -29,7 +29,9 @@ struct NewsFeedManagerTests {
         let result = try await manager.fetchNews(category: nil, language: nil, page: 1, pageSize: 20)
 
         #expect(result.source == .remote)
+        // swiftlint:disable empty_count
         #expect(result.articles.count > 0)
+        // swiftlint:enable empty_count
         #expect(result.totalResults != nil)
     }
 
@@ -101,7 +103,9 @@ struct NewsFeedManagerTests {
 
         // Verify articles were saved to local storage
         let cachedArticles = try mockLocalService.fetchCachedNews()
+        // swiftlint:disable empty_count
         #expect(cachedArticles.count > 0)
+        // swiftlint:enable empty_count
     }
 
     @Test("Filter News by Category")
@@ -141,7 +145,9 @@ struct NewsFeedManagerTests {
         let result = try await manager.fetchTopHeadlines(country: "us", language: nil, page: 1, pageSize: 20)
 
         #expect(result.source == .remote)
+        // swiftlint:disable empty_count
         #expect(result.articles.count > 0)
+        // swiftlint:enable empty_count
         #expect(result.totalResults != nil)
     }
 
