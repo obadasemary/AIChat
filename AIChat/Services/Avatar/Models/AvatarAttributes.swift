@@ -60,7 +60,8 @@ enum CharacterAction: String, CaseIterable, Hashable, Codable {
 
 enum CharacterLocation: String, CaseIterable, Hashable, Codable {
     case park, mall, museum, city, mountain, desert, forest, beach, ocean, space
-    
+    case office, courthouse, boardroom, conference, lawFirm = "law firm"
+
     static var `default`: Self { .space }
 }
 
