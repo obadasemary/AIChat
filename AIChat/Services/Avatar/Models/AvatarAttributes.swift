@@ -22,37 +22,22 @@ enum CharacterOption: String, CaseIterable, Hashable, Codable {
             "men"
         case .woman:
             "women"
-        case .alien:
-            "aliens"
-        case .dog:
-            "dogs"
-        case .cat:
-            "cats"
-        case .robot:
-            "robots"
-        case .lawyer:
-            "lawyers"
         case .criminalLawyer:
             "criminal lawyers"
-        case .strategist:
-            "strategists"
-        case .consultant:
-            "consultants"
+        default:
+            "\(rawValue)s"
         }
     }
     
     var startsWithVowel: Bool {
-        switch self {
-        case .woman, .alien:
-            return true
-        default:
-            return false
-        }
+        guard let firstChar = rawValue.first?.lowercased() else { return false }
+        return ["a", "e", "i", "o", "u"].contains(firstChar)
     }
 }
 
 enum CharacterAction: String, CaseIterable, Hashable, Codable {
-    case smiling, sitting, eating, drinking, walking, running, jumping, sleeping, shopping, studying, working, relaxing, fighting, kissing, hugging, crying, laughing
+    case smiling, sitting, eating, drinking, walking, running, jumping, sleeping
+    case shopping, studying, working, relaxing, fighting, kissing, hugging, crying, laughing
     case consulting, presenting, negotiating, meeting, analyzing, advising, reviewing
 
     static var `default`: Self { .fighting }
