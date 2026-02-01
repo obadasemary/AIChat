@@ -9,7 +9,11 @@ import Foundation
 
 enum CharacterOption: String, CaseIterable, Hashable, Codable {
     case man, woman, alien, dog, cat, robot
-    
+    case lawyer
+    case criminalLawyer = "criminal lawyer"
+    case strategist
+    case consultant
+
     static var `default`: Self { .robot }
     
     var plural: String {
@@ -26,6 +30,14 @@ enum CharacterOption: String, CaseIterable, Hashable, Codable {
             "cats"
         case .robot:
             "robots"
+        case .lawyer:
+            "lawyers"
+        case .criminalLawyer:
+            "criminal lawyers"
+        case .strategist:
+            "strategists"
+        case .consultant:
+            "consultants"
         }
     }
     
