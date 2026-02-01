@@ -53,7 +53,8 @@ enum CharacterOption: String, CaseIterable, Hashable, Codable {
 
 enum CharacterAction: String, CaseIterable, Hashable, Codable {
     case smiling, sitting, eating, drinking, walking, running, jumping, sleeping, shopping, studying, working, relaxing, fighting, kissing, hugging, crying, laughing
-    
+    case consulting, presenting, negotiating, meeting, analyzing, advising, reviewing
+
     static var `default`: Self { .fighting }
 }
 
