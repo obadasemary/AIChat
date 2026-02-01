@@ -391,6 +391,43 @@ Task { @MainActor in
 
 **Benefits**: Avoids unnecessary suspensions, allows non-Sendable data.
 
+### Task Closures and Isolation Inheritance
+
+When spawning unstructured `Task` closures that need to work with `non-Sendable` types, you must capture the isolation parameter to inherit the caller's isolation context.
+
+**Problem**: `Task` closures are `@Sendable`, which prevents capturing `non-Sendable` types:
+
+```swift
+func process(delegate: NonSendableDelegate) {
+  Task {
+    delegate.doWork() // ❌ Error: capturing non-Sendable type
+  }
+}
+```
+
+**Solution**: Use `#isolation` parameter and capture it inside the `Task`:
+
+```swift
+func process(
+  delegate: NonSendableDelegate,
+  isolation: isolated (any Actor)? = #isolation
+) {
+  Task {
+    _ = isolation  // Forces capture, Task inherits caller's isolation
+    delegate.doWork()  // ✅ Safe - running on caller's actor
+  }
+}
+```
+
+**Why `_ = isolation` is required**: Per [SE-0420](https://github.com/swiftlang/swift-evolution/blob/main/proposals/0420-inheritance-of-actor-isolation.md), `Task` closures only inherit isolation when "a non-optional binding of an isolated parameter is captured by the closure." The `_ = isolation` statement forces this capture. The capture list syntax `[isolation]` should work but currently does not.
+
+**When to use this pattern**:
+- Spawning `Task`s that work with `non-Sendable` delegate objects
+- Fire-and-forget async work that needs access to caller's state
+- Bridging callback-based APIs to async streams while keeping delegates alive
+
+**Note**: This pattern keeps the `non-Sendable` value alive and accessible within the `Task`. The `Task` runs on the caller's isolation domain, so no cross-isolation "sending" occurs.
+
 > **Course Deep Dive**: This topic is covered in detail in [Lesson 5.8: Inheritance of actor isolation using the #isolation macro](https://www.swiftconcurrencycourse.com?utm_source=github&utm_medium=agent-skill&utm_campaign=lesson-reference)
 
 ## Custom Actor Executors

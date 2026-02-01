@@ -486,6 +486,41 @@ for await value in stream {
 - Polling or repeated async operations
 - Most common use case
 
+---
+
+## When to Use AsyncAlgorithms vs Standard Library
+
+### Use AsyncAlgorithms when:
+
+- **Time-based operations** need debounce/throttle/timer
+- **Combining multiple async sequences** (merge, combineLatest, zip)
+- **Multi-consumer scenarios** require backpressure (AsyncChannel)
+- **Complex operator chains** that Combine would handle naturally
+- **Need specific operators** not in standard library
+
+### Use Standard Library when:
+
+- **Bridging callback APIs** → AsyncStream
+- **Simple iteration** → for await in sequence
+- **Single-value operations** → async/await
+- **Basic transformations** → map/filter/contains
+
+### Quick Decision Table
+
+| Need | Solution |
+|------|----------|
+| Debounce search input | ✅ AsyncAlgorithms.debounce() |
+| Throttle button clicks | ✅ AsyncAlgorithms.throttle() |
+| Merge independent streams | ✅ AsyncAlgorithms.merge() |
+| Combine dependent values | ✅ AsyncAlgorithms.combineLatest() or async let |
+| Pair values from two sources | ✅ AsyncAlgorithms.zip() |
+| Bridge callback API | AsyncStream |
+| Multi-consumer with backpressure | ✅ AsyncChannel |
+| Periodic timer | ✅ AsyncTimerSequence |
+| Simple async iteration | for await in... |
+
+> **See**: [async-algorithms.md](async-algorithms.md) for detailed usage examples with real-world patterns.
+
 ### Use regular async methods when:
 
 - Single value returned
