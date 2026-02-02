@@ -47,6 +47,7 @@ struct Dependencies {
     let purchaseManager: PurchaseManager
     let newsFeedManager: NewsFeedManager
     let networkMonitor: NetworkMonitorProtocol
+    let networkManager: NetworkManager
     let bookmarkManager: BookmarkManager
     let appState: AppState
     
@@ -103,6 +104,10 @@ struct Dependencies {
                 logManager: logManager
             )
             bookmarkManager = BookmarkManager()
+            networkManager = NetworkManager(
+                service: MockNetworkService(),
+                logManager: logManager
+            )
             appState = AppState(showTabBar: isSignedIn)
         case .dev:
             logManager = LogManager(
@@ -145,6 +150,17 @@ struct Dependencies {
                 logManager: logManager
             )
             bookmarkManager = BookmarkManager()
+            networkManager = NetworkManager(
+                service: URLSessionNetworkService(
+                    requestInterceptors: [
+                        LoggingInterceptor(logLevel: .headers)
+                    ],
+                    responseInterceptors: [
+                        LoggingInterceptor(logLevel: .headers)
+                    ]
+                ),
+                logManager: logManager
+            )
             appState = AppState()
         case .prod:
             logManager = LogManager(
@@ -186,6 +202,10 @@ struct Dependencies {
                 logManager: logManager
             )
             bookmarkManager = BookmarkManager()
+            networkManager = NetworkManager(
+                service: URLSessionNetworkService(),
+                logManager: logManager
+            )
             appState = AppState()
         }
 
@@ -203,6 +223,7 @@ struct Dependencies {
         container.register(PurchaseManager.self, purchaseManager)
         container.register(NewsFeedManager.self, newsFeedManager)
         container.register(NetworkMonitorProtocol.self, networkMonitor)
+        container.register(NetworkManager.self, networkManager)
         container.register(BookmarkManager.self, bookmarkManager)
         container.register(AppState.self, appState)
 
