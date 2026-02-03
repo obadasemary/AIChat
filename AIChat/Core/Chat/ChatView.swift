@@ -4,36 +4,42 @@
 //
 //  Created by Abdelrahman Mohamed on 02.06.2025.
 //
+//  A modern chat view with iMessage/WhatsApp-style UI featuring:
+//  - Bubble tails and smooth corners
+//  - Date headers for message grouping
+//  - Animated typing indicator
+//  - Read receipts
+//  - Modern input bar
+//  - Haptic feedback
+//
 
 import SwiftUI
 
 struct ChatView: View {
-    
+
     @State var viewModel: ChatViewModel
     @FocusState private var isTextFieldFocused: Bool
-    
+
     let delegate: ChatDelegate
-    
+
+    // Animation states
+    @State private var showScrollToBottom: Bool = false
+    @Namespace private var bottomID
+
     var body: some View {
-        VStack(spacing: .zero) {
-            scrollViewSection
-            textFieldSection
+        VStack(spacing: 0) {
+            messagesScrollView
+            inputBarSection
         }
-        .navigationTitle(viewModel.avatar?.name ?? "")
-        .toolbarTitleDisplayMode(.inline)
+        .background(chatBackground)
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                navigationTitleView
+            }
+
             ToolbarItem(placement: .navigationBarTrailing) {
-                HStack {
-                    if viewModel.isGeneratingResponse {
-                        ProgressView()
-                    } else {
-                        Image(systemName: "ellipsis")
-                            .padding(8)
-                            .anyButton {
-                                viewModel.onChatSettingsTapped()
-                            }
-                    }
-                }
+                settingsButton
             }
         }
         .screenAppearAnalytics(name: ScreenName.from(Self.self))
@@ -53,99 +59,180 @@ struct ChatView: View {
     }
 }
 
-// MARK: - SectionViews
+// MARK: - Navigation Bar Components
 private extension ChatView {
-    var scrollViewSection: some View {
-        ScrollView {
-            LazyVStack(spacing: 24) {
-                ForEach(viewModel.chatMessages + (viewModel.typingIndicatorMessage.map { [$0] } ?? [])) { message in
-                    
-                    if viewModel.messageIsDelayed(message: message) {
-                        timestampView(date: message.dateCreatedCalculated)
-                    }
-                    
-                    let isCurrentUser = viewModel
-                        .messageIsCurrentUser(message: message)
-                    ChatBubbleViewBuilder(
-                        message: message,
-                        isCurrentUser: isCurrentUser,
-                        currentUserProfileColor: viewModel.currentUser?.profileColorCalculated ?? .accent,
-                        imageName: isCurrentUser ? nil : viewModel.avatar?.profileImageName,
-                        onImageTapped: {
-                            viewModel.onAvatarImageTapped()
+
+    var navigationTitleView: some View {
+        ChatNavigationTitleView(
+            name: viewModel.avatar?.name ?? "Chat",
+            avatarImageUrl: viewModel.avatar?.profileImageName,
+            isOnline: true,
+            isTyping: viewModel.isGeneratingResponse,
+            onTapped: {
+                viewModel.onAvatarImageTapped()
+            }
+        )
+    }
+
+    @ViewBuilder
+    var settingsButton: some View {
+        if viewModel.isGeneratingResponse {
+            ProgressView()
+                .controlSize(.small)
+        } else {
+            Menu {
+                Button(role: .destructive) {
+                    viewModel.onReportChatTapped()
+                } label: {
+                    Label("Report Chat", systemImage: "exclamationmark.triangle")
+                }
+
+                Button(role: .destructive) {
+                    viewModel.onDeleteChatTapped()
+                } label: {
+                    Label("Delete Chat", systemImage: "trash")
+                }
+            } label: {
+                Image(systemName: "ellipsis.circle")
+                    .font(.system(size: 20))
+                    .foregroundStyle(.primary)
+            }
+        }
+    }
+}
+
+// MARK: - Messages Section
+private extension ChatView {
+
+    var messagesScrollView: some View {
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(spacing: 2) {
+                    // Group messages by date
+                    ForEach(messageGroups) { group in
+                        dateHeader(for: group.date)
+
+                        ForEach(group.messages) { message in
+                            messageRow(for: message, in: group.messages)
+                                .id(message.id)
+                                .transition(.asymmetric(
+                                    insertion: .opacity.combined(with: .move(edge: .bottom)),
+                                    removal: .opacity
+                                ))
                         }
-                    )
-                    .onAppear {
-                        viewModel.onMessageDidAppear(message: message)
                     }
-                    .id(message.id)
-                    .transition(.opacity)
+
+                    // Typing indicator
+                    if viewModel.typingIndicatorMessage != nil {
+                        typingIndicator
+                            .id("typing")
+                            .transition(.opacity.combined(with: .move(edge: .bottom)))
+                    }
+
+                    // Bottom anchor for scrolling
+                    Color.clear
+                        .frame(height: 1)
+                        .id("bottom")
+                }
+                .padding(.horizontal, 4)
+                .padding(.top, 8)
+                .padding(.bottom, 4)
+            }
+            .scrollDismissesKeyboard(.interactively)
+            .onChange(of: viewModel.scrollPosition) { _, newValue in
+                if let newValue {
+                    withAnimation(.easeOut(duration: 0.3)) {
+                        proxy.scrollTo(newValue, anchor: .bottom)
+                    }
                 }
             }
-            .frame(maxWidth: .infinity)
-            .padding(8)
-            .rotationEffect(.degrees(180))
+            .onChange(of: viewModel.typingIndicatorMessage) { _, newValue in
+                if newValue != nil {
+                    withAnimation(.easeOut(duration: 0.3)) {
+                        proxy.scrollTo("typing", anchor: .bottom)
+                    }
+                }
+            }
         }
-        .rotationEffect(.degrees(180))
-        .scrollPosition(id: $viewModel.scrollPosition, anchor: .center)
-        .animation(.easeInOut, value: viewModel.chatMessages.count)
-        .animation(.easeInOut, value: viewModel.scrollPosition)
     }
-    
-    func timestampView(date: Date) -> some View {
-        Group {
-            Text(date.formatted(date: .abbreviated, time: .omitted))
-            +
-            Text(" • ")
-            +
-            Text(date.formatted(date: .omitted, time: .shortened))
-        }
-        .foregroundStyle(.secondary)
-        .font(.callout)
-        .lineLimit(1)
-        .minimumScaleFactor(0.3)
+
+    var messageGroups: [MessageGroup] {
+        viewModel.chatMessages.groupedByDate()
     }
-    
-    var textFieldSection: some View {
-        TextField(
-            "Type your message...",
-            text: $viewModel.textFieldText,
-            axis: .vertical
+
+    func dateHeader(for date: Date) -> some View {
+        DateHeaderView(date: date)
+            .padding(.top, 8)
+    }
+
+    func messageRow(for message: ChatMessageModel, in messages: [ChatMessageModel]) -> some View {
+        let isCurrentUser = viewModel.messageIsCurrentUser(message: message)
+        let showAvatar = messages.shouldShowAvatar(
+            for: message,
+            currentUserId: viewModel.currentUser?.id
         )
-        .keyboardType(.default)
-        .autocorrectionDisabled()
-        .focused($isTextFieldFocused)
-        .onSubmit {
-            isTextFieldFocused = false
-            if !viewModel.textFieldText.isEmpty {
+        let showTail = messages.shouldShowTail(for: message)
+
+        return MessageRowView(
+            message: message,
+            isCurrentUser: isCurrentUser,
+            avatarImageUrl: isCurrentUser ? nil : viewModel.avatar?.profileImageName,
+            currentUserProfileColor: viewModel.currentUser?.profileColorCalculated ?? .blue,
+            showAvatar: showAvatar && !isCurrentUser,
+            showTail: showTail,
+            onAvatarTapped: {
+                triggerHaptic(.light)
+                viewModel.onAvatarImageTapped()
+            }
+        )
+        .onAppear {
+            viewModel.onMessageDidAppear(message: message)
+        }
+        .padding(.vertical, showTail ? 4 : 1)
+    }
+
+    var typingIndicator: some View {
+        TypingIndicatorView(
+            avatarImageUrl: viewModel.avatar?.profileImageName,
+            showAvatar: true
+        )
+        .padding(.vertical, 4)
+    }
+}
+
+// MARK: - Input Bar Section
+private extension ChatView {
+
+    var inputBarSection: some View {
+        SimpleChatInputBar(
+            text: $viewModel.textFieldText,
+            isFocused: $isTextFieldFocused,
+            isLoading: viewModel.isGeneratingResponse,
+            placeholder: "Type your message...",
+            accentColor: viewModel.currentUser?.profileColorCalculated ?? .blue,
+            onSendTapped: {
+                triggerHaptic(.medium)
                 viewModel.onSendMessageTapped(avatarId: delegate.avatarId)
             }
-        }
-        .padding(12)
-        .padding(.trailing, 60)
-        .accessibilityIdentifier("ChatTextField")
-        .overlay(alignment: .trailing) {
-            Image(systemName: "arrow.up.circle.fill")
-                .font(.system(size: 32))
-                .padding(.trailing, 4)
-                .foregroundStyle(.accent)
-                .anyButton(.plain) {
-                    viewModel.onSendMessageTapped(avatarId: delegate.avatarId)
-                }
-                .disabled(viewModel.textFieldText.isEmpty)
-        }
-        .background {
-            ZStack {
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(Color(uiColor: .systemBackground))
-                
-                RoundedRectangle(cornerRadius: 4)
-                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-            }
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
-        .background(Color(uiColor: .secondarySystemBackground))
+        )
+    }
+}
+
+// MARK: - Background
+private extension ChatView {
+
+    var chatBackground: some View {
+        Color(uiColor: .systemGroupedBackground)
+            .ignoresSafeArea()
+    }
+}
+
+// MARK: - Haptic Feedback
+private extension ChatView {
+
+    func triggerHaptic(_ style: UIImpactFeedbackGenerator.FeedbackStyle) {
+        let generator = UIImpactFeedbackGenerator(style: style)
+        generator.impactOccurred()
     }
 }
 
