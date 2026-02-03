@@ -36,7 +36,11 @@ extension ChatManager: ChatManagerProtocol {
         try await service
             .addChatMessage(message: message)
     }
-    
+
+    func updateMessageReaction(chatId: String, messageId: String, reactions: [String: MessageReaction]) async throws {
+        try await service.updateMessageReaction(chatId: chatId, messageId: messageId, reactions: reactions)
+    }
+
     func markChatMessagesAsSeen(chatId: String, messageId: String, userId: String) async throws {
         try await service
             .markChatMessagesAsSeen(
