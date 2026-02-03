@@ -71,7 +71,7 @@ struct TypingIndicatorView: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
         .background(
-            BubbleShape(isCurrentUser: false)
+            RoundedRectangle(cornerRadius: BubbleShape.cornerRadius)
                 .fill(Color(uiColor: .systemGray5))
                 .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         )
