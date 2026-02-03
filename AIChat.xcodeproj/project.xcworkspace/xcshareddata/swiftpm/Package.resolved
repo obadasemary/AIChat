@@ -1,5 +1,5 @@
 {
-  "originHash" : "d830c49ff99536734763c5d51541fe89b28753652befd60a0b4a5e22ae6701a9",
+  "originHash" : "28636a38fe1becf50bd97d6b7a24f80348d5055522c0c62e1a8fb9fcac357fe7",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -119,6 +119,15 @@
       }
     },
     {
+      "identity" : "inputbaraccessoryview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nathantannar4/InputBarAccessoryView",
+      "state" : {
+        "revision" : "6677def509ef3a0cb252bcf9a23e1c6a67ec2fa0",
+        "version" : "7.0.4"
+      }
+    },
+    {
       "identity" : "interop-ios-for-google-sdks",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/interop-ios-for-google-sdks.git",
@@ -134,6 +143,15 @@
       "state" : {
         "revision" : "a0bc79961d7be727d258d33d5a6b2f1023270ba1",
         "version" : "1.22.5"
+      }
+    },
+    {
+      "identity" : "messagekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/MessageKit/MessageKit",
+      "state" : {
+        "revision" : "dc48356f830d40de5acc0e126a44257d0a1329b6",
+        "version" : "5.0.0"
       }
     },
     {
