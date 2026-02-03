@@ -8,7 +8,7 @@
 import Foundation
 
 /// Mock implementation of NetworkServiceProtocol for testing
-final class MockNetworkService: NetworkServiceProtocol, @unchecked Sendable {
+actor MockNetworkService: NetworkServiceProtocol {
     /// The base URL (not used in mock but required by protocol)
     let baseURL: URL?
 
