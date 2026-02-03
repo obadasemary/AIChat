@@ -29,7 +29,7 @@ struct MockNetworkServiceTests {
     func test_whenMockRegistered_thenReturnsMockResponse() async throws {
         let service = MockNetworkService(delay: 0)
         let mockData = Data("{\"id\": 1}".utf8)
-        service.register(path: "/api/test", response: .init(data: mockData, statusCode: 200))
+        await service.register(path: "/api/test", response: .init(data: mockData, statusCode: 200))
 
         let request = NetworkRequest.get("/api/test")
         let response = try await service.execute(request)
@@ -45,8 +45,8 @@ struct MockNetworkServiceTests {
 
         _ = try await service.execute(request)
 
-        #expect(service.recordedRequests.count == 1)
-        #expect(service.recordedRequests.first?.path == "/api/test")
+        #expect(await service.recordedRequests.count == 1)
+        #expect(await service.recordedRequests.first?.path == "/api/test")
     }
 
     // MARK: - Error Simulation Tests
@@ -68,7 +68,7 @@ struct MockNetworkServiceTests {
     @Test("Execute throws error for error status code")
     func test_whenErrorStatusCode_thenThrowsError() async {
         let service = MockNetworkService(delay: 0)
-        service.register(
+        await service.register(
             path: "/api/error",
             response: .init(data: Data(), statusCode: 404)
         )
@@ -91,7 +91,7 @@ struct MockNetworkServiceTests {
 
         let service = MockNetworkService(delay: 0)
         let model = TestModel(id: 1, name: "Test")
-        try service.register(path: "/api/model", object: model)
+        try await service.register(path: "/api/model", object: model)
 
         let request = NetworkRequest.get("/api/model")
         let response = try await service.execute(request)
@@ -104,7 +104,7 @@ struct MockNetworkServiceTests {
     func test_whenJSONStringMock_thenCreatesCorrectResponse() async throws {
         let service = MockNetworkService(delay: 0)
         let json = "{\"status\": \"ok\"}"
-        service.register(path: "/api/status", response: .jsonString(json))
+        await service.register(path: "/api/status", response: .jsonString(json))
 
         let request = NetworkRequest.get("/api/status")
         let response = try await service.execute(request)
@@ -122,17 +122,17 @@ struct MockNetworkServiceTests {
         _ = try await service.execute(NetworkRequest.get("/api/test1"))
         _ = try await service.execute(NetworkRequest.get("/api/test2"))
 
-        service.clearRecordedRequests()
+        await service.clearRecordedRequests()
 
-        #expect(service.recordedRequests.isEmpty)
+        #expect(await service.recordedRequests.isEmpty)
     }
 
     @Test("Clear mock responses returns default response")
     func test_whenClearMockResponses_thenReturnsDefaultResponse() async throws {
         let service = MockNetworkService(delay: 0)
-        service.register(path: "/api/test", response: .jsonString("{\"id\": 1}"))
+        await service.register(path: "/api/test", response: .jsonString("{\"id\": 1}"))
 
-        service.clearMockResponses()
+        await service.clearMockResponses()
 
         let response = try await service.execute(NetworkRequest.get("/api/test"))
         #expect(response.data.isEmpty)
