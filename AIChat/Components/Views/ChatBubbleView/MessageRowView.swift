@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct MessageRowView: View {
-
+    
     let message: ChatMessageModel
     let isCurrentUser: Bool
     let avatarImageUrl: String?
@@ -17,7 +17,10 @@ struct MessageRowView: View {
     let showAvatar: Bool
     let showTail: Bool
     let onAvatarTapped: (() -> Void)?
-
+    let onReactionTapped: ((MessageReaction) -> Void)?
+    let onCopyTapped: (() -> Void)?
+    let onShareTapped: (() -> Void)?
+    
     init(
         message: ChatMessageModel,
         isCurrentUser: Bool,
@@ -25,7 +28,10 @@ struct MessageRowView: View {
         currentUserProfileColor: Color = .blue,
         showAvatar: Bool = true,
         showTail: Bool = true,
-        onAvatarTapped: (() -> Void)? = nil
+        onAvatarTapped: (() -> Void)? = nil,
+        onReactionTapped: ((MessageReaction) -> Void)? = nil,
+        onCopyTapped: (() -> Void)? = nil,
+        onShareTapped: (() -> Void)? = nil
     ) {
         self.message = message
         self.isCurrentUser = isCurrentUser
@@ -34,35 +40,48 @@ struct MessageRowView: View {
         self.showAvatar = showAvatar
         self.showTail = showTail
         self.onAvatarTapped = onAvatarTapped
+        self.onReactionTapped = onReactionTapped
+        self.onCopyTapped = onCopyTapped
+        self.onShareTapped = onShareTapped
     }
-
+    
     private var backgroundColor: Color {
         isCurrentUser ? currentUserProfileColor : Color(uiColor: .systemGray5)
     }
-
+    
     private var textColor: Color {
         isCurrentUser ? .white : .primary
     }
-
+    
     var body: some View {
-        HStack(alignment: .bottom, spacing: 8) {
-            if !isCurrentUser {
-                avatarView
-            } else {
-                Spacer(minLength: 50)
+        VStack(alignment: isCurrentUser ? .trailing : .leading, spacing: 0) {
+            HStack(alignment: .bottom, spacing: 8) {
+                if !isCurrentUser {
+                    avatarView
+                } else {
+                    Spacer(minLength: 50)
+                }
+                
+                messageContent
+                
+                if isCurrentUser {
+                    // No avatar for current user, but maintain spacing
+                } else {
+                    Spacer(minLength: 50)
+                }
             }
-
-            messageContent
-
-            if isCurrentUser {
-                // No avatar for current user, but maintain spacing
-            } else {
-                Spacer(minLength: 50)
+            
+            // Reactions display
+            if let reactions = message.reactions, !reactions.isEmpty {
+                MessageReactionView(
+                    reactions: reactions,
+                    isCurrentUser: isCurrentUser
+                )
             }
         }
         .padding(.horizontal, 8)
     }
-
+    
     @ViewBuilder
     private var avatarView: some View {
         if showAvatar {
@@ -86,11 +105,12 @@ struct MessageRowView: View {
                 .frame(width: 32, height: 32)
         }
     }
-
+    
     private var messageContent: some View {
         VStack(alignment: isCurrentUser ? .trailing : .leading, spacing: 2) {
             bubbleView
         }
+        .frame(maxWidth: .infinity, alignment: isCurrentUser ? .trailing : .leading)
     }
 
     private var bubbleView: some View {
@@ -99,41 +119,123 @@ struct MessageRowView: View {
                 .font(.body)
                 .foregroundStyle(textColor)
                 .multilineTextAlignment(.leading)
-
+            
             // Timestamp and read receipt
             HStack(spacing: 2) {
                 Text(message.dateCreatedCalculated.formatted(date: .omitted, time: .shortened))
                     .font(.caption2)
                     .foregroundStyle(textColor.opacity(0.7))
-
+                
                 if isCurrentUser {
                     readReceiptIcon
                 }
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
+        .padding(bubbleContentInsets)
         .background(
             Group {
                 if showTail {
                     BubbleShape(isCurrentUser: isCurrentUser)
                         .fill(backgroundColor)
                 } else {
-                    RoundedRectangle(cornerRadius: 18)
+                    RoundedRectangle(cornerRadius: BubbleShape.cornerRadius)
                         .fill(backgroundColor)
                 }
             }
             .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         )
-        .frame(maxWidth: .infinity, alignment: isCurrentUser ? .trailing : .leading)
+        .contentShape(RoundedRectangle(cornerRadius: BubbleShape.cornerRadius))
+        .contextMenu {
+            contextMenuContent
+        }
     }
 
+    private var bubbleContentInsets: EdgeInsets {
+        let baseHorizontal: CGFloat = 12
+        let baseVertical: CGFloat = 12
+        let tailInset: CGFloat = showTail ? BubbleShape.tailWidth : 0
+
+        if isCurrentUser {
+            return EdgeInsets(
+                top: baseVertical,
+                leading: baseHorizontal,
+                bottom: baseVertical,
+                trailing: baseHorizontal + tailInset
+            )
+        }
+
+        return EdgeInsets(
+            top: baseVertical,
+            leading: baseHorizontal + tailInset,
+            bottom: baseVertical,
+            trailing: baseHorizontal
+        )
+    }
+    
     @ViewBuilder
     private var readReceiptIcon: some View {
         let isSeen = message.seenByIds?.isEmpty == false
         Image(systemName: isSeen ? "checkmark.circle.fill" : "checkmark.circle")
             .font(.caption2)
             .foregroundStyle(textColor.opacity(isSeen ? 0.8 : 0.5))
+    }
+    
+    @ViewBuilder
+    private var contextMenuContent: some View {
+        // Reactions section
+        Section {
+            Menu {
+                ForEach(MessageReaction.allCases, id: \.self) { reaction in
+                    Button {
+                        onReactionTapped?(reaction)
+                        triggerHaptic(.light)
+                    } label: {
+                        Label(reaction.emoji, systemImage: "hand.thumbsup")
+                    }
+                }
+            } label: {
+                Label("React", systemImage: "face.smiling")
+            }
+        }
+        
+        // Quick reactions
+        Section {
+            Button {
+                onReactionTapped?(.like)
+                triggerHaptic(.light)
+            } label: {
+                Label("Like", systemImage: "hand.thumbsup.fill")
+            }
+            
+            Button {
+                onReactionTapped?(.love)
+                triggerHaptic(.light)
+            } label: {
+                Label("Love", systemImage: "heart.fill")
+            }
+        }
+        
+        // Actions section
+        Section {
+            Button {
+                onCopyTapped?()
+                triggerHaptic(.light)
+            } label: {
+                Label("Copy", systemImage: "doc.on.doc")
+            }
+            
+            Button {
+                onShareTapped?()
+                triggerHaptic(.light)
+            } label: {
+                Label("Share", systemImage: "square.and.arrow.up")
+            }
+        }
+    }
+    
+    private func triggerHaptic(_ style: UIImpactFeedbackGenerator.FeedbackStyle) {
+        let generator = UIImpactFeedbackGenerator(style: style)
+        generator.impactOccurred()
     }
 }
 
@@ -153,7 +255,7 @@ struct MessageRowView: View {
                 isCurrentUser: false,
                 avatarImageUrl: Constants.randomImage
             )
-
+            
             MessageRowView(
                 message: ChatMessageModel(
                     id: "2",
@@ -166,7 +268,7 @@ struct MessageRowView: View {
                 isCurrentUser: true,
                 currentUserProfileColor: .blue
             )
-
+            
             MessageRowView(
                 message: ChatMessageModel(
                     id: "3",
@@ -181,7 +283,7 @@ struct MessageRowView: View {
                 showAvatar: false,
                 showTail: false
             )
-
+            
             MessageRowView(
                 message: ChatMessageModel(
                     id: "4",
