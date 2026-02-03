@@ -68,6 +68,10 @@ final class URLSessionNetworkService: NetworkServiceProtocol, @unchecked Sendabl
             responseInterceptors: responseInterceptors
         )
     }
+    
+    deinit {
+        session.finishTasksAndInvalidate()
+    }
 
     func execute(_ request: NetworkRequest) async throws -> NetworkResponse {
         // Build the URL request
