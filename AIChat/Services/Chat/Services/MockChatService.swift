@@ -51,7 +51,23 @@ extension MockChatService: ChatServiceProtocol {
     func addChatMessage(message: ChatMessageModel) async throws {
         messages.append(message)
     }
-    
+
+    func updateMessageReaction(chatId: String, messageId: String, reactions: [String: MessageReaction]) async throws {
+        if let index = messages.firstIndex(where: { $0.id == messageId }) {
+            var updatedMessage = messages[index]
+            updatedMessage = ChatMessageModel(
+                id: updatedMessage.id,
+                chatId: updatedMessage.chatId,
+                authorId: updatedMessage.authorId,
+                content: updatedMessage.content,
+                seenByIds: updatedMessage.seenByIds,
+                dateCreated: updatedMessage.dateCreated,
+                reactions: reactions
+            )
+            messages[index] = updatedMessage
+        }
+    }
+
     func markChatMessagesAsSeen(chatId: String, messageId: String, userId: String) async throws {}
     
     func streamChatMessages(
