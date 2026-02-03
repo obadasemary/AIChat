@@ -17,7 +17,7 @@ struct NetworkManagerTests {
     @Test("Execute returns successful response")
     func test_whenExecuteSucceeds_thenReturnsResponse() async throws {
         let mockService = MockNetworkService(delay: 0)
-        mockService.register(
+        await mockService.register(
             path: "/api/test",
             response: .jsonString("{\"status\": \"ok\"}")
         )
@@ -57,7 +57,7 @@ struct NetworkManagerTests {
         }
 
         let mockService = MockNetworkService(delay: 0)
-        mockService.register(
+        await mockService.register(
             path: "/api/user",
             response: .jsonString("{\"id\": 123, \"name\": \"John\"}")
         )
@@ -78,7 +78,7 @@ struct NetworkManagerTests {
         }
 
         let mockService = MockNetworkService(delay: 0)
-        mockService.register(
+        await mockService.register(
             path: "/api/invalid",
             response: .jsonString("{\"otherField\": \"value\"}")
         )
@@ -96,7 +96,7 @@ struct NetworkManagerTests {
     @Test("Execute with retry succeeds on first attempt")
     func test_whenExecuteWithRetrySucceeds_thenReturnsResponse() async throws {
         let mockService = MockNetworkService(delay: 0)
-        mockService.register(
+        await mockService.register(
             path: "/api/test",
             response: .jsonString("{\"success\": true}")
         )
@@ -119,7 +119,7 @@ struct NetworkManagerTests {
         }
 
         let mockService = MockNetworkService(delay: 0)
-        mockService.register(
+        await mockService.register(
             path: "/api/data",
             response: .jsonString("{\"value\": 42}")
         )
@@ -147,7 +147,7 @@ struct NetworkManagerTests {
         }
 
         let mockService = MockNetworkService(delay: 0)
-        mockService.register(
+        await mockService.register(
             path: "/api/date",
             response: .jsonString("{\"createdAt\": \"2025-06-15T10:30:00Z\"}")
         )
@@ -172,9 +172,9 @@ struct NetworkManagerTests {
     @Test("Multiple concurrent requests succeed")
     func test_whenMultipleConcurrentRequests_thenAllSucceed() async throws {
         let mockService = MockNetworkService(delay: 0)
-        mockService.register(path: "/api/1", response: .jsonString("{\"id\": 1}"))
-        mockService.register(path: "/api/2", response: .jsonString("{\"id\": 2}"))
-        mockService.register(path: "/api/3", response: .jsonString("{\"id\": 3}"))
+        await mockService.register(path: "/api/1", response: .jsonString("{\"id\": 1}"))
+        await mockService.register(path: "/api/2", response: .jsonString("{\"id\": 2}"))
+        await mockService.register(path: "/api/3", response: .jsonString("{\"id\": 3}"))
 
         let manager = NetworkManager(service: mockService)
 
