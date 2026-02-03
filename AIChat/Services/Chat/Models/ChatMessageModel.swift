@@ -8,14 +8,29 @@
 import Foundation
 import IdentifiableByString
 
-struct ChatMessageModel: Identifiable, Codable, StringIdentifiable {
-    
+// MARK: - Message Reaction
+enum MessageReaction: String, Codable, CaseIterable {
+    case like = "👍"
+    case love = "❤️"
+    case laugh = "😂"
+    case wow = "😮"
+    case sad = "😢"
+    case angry = "😠"
+
+    var emoji: String {
+        rawValue
+    }
+}
+
+struct ChatMessageModel: Identifiable, Codable, StringIdentifiable, Equatable {
+
     let id: String
     let chatId: String
     let authorId: String?
     let content: AIChatModel?
     let seenByIds: [String]?
     let dateCreated: Date?
+    var reactions: [String: MessageReaction]?
     
     init(
         id: String,
@@ -23,7 +38,8 @@ struct ChatMessageModel: Identifiable, Codable, StringIdentifiable {
         authorId: String? = nil,
         content: AIChatModel? = nil,
         seenByIds: [String]? = nil,
-        dateCreated: Date? = nil
+        dateCreated: Date? = nil,
+        reactions: [String: MessageReaction]? = nil
     ) {
         self.id = id
         self.chatId = chatId
@@ -31,6 +47,7 @@ struct ChatMessageModel: Identifiable, Codable, StringIdentifiable {
         self.content = content
         self.seenByIds = seenByIds
         self.dateCreated = dateCreated
+        self.reactions = reactions
     }
     
     enum CodingKeys: String, CodingKey {
@@ -40,6 +57,7 @@ struct ChatMessageModel: Identifiable, Codable, StringIdentifiable {
         case content
         case seenByIds = "seen_by_ids"
         case dateCreated = "date_created"
+        case reactions
     }
     
     var eventParameters: [String: Any] {
