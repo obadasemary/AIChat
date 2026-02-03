@@ -174,7 +174,7 @@ struct SimpleChatInputBar: View {
                     .lineLimit(1...6)
                     .focused($isFocused)
                     .padding(.horizontal, 16)
-                    .padding(.vertical, 10)
+                    .padding(.vertical, 12)
                     .background(
                         RoundedRectangle(cornerRadius: 22)
                             .fill(Color(uiColor: .systemGray6))
@@ -187,9 +187,10 @@ struct SimpleChatInputBar: View {
 
                 // Send button
                 sendButton
+                    .padding(.trailing, 4)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
             .background(Color(uiColor: .systemBackground))
         }
     }
