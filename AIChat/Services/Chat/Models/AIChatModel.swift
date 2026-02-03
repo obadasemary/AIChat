@@ -14,7 +14,7 @@ typealias UserMessage = ChatQuery.ChatCompletionMessageParam.ChatCompletionUserM
 typealias UserTextContent = ChatQuery.ChatCompletionMessageParam.ChatCompletionUserMessageParam.Content
 typealias AssistantMessage = ChatQuery.ChatCompletionMessageParam.ChatCompletionAssistantMessageParam
 
-struct AIChatModel: Codable {
+struct AIChatModel: Codable, Equatable {
     
     let role: AIChatRole
     let message: String
