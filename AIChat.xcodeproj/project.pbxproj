@@ -14,6 +14,7 @@
 		AF3986932DF8D2E5000F064C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = AF3986922DF8D2E5000F064C /* GoogleSignIn */; };
 		AF3986952DF8D2E5000F064C /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = AF3986942DF8D2E5000F064C /* GoogleSignInSwift */; };
 		AF3E88B22E0B7CA1002FAC13 /* Mixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = AF3E88B12E0B7CA1002FAC13 /* Mixpanel */; };
+		AF4A1E6B2F3239870090E468 /* MessageKit in Frameworks */ = {isa = PBXBuildFile; productRef = AF4A1E6A2F3239870090E468 /* MessageKit */; };
 		AF95B1772DF38774003D5BA0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = AF95B1762DF38774003D5BA0 /* FirebaseAuth */; };
 		AFA98BB32DA46E0600492141 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = AFA98BB22DA46E0600492141 /* SDWebImageSwiftUI */; };
 		AFAA66B62DF4E4960013F8DC /* SignInAppleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = AFAA66B52DF4E4960013F8DC /* SignInAppleAsync */; };
@@ -90,6 +91,7 @@
 				AFEF44072DFF1489000E87DC /* OpenAI in Frameworks */,
 				AFAA66B62DF4E4960013F8DC /* SignInAppleAsync in Frameworks */,
 				AF1B57892E0B526200C28263 /* FirebaseAnalytics in Frameworks */,
+				AF4A1E6B2F3239870090E468 /* MessageKit in Frameworks */,
 				AFC575AA2E5E243100B3C3F0 /* SUIRouting in Frameworks */,
 				AF1E6BF52E0C4DE3005D93F8 /* FirebaseCrashlytics in Frameworks */,
 				AF39868C2DF8C958000F064C /* SignInGoogleAsync in Frameworks */,
@@ -192,6 +194,7 @@
 				AF1E6BF42E0C4DE3005D93F8 /* FirebaseCrashlytics */,
 				AFCE8E3B2E1D443900CC88C7 /* FirebaseRemoteConfig */,
 				AFC575A92E5E243100B3C3F0 /* SUIRouting */,
+				AF4A1E6A2F3239870090E468 /* MessageKit */,
 			);
 			productName = AIChat;
 			productReference = AF9034FB2DA3FDB000A35095 /* AIChat.app */;
@@ -287,6 +290,7 @@
 				AF3E88B02E0B7CA1002FAC13 /* XCRemoteSwiftPackageReference "mixpanel-swift" */,
 				AFC575A82E5E243100B3C3F0 /* XCRemoteSwiftPackageReference "SUIRouting" */,
 				AFSC00012E7F000000000001 /* XCRemoteSwiftPackageReference "swift-configuration" */,
+				AF4A1E692F3239870090E468 /* XCRemoteSwiftPackageReference "MessageKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = AF9034FC2DA3FDB000A35095 /* Products */;
@@ -949,6 +953,14 @@
 				minimumVersion = 5.0.0;
 			};
 		};
+		AF4A1E692F3239870090E468 /* XCRemoteSwiftPackageReference "MessageKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/MessageKit/MessageKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 		AF95B1752DF38774003D5BA0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -1042,6 +1054,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AF3E88B02E0B7CA1002FAC13 /* XCRemoteSwiftPackageReference "mixpanel-swift" */;
 			productName = Mixpanel;
+		};
+		AF4A1E6A2F3239870090E468 /* MessageKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AF4A1E692F3239870090E468 /* XCRemoteSwiftPackageReference "MessageKit" */;
+			productName = MessageKit;
 		};
 		AF95B1762DF38774003D5BA0 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
