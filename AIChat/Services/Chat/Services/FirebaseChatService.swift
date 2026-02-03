@@ -57,13 +57,22 @@ extension FirebaseChatService: ChatServiceProtocol {
         try messageCollectionReference(for: message.chatId)
             .document(message.id)
             .setData(from: message, merge: true)
-        
+
         try await collectionReference
             .document(message.chatId).updateData([
                 ChatModel.CodingKeys.dateModified.rawValue: Date.now
             ])
     }
-    
+
+    func updateMessageReaction(chatId: String, messageId: String, reactions: [String: MessageReaction]) async throws {
+        let reactionsDict = reactions.mapValues { $0.rawValue }
+        try await messageCollectionReference(for: chatId)
+            .document(messageId)
+            .updateData([
+                ChatMessageModel.CodingKeys.reactions.rawValue: reactionsDict
+            ])
+    }
+
     func markChatMessagesAsSeen(chatId: String, messageId: String, userId: String) async throws {
         try await messageCollectionReference(for: chatId)
             .document(messageId)
