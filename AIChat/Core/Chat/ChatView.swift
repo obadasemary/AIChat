@@ -169,9 +169,9 @@ private extension ChatView {
         let isCurrentUser = viewModel.messageIsCurrentUser(message: message)
         let showAvatar = messages.shouldShowAvatar(
             for: message,
-            currentUserId: viewModel.currentUser?.id
+            currentUserId: viewModel.currentUser?.userId
         )
-        let showTail = messages.shouldShowTail(for: message)
+        let showTail = false
 
         return MessageRowView(
             message: message,
@@ -183,6 +183,15 @@ private extension ChatView {
             onAvatarTapped: {
                 triggerHaptic(.light)
                 viewModel.onAvatarImageTapped()
+            },
+            onReactionTapped: { reaction in
+                viewModel.onMessageReactionTapped(message: message, reaction: reaction)
+            },
+            onCopyTapped: {
+                viewModel.onMessageCopyTapped(message: message)
+            },
+            onShareTapped: {
+                viewModel.onMessageShareTapped(message: message)
             }
         )
         .onAppear {
