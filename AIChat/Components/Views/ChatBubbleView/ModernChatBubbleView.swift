@@ -95,7 +95,7 @@ struct ModernChatBubbleView: View {
                 .fill(backgroundColor)
                 .shadow(color: .black.opacity(0.06), radius: 3, x: 0, y: 1)
         } else {
-            RoundedRectangle(cornerRadius: 18)
+            RoundedRectangle(cornerRadius: BubbleShape.cornerRadius)
                 .fill(backgroundColor)
                 .shadow(color: .black.opacity(0.06), radius: 3, x: 0, y: 1)
         }
@@ -105,104 +105,62 @@ struct ModernChatBubbleView: View {
 // MARK: - Bubble Shape with Tail
 struct BubbleShape: Shape {
     let isCurrentUser: Bool
+    static let cornerRadius: CGFloat = 18
+    static let tailWidth: CGFloat = 10
+    static let tailHeight: CGFloat = 8
+    private static let tailYOffset: CGFloat = 4
 
     func path(in rect: CGRect) -> Path {
-        let width = rect.width
-        let height = rect.height
-        let radius: CGFloat = 18
-        let tailWidth: CGFloat = 10
-        let tailHeight: CGFloat = 8
+        let radius = min(Self.cornerRadius, rect.height / 2)
+        let tailWidth = Self.tailWidth
+        let tailHeight = min(Self.tailHeight, rect.height / 2)
+        let tailTopY = max(rect.minY + radius, rect.maxY - radius - tailHeight)
+        let tailBottomY = min(rect.maxY - radius / 2, tailTopY + tailHeight + Self.tailYOffset)
 
-        var path = Path()
-
+        let bodyRect: CGRect
         if isCurrentUser {
-            // Start from bottom-right (where tail is)
-            path.move(to: CGPoint(x: width, y: height - tailHeight))
-
-            // Tail curve
-            path.addQuadCurve(
-                to: CGPoint(x: width - tailWidth, y: height - tailHeight - 4),
-                control: CGPoint(x: width - 2, y: height - tailHeight - 2)
+            bodyRect = CGRect(
+                x: rect.minX,
+                y: rect.minY,
+                width: rect.width - tailWidth,
+                height: rect.height
             )
-
-            // Bottom-right corner (no radius on tail side)
-            path.addLine(to: CGPoint(x: width - tailWidth, y: height - radius))
-
-            // Right side
-            path.addLine(to: CGPoint(x: width - tailWidth, y: radius))
-
-            // Top-right corner
-            path.addQuadCurve(
-                to: CGPoint(x: width - tailWidth - radius, y: 0),
-                control: CGPoint(x: width - tailWidth, y: 0)
-            )
-
-            // Top side
-            path.addLine(to: CGPoint(x: radius, y: 0))
-
-            // Top-left corner
-            path.addQuadCurve(
-                to: CGPoint(x: 0, y: radius),
-                control: CGPoint(x: 0, y: 0)
-            )
-
-            // Left side
-            path.addLine(to: CGPoint(x: 0, y: height - radius))
-
-            // Bottom-left corner
-            path.addQuadCurve(
-                to: CGPoint(x: radius, y: height - tailHeight - 4),
-                control: CGPoint(x: 0, y: height - tailHeight - 4)
-            )
-
-            // Bottom side
-            path.addLine(to: CGPoint(x: width - tailWidth, y: height - tailHeight - 4))
-
         } else {
-            // Start from bottom-left (where tail is)
-            path.move(to: CGPoint(x: 0, y: height - tailHeight))
-
-            // Tail curve
-            path.addQuadCurve(
-                to: CGPoint(x: tailWidth, y: height - tailHeight - 4),
-                control: CGPoint(x: 2, y: height - tailHeight - 2)
+            bodyRect = CGRect(
+                x: rect.minX + tailWidth,
+                y: rect.minY,
+                width: rect.width - tailWidth,
+                height: rect.height
             )
-
-            // Bottom-left corner (no radius on tail side)
-            path.addLine(to: CGPoint(x: tailWidth, y: height - radius))
-
-            // Left side going up
-            path.addLine(to: CGPoint(x: tailWidth, y: radius))
-
-            // Top-left corner
-            path.addQuadCurve(
-                to: CGPoint(x: tailWidth + radius, y: 0),
-                control: CGPoint(x: tailWidth, y: 0)
-            )
-
-            // Top side
-            path.addLine(to: CGPoint(x: width - radius, y: 0))
-
-            // Top-right corner
-            path.addQuadCurve(
-                to: CGPoint(x: width, y: radius),
-                control: CGPoint(x: width, y: 0)
-            )
-
-            // Right side
-            path.addLine(to: CGPoint(x: width, y: height - radius))
-
-            // Bottom-right corner
-            path.addQuadCurve(
-                to: CGPoint(x: width - radius, y: height - tailHeight - 4),
-                control: CGPoint(x: width, y: height - tailHeight - 4)
-            )
-
-            // Bottom side
-            path.addLine(to: CGPoint(x: tailWidth, y: height - tailHeight - 4))
         }
 
-        path.closeSubpath()
+        var path = Path(roundedRect: bodyRect, cornerRadius: radius)
+        var tail = Path()
+
+        if isCurrentUser {
+            tail.move(to: CGPoint(x: bodyRect.maxX, y: tailTopY))
+            tail.addQuadCurve(
+                to: CGPoint(x: rect.maxX, y: (tailTopY + tailBottomY) / 2),
+                control: CGPoint(x: rect.maxX - 1, y: tailTopY + 1)
+            )
+            tail.addQuadCurve(
+                to: CGPoint(x: bodyRect.maxX, y: tailBottomY),
+                control: CGPoint(x: rect.maxX - 1, y: tailBottomY - 1)
+            )
+        } else {
+            tail.move(to: CGPoint(x: bodyRect.minX, y: tailTopY))
+            tail.addQuadCurve(
+                to: CGPoint(x: rect.minX, y: (tailTopY + tailBottomY) / 2),
+                control: CGPoint(x: rect.minX + 1, y: tailTopY + 1)
+            )
+            tail.addQuadCurve(
+                to: CGPoint(x: bodyRect.minX, y: tailBottomY),
+                control: CGPoint(x: rect.minX + 1, y: tailBottomY - 1)
+            )
+        }
+
+        tail.closeSubpath()
+        path.addPath(tail)
         return path
     }
 }
