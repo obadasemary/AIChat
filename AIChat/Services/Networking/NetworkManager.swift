@@ -183,7 +183,7 @@ private extension NetworkManager {
             case .requestStart, .requestSuccess:
                 return .analytic
             case .requestFailed:
-                return .error
+                return .severe
             }
         }
     }
