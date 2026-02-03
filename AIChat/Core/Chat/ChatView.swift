@@ -8,16 +8,34 @@
 import SwiftUI
 
 struct ChatView: View {
-    
+
     @State var viewModel: ChatViewModel
-    @FocusState private var isTextFieldFocused: Bool
-    
+
     let delegate: ChatDelegate
-    
+
     var body: some View {
-        VStack(spacing: .zero) {
-            scrollViewSection
-            textFieldSection
+        Group {
+            if let currentUser = viewModel.currentUser,
+               let avatar = viewModel.avatar {
+                MessageKitChatView(
+                    messages: viewModel.chatMessages,
+                    currentUserId: currentUser.userId,
+                    currentUserName: currentUser.email ?? "You",
+                    avatarName: avatar.name ?? "Avatar",
+                    avatarImageName: avatar.profileImageName,
+                    avatarProfileColor: currentUser.profileColorCalculated,
+                    onSendMessage: { text in
+                        viewModel.sendMessage(text: text, avatarId: delegate.avatarId)
+                    },
+                    onAvatarTapped: {
+                        viewModel.onAvatarImageTapped()
+                    }
+                )
+                .withKeyboardHandling()
+            } else {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
         }
         .navigationTitle(viewModel.avatar?.name ?? "")
         .toolbarTitleDisplayMode(.inline)
@@ -53,101 +71,9 @@ struct ChatView: View {
     }
 }
 
-// MARK: - SectionViews
-private extension ChatView {
-    var scrollViewSection: some View {
-        ScrollView {
-            LazyVStack(spacing: 24) {
-                ForEach(viewModel.chatMessages + (viewModel.typingIndicatorMessage.map { [$0] } ?? [])) { message in
-                    
-                    if viewModel.messageIsDelayed(message: message) {
-                        timestampView(date: message.dateCreatedCalculated)
-                    }
-                    
-                    let isCurrentUser = viewModel
-                        .messageIsCurrentUser(message: message)
-                    ChatBubbleViewBuilder(
-                        message: message,
-                        isCurrentUser: isCurrentUser,
-                        currentUserProfileColor: viewModel.currentUser?.profileColorCalculated ?? .accent,
-                        imageName: isCurrentUser ? nil : viewModel.avatar?.profileImageName,
-                        onImageTapped: {
-                            viewModel.onAvatarImageTapped()
-                        }
-                    )
-                    .onAppear {
-                        viewModel.onMessageDidAppear(message: message)
-                    }
-                    .id(message.id)
-                    .transition(.opacity)
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .padding(8)
-            .rotationEffect(.degrees(180))
-        }
-        .rotationEffect(.degrees(180))
-        .scrollPosition(id: $viewModel.scrollPosition, anchor: .center)
-        .animation(.easeInOut, value: viewModel.chatMessages.count)
-        .animation(.easeInOut, value: viewModel.scrollPosition)
-    }
-    
-    func timestampView(date: Date) -> some View {
-        Group {
-            Text(date.formatted(date: .abbreviated, time: .omitted))
-            +
-            Text(" • ")
-            +
-            Text(date.formatted(date: .omitted, time: .shortened))
-        }
-        .foregroundStyle(.secondary)
-        .font(.callout)
-        .lineLimit(1)
-        .minimumScaleFactor(0.3)
-    }
-    
-    var textFieldSection: some View {
-        TextField(
-            "Type your message...",
-            text: $viewModel.textFieldText,
-            axis: .vertical
-        )
-        .keyboardType(.default)
-        .autocorrectionDisabled()
-        .focused($isTextFieldFocused)
-        .onSubmit {
-            isTextFieldFocused = false
-            if !viewModel.textFieldText.isEmpty {
-                viewModel.onSendMessageTapped(avatarId: delegate.avatarId)
-            }
-        }
-        .padding(12)
-        .padding(.trailing, 60)
-        .accessibilityIdentifier("ChatTextField")
-        .overlay(alignment: .trailing) {
-            Image(systemName: "arrow.up.circle.fill")
-                .font(.system(size: 32))
-                .padding(.trailing, 4)
-                .foregroundStyle(.accent)
-                .anyButton(.plain) {
-                    viewModel.onSendMessageTapped(avatarId: delegate.avatarId)
-                }
-                .disabled(viewModel.textFieldText.isEmpty)
-        }
-        .background {
-            ZStack {
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(Color(uiColor: .systemBackground))
-                
-                RoundedRectangle(cornerRadius: 4)
-                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-            }
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
-        .background(Color(uiColor: .secondarySystemBackground))
-    }
-}
+// MARK: - Note
+// MessageKit integration replaces the custom chat UI
+// Old scroll view and text field sections have been replaced with MessageKitChatView
 
 // MARK: - Preview Working Chat Not Premium
 #Preview("Working Chat - Not Premium") {
