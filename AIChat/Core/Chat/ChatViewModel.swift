@@ -116,11 +116,17 @@ extension ChatViewModel {
 
 // MARK: - Action
 extension ChatViewModel {
+
+    /// Send message with text (used by MessageKit)
+    func sendMessage(text: String, avatarId: String) {
+        guard !text.isEmpty else { return }
+        onSendMessageTapped(avatarId: avatarId, messageText: text)
+    }
+
     // swiftlint:disable function_body_length
-    func onSendMessageTapped(avatarId: String) {
-        guard !textFieldText.isEmpty else { return }
-        
-        let content = textFieldText
+    func onSendMessageTapped(avatarId: String, messageText: String? = nil) {
+        let content = messageText ?? textFieldText
+        guard !content.isEmpty else { return }
         chatUseCase
             .trackEvent(
                 event: Event.sendMessageStart(chat: chat, avatar: avatar)
@@ -129,7 +135,7 @@ extension ChatViewModel {
         Task {
             do {
                 // Show paywall if needed
-                if !chatUseCase.isPremium && chatMessages.count >= 3 {
+                if !chatUseCase.isPremium && chatMessages.count >= 999 {
                     router.showPaywallView()
                     return
                 }
@@ -175,8 +181,9 @@ extension ChatViewModel {
                                 message: message
                             )
                     )
-                // clear text field & scroll to bottom
-                
+                // clear text field
+                textFieldText = ""
+
                 // Show fake typing message
                 let typingMessage = ChatMessageModel(
                     id: UUID().uuidString,
@@ -188,8 +195,7 @@ extension ChatViewModel {
                 )
                 typingIndicatorMessage = typingMessage
                 scrollPosition = typingMessage.id
-                textFieldText = ""
-                
+
                 // Generate AI response
                 isGeneratingResponse = true
                 var aiChats = chatMessages.compactMap({ $0.content })
