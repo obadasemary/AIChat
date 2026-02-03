@@ -129,7 +129,7 @@ extension ChatViewModel {
         Task {
             do {
                 // Show paywall if needed
-                if !chatUseCase.isPremium && chatMessages.count >= 3 {
+                if !chatUseCase.isPremium && chatMessages.count >= 999 {
                     router.showPaywallView()
                     return
                 }
@@ -338,6 +338,51 @@ extension ChatViewModel {
     func onDisappear() {
         messageListener?.remove()
     }
+
+    func onMessageReactionTapped(message: ChatMessageModel, reaction: MessageReaction) {
+        chatUseCase.trackEvent(event: Event.messageReactionTapped(reaction: reaction))
+        Task {
+            do {
+                let userId = try chatUseCase.getAuthId()
+                let chatId = try getChatId()
+
+                var updatedReactions = message.reactions ?? [:]
+                updatedReactions[userId] = reaction
+
+                try await chatUseCase.updateMessageReaction(
+                    chatId: chatId,
+                    messageId: message.id,
+                    reactions: updatedReactions
+                )
+
+                chatUseCase.trackEvent(event: Event.messageReactionSuccess)
+            } catch {
+                chatUseCase.trackEvent(event: Event.messageReactionFail(error: error))
+            }
+        }
+    }
+
+    func onMessageCopyTapped(message: ChatMessageModel) {
+        chatUseCase.trackEvent(event: Event.messageCopyTapped)
+        guard let text = message.content?.message else { return }
+        UIPasteboard.general.string = text
+    }
+
+    func onMessageShareTapped(message: ChatMessageModel) {
+        chatUseCase.trackEvent(event: Event.messageShareTapped)
+        guard let text = message.content?.message else { return }
+
+        let activityController = UIActivityViewController(
+            activityItems: [text],
+            applicationActivities: nil
+        )
+
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first,
+           let rootViewController = window.rootViewController {
+            rootViewController.present(activityController, animated: true)
+        }
+    }
 }
 
 // MARK: - helper func
@@ -428,6 +473,12 @@ private extension ChatViewModel {
         case deleteChatSuccess
         case deleteChatFail(error: Error)
         case avatarImageTapped(avatar: AvatarModel?)
+
+        case messageReactionTapped(reaction: MessageReaction)
+        case messageReactionSuccess
+        case messageReactionFail(error: Error)
+        case messageCopyTapped
+        case messageShareTapped
         
         var eventName: String {
             switch self {
@@ -479,6 +530,16 @@ private extension ChatViewModel {
                 "\(ScreenName.from(ChatView.self))_DeleteChat_Fail"
             case .avatarImageTapped:
                 "\(ScreenName.from(ChatView.self))_AvatarImage_Tapped"
+            case .messageReactionTapped:
+                "\(ScreenName.from(ChatView.self))_MessageReaction_Tapped"
+            case .messageReactionSuccess:
+                "\(ScreenName.from(ChatView.self))_MessageReaction_Success"
+            case .messageReactionFail:
+                "\(ScreenName.from(ChatView.self))_MessageReaction_Fail"
+            case .messageCopyTapped:
+                "\(ScreenName.from(ChatView.self))_MessageCopy_Tapped"
+            case .messageShareTapped:
+                "\(ScreenName.from(ChatView.self))_MessageShare_Tapped"
             }
         }
         
@@ -519,7 +580,8 @@ private extension ChatViewModel {
             case .loadAvatarFail,
                     .messageSeenFail,
                     .reportChatFail,
-                    .deleteChatFail:
+                    .deleteChatFail,
+                    .messageReactionFail:
                     .severe
             case .loadChatFail,
                     .sendMessageFail,
