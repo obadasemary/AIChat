@@ -41,6 +41,16 @@ extension FirebaseUserService: RemoteUserServiceProtocol {
             )
     }
     
+    func updateProfileColor(userId: String, profileColorHex: String) async throws {
+        try await collectionReference
+            .document(userId)
+            .updateData(
+                [
+                    UserModel.CodingKeys.profileColorHex.rawValue: profileColorHex
+                ]
+            )
+    }
+    
     func streamUser(userId: String) -> AsyncThrowingStream<UserModel, Error> {
         collectionReference.streamDocument(id: userId)
     }
