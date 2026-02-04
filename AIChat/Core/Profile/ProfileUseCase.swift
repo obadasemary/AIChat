@@ -14,6 +14,7 @@ protocol ProfileUseCaseProtocol {
     func getAuthId() throws -> String
     func getAvatarsForAuthor(userId: String) async throws -> [AvatarModel]
     func removeAuthorIdFromAvatar(avatarId: String) async throws
+    func updateProfileColor(profileColorHex: String) async throws
     
     func trackEvent(event: any LoggableEvent)
 }
@@ -63,6 +64,10 @@ extension ProfileUseCase: ProfileUseCaseProtocol {
     
     func removeAuthorIdFromAvatar(avatarId: String) async throws {
         try await avatarManager.removeAuthorIdFromAvatar(avatarId: avatarId)
+    }
+    
+    func updateProfileColor(profileColorHex: String) async throws {
+        try await userManager.updateProfileColorForCurrentUser(profileColorHex: profileColorHex)
     }
     
     func trackEvent(event: any LoggableEvent) {
