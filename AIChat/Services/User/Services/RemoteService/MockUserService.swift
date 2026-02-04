@@ -39,6 +39,23 @@ extension MockUserService: RemoteUserServiceProtocol {
             profileColorHex: profileColorHex
         )
     }
+    
+    func updateProfileColor(userId: String, profileColorHex: String) async throws {
+        guard let currentUser else {
+            throw URLError(.unknown)
+        }
+        
+        self.currentUser = UserModel(
+            userId: currentUser.userId,
+            email: currentUser.email,
+            isAnonymous: currentUser.isAnonymous,
+            creationDate: currentUser.creationDate,
+            creationVersion: currentUser.creationVersion,
+            lastSignInDate: currentUser.lastSignInDate,
+            didCompleteOnboarding: currentUser.didCompleteOnboarding,
+            profileColorHex: profileColorHex
+        )
+    }
 
     func streamUser(userId: String) -> AsyncThrowingStream<UserModel, any Error> {
         AsyncThrowingStream { continuation in
