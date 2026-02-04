@@ -15,6 +15,7 @@ struct AnyProfileInteractor: ProfileUseCaseProtocol {
     let anyGetAuthId: () throws -> String
     let anyGetAvatarsForAuthor: (_ userId: String) async throws -> [AIChat.AvatarModel]
     let anyRemoveAuthorIdFromAvatar: (_ avatarId: String) async throws -> Void
+    let anyUpdateProfileColor: (_ profileColorHex: String) async throws -> Void
     let anyTrackEvent: (LoggableEvent) -> Void
     
     init(
@@ -22,12 +23,14 @@ struct AnyProfileInteractor: ProfileUseCaseProtocol {
         getAuthId: @escaping () throws -> String,
         getAvatarsForAuthor: @escaping (_: String) async throws -> [AIChat.AvatarModel],
         removeAuthorIdFromAvatar: @escaping (_: String) async throws -> Void,
+        updateProfileColor: @escaping (_: String) async throws -> Void,
         trackEvent: @escaping (LoggableEvent) -> Void
     ) {
         self.anyCurrentUser = currentUser
         self.anyGetAuthId = getAuthId
         self.anyGetAvatarsForAuthor = getAvatarsForAuthor
         self.anyRemoveAuthorIdFromAvatar = removeAuthorIdFromAvatar
+        self.anyUpdateProfileColor = updateProfileColor
         self.anyTrackEvent = trackEvent
     }
     
@@ -36,6 +39,7 @@ struct AnyProfileInteractor: ProfileUseCaseProtocol {
         anyGetAuthId = interactor.getAuthId
         anyGetAvatarsForAuthor = interactor.getAvatarsForAuthor
         anyRemoveAuthorIdFromAvatar = interactor.removeAuthorIdFromAvatar
+        anyUpdateProfileColor = interactor.updateProfileColor
         anyTrackEvent = interactor.trackEvent
     }
     
@@ -44,6 +48,7 @@ struct AnyProfileInteractor: ProfileUseCaseProtocol {
         anyGetAuthId = interactor.getAuthId
         anyGetAvatarsForAuthor = interactor.getAvatarsForAuthor
         anyRemoveAuthorIdFromAvatar = interactor.removeAuthorIdFromAvatar
+        anyUpdateProfileColor = interactor.updateProfileColor
         anyTrackEvent = interactor.trackEvent
     }
     
@@ -52,6 +57,7 @@ struct AnyProfileInteractor: ProfileUseCaseProtocol {
         anyGetAuthId = interactor.getAuthId
         anyGetAvatarsForAuthor = interactor.getAvatarsForAuthor
         anyRemoveAuthorIdFromAvatar = interactor.removeAuthorIdFromAvatar
+        anyUpdateProfileColor = interactor.updateProfileColor
         anyTrackEvent = interactor.trackEvent
     }
     
@@ -69,6 +75,10 @@ struct AnyProfileInteractor: ProfileUseCaseProtocol {
     
     func removeAuthorIdFromAvatar(avatarId: String) async throws {
         try await anyRemoveAuthorIdFromAvatar(avatarId)
+    }
+    
+    func updateProfileColor(profileColorHex: String) async throws {
+        try await anyUpdateProfileColor(profileColorHex)
     }
     
     func trackEvent(event: any AIChat.LoggableEvent) {
