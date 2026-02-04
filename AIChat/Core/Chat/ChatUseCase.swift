@@ -25,6 +25,7 @@ protocol ChatUseCaseProtocol {
     func markChatMessagesAsSeen(chatId: String, messageId: String, userId: String) async throws
     func createNewChat(chat: ChatModel) async throws
     func addChatMessage(message: ChatMessageModel) async throws
+    func updateChatMessage(message: ChatMessageModel) async throws
     func updateMessageReaction(chatId: String, messageId: String, reactions: [String: MessageReaction]) async throws
     func reportChat(chatId: String, userId: String) async throws
     func deleteChat(chatId: String) async throws
@@ -128,6 +129,10 @@ extension ChatUseCase: ChatUseCaseProtocol {
     
     func addChatMessage(message: ChatMessageModel) async throws {
         try await chatManager.addChatMessage(message: message)
+    }
+
+    func updateChatMessage(message: ChatMessageModel) async throws {
+        try await chatManager.updateChatMessage(message: message)
     }
 
     func updateMessageReaction(chatId: String, messageId: String, reactions: [String: MessageReaction]) async throws {
