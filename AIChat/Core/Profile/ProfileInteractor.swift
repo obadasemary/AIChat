@@ -14,6 +14,7 @@ protocol ProfileInteractor {
     func getAuthId() throws -> String
     func getAvatarsForAuthor(userId: String) async throws -> [AvatarModel]
     func removeAuthorIdFromAvatar(avatarId: String) async throws
+    func updateProfileColor(profileColorHex: String) async throws
     
     func trackEvent(event: any LoggableEvent)
 }
