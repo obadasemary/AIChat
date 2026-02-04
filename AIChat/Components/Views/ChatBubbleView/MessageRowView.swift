@@ -9,18 +9,25 @@
 import SwiftUI
 
 struct MessageRowView: View {
-    
+
     let message: ChatMessageModel
     let isCurrentUser: Bool
     let avatarImageUrl: String?
     let currentUserProfileColor: Color
     let showAvatar: Bool
     let showTail: Bool
+    let replyToMessage: ChatMessageModel?
     let onAvatarTapped: (() -> Void)?
+    let onLongPress: (() -> Void)?
     let onReactionTapped: ((MessageReaction) -> Void)?
     let onCopyTapped: (() -> Void)?
     let onShareTapped: (() -> Void)?
-    
+    let onReplyTapped: (() -> Void)?
+    let onEditTapped: (() -> Void)?
+    let onTranslateTapped: (() -> Void)?
+    let onSelectTapped: (() -> Void)?
+    let translatedText: String?
+
     init(
         message: ChatMessageModel,
         isCurrentUser: Bool,
@@ -28,10 +35,17 @@ struct MessageRowView: View {
         currentUserProfileColor: Color = .blue,
         showAvatar: Bool = true,
         showTail: Bool = true,
+        replyToMessage: ChatMessageModel? = nil,
         onAvatarTapped: (() -> Void)? = nil,
+        onLongPress: (() -> Void)? = nil,
         onReactionTapped: ((MessageReaction) -> Void)? = nil,
         onCopyTapped: (() -> Void)? = nil,
-        onShareTapped: (() -> Void)? = nil
+        onShareTapped: (() -> Void)? = nil,
+        onReplyTapped: (() -> Void)? = nil,
+        onEditTapped: (() -> Void)? = nil,
+        onTranslateTapped: (() -> Void)? = nil,
+        onSelectTapped: (() -> Void)? = nil,
+        translatedText: String? = nil
     ) {
         self.message = message
         self.isCurrentUser = isCurrentUser
@@ -39,10 +53,17 @@ struct MessageRowView: View {
         self.currentUserProfileColor = currentUserProfileColor
         self.showAvatar = showAvatar
         self.showTail = showTail
+        self.replyToMessage = replyToMessage
         self.onAvatarTapped = onAvatarTapped
+        self.onLongPress = onLongPress
         self.onReactionTapped = onReactionTapped
         self.onCopyTapped = onCopyTapped
         self.onShareTapped = onShareTapped
+        self.onReplyTapped = onReplyTapped
+        self.onEditTapped = onEditTapped
+        self.onTranslateTapped = onTranslateTapped
+        self.onSelectTapped = onSelectTapped
+        self.translatedText = translatedText
     }
     
     private var backgroundColor: Color {
@@ -114,20 +135,62 @@ struct MessageRowView: View {
     }
 
     private var bubbleView: some View {
-        HStack(alignment: .bottom, spacing: 4) {
-            Text(message.content?.message ?? "")
-                .font(.body)
-                .foregroundStyle(textColor)
-                .multilineTextAlignment(.leading)
-            
-            // Timestamp and read receipt
-            HStack(spacing: 2) {
-                Text(message.dateCreatedCalculated.formatted(date: .omitted, time: .shortened))
-                    .font(.caption2)
-                    .foregroundStyle(textColor.opacity(0.7))
-                
-                if isCurrentUser {
-                    readReceiptIcon
+        VStack(alignment: .leading, spacing: 6) {
+            // Reply preview
+            if let replyToMessage {
+                ReplyPreviewView(
+                    replyToMessage: replyToMessage.content?.message ?? "",
+                    replyToAuthor: isCurrentUser ? "You" : "AI Assistant",
+                    isCurrentUser: isCurrentUser
+                )
+            }
+
+            // Message content
+            HStack(alignment: .bottom, spacing: 4) {
+                VStack(alignment: .leading, spacing: 4) {
+                    if let translatedText {
+                        Text(translatedText)
+                            .font(.body)
+                            .foregroundStyle(textColor)
+                            .multilineTextAlignment(.leading)
+
+                        HStack(spacing: 4) {
+                            Image(systemName: "character.bubble")
+                                .font(.caption2)
+                            Text("Translated")
+                                .font(.caption2)
+                        }
+                        .foregroundStyle(textColor.opacity(0.6))
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(
+                            Capsule()
+                                .fill(textColor.opacity(0.1))
+                        )
+                    } else {
+                        Text(message.content?.message ?? "")
+                            .font(.body)
+                            .foregroundStyle(textColor)
+                            .multilineTextAlignment(.leading)
+                    }
+
+                    if message.isEdited {
+                        Text("Edited")
+                            .font(.caption2)
+                            .foregroundStyle(textColor.opacity(0.5))
+                            .italic()
+                    }
+                }
+
+                // Timestamp and read receipt
+                HStack(spacing: 2) {
+                    Text(message.dateCreatedCalculated.formatted(date: .omitted, time: .shortened))
+                        .font(.caption2)
+                        .foregroundStyle(textColor.opacity(0.7))
+
+                    if isCurrentUser {
+                        readReceiptIcon
+                    }
                 }
             }
         }
@@ -145,8 +208,8 @@ struct MessageRowView: View {
             .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         )
         .contentShape(RoundedRectangle(cornerRadius: BubbleShape.cornerRadius))
-        .contextMenu {
-            contextMenuContent
+        .onLongPressGesture(minimumDuration: 0.5) {
+            onLongPress?()
         }
     }
 
@@ -182,40 +245,52 @@ struct MessageRowView: View {
     
     @ViewBuilder
     private var contextMenuContent: some View {
-        // Reactions section
+        // Primary actions
         Section {
-            Menu {
-                ForEach(MessageReaction.allCases, id: \.self) { reaction in
-                    Button {
-                        onReactionTapped?(reaction)
-                        triggerHaptic(.light)
-                    } label: {
-                        Label(reaction.emoji, systemImage: "hand.thumbsup")
-                    }
-                }
+            Button {
+                onReplyTapped?()
+                triggerHaptic(.light)
             } label: {
-                Label("React", systemImage: "face.smiling")
+                Label("Reply", systemImage: "arrowshape.turn.up.left")
+            }
+
+            if isCurrentUser && message.canEdit {
+                Button {
+                    onEditTapped?()
+                    triggerHaptic(.light)
+                } label: {
+                    Label("Edit", systemImage: "pencil")
+                }
+            }
+
+            Button {
+                onTranslateTapped?()
+                triggerHaptic(.light)
+            } label: {
+                Label("Translate", systemImage: "character.bubble")
+            }
+
+            Button {
+                onSelectTapped?()
+                triggerHaptic(.light)
+            } label: {
+                Label("Select", systemImage: "selection.pin.in.out")
             }
         }
-        
+
         // Quick reactions
         Section {
-            Button {
-                onReactionTapped?(.like)
-                triggerHaptic(.light)
-            } label: {
-                Label("Like", systemImage: "hand.thumbsup.fill")
-            }
-            
-            Button {
-                onReactionTapped?(.love)
-                triggerHaptic(.light)
-            } label: {
-                Label("Love", systemImage: "heart.fill")
+            ForEach([MessageReaction.like, MessageReaction.love, MessageReaction.laugh], id: \.self) { reaction in
+                Button {
+                    onReactionTapped?(reaction)
+                    triggerHaptic(.light)
+                } label: {
+                    Label(reaction.emoji, systemImage: "hand.thumbsup.fill")
+                }
             }
         }
-        
-        // Actions section
+
+        // Share actions
         Section {
             Button {
                 onCopyTapped?()
@@ -223,7 +298,7 @@ struct MessageRowView: View {
             } label: {
                 Label("Copy", systemImage: "doc.on.doc")
             }
-            
+
             Button {
                 onShareTapped?()
                 triggerHaptic(.light)
@@ -232,7 +307,7 @@ struct MessageRowView: View {
             }
         }
     }
-    
+
     private func triggerHaptic(_ style: UIImpactFeedbackGenerator.FeedbackStyle) {
         let generator = UIImpactFeedbackGenerator(style: style)
         generator.impactOccurred()
@@ -255,7 +330,7 @@ struct MessageRowView: View {
                 isCurrentUser: false,
                 avatarImageUrl: Constants.randomImage
             )
-            
+
             MessageRowView(
                 message: ChatMessageModel(
                     id: "2",
@@ -263,27 +338,39 @@ struct MessageRowView: View {
                     authorId: "user1",
                     content: AIChatModel(role: .user, message: "I'm doing great! Working on a new project."),
                     seenByIds: ["user1", "other"],
-                    dateCreated: .now
+                    dateCreated: .now,
+                    reactions: ["user1": .like, "other": .love]
                 ),
                 isCurrentUser: true,
                 currentUserProfileColor: .blue
             )
-            
+
+            // Message with reply
             MessageRowView(
                 message: ChatMessageModel(
                     id: "3",
                     chatId: "chat1",
                     authorId: "other",
-                    content: AIChatModel(role: .assistant, message: "That sounds exciting! Tell me more about it. I'd love to hear what you're building."),
+                    content: AIChatModel(role: .assistant, message: "That sounds exciting! Tell me more about it."),
                     seenByIds: nil,
-                    dateCreated: .now
+                    dateCreated: .now,
+                    replyToMessageId: "2"
                 ),
                 isCurrentUser: false,
                 avatarImageUrl: Constants.randomImage,
                 showAvatar: false,
-                showTail: false
+                showTail: false,
+                replyToMessage: ChatMessageModel(
+                    id: "2",
+                    chatId: "chat1",
+                    authorId: "user1",
+                    content: AIChatModel(role: .user, message: "I'm doing great! Working on a new project."),
+                    seenByIds: ["user1", "other"],
+                    dateCreated: .now
+                )
             )
-            
+
+            // Edited message
             MessageRowView(
                 message: ChatMessageModel(
                     id: "4",
@@ -291,7 +378,8 @@ struct MessageRowView: View {
                     authorId: "user1",
                     content: AIChatModel(role: .user, message: "Sure! It's a chat app with a modern UI like iMessage."),
                     seenByIds: nil,
-                    dateCreated: .now
+                    dateCreated: .now.addingTimeInterval(-300),
+                    editedAt: .now
                 ),
                 isCurrentUser: true,
                 currentUserProfileColor: .blue,
