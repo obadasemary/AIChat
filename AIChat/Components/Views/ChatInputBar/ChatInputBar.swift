@@ -142,6 +142,10 @@ struct SimpleChatInputBar: View {
     let placeholder: String
     let accentColor: Color
     let onSendTapped: () -> Void
+    let replyingToMessage: ChatMessageModel?
+    let editingMessage: ChatMessageModel?
+    let onCancelReply: (() -> Void)?
+    let onCancelEdit: (() -> Void)?
 
     init(
         text: Binding<String>,
@@ -149,7 +153,11 @@ struct SimpleChatInputBar: View {
         isLoading: Bool = false,
         placeholder: String = "Message",
         accentColor: Color = .blue,
-        onSendTapped: @escaping () -> Void
+        onSendTapped: @escaping () -> Void,
+        replyingToMessage: ChatMessageModel? = nil,
+        editingMessage: ChatMessageModel? = nil,
+        onCancelReply: (() -> Void)? = nil,
+        onCancelEdit: (() -> Void)? = nil
     ) {
         self._text = text
         self._isFocused = isFocused
@@ -157,6 +165,10 @@ struct SimpleChatInputBar: View {
         self.placeholder = placeholder
         self.accentColor = accentColor
         self.onSendTapped = onSendTapped
+        self.replyingToMessage = replyingToMessage
+        self.editingMessage = editingMessage
+        self.onCancelReply = onCancelReply
+        self.onCancelEdit = onCancelEdit
     }
 
     private var canSend: Bool {
@@ -166,6 +178,13 @@ struct SimpleChatInputBar: View {
     var body: some View {
         VStack(spacing: 0) {
             Divider()
+
+            // Reply/Edit Preview
+            if let replyingToMessage {
+                replyPreview(message: replyingToMessage, onCancel: onCancelReply)
+            } else if let editingMessage {
+                editPreview(message: editingMessage, onCancel: onCancelEdit)
+            }
 
             HStack(alignment: .bottom, spacing: 12) {
                 // Text field
@@ -193,6 +212,72 @@ struct SimpleChatInputBar: View {
             .padding(.vertical, 12)
             .background(Color(uiColor: .systemBackground))
         }
+    }
+
+    private func replyPreview(message: ChatMessageModel, onCancel: (() -> Void)?) -> some View {
+        HStack(spacing: 12) {
+            Rectangle()
+                .fill(accentColor)
+                .frame(width: 3)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Replying to")
+                    .font(.caption.bold())
+                    .foregroundStyle(.secondary)
+
+                Text(message.content?.message ?? "")
+                    .font(.caption)
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+            }
+
+            Spacer()
+
+            if let onCancel {
+                Button(action: onCancel) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 20))
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(Color(uiColor: .systemGray6))
+    }
+
+    private func editPreview(message: ChatMessageModel, onCancel: (() -> Void)?) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: "pencil")
+                .font(.caption)
+                .foregroundStyle(accentColor)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Edit message")
+                    .font(.caption.bold())
+                    .foregroundStyle(.secondary)
+
+                Text(message.content?.message ?? "")
+                    .font(.caption)
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+            }
+
+            Spacer()
+
+            if let onCancel {
+                Button(action: onCancel) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 20))
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(Color(uiColor: .systemGray6))
     }
 
     @ViewBuilder
