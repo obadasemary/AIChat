@@ -37,6 +37,11 @@ extension ChatManager: ChatManagerProtocol {
             .addChatMessage(message: message)
     }
 
+    func updateChatMessage(message: ChatMessageModel) async throws {
+        try await service
+            .updateChatMessage(message: message)
+    }
+
     func updateMessageReaction(chatId: String, messageId: String, reactions: [String: MessageReaction]) async throws {
         try await service.updateMessageReaction(chatId: chatId, messageId: messageId, reactions: reactions)
     }
