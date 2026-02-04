@@ -187,6 +187,7 @@ private extension ChatView {
         return MessageRowView(
             message: message,
             isCurrentUser: isCurrentUser,
+            currentUserId: viewModel.currentUser?.userId,
             avatarImageUrl: isCurrentUser ? nil : viewModel.avatar?.profileImageName,
             currentUserProfileColor: viewModel.currentUser?.profileColorCalculated ?? .blue,
             showAvatar: showAvatar && !isCurrentUser,
