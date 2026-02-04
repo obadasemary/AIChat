@@ -10,6 +10,7 @@ protocol ChatManagerProtocol {
     func getChat(userId: String, avatarId: String) async throws -> ChatModel?
     func getAllChats(userId: String) async throws -> [ChatModel]
     func addChatMessage(message: ChatMessageModel) async throws
+    func updateChatMessage(message: ChatMessageModel) async throws
     func updateMessageReaction(chatId: String, messageId: String, reactions: [String: MessageReaction]) async throws
     func markChatMessagesAsSeen(chatId: String, messageId: String, userId: String) async throws
     @MainActor func streamChatMessages(chatId: String) -> AsyncThrowingStream<[ChatMessageModel], any Error>
