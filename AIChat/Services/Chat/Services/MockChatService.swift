@@ -52,6 +52,12 @@ extension MockChatService: ChatServiceProtocol {
         messages.append(message)
     }
 
+    func updateChatMessage(message: ChatMessageModel) async throws {
+        if let index = messages.firstIndex(where: { $0.id == message.id }) {
+            messages[index] = message
+        }
+    }
+
     func updateMessageReaction(chatId: String, messageId: String, reactions: [String: MessageReaction]) async throws {
         if let index = messages.firstIndex(where: { $0.id == messageId }) {
             var updatedMessage = messages[index]
