@@ -106,6 +106,9 @@ struct ProfileViewTests {
             removeAuthorIdFromAvatar: { _ in
                 
             },
+            updateProfileColor: { _ in
+                
+            },
             trackEvent: { event in
                 events.append(event)
             }
@@ -484,6 +487,9 @@ struct ProfileViewTests {
             removeAuthorIdFromAvatar: { _ in
                 // Server deletion succeeds
             },
+            updateProfileColor: { _ in
+                
+            },
             trackEvent: { event in
                 trackedEvents.append(event)
             }
@@ -553,6 +559,8 @@ struct ProfileViewTests {
         }
         
         func removeAuthorIdFromAvatar(avatarId: String) async throws {}
+        
+        func updateProfileColor(profileColorHex: String) async throws {}
         
         func trackEvent(event: any LoggableEvent) {
             trackedEvents.append(event)
