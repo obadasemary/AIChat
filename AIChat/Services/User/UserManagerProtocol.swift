@@ -12,6 +12,7 @@ protocol UserManagerProtocol: Sendable {
     
     func logIn(auth: UserAuthInfo, isNewUser: Bool) async throws
     func markOnboardingCompleteForCurrentUser(profileColorHex: String) async throws
+    func updateProfileColorForCurrentUser(profileColorHex: String) async throws
     func signOut()
     func deleteCurrentUser() async throws
 }
