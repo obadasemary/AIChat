@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 @Observable
 @MainActor
@@ -155,6 +156,25 @@ extension ProfileViewModel {
             }
         }
     }
+    
+    func onColorChanged(color: Color) {
+        let hexString = color.asHex()
+        profileUseCase.trackEvent(event: Event.colorChangeStart(colorHex: hexString))
+        
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            do {
+                try await self.profileUseCase.updateProfileColor(profileColorHex: hexString)
+                self.profileUseCase.trackEvent(event: Event.colorChangeSuccess(colorHex: hexString))
+            } catch {
+                self.router.showSimpleAlert(
+                    title: "Unable to update color",
+                    subtitle: "Please try again later."
+                )
+                self.profileUseCase.trackEvent(event: Event.colorChangeFail(error: error))
+            }
+        }
+    }
 }
 
 // MARK: - Event
@@ -170,6 +190,9 @@ extension ProfileViewModel {
         case deleteAvatarStart(avatar: AvatarModel)
         case deleteAvatarSuccess(avatar: AvatarModel)
         case deleteAvatarFail(error: Error)
+        case colorChangeStart(colorHex: String)
+        case colorChangeSuccess(colorHex: String)
+        case colorChangeFail(error: Error)
         
         var eventName: String {
             switch self {
@@ -182,6 +205,9 @@ extension ProfileViewModel {
             case .deleteAvatarStart: "ProfileView_DeleteAvatar_Start"
             case .deleteAvatarSuccess: "ProfileView_DeleteAvatar_Success"
             case .deleteAvatarFail: "ProfileView_DeleteAvatar_Fail"
+            case .colorChangeStart: "ProfileView_ColorChange_Start"
+            case .colorChangeSuccess: "ProfileView_ColorChange_Success"
+            case .colorChangeFail: "ProfileView_ColorChange_Fail"
             }
         }
         
@@ -191,10 +217,14 @@ extension ProfileViewModel {
                 return [
                     "avatars_count": count
                 ]
-            case .loadAvatarsFail(error: let error), .deleteAvatarFail(error: let error):
+            case .loadAvatarsFail(error: let error), .deleteAvatarFail(error: let error), .colorChangeFail(error: let error):
                 return error.eventParameters
             case .avatarPressed(avatar: let avatar), .deleteAvatarStart(avatar: let avatar), .deleteAvatarSuccess(avatar: let avatar):
                 return avatar.eventParameters
+            case .colorChangeStart(colorHex: let colorHex), .colorChangeSuccess(colorHex: let colorHex):
+                return [
+                    "color_hex": colorHex
+                ]
             default:
                 return nil
             }
@@ -202,7 +232,7 @@ extension ProfileViewModel {
         
         var type: LogType {
             switch self {
-            case .loadAvatarsFail, .deleteAvatarFail:
+            case .loadAvatarsFail, .deleteAvatarFail, .colorChangeFail:
                 return .severe
             default:
                 return .analytic
