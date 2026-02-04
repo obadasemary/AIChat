@@ -26,6 +26,9 @@ struct ChatView: View {
     @State private var showScrollToBottom: Bool = false
     @Namespace private var bottomID
 
+    // Reaction overlay state
+    @State private var selectedMessageForReaction: ChatMessageModel?
+
     var body: some View {
         VStack(spacing: 0) {
             messagesScrollView
@@ -40,6 +43,11 @@ struct ChatView: View {
 
             ToolbarItem(placement: .navigationBarTrailing) {
                 settingsButton
+            }
+        }
+        .overlay {
+            if let selectedMessage = selectedMessageForReaction {
+                reactionOverlay(for: selectedMessage)
             }
         }
         .screenAppearAnalytics(name: ScreenName.from(Self.self))
@@ -172,6 +180,9 @@ private extension ChatView {
             currentUserId: viewModel.currentUser?.userId
         )
         let showTail = false
+        let replyToMessage = message.replyToMessageId.flatMap { replyId in
+            viewModel.chatMessages.first { $0.id == replyId }
+        }
 
         return MessageRowView(
             message: message,
@@ -180,9 +191,14 @@ private extension ChatView {
             currentUserProfileColor: viewModel.currentUser?.profileColorCalculated ?? .blue,
             showAvatar: showAvatar && !isCurrentUser,
             showTail: showTail,
+            replyToMessage: replyToMessage,
             onAvatarTapped: {
                 triggerHaptic(.light)
                 viewModel.onAvatarImageTapped()
+            },
+            onLongPress: {
+                triggerHaptic(.medium)
+                selectedMessageForReaction = message
             },
             onReactionTapped: { reaction in
                 viewModel.onMessageReactionTapped(message: message, reaction: reaction)
@@ -192,7 +208,24 @@ private extension ChatView {
             },
             onShareTapped: {
                 viewModel.onMessageShareTapped(message: message)
-            }
+            },
+            onReplyTapped: {
+                triggerHaptic(.light)
+                viewModel.onMessageReplyTapped(message: message)
+            },
+            onEditTapped: {
+                triggerHaptic(.light)
+                viewModel.onMessageEditTapped(message: message)
+            },
+            onTranslateTapped: {
+                triggerHaptic(.light)
+                viewModel.onMessageTranslateTapped(message: message)
+            },
+            onSelectTapped: {
+                triggerHaptic(.light)
+                viewModel.onMessageSelectTapped(message: message)
+            },
+            translatedText: viewModel.translatedMessages[message.id]
         )
         .onAppear {
             viewModel.onMessageDidAppear(message: message)
@@ -206,6 +239,183 @@ private extension ChatView {
             showAvatar: true
         )
         .padding(.vertical, 4)
+    }
+
+    func reactionOverlay(for message: ChatMessageModel) -> some View {
+        let isCurrentUser = viewModel.messageIsCurrentUser(message: message)
+        let backgroundColor = isCurrentUser ? (viewModel.currentUser?.profileColorCalculated ?? .blue) : Color(uiColor: .systemGray5)
+        let textColor = isCurrentUser ? Color.white : Color.primary
+        let replyToMessage = message.replyToMessageId.flatMap { replyId in
+            viewModel.chatMessages.first { $0.id == replyId }
+        }
+
+        return Color.black.opacity(0.001)
+            .ignoresSafeArea()
+            .onTapGesture {
+                withAnimation {
+                    selectedMessageForReaction = nil
+                }
+            }
+            .overlay(alignment: .center) {
+                VStack(alignment: .center, spacing: 10) {
+                    // Reactions at top
+                    ReactionPickerView { reaction in
+                        viewModel.onMessageReactionTapped(message: message, reaction: reaction)
+                        withAnimation {
+                            selectedMessageForReaction = nil
+                        }
+                    }
+
+                    // Message preview in middle (full width)
+                    messageBubblePreview(for: message, isCurrentUser: isCurrentUser, backgroundColor: backgroundColor, textColor: textColor, replyToMessage: replyToMessage)
+                        .frame(maxWidth: .infinity)
+
+                    // Actions at bottom (full width)
+                    messageActionsView(for: message, isCurrentUser: isCurrentUser)
+                        .frame(maxWidth: .infinity)
+                }
+                .padding(.horizontal, 20)
+                .frame(maxWidth: .infinity)
+                .frame(maxHeight: .infinity, alignment: .top)
+                .padding(.top, 60)
+                .transition(.scale.combined(with: .opacity))
+            }
+            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: selectedMessageForReaction != nil)
+    }
+
+    func messageBubblePreview(for message: ChatMessageModel, isCurrentUser: Bool, backgroundColor: Color, textColor: Color, replyToMessage: ChatMessageModel?) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            // Reply preview if exists
+            if let replyToMessage {
+                ReplyPreviewView(
+                    replyToMessage: replyToMessage.content?.message ?? "",
+                    replyToAuthor: isCurrentUser ? "You" : "AI Assistant",
+                    isCurrentUser: isCurrentUser
+                )
+            }
+
+            // Message content
+            HStack(alignment: .bottom, spacing: 4) {
+                VStack(alignment: .leading, spacing: 4) {
+                    if let translatedText = viewModel.translatedMessages[message.id] {
+                        Text(translatedText)
+                            .font(.body)
+                            .foregroundStyle(textColor)
+                            .multilineTextAlignment(.leading)
+
+                        HStack(spacing: 4) {
+                            Image(systemName: "character.bubble")
+                                .font(.caption2)
+                            Text("Translated")
+                                .font(.caption2)
+                        }
+                        .foregroundStyle(textColor.opacity(0.6))
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(
+                            Capsule()
+                                .fill(textColor.opacity(0.1))
+                        )
+                    } else {
+                        Text(message.content?.message ?? "")
+                            .font(.body)
+                            .foregroundStyle(textColor)
+                            .multilineTextAlignment(.leading)
+                    }
+
+                    if message.isEdited {
+                        Text("Edited")
+                            .font(.caption2)
+                            .foregroundStyle(textColor.opacity(0.5))
+                            .italic()
+                    }
+                }
+
+                // Timestamp
+                Text(message.dateCreatedCalculated.formatted(date: .omitted, time: .shortened))
+                    .font(.caption2)
+                    .foregroundStyle(textColor.opacity(0.7))
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(backgroundColor)
+                .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
+        )
+    }
+
+    func messageActionsView(for message: ChatMessageModel, isCurrentUser: Bool) -> some View {
+        VStack(spacing: 0) {
+            actionButton(icon: "arrowshape.turn.up.left", label: "Reply") {
+                viewModel.onMessageReplyTapped(message: message)
+                withAnimation {
+                    selectedMessageForReaction = nil
+                }
+            }
+
+            if isCurrentUser && message.canEdit {
+                Divider()
+                    .padding(.leading, 44)
+
+                actionButton(icon: "pencil", label: "Edit") {
+                    viewModel.onMessageEditTapped(message: message)
+                    withAnimation {
+                        selectedMessageForReaction = nil
+                    }
+                }
+            }
+
+            Divider()
+                .padding(.leading, 44)
+
+            actionButton(icon: "doc.on.doc", label: "Copy") {
+                viewModel.onMessageCopyTapped(message: message)
+                withAnimation {
+                    selectedMessageForReaction = nil
+                }
+            }
+
+            Divider()
+                .padding(.leading, 44)
+
+            actionButton(icon: "character.bubble", label: "Translate") {
+                viewModel.onMessageTranslateTapped(message: message)
+                withAnimation {
+                    selectedMessageForReaction = nil
+                }
+            }
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(Color(uiColor: .secondarySystemBackground).opacity(0.95))
+                .shadow(color: .black.opacity(0.2), radius: 12, x: 0, y: 4)
+        )
+    }
+
+    func actionButton(icon: String, label: String, action: @escaping () -> Void) -> some View {
+        Button {
+            triggerHaptic(.light)
+            action()
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.system(size: 18))
+                    .foregroundStyle(.blue)
+                    .frame(width: 28)
+
+                Text(label)
+                    .font(.body)
+                    .foregroundStyle(.primary)
+
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 }
 
@@ -222,6 +432,14 @@ private extension ChatView {
             onSendTapped: {
                 triggerHaptic(.medium)
                 viewModel.onSendMessageTapped(avatarId: delegate.avatarId)
+            },
+            replyingToMessage: viewModel.replyingToMessage,
+            editingMessage: viewModel.editingMessage,
+            onCancelReply: {
+                viewModel.cancelReply()
+            },
+            onCancelEdit: {
+                viewModel.cancelEdit()
             }
         )
     }
