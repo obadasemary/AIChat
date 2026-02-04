@@ -21,9 +21,12 @@ final class ChatViewModel {
     private(set) var isGeneratingResponse: Bool = false
     private(set) var typingIndicatorMessage: ChatMessageModel?
     private(set) var messageListener: ListenerRegistration?
-    
+
     var textFieldText: String = ""
     var scrollPosition: String?
+    var replyingToMessage: ChatMessageModel?
+    var editingMessage: ChatMessageModel?
+    var translatedMessages: [String: String] = [:]
     
     init(
         chatUseCase: ChatUseCaseProtocol,
@@ -152,15 +155,34 @@ extension ChatViewModel {
                 guard let chat else {
                     throw ChatViewEror.failedToCreateNewChat
                 }
-                
+
+                // Handle editing existing message
+                if let editingMessage {
+                    var updatedMessage = editingMessage
+                    updatedMessage.content = AIChatModel(role: .user, message: content)
+                    updatedMessage.editedAt = .now
+
+                    try await chatUseCase.updateChatMessage(message: updatedMessage)
+
+                    self.editingMessage = nil
+                    textFieldText = ""
+                    return
+                }
+
                 // create User Chat
                 let newChatMessage = AIChatModel(role: .user, message: content)
-                let message = ChatMessageModel.newUserMessage(
+                var message = ChatMessageModel.newUserMessage(
                     chatId: chat.id,
                     userId: userId,
                     message: newChatMessage
                 )
-                
+
+                // Add reply reference if replying
+                if let replyingToMessage {
+                    message.replyToMessageId = replyingToMessage.id
+                    self.replyingToMessage = nil
+                }
+
                 // upload user chat
                 try await chatUseCase
                     .addChatMessage(
@@ -383,6 +405,76 @@ extension ChatViewModel {
             rootViewController.present(activityController, animated: true)
         }
     }
+
+    func onMessageReplyTapped(message: ChatMessageModel) {
+        chatUseCase.trackEvent(event: Event.messageReplyTapped)
+        replyingToMessage = message
+        editingMessage = nil
+    }
+
+    func cancelReply() {
+        replyingToMessage = nil
+    }
+
+    func onMessageEditTapped(message: ChatMessageModel) {
+        chatUseCase.trackEvent(event: Event.messageEditTapped)
+        editingMessage = message
+        replyingToMessage = nil
+
+        // Always use original message text, not translated
+        textFieldText = message.content?.message ?? ""
+
+        // Clear translation if it exists
+        translatedMessages.removeValue(forKey: message.id)
+    }
+
+    func cancelEdit() {
+        editingMessage = nil
+        textFieldText = ""
+    }
+
+    func onMessageTranslateTapped(message: ChatMessageModel) {
+        chatUseCase.trackEvent(event: Event.messageTranslateTapped)
+        Task {
+            do {
+                guard let text = message.content?.message else { return }
+
+                // Check if already translated
+                if translatedMessages[message.id] != nil {
+                    // Remove translation to show original
+                    translatedMessages.removeValue(forKey: message.id)
+                    return
+                }
+
+                // Translate the message
+                let translatedText = try await translateText(text: text, targetLanguage: "en")
+                translatedMessages[message.id] = translatedText
+
+                chatUseCase.trackEvent(event: Event.messageTranslateSuccess)
+            } catch {
+                chatUseCase.trackEvent(event: Event.messageTranslateFail(error: error))
+                router.showAlert(error: error)
+            }
+        }
+    }
+
+    func onMessageSelectTapped(message: ChatMessageModel) {
+        chatUseCase.trackEvent(event: Event.messageSelectTapped)
+
+        // Copy message text to clipboard
+        if let messageText = message.content?.message {
+            UIPasteboard.general.string = messageText
+        }
+    }
+
+    private func translateText(text: String, targetLanguage: String) async throws -> String {
+        // Simple implementation using AI for translation
+        let prompt = "Translate the following text to \(targetLanguage). Only return the translated text, nothing else:\n\n\(text)"
+        let translationChat = AIChatModel(role: .user, message: prompt)
+
+        let response = try await chatUseCase.generateText(chats: [translationChat])
+        return response.message
+    }
 }
 
 // MARK: - helper func
@@ -479,6 +571,12 @@ private extension ChatViewModel {
         case messageReactionFail(error: Error)
         case messageCopyTapped
         case messageShareTapped
+        case messageReplyTapped
+        case messageEditTapped
+        case messageTranslateTapped
+        case messageTranslateSuccess
+        case messageTranslateFail(error: Error)
+        case messageSelectTapped
         
         var eventName: String {
             switch self {
@@ -540,6 +638,18 @@ private extension ChatViewModel {
                 "\(ScreenName.from(ChatView.self))_MessageCopy_Tapped"
             case .messageShareTapped:
                 "\(ScreenName.from(ChatView.self))_MessageShare_Tapped"
+            case .messageReplyTapped:
+                "\(ScreenName.from(ChatView.self))_MessageReply_Tapped"
+            case .messageEditTapped:
+                "\(ScreenName.from(ChatView.self))_MessageEdit_Tapped"
+            case .messageTranslateTapped:
+                "\(ScreenName.from(ChatView.self))_MessageTranslate_Tapped"
+            case .messageTranslateSuccess:
+                "\(ScreenName.from(ChatView.self))_MessageTranslate_Success"
+            case .messageTranslateFail:
+                "\(ScreenName.from(ChatView.self))_MessageTranslate_Fail"
+            case .messageSelectTapped:
+                "\(ScreenName.from(ChatView.self))_MessageSelect_Tapped"
             }
         }
         
@@ -556,7 +666,8 @@ private extension ChatViewModel {
                     .messageSeenFail(error: let error),
                     .sendMessageFail(error: let error),
                     .reportChatFail(error: let error),
-                    .deleteChatFail(error: let error):
+                    .deleteChatFail(error: let error),
+                    .messageTranslateFail(error: let error):
                 return error.eventParameters
             case .sendMessageStart(chat: let chat, avatar: let avatar),
                     .sendMessagePaywall(chat: let chat, avatar: let avatar):
@@ -585,7 +696,8 @@ private extension ChatViewModel {
                     .severe
             case .loadChatFail,
                     .sendMessageFail,
-                    .loadMessagesFail:
+                    .loadMessagesFail,
+                    .messageTranslateFail:
                     .warning
             default:
                     .analytic
