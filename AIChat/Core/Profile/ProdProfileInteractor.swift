@@ -41,6 +41,10 @@ extension ProdProfileInteractor: ProfileInteractor {
         try await avatarManager.removeAuthorIdFromAvatar(avatarId: avatarId)
     }
     
+    func updateProfileColor(profileColorHex: String) async throws {
+        try await userManager.updateProfileColorForCurrentUser(profileColorHex: profileColorHex)
+    }
+    
     func trackEvent(event: any LoggableEvent) {
         logManager.trackEvent(event: event)
     }
