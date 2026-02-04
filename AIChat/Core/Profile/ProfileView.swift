@@ -10,6 +10,7 @@ import SwiftUI
 struct ProfileView: View {
     
     @State var viewModel: ProfileViewModel
+    @State private var selectedColor: Color = .accent
     
     var body: some View {
         List {
@@ -37,15 +38,31 @@ private extension ProfileView {
     
     var myInfoSection: some View {
         Section {
-            ZStack {
-                Circle()
-                    .fill(
-                        viewModel.currentUser?.profileColorCalculated ?? .accent
-                    )
+            VStack(spacing: 16) {
+                ZStack {
+                    Circle()
+                        .fill(selectedColor)
+                }
+                .frame(width: 100, height: 100)
+                .frame(maxWidth: .infinity)
+                
+                ColorPicker("Profile Color", selection: $selectedColor)
+                    .labelsHidden()
+                    .onChange(of: selectedColor) { _, newValue in
+                        viewModel.onColorChanged(color: newValue)
+                    }
             }
-            .frame(width: 100, height: 100)
+            .padding(.vertical, 8)
             .frame(maxWidth: .infinity)
             .removeListRowFormatting()
+        }
+        .onAppear {
+            selectedColor = viewModel.currentUser?.profileColorCalculated ?? .accent
+        }
+        .onChange(of: viewModel.currentUser?.profileColorHex) { _, newHex in
+            if let newHex {
+                selectedColor = Color(hex: newHex)
+            }
         }
     }
     
