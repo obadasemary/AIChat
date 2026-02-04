@@ -160,10 +160,10 @@ final class AIChatUITests: XCTestCase {
         let profileNavBar = app.navigationBars["Profile"]
         XCTAssert(waitForElement(profileNavBar, timeout: 5))
         
-        // Click Hero Cell
-        let profileHeroCell = app.collectionViews.buttons.element(boundBy: 1)
-        XCTAssert(waitForElement(profileHeroCell, timeout: 5))
-        profileHeroCell.tap()
+        // Click first avatar cell in the list
+        let profileAvatarCell = app.buttons.matching(identifier: "CustomListCellView").firstMatch
+        XCTAssert(waitForElement(profileAvatarCell, timeout: 5))
+        profileAvatarCell.tap()
         
         XCTAssert(waitForElement(chatTextField, timeout: 5))
         
