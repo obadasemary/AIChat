@@ -62,6 +62,15 @@ extension UserManager: UserManagerProtocol {
             )
     }
     
+    func updateProfileColorForCurrentUser(profileColorHex: String) async throws {
+        let uId = try currentUserId()
+        try await remoteService
+            .updateProfileColor(
+                userId: uId,
+                profileColorHex: profileColorHex
+            )
+    }
+    
     func signOut() {
         currentUserListener?.remove()
         currentUserListener = nil
