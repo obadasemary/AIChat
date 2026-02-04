@@ -31,6 +31,10 @@ struct MockProfileInteractor: ProfileUseCaseProtocol {
         
     }
     
+    func updateProfileColor(profileColorHex: String) async throws {
+        
+    }
+    
     func trackEvent(event: any AIChat.LoggableEvent) {
         logger.trackEvent(event: event)
     }
