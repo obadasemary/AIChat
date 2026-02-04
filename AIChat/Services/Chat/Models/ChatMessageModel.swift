@@ -27,11 +27,13 @@ struct ChatMessageModel: Identifiable, Codable, StringIdentifiable, Equatable {
     let id: String
     let chatId: String
     let authorId: String?
-    let content: AIChatModel?
+    var content: AIChatModel?
     let seenByIds: [String]?
     let dateCreated: Date?
     var reactions: [String: MessageReaction]?
-    
+    var replyToMessageId: String?
+    var editedAt: Date?
+
     init(
         id: String,
         chatId: String,
@@ -39,7 +41,9 @@ struct ChatMessageModel: Identifiable, Codable, StringIdentifiable, Equatable {
         content: AIChatModel? = nil,
         seenByIds: [String]? = nil,
         dateCreated: Date? = nil,
-        reactions: [String: MessageReaction]? = nil
+        reactions: [String: MessageReaction]? = nil,
+        replyToMessageId: String? = nil,
+        editedAt: Date? = nil
     ) {
         self.id = id
         self.chatId = chatId
@@ -48,8 +52,10 @@ struct ChatMessageModel: Identifiable, Codable, StringIdentifiable, Equatable {
         self.seenByIds = seenByIds
         self.dateCreated = dateCreated
         self.reactions = reactions
+        self.replyToMessageId = replyToMessageId
+        self.editedAt = editedAt
     }
-    
+
     enum CodingKeys: String, CodingKey {
         case id
         case chatId = "chat_id"
@@ -58,6 +64,8 @@ struct ChatMessageModel: Identifiable, Codable, StringIdentifiable, Equatable {
         case seenByIds = "seen_by_ids"
         case dateCreated = "date_created"
         case reactions
+        case replyToMessageId = "reply_to_message_id"
+        case editedAt = "edited_at"
     }
     
     var eventParameters: [String: Any] {
@@ -75,7 +83,17 @@ struct ChatMessageModel: Identifiable, Codable, StringIdentifiable, Equatable {
     var dateCreatedCalculated: Date {
         dateCreated ?? .distantPast
     }
-    
+
+    var isEdited: Bool {
+        editedAt != nil
+    }
+
+    var canEdit: Bool {
+        guard let dateCreated else { return false }
+        let editTimeLimit: TimeInterval = 15 * 60 // 15 minutes
+        return Date().timeIntervalSince(dateCreated) < editTimeLimit
+    }
+
     func hasBeenSeenBy(userId: String) -> Bool {
         guard let seenByIds, !seenByIds.isEmpty else {
             return false
