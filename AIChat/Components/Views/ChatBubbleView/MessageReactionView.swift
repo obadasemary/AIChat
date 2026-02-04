@@ -14,23 +14,23 @@ struct MessageReactionView: View {
 
     var body: some View {
         if !reactions.isEmpty {
-            HStack(spacing: 4) {
-                ForEach(Array(reactionCounts.keys), id: \.self) { reaction in
-                    if let count = reactionCounts[reaction], count > 0 {
-                        reactionBadge(reaction: reaction, count: count)
+            HStack(spacing: 6) {
+                ForEach(sortedReactions, id: \.reaction) { item in
+                    if item.count > 0 {
+                        reactionBadge(reaction: item.reaction, count: item.count)
                     }
                 }
             }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
             .background(
                 Capsule()
                     .fill(Color(uiColor: .systemBackground))
-                    .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+                    .shadow(color: .black.opacity(0.12), radius: 4, x: 0, y: 2)
             )
             .frame(maxWidth: .infinity, alignment: isCurrentUser ? .trailing : .leading)
             .padding(.horizontal, 8)
-            .padding(.top, -8)
+            .padding(.top, -10)
         }
     }
 
@@ -42,17 +42,29 @@ struct MessageReactionView: View {
         return counts
     }
 
+    private var sortedReactions: [(reaction: MessageReaction, count: Int)] {
+        reactionCounts
+            .map { (reaction: $0.key, count: $0.value) }
+            .sorted { $0.count > $1.count }
+    }
+
     private func reactionBadge(reaction: MessageReaction, count: Int) -> some View {
-        HStack(spacing: 2) {
+        HStack(spacing: 3) {
             Text(reaction.emoji)
-                .font(.caption)
+                .font(.system(size: 14))
 
             if count > 1 {
                 Text("\(count)")
-                    .font(.caption2)
+                    .font(.caption2.bold())
                     .foregroundStyle(.secondary)
             }
         }
+        .padding(.horizontal, 6)
+        .padding(.vertical, 4)
+        .background(
+            Capsule()
+                .fill(Color(uiColor: .quaternarySystemFill))
+        )
     }
 }
 
