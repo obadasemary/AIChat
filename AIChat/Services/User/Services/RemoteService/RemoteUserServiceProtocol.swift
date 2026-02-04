@@ -14,6 +14,8 @@ protocol RemoteUserServiceProtocol: Sendable {
     
     func markOnboardingAsCompleted(userId: String, profileColorHex: String) async throws
     
+    func updateProfileColor(userId: String, profileColorHex: String) async throws
+    
     func streamUser(userId: String) -> AsyncThrowingStream<UserModel, Error>
     
     func deleteUser(userId: String) async throws
