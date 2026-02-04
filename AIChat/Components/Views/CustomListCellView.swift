@@ -46,6 +46,7 @@ struct CustomListCellView: View {
         .padding(12)
         .padding(.vertical, 4)
         .background(colorScheme.backgroundPrimary)
+        .accessibilityIdentifier("CustomListCellView")
     }
 }
 
