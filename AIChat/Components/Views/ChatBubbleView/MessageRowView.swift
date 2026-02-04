@@ -12,6 +12,7 @@ struct MessageRowView: View {
 
     let message: ChatMessageModel
     let isCurrentUser: Bool
+    let currentUserId: String?
     let avatarImageUrl: String?
     let currentUserProfileColor: Color
     let showAvatar: Bool
@@ -26,11 +27,13 @@ struct MessageRowView: View {
     let onEditTapped: (() -> Void)?
     let onTranslateTapped: (() -> Void)?
     let onSelectTapped: (() -> Void)?
+    let onDeleteTapped: (() -> Void)?
     let translatedText: String?
 
     init(
         message: ChatMessageModel,
         isCurrentUser: Bool,
+        currentUserId: String? = nil,
         avatarImageUrl: String? = nil,
         currentUserProfileColor: Color = .blue,
         showAvatar: Bool = true,
@@ -45,10 +48,12 @@ struct MessageRowView: View {
         onEditTapped: (() -> Void)? = nil,
         onTranslateTapped: (() -> Void)? = nil,
         onSelectTapped: (() -> Void)? = nil,
+        onDeleteTapped: (() -> Void)? = nil,
         translatedText: String? = nil
     ) {
         self.message = message
         self.isCurrentUser = isCurrentUser
+        self.currentUserId = currentUserId
         self.avatarImageUrl = avatarImageUrl
         self.currentUserProfileColor = currentUserProfileColor
         self.showAvatar = showAvatar
@@ -63,6 +68,7 @@ struct MessageRowView: View {
         self.onEditTapped = onEditTapped
         self.onTranslateTapped = onTranslateTapped
         self.onSelectTapped = onSelectTapped
+        self.onDeleteTapped = onDeleteTapped
         self.translatedText = translatedText
     }
     
@@ -138,9 +144,10 @@ struct MessageRowView: View {
         VStack(alignment: .leading, spacing: 6) {
             // Reply preview
             if let replyToMessage {
+                let replyAuthorIsCurrentUser = replyToMessage.authorId == currentUserId
                 ReplyPreviewView(
                     replyToMessage: replyToMessage.content?.message ?? "",
-                    replyToAuthor: isCurrentUser ? "You" : "AI Assistant",
+                    replyToAuthor: replyAuthorIsCurrentUser ? "You" : "AI Assistant",
                     isCurrentUser: isCurrentUser
                 )
             }
@@ -304,6 +311,15 @@ struct MessageRowView: View {
                 triggerHaptic(.light)
             } label: {
                 Label("Share", systemImage: "square.and.arrow.up")
+            }
+        }
+
+        Section {
+            Button(role: .destructive) {
+                onDeleteTapped?()
+                triggerHaptic(.heavy)
+            } label: {
+                Label("Delete", systemImage: "trash")
             }
         }
     }
