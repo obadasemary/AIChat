@@ -94,6 +94,10 @@ extension CoreInteractor {
             )
     }
     
+    func updateProfileColor(profileColorHex: String) async throws {
+        try await userManager.updateProfileColorForCurrentUser(profileColorHex: profileColorHex)
+    }
+    
 //    func deleteCurrentUser() async throws {
 //        try await userManager.deleteCurrentUser()
 //    }
