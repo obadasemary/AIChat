@@ -3,26 +3,17 @@
 <plist version="1.0">
 <dict>
     <key>Kind</key>
-    <string>Xcode.IDEFoundation.TextSubstitutionFileTemplateKind</string>
+    <string>Xcode.IDEKit.TextSubstitutionFileTemplateKind</string>
     <key>Summary</key>
-    <string>Creates a complete MVVM feature with Clean Architecture pattern</string>
+    <string>MVVM Feature with Clean Architecture</string>
     <key>Description</key>
-    <string>Generates View, ViewModel, UseCase, Builder, and Router files following the AIChat MVVM pattern</string>
+    <string>Creates View, ViewModel, UseCase, Builder, and Router files</string>
     <key>Platforms</key>
     <array>
         <string>com.apple.platform.iphoneos</string>
     </array>
-    <key>AllowedTypes</key>
-    <array>
-        <string>public.swift-source</string>
-    </array>
-    <key>DefaultCompletionName</key>
-    <string>MVVMFeature</string>
-    <key>SortOrder</key>
-    <integer>1</integer>
     <key>Options</key>
     <array>
-        <!-- Module Name (Only user input needed) -->
         <dict>
             <key>Identifier</key>
             <string>productName</string>
@@ -36,14 +27,14 @@
             <string>text</string>
             <key>Default</key>
             <string>Feature</string>
+            <key>NotPersisted</key>
+            <false/>
         </dict>
     </array>
     <key>Definitions</key>
     <dict>
-        <!-- Auto-generate camelCase version -->
         <key>camelCasedProductName</key>
         <string>___VARIABLE_productName:identifier___</string>
-        <!-- Default Core router name -->
         <key>coreName</key>
         <string>Core</string>
     </dict>
