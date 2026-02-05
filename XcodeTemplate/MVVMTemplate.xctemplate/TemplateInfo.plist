@@ -3,20 +3,23 @@
 <plist version="1.0">
 <dict>
     <key>Kind</key>
-    <string>Xcode.IDEKit.TextSubstitutionFileTemplateKind</string>
+    <string>Xcode.IDEFoundation.TextSubstitutionFileTemplateKind</string>
+    <key>Summary</key>
+    <string>Creates a complete MVVM feature with Clean Architecture pattern</string>
+    <key>Description</key>
+    <string>Generates View, ViewModel, UseCase, Builder, and Router files following the AIChat MVVM pattern</string>
     <key>Platforms</key>
     <array>
         <string>com.apple.platform.iphoneos</string>
-        <string>com.apple.platform.macosx</string>
     </array>
+    <key>AllowedTypes</key>
+    <array>
+        <string>public.swift-source</string>
+    </array>
+    <key>DefaultCompletionName</key>
+    <string>MVVMFeature</string>
     <key>SortOrder</key>
     <integer>1</integer>
-    <key>Destination</key>
-    <string>Group</string>
-    <key>FileGroup</key>
-    <string>___VARIABLE_productName:identifier___</string>
-    <key>MainTemplateFile</key>
-    <string>___FILEBASENAME___View.swift</string>
     <key>Options</key>
     <array>
         <!-- Module Name -->
