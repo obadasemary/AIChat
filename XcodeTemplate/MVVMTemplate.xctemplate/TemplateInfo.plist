@@ -14,27 +14,40 @@
     </array>
     <key>Options</key>
     <array>
+        <!-- Module Name -->
         <dict>
             <key>Identifier</key>
             <string>productName</string>
             <key>Required</key>
             <true/>
             <key>Name</key>
-            <string>Feature Name:</string>
+            <string>Feature Name (PascalCase):</string>
             <key>Description</key>
-            <string>The name of your feature (e.g., About, Profile, Chat)</string>
+            <string>Feature name starting with capital letter (e.g., UserProfile, Settings)</string>
             <key>Type</key>
             <string>text</string>
             <key>Default</key>
-            <string>Feature</string>
-            <key>NotPersisted</key>
-            <false/>
+            <string>NewFeature</string>
+        </dict>
+
+        <!-- camelCase Module Name -->
+        <dict>
+            <key>Identifier</key>
+            <string>camelCasedProductName</string>
+            <key>Required</key>
+            <true/>
+            <key>Name</key>
+            <string>Feature Name (camelCase):</string>
+            <key>Description</key>
+            <string>Same name with lowercase first letter (e.g., userProfile, settings)</string>
+            <key>Type</key>
+            <string>text</string>
+            <key>Default</key>
+            <string>newFeature</string>
         </dict>
     </array>
     <key>Definitions</key>
     <dict>
-        <key>camelCasedProductName</key>
-        <string>___VARIABLE_productName:identifier___</string>
         <key>coreName</key>
         <string>Core</string>
     </dict>
