@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Kind</key>
+    <string>Xcode.IDEKit.TextSubstitutionFileTemplateKind</string>
+    <key>Platforms</key>
+    <array>
+        <string>com.apple.platform.iphoneos</string>
+        <string>com.apple.platform.macosx</string>
+    </array>
+    <key>SortOrder</key>
+    <integer>1</integer>
+    <key>Destination</key>
+    <string>Group</string>
+    <key>FileGroup</key>
+    <string>___VARIABLE_productName:identifier___</string>
+    <key>MainTemplateFile</key>
+    <string>___FILEBASENAME___View.swift</string>
+    <key>Options</key>
+    <array>
+        <!-- Module Name -->
+        <dict>
+            <key>Identifier</key>
+            <string>productName</string>
+            <key>Required</key>
+            <true/>
+            <key>Name</key>
+            <string>Module Name:</string>
+            <key>Description</key>
+            <string>The name of the feature module (e.g., About, Profile, Chat)</string>
+            <key>Type</key>
+            <string>text</string>
+            <key>Default</key>
+            <string>Feature</string>
+        </dict>
+
+        <!-- Lowercased Module Name -->
+        <dict>
+            <key>Identifier</key>
+            <string>camelCasedProductName</string>
+            <key>Required</key>
+            <true/>
+            <key>Name</key>
+            <string>camelCased Module Name:</string>
+            <key>Description</key>
+            <string>The module name with the first letter lowercased (e.g., about, profile, chat)</string>
+            <key>Type</key>
+            <string>text</string>
+            <key>Default</key>
+            <string>feature</string>
+        </dict>
+
+        <!-- Core Name -->
+        <dict>
+            <key>Identifier</key>
+            <string>coreName</string>
+            <key>Required</key>
+            <true/>
+            <key>Name</key>
+            <string>Core Router Name:</string>
+            <key>Description</key>
+            <string>The name of your core router (default: Core)</string>
+            <key>Type</key>
+            <string>text</string>
+            <key>Default</key>
+            <string>Core</string>
+        </dict>
+    </array>
+</dict>
+</plist>
