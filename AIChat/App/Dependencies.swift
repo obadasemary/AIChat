@@ -233,6 +233,7 @@ struct Dependencies {
 }
 
 extension View {
+    // swiftlint:disable function_body_length
     func previewEnvironment(isSignedIn: Bool = true) -> some View {
         self
             .environment(LogManager(services: []))
@@ -291,4 +292,5 @@ extension View {
                 BookmarksBuilder(container: DevPreview.shared.container)
             )
     }
+    // swiftlint:enable function_body_length
 }

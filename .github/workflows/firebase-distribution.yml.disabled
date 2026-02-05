@@ -1,0 +1,145 @@
+name: Firebase App Distribution - QA
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # Allow manual trigger from GitHub UI
+
+jobs:
+  distribute:
+    name: Build & Distribute to Firebase
+    runs-on: macos-26
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Select Xcode 26
+        run: |
+          echo "✅ Using Xcode 26"
+          sudo xcode-select -switch /Applications/Xcode_26.0.1.app
+
+      - name: Clear SwiftPM protoc artifact cache (workaround)
+        run: |
+          PROTOC_CACHE=~/Library/Caches/org.swift.swiftpm/artifacts/https___github_com_apple_swift_protobuf_releases_download_protoc_artifactbundle_v31_1_protoc_31_1_artifactbundle_zip
+          if [ -e "$PROTOC_CACHE" ]; then
+            echo "🧹 Removing stale SwiftPM protoc artifact bundle at $PROTOC_CACHE"
+            rm -rf "$PROTOC_CACHE"
+          fi
+
+      - name: Create Firebase configuration files
+        run: |
+          # Create the GoogleServicePLists directory
+          mkdir -p AIChat/GoogleServicePLists
+
+          # Decode Firebase configuration from GitHub Secret and save as plist
+          echo "${{ secrets.FIREBASE_DEV_PLIST }}" | base64 --decode > AIChat/GoogleServicePLists/GoogleService-Info-Dev.plist
+          echo "${{ secrets.FIREBASE_PROD_PLIST }}" | base64 --decode > AIChat/GoogleServicePLists/GoogleService-Info-Prod.plist
+
+          echo "✅ Firebase configuration files created"
+
+      - name: Import Code Signing Certificates
+        env:
+          CERTIFICATE_BASE64: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_BASE64 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          # Create variables
+          CERTIFICATE_PATH=$RUNNER_TEMP/certificate.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+
+          # Decode certificate from base64
+          echo "$CERTIFICATE_BASE64" | base64 --decode > $CERTIFICATE_PATH
+
+          # Create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          # Import certificate to keychain
+          security import $CERTIFICATE_PATH -P "$CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+
+          # Allow codesign to access the certificate
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+      - name: Import Provisioning Profile
+        env:
+          PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+        run: |
+          # Create provisioning profiles directory
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+
+          # Decode and save provisioning profile
+          PROFILE_PATH="$RUNNER_TEMP/profile.mobileprovision"
+          echo "$PROVISIONING_PROFILE_BASE64" | base64 --decode > $PROFILE_PATH
+
+          # Get UUID from the profile
+          PROFILE_UUID=$(grep -aA1 UUID $PROFILE_PATH | grep string | sed -e "s/<string>//" -e "s/<\/string>//" | tr -d '[:space:]')
+
+          # Copy to provisioning profiles directory with UUID as filename
+          cp $PROFILE_PATH ~/Library/MobileDevice/Provisioning\ Profiles/$PROFILE_UUID.mobileprovision
+
+          echo "✅ Provisioning profile installed: $PROFILE_UUID"
+
+      - name: Build Archive
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
+          NEWSAPI_API_KEY: ${{ secrets.NEWSAPI_API_KEY }}
+        run: |
+          echo "🔨 Building archive for Development scheme"
+          xcodebuild archive \
+            -project AIChat.xcodeproj \
+            -scheme "AIChat - Development" \
+            -sdk iphoneos \
+            -configuration Debug \
+            -archivePath $RUNNER_TEMP/AIChat.xcarchive \
+            -allowProvisioningUpdates \
+            DEVELOPMENT_TEAM="${{ secrets.APPLE_TEAM_ID }}"
+
+      - name: Export IPA
+        run: |
+          echo "📦 Exporting IPA for ad-hoc distribution"
+          xcodebuild -exportArchive \
+            -archivePath $RUNNER_TEMP/AIChat.xcarchive \
+            -exportOptionsPlist ExportOptions.plist \
+            -exportPath $RUNNER_TEMP/export \
+            -allowProvisioningUpdates \
+            DEVELOPMENT_TEAM="${{ secrets.APPLE_TEAM_ID }}"
+
+          # Verify IPA was created
+          if [ -f "$RUNNER_TEMP/export/AIChat.ipa" ]; then
+            echo "✅ IPA created successfully"
+            ls -lh $RUNNER_TEMP/export/AIChat.ipa
+          else
+            echo "❌ IPA not found"
+            exit 1
+          fi
+
+      - name: Upload to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_CREDENTIALS }}
+          groups: qa-testers
+          file: ${{ runner.temp }}/export/AIChat.ipa
+          releaseNotes: |
+            Build from commit: ${{ github.sha }}
+            Branch: ${{ github.ref_name }}
+            Triggered by: ${{ github.actor }}
+
+      - name: Cleanup Keychain
+        if: always()
+        run: |
+          security delete-keychain $RUNNER_TEMP/app-signing.keychain-db || true
+
+      - name: Upload IPA artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: AIChat-QA-Build
+          path: ${{ runner.temp }}/export/AIChat.ipa
+          retention-days: 30

@@ -21,6 +21,7 @@ struct CoreInteractor {
     private let purchaseManager: PurchaseManager
     private let appState: AppState
     
+    // swiftlint:disable force_unwrapping
     init(container: DependencyContainer) {
         self.authManager = container.resolve(AuthManager.self)!
         self.userManager = container.resolve(UserManager.self)!
@@ -33,6 +34,7 @@ struct CoreInteractor {
         self.purchaseManager = container.resolve(PurchaseManager.self)!
         self.appState = container.resolve(AppState.self)!
     }
+    // swiftlint:enable force_unwrapping
 }
 
 
