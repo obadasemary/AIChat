@@ -196,6 +196,17 @@ private extension SettingsView {
                     .padding(.leading, 16)
                 
                 SettingRowButton(
+                    title: "Admin",
+                    textColor: .primary,
+                    action: viewModel.onAdminPressed,
+                    isFirst: false,
+                    isLast: false
+                )
+                
+                Divider()
+                    .padding(.leading, 16)
+                
+                SettingRowButton(
                     title: "Contact Support",
                     textColor: .blue,
                     action: viewModel.onContactUsPressed,
