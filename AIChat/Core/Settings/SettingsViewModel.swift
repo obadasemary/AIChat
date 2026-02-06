@@ -171,6 +171,11 @@ extension SettingsViewModel {
         router.showAboutView()
     }
 
+    func onAdminPressed() {
+        settingsUseCase.trackEvent(event: Event.adminPressed)
+        router.showAdminView()
+    }
+
     func onNewsFeedPressed() {
         settingsUseCase.trackEvent(event: Event.newsFeedPressed)
         router.showNewsFeedView()
@@ -209,6 +214,7 @@ private extension SettingsViewModel {
         case ratingYesPressed
         case ratingNoPressed
         case aboutPressed
+        case adminPressed
         case newsFeedPressed
         case bookmarksPressed
 
@@ -227,6 +233,7 @@ private extension SettingsViewModel {
             case .ratingYesPressed: "SettingsView_Rating_Yes_Pressed"
             case .ratingNoPressed: "SettingsView_Rating_No_Pressed"
             case .aboutPressed: "SettingsView_About_Pressed"
+            case .adminPressed: "SettingsView_Admin_Pressed"
             case .newsFeedPressed: "SettingsView_NewsFeed_Pressed"
             case .bookmarksPressed: "SettingsView_Bookmarks_Pressed"
             }
