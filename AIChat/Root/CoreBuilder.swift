@@ -226,6 +226,15 @@ class CoreBuilder {
             )
         )
     }
+
+    func adminView(router: Router) -> some View {
+        AdminView(
+            viewModel: AdminViewModel(
+                adminUseCase: AdminUseCase(container: container),
+                router: AdminRouter(router: router)
+            )
+        )
+    }
     
     func createAvatarView(router: Router) -> some View {
         CreateAvatarView(
