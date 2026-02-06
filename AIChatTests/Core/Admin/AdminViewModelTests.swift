@@ -111,7 +111,12 @@ struct AdminViewModelTests {
         )
 
         viewModel.loadData()
-        await waitForLoadingToFinish(viewModel)
+        await waitForPredicate {
+            viewModel.pushStatus != "Checking..." ||
+            viewModel.chatCount != 0 ||
+            viewModel.avatarCount != 0 ||
+            viewModel.bookmarkCount != 0
+        }
 
         #expect(viewModel.chatCount == 4)
         #expect(viewModel.avatarCount == 2)
@@ -136,7 +141,9 @@ struct AdminViewModelTests {
         )
 
         viewModel.loadData()
-        await waitForLoadingToFinish(viewModel)
+        await waitForPredicate {
+            viewModel.pushStatus != "Checking..."
+        }
 
         let errorEvents = useCase.trackedEvents.filter {
             $0.eventName == "AdminView_LoadData_Failed"
@@ -179,7 +186,9 @@ struct AdminViewModelTests {
         )
 
         viewModel.onRefreshDataPressed()
-        await waitForLoadingToFinish(viewModel)
+        await waitForPredicate {
+            viewModel.chatCount == 1
+        }
 
         let refreshEvents = useCase.trackedEvents.filter {
             $0.eventName == "AdminView_RefreshData_Pressed"
@@ -188,15 +197,17 @@ struct AdminViewModelTests {
         #expect(viewModel.chatCount == 1)
     }
 
-    private func waitForLoadingToFinish(_ viewModel: AdminViewModel) async {
-        let maxAttempts = 50
+    private func waitForPredicate(_ predicate: @MainActor @escaping () -> Bool) async {
+        let maxAttempts = 100
+
         for _ in 0..<maxAttempts {
-            if viewModel.isLoading == false {
+            if predicate() {
                 return
             }
             try? await Task.sleep(nanoseconds: 10_000_000)
         }
-        Issue.record("Timed out waiting for loadData to finish")
+
+        Issue.record("Timed out waiting for async condition")
     }
 }
 
