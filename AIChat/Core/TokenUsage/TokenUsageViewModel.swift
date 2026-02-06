@@ -18,6 +18,13 @@ final class TokenUsageViewModel {
     private(set) var entries: [TokenUsageEntry] = []
     private(set) var isLoading = false
     private(set) var lastUpdated: Date?
+    var selectedRange: TokenUsageRange = .last30 {
+        didSet {
+            Task {
+                await loadUsage()
+            }
+        }
+    }
 
     init(
         useCase: TokenUsageUseCaseProtocol,
@@ -36,7 +43,7 @@ extension TokenUsageViewModel {
         defer { isLoading = false }
 
         do {
-            entries = try await useCase.fetchUsage()
+            entries = try await useCase.fetchUsage(range: selectedRange)
             lastUpdated = Date()
             useCase.trackEvent(event: Event.loadUsageSuccess)
         } catch {
@@ -49,6 +56,32 @@ extension TokenUsageViewModel {
         useCase.trackEvent(event: Event.refreshTapped)
         Task {
             await loadUsage()
+        }
+    }
+
+    func apiKey(for provider: TokenUsageProvider) -> String {
+        useCase.apiKey(for: provider) ?? ""
+    }
+
+    func saveAPIKey(_ apiKey: String, for provider: TokenUsageProvider) {
+        do {
+            try useCase.saveAPIKey(apiKey, for: provider)
+            Task {
+                await loadUsage()
+            }
+        } catch {
+            router.showAlert(error: error)
+        }
+    }
+
+    func clearAPIKey(for provider: TokenUsageProvider) {
+        do {
+            try useCase.clearAPIKey(for: provider)
+            Task {
+                await loadUsage()
+            }
+        } catch {
+            router.showAlert(error: error)
         }
     }
 }
