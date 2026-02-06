@@ -10,6 +10,7 @@ import SwiftUI
 struct TokenUsageView: View {
 
     @State var viewModel: TokenUsageViewModel
+    @State private var editingProvider: TokenUsageProvider?
 
     var body: some View {
         ScrollView {
@@ -23,7 +24,12 @@ struct TokenUsageView: View {
                     emptyState
                 } else {
                     ForEach(viewModel.entries) { entry in
-                        TokenUsageCardView(entry: entry)
+                        TokenUsageCardView(
+                            entry: entry,
+                            onConfigureTapped: { provider in
+                                editingProvider = provider
+                            }
+                        )
                     }
                 }
             }
@@ -43,6 +49,23 @@ struct TokenUsageView: View {
         .task {
             await viewModel.loadUsage()
         }
+        .sheet(item: $editingProvider) { provider in
+            TokenUsageConfigurationView(
+                provider: provider,
+                initialAPIKey: viewModel.apiKey(for: provider),
+                onSave: { apiKey in
+                    viewModel.saveAPIKey(apiKey, for: provider)
+                    editingProvider = nil
+                },
+                onClear: {
+                    viewModel.clearAPIKey(for: provider)
+                    editingProvider = nil
+                },
+                onCancel: {
+                    editingProvider = nil
+                }
+            )
+        }
         .screenAppearAnalytics(name: "TokenUsageView")
     }
 }
@@ -54,9 +77,16 @@ private extension TokenUsageView {
             Text("Usage Overview")
                 .font(.headline)
 
-            Text("Connect your provider dashboards to pull live Claude and Codex usage.")
+            Text("Connect your provider dashboards to pull usage from the last \(viewModel.selectedRange.rawValue) days. Admin API keys may be required.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+
+            Picker("Range", selection: $viewModel.selectedRange) {
+                ForEach(TokenUsageRange.allCases) { range in
+                    Text(range.title).tag(range)
+                }
+            }
+            .pickerStyle(.segmented)
 
             if let lastUpdated = viewModel.lastUpdated {
                 Text("Last updated \(Self.relativeDateFormatter.localizedString(for: lastUpdated, relativeTo: Date()))")
@@ -90,6 +120,7 @@ private extension TokenUsageView {
 
 private struct TokenUsageCardView: View {
     let entry: TokenUsageEntry
+    let onConfigureTapped: (TokenUsageProvider) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -138,6 +169,23 @@ private struct TokenUsageCardView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
+            if let bucketCount = entry.bucketCount {
+                Text("Buckets: \(bucketCount)")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+
+            if let lastBucket = entry.lastBucket {
+                Text("Last bucket: \(Self.formatInterval(lastBucket))")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+
+            Button(configurationTitle) {
+                onConfigureTapped(entry.provider)
+            }
+            .badgeButton()
+
             if let billingPeriod = entry.billingPeriod {
                 Text("Billing period: \(Self.periodFormatter.string(from: billingPeriod.start)) – \(Self.periodFormatter.string(from: billingPeriod.end))")
                     .font(.caption2)
@@ -165,6 +213,21 @@ private struct TokenUsageCardView: View {
         formatter.dateStyle = .medium
         return formatter
     }()
+
+    private static func formatInterval(_ interval: DateInterval) -> String {
+        "\(periodFormatter.string(from: interval.start)) – \(periodFormatter.string(from: interval.end))"
+    }
+
+    private var configurationTitle: String {
+        switch entry.status {
+        case .needsConfiguration:
+            return "Configure"
+        case .ready:
+            return "Edit Configuration"
+        case .unavailable:
+            return "Update Key"
+        }
+    }
 }
 
 private struct StatusBadge: View {
