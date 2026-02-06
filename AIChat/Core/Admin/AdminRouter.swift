@@ -10,7 +10,14 @@ import SUIRouting
 
 @MainActor
 protocol AdminRouterProtocol {
-    // Add navigation methods here if needed
+    func showAlert(
+        _ option: RouterAlertType,
+        title: String,
+        subtitle: String?,
+        buttons: (@Sendable () -> AnyView)?
+    )
+    func showAlert(error: Error)
+    func dismissScreen()
 }
 
 @MainActor
@@ -19,5 +26,26 @@ struct AdminRouter {
 }
 
 extension AdminRouter: AdminRouterProtocol {
-    // Implement navigation methods here
+
+    func showAlert(
+        _ option: RouterAlertType = .alert,
+        title: String,
+        subtitle: String? = nil,
+        buttons: (@Sendable () -> AnyView)? = nil
+    ) {
+        router.showAlert(option, title: title, subtitle: subtitle, buttons: buttons)
+    }
+
+    func showAlert(error: Error) {
+        router.showAlert(
+            .alert,
+            title: "Error",
+            subtitle: error.localizedDescription,
+            buttons: nil
+        )
+    }
+
+    func dismissScreen() {
+        router.dismissScreen()
+    }
 }
