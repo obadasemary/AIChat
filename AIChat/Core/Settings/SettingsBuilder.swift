@@ -42,6 +42,9 @@ final class SettingsBuilder {
                     aboutBuilder: AboutBuilder(
                         container: container
                     ),
+                    adminBuilder: AdminBuilder(
+                        container: container
+                    ),
                     newsFeedBuilder: NewsFeedBuilder(
                         container: container
                     ),
