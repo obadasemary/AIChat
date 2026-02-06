@@ -108,6 +108,12 @@ struct CoreRouter {
             builder.aboutView(router: router)
         }
     }
+
+    func showAdminView() {
+        router.showScreen(.push) { router in
+            builder.adminView(router: router)
+        }
+    }
     
     func dismissScreen() {
         router.dismissScreen()
