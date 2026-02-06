@@ -17,6 +17,7 @@ protocol SettingsRouterProtocol {
     func showAboutView()
     func showNewsFeedView()
     func showBookmarksView()
+    func showTokenUsageView()
     func showRatingsModal(
         onEnjoyingAppYesPressed: @escaping () -> Void,
         onEnjoyingAppNoPressed: @escaping () -> Void
@@ -39,6 +40,7 @@ struct SettingsRouter {
     let aboutBuilder: AboutBuilder
     let newsFeedBuilder: NewsFeedBuilder
     let bookmarksBuilder: BookmarksBuilder
+    let tokenUsageBuilder: TokenUsageBuilder
 }
 
 extension SettingsRouter: SettingsRouterProtocol {
@@ -72,6 +74,12 @@ extension SettingsRouter: SettingsRouterProtocol {
     func showBookmarksView() {
         router.showScreen(.push) { router in
             bookmarksBuilder.buildBookmarksView(router: router)
+        }
+    }
+
+    func showTokenUsageView() {
+        router.showScreen(.push) { router in
+            tokenUsageBuilder.buildTokenUsageView(router: router)
         }
     }
 

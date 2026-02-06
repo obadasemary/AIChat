@@ -180,6 +180,11 @@ extension SettingsViewModel {
         settingsUseCase.trackEvent(event: Event.bookmarksPressed)
         router.showBookmarksView()
     }
+
+    func onTokenUsagePressed() {
+        settingsUseCase.trackEvent(event: Event.tokenUsagePressed)
+        router.showTokenUsageView()
+    }
 }
 
 // MARK: - Helper
@@ -211,6 +216,7 @@ private extension SettingsViewModel {
         case aboutPressed
         case newsFeedPressed
         case bookmarksPressed
+        case tokenUsagePressed
 
         var eventName: String {
             switch self {
@@ -229,6 +235,7 @@ private extension SettingsViewModel {
             case .aboutPressed: "SettingsView_About_Pressed"
             case .newsFeedPressed: "SettingsView_NewsFeed_Pressed"
             case .bookmarksPressed: "SettingsView_Bookmarks_Pressed"
+            case .tokenUsagePressed: "SettingsView_TokenUsage_Pressed"
             }
         }
         

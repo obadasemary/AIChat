@@ -47,6 +47,9 @@ final class SettingsBuilder {
                     ),
                     bookmarksBuilder: BookmarksBuilder(
                         container: container
+                    ),
+                    tokenUsageBuilder: TokenUsageBuilder(
+                        container: container
                     )
                 ),
                 onSignedIn: onSignedIn

@@ -17,6 +17,7 @@ struct SettingsView: View {
             VStack(spacing: 16) {
                 accountSection
                 purchaseSection
+                usageSection
                 contentSection
                 applicationSection
 
@@ -131,6 +132,27 @@ private extension SettingsView {
                     textColor: .primary,
                     action: viewModel.onBookmarksPressed,
                     isFirst: false,
+                    isLast: true
+                )
+            }
+            .background(Color(uiColor: .systemBackground))
+            .cornerRadius(12)
+        }
+    }
+
+    var usageSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Usage")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 16)
+
+            VStack(spacing: 0) {
+                SettingRowButton(
+                    title: "Token Usage",
+                    textColor: .primary,
+                    action: viewModel.onTokenUsagePressed,
+                    isFirst: true,
                     isLast: true
                 )
             }

@@ -209,6 +209,12 @@ struct CoreRouter {
                 .onDisappear(perform: onDisappear)
         }
     }
+
+    func showTokenUsageView() {
+        router.showScreen(.push) { router in
+            builder.tokenUsageView(router: router)
+        }
+    }
     
     // MARK: Create Avatar View
     

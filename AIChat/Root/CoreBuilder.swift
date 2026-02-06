@@ -247,4 +247,9 @@ class CoreBuilder {
         BookmarksBuilder(container: container)
             .buildBookmarksView(router: router)
     }
+
+    func tokenUsageView(router: Router) -> some View {
+        TokenUsageBuilder(container: container)
+            .buildTokenUsageView(router: router)
+    }
 }
