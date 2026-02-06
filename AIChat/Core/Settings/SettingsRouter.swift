@@ -15,6 +15,7 @@ protocol SettingsRouterProtocol {
         onDisappear: (() -> Void)?
     )
     func showAboutView()
+    func showAdminView()
     func showNewsFeedView()
     func showBookmarksView()
     func showRatingsModal(
@@ -37,6 +38,7 @@ struct SettingsRouter {
     let router: Router
     let createAccountBuilder: CreateAccountBuilder
     let aboutBuilder: AboutBuilder
+    let adminBuilder: AdminBuilder
     let newsFeedBuilder: NewsFeedBuilder
     let bookmarksBuilder: BookmarksBuilder
 }
@@ -60,6 +62,12 @@ extension SettingsRouter: SettingsRouterProtocol {
     func showAboutView() {
         router.showScreen(.push) { router in
             aboutBuilder.buildAboutView(router: router)
+        }
+    }
+
+    func showAdminView() {
+        router.showScreen(.push) { router in
+            adminBuilder.buildAdminView(router: router)
         }
     }
 
@@ -135,3 +143,4 @@ extension SettingsRouter: SettingsRouterProtocol {
 
 //MARK: FIXME We don't need it just if we going to use CoreRouter and CoreBuilder
 extension CoreRouter: SettingsRouterProtocol {}
+
