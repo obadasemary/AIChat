@@ -4,7 +4,7 @@
 
 Your MVVM + Clean Architecture template has been successfully created and verified!
 
-**Location**: `/Users/obada/Library/Developer/Xcode/Templates/CustomTemplates/MVVMTemplate.xctemplate/`
+**Location**: `~/Library/Developer/Xcode/Templates/CustomTemplates/MVVMTemplate.xctemplate/`
 
 ## 📋 Verification Results
 
