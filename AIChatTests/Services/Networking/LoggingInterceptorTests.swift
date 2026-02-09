@@ -9,7 +9,7 @@ import Testing
 import Foundation
 @testable import AIChat
 
-// swiftlint:disable file_length force_unwrapping
+// swiftlint:disable type_body_length
 @MainActor
 struct LoggingInterceptorTests {
 
@@ -23,7 +23,8 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        var request = URLRequest(url: url)
         request.httpMethod = "GET"
         _ = try await interceptor.intercept(request)
 
@@ -40,9 +41,8 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
-        let request = URLRequest(
-            url: URL(string: "https://api.example.com/test")!
-        )
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        let request = URLRequest(url: url)
         _ = try await interceptor.intercept(request)
 
         #expect(loggedMessage == nil)
@@ -59,9 +59,8 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
-        let request = URLRequest(
-            url: URL(string: "https://api.example.com/test")!
-        )
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        let request = URLRequest(url: url)
         let result = try await interceptor.intercept(request)
 
         #expect(loggedMessage == nil)
@@ -79,7 +78,8 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        var request = URLRequest(url: url)
         request.httpMethod = "POST"
         _ = try await interceptor.intercept(request)
 
@@ -99,7 +99,8 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        var request = URLRequest(url: url)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         _ = try await interceptor.intercept(request)
 
@@ -118,7 +119,8 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("gzip", forHTTPHeaderField: "Accept-Encoding")
@@ -141,7 +143,8 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        var request = URLRequest(url: url)
         request.setValue("Bearer secret-token", forHTTPHeaderField: "Authorization")
         request.setValue("my-api-key", forHTTPHeaderField: "X-API-Key")
         request.setValue("session-cookie", forHTTPHeaderField: "Cookie")
@@ -163,7 +166,8 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        var request = URLRequest(url: url)
         request.httpBody = Data("test body".utf8)
         _ = try await interceptor.intercept(request)
 
@@ -182,7 +186,8 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        var request = URLRequest(url: url)
         request.httpBody = Data("{\"key\": \"value\"}".utf8)
         _ = try await interceptor.intercept(request)
 
@@ -199,7 +204,8 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        var request = URLRequest(url: url)
         // Create non-UTF8 binary data
         request.httpBody = Data([0xFF, 0xFE, 0xFD, 0xFC])
         _ = try await interceptor.intercept(request)
@@ -218,7 +224,8 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        var request = URLRequest(url: url)
         let longString = String(repeating: "a", count: 1500)
         request.httpBody = Data(longString.utf8)
         _ = try await interceptor.intercept(request)
@@ -237,7 +244,8 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        var request = URLRequest(url: url)
         let shortString = String(repeating: "a", count: 500)
         request.httpBody = Data(shortString.utf8)
         _ = try await interceptor.intercept(request)
@@ -257,11 +265,12 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
+        let url = try #require(URL(string: "https://api.example.com/test"))
         let response = NetworkResponse(
             data: Data(),
             statusCode: 200,
             headers: [:],
-            request: URLRequest(url: URL(string: "https://api.example.com/test")!)
+            request: URLRequest(url: url)
         )
 
         let result = try await interceptor.intercept(response)
@@ -281,11 +290,12 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
+        let url = try #require(URL(string: "https://api.example.com/test"))
         let response = NetworkResponse(
             data: Data(),
             statusCode: 404,
             headers: [:],
-            request: URLRequest(url: URL(string: "https://api.example.com/test")!)
+            request: URLRequest(url: url)
         )
 
         _ = try await interceptor.intercept(response)
@@ -307,6 +317,7 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
+        let url = try #require(URL(string: "https://api.example.com/test"))
         let response = NetworkResponse(
             data: Data(),
             statusCode: 200,
@@ -315,7 +326,7 @@ struct LoggingInterceptorTests {
                 "Cache-Control": "no-cache"
             ]
         ,
-            request: URLRequest(url: URL(string: "https://api.example.com/test")!)
+            request: URLRequest(url: url)
         )
 
         _ = try await interceptor.intercept(response)
@@ -336,11 +347,12 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
+        let url = try #require(URL(string: "https://api.example.com/test"))
         let response = NetworkResponse(
             data: Data(),
             statusCode: 200,
             headers: [:],
-            request: URLRequest(url: URL(string: "https://api.example.com/test")!)
+            request: URLRequest(url: url)
         )
 
         _ = try await interceptor.intercept(response)
@@ -359,12 +371,13 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
+        let url = try #require(URL(string: "https://api.example.com/test"))
         let responseData = Data("{\"status\": \"success\"}".utf8)
         let response = NetworkResponse(
             data: responseData,
             statusCode: 200,
             headers: [:],
-            request: URLRequest(url: URL(string: "https://api.example.com/test")!)
+            request: URLRequest(url: url)
         )
 
         _ = try await interceptor.intercept(response)
@@ -382,12 +395,13 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
+        let url = try #require(URL(string: "https://api.example.com/test"))
         let binaryData = Data([0xFF, 0xFE, 0xFD, 0xFC, 0xFB])
         let response = NetworkResponse(
             data: binaryData,
             statusCode: 200,
             headers: [:],
-            request: URLRequest(url: URL(string: "https://api.example.com/test")!)
+            request: URLRequest(url: url)
         )
 
         _ = try await interceptor.intercept(response)
@@ -406,13 +420,14 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
+        let url = try #require(URL(string: "https://api.example.com/test"))
         let longString = String(repeating: "b", count: 2000)
         let responseData = Data(longString.utf8)
         let response = NetworkResponse(
             data: responseData,
             statusCode: 200,
             headers: [:],
-            request: URLRequest(url: URL(string: "https://api.example.com/test")!)
+            request: URLRequest(url: url)
         )
 
         _ = try await interceptor.intercept(response)
@@ -433,9 +448,8 @@ struct LoggingInterceptorTests {
             customLogger: { _ in customLogCalled = true }
         )
 
-        let request = URLRequest(
-            url: URL(string: "https://api.example.com/test")!
-        )
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        let request = URLRequest(url: url)
         _ = try await interceptor.intercept(request)
 
         #expect(customLogCalled == true)
@@ -450,9 +464,8 @@ struct LoggingInterceptorTests {
             customLogger: { _ in logCount += 1 }
         )
 
-        let request = URLRequest(
-            url: URL(string: "https://api.example.com/test")!
-        )
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        let request = URLRequest(url: url)
         _ = try await interceptor.intercept(request)
 
         let response = NetworkResponse(
@@ -474,9 +487,8 @@ struct LoggingInterceptorTests {
             customLogger: nil
         )
 
-        let request = URLRequest(
-            url: URL(string: "https://api.example.com/test")!
-        )
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        let request = URLRequest(url: url)
         let result = try await interceptor.intercept(request)
 
         #expect(result.url == request.url)
@@ -492,7 +504,8 @@ struct LoggingInterceptorTests {
             customLogger: nil
         )
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = Data("test".utf8)
@@ -515,13 +528,14 @@ struct LoggingInterceptorTests {
             customLogger: nil
         )
 
+        let url = try #require(URL(string: "https://api.example.com/test"))
         let responseData = Data("test data".utf8)
         let response = NetworkResponse(
             data: responseData,
             statusCode: 201,
             headers: ["X-Custom": "value"]
         ,
-            request: URLRequest(url: URL(string: "https://api.example.com/test")!)
+            request: URLRequest(url: url)
         )
 
         let result = try await interceptor.intercept(response)
@@ -543,7 +557,8 @@ struct LoggingInterceptorTests {
         )
 
         // Note: URLRequest requires a URL, so this test verifies the guard works
-        let request = URLRequest(url: URL(string: "https://api.example.com")!)
+        let url = try #require(URL(string: "https://api.example.com"))
+        let request = URLRequest(url: url)
         _ = try await interceptor.intercept(request)
 
         #expect(loggedMessage?.contains("[Network Request]") == true)
@@ -581,7 +596,8 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        var request = URLRequest(url: url)
         request.httpBody = Data()
         _ = try await interceptor.intercept(request)
 
@@ -597,7 +613,8 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        var request = URLRequest(url: url)
         request.setValue("secret", forHTTPHeaderField: "AUTHORIZATION")
         request.setValue("key", forHTTPHeaderField: "Api-Key")
         _ = try await interceptor.intercept(request)
@@ -616,7 +633,8 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        var request = URLRequest(url: url)
         request.setValue("value1", forHTTPHeaderField: "Z-Header")
         request.setValue("value2", forHTTPHeaderField: "A-Header")
         request.setValue("value3", forHTTPHeaderField: "M-Header")
@@ -646,6 +664,7 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
+        let url = try #require(URL(string: "https://api.example.com/test"))
         let response = NetworkResponse(
             data: Data(),
             statusCode: 200,
@@ -655,7 +674,7 @@ struct LoggingInterceptorTests {
                 "M-Response": "value3"
             ]
         ,
-            request: URLRequest(url: URL(string: "https://api.example.com/test")!)
+            request: URLRequest(url: url)
         )
 
         _ = try await interceptor.intercept(response)
@@ -675,4 +694,4 @@ struct LoggingInterceptorTests {
         }
     }
 }
-// swiftlint:enable file_length
+// swiftlint:enable type_body_length
