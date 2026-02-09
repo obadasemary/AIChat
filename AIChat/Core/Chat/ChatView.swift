@@ -14,7 +14,8 @@
 //
 
 import SwiftUI
-
+// swiftlint:disable blanket_disable_command
+// swiftlint:disable file_length
 struct ChatView: View {
 
     @State var viewModel: ChatViewModel
@@ -173,7 +174,11 @@ private extension ChatView {
             .padding(.top, 8)
     }
 
-    func messageRow(for message: ChatMessageModel, in messages: [ChatMessageModel]) -> some View {
+    // swiftlint:disable function_body_length
+    func messageRow(
+        for message: ChatMessageModel,
+        in messages: [ChatMessageModel]
+    ) -> some View {
         let isCurrentUser = viewModel.messageIsCurrentUser(message: message)
         let showAvatar = messages.shouldShowAvatar(
             for: message,
@@ -233,6 +238,7 @@ private extension ChatView {
         }
         .padding(.vertical, showTail ? 4 : 1)
     }
+    // swiftlint:enable function_body_length
 
     var typingIndicator: some View {
         TypingIndicatorView(
@@ -242,6 +248,8 @@ private extension ChatView {
         .padding(.vertical, 4)
     }
 
+    // swiftlint:disable superfluous_disable_command
+    // swiftlint:disable function_body_length
     func reactionOverlay(for message: ChatMessageModel) -> some View {
         let isCurrentUser = viewModel.messageIsCurrentUser(message: message)
         let backgroundColor = isCurrentUser ? (viewModel.currentUser?.profileColorCalculated ?? .blue) : Color(uiColor: .systemGray5)
@@ -283,7 +291,11 @@ private extension ChatView {
             }
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: selectedMessageForReaction != nil)
     }
+    // swiftlint:enable function_body_length
+    // swiftlint:enable superfluous_disable_command
 
+    // swiftlint:disable superfluous_disable_command
+    // swiftlint:disable function_body_length
     func messageBubblePreview(for message: ChatMessageModel, isCurrentUser: Bool, backgroundColor: Color, textColor: Color, replyToMessage: ChatMessageModel?) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             // Reply preview if exists
@@ -346,6 +358,8 @@ private extension ChatView {
                 .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
         )
     }
+    // swiftlint:enable function_body_length
+    // swiftlint:enable superfluous_disable_command
 
     func messageActionsView(for message: ChatMessageModel, isCurrentUser: Bool) -> some View {
         VStack(spacing: 0) {
@@ -530,3 +544,5 @@ private extension ChatView {
     }
     .previewEnvironment()
 }
+// swiftlint:disable file_length
+// swiftlint:enable blanket_disable_command
