@@ -55,6 +55,7 @@ extension CreateAvatarUseCase: CreateAvatarUseCaseProtocol {
         try await aiManager.generateImage(input: input)
     }
     
+    // swiftlint:disable force_unwrapping
     func generateImage() async throws -> UIImage {
         let (data, _) = try await URLSession.shared.data(from: URL(string: Constants.randomImage)!)
         guard let image = UIImage(data: data) else {
@@ -71,4 +72,5 @@ extension CreateAvatarUseCase: CreateAvatarUseCaseProtocol {
     func trackEvent(event: any LoggableEvent) {
         logManager.trackEvent(event: event)
     }
+    // swiftlint:enable force_unwrapping
 }
