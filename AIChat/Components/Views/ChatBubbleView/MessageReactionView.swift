@@ -16,9 +16,11 @@ struct MessageReactionView: View {
         if !reactions.isEmpty {
             HStack(spacing: 6) {
                 ForEach(sortedReactions, id: \.reaction) { item in
+                    // swiftlint:disable empty_count
                     if item.count > 0 {
                         reactionBadge(reaction: item.reaction, count: item.count)
                     }
+                    // swiftlint:enable empty_count
                 }
             }
             .padding(.horizontal, 10)
