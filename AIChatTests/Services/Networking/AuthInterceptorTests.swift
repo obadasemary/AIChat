@@ -18,9 +18,8 @@ struct AuthInterceptorTests {
     func test_whenInitialized_thenUsesDefaultHeaderName() async throws {
         let interceptor = AuthInterceptor(tokenProvider: { "test-token" })
 
-        let request = URLRequest(
-            url: URL(string: "https://api.example.com/test")!
-        )
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        let request = URLRequest(url: url)
         let result = try await interceptor.intercept(request)
 
         #expect(result.value(forHTTPHeaderField: "Authorization") == "test-token")
@@ -33,9 +32,8 @@ struct AuthInterceptorTests {
             tokenProvider: { "custom-token" }
         )
 
-        let request = URLRequest(
-            url: URL(string: "https://api.example.com/test")!
-        )
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        let request = URLRequest(url: url)
         let result = try await interceptor.intercept(request)
 
         #expect(result.value(forHTTPHeaderField: "X-API-Key") == "custom-token")
@@ -48,9 +46,8 @@ struct AuthInterceptorTests {
     func test_whenBearerFactory_thenAddsBearerPrefix() async throws {
         let interceptor = AuthInterceptor.bearer(tokenProvider: { "abc123" })
 
-        let request = URLRequest(
-            url: URL(string: "https://api.example.com/test")!
-        )
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        let request = URLRequest(url: url)
         let result = try await interceptor.intercept(request)
 
         #expect(result.value(forHTTPHeaderField: "Authorization") == "Bearer abc123")
@@ -60,9 +57,8 @@ struct AuthInterceptorTests {
     func test_whenBearerTokenIsNil_thenReturnsUnmodifiedRequest() async throws {
         let interceptor = AuthInterceptor.bearer(tokenProvider: { nil })
 
-        let request = URLRequest(
-            url: URL(string: "https://api.example.com/test")!
-        )
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        let request = URLRequest(url: url)
         let result = try await interceptor.intercept(request)
 
         #expect(result.value(forHTTPHeaderField: "Authorization") == nil)
@@ -72,9 +68,8 @@ struct AuthInterceptorTests {
     func test_whenBearerTokenIsEmpty_thenAddsBearerWithEmptyString() async throws {
         let interceptor = AuthInterceptor.bearer(tokenProvider: { "" })
 
-        let request = URLRequest(
-            url: URL(string: "https://api.example.com/test")!
-        )
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        let request = URLRequest(url: url)
         let result = try await interceptor.intercept(request)
 
         #expect(result.value(forHTTPHeaderField: "Authorization") == "Bearer ")
@@ -89,9 +84,8 @@ struct AuthInterceptorTests {
             apiKey: "my-secret-key"
         )
 
-        let request = URLRequest(
-            url: URL(string: "https://api.example.com/test")!
-        )
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        let request = URLRequest(url: url)
         let result = try await interceptor.intercept(request)
 
         #expect(result.value(forHTTPHeaderField: "X-API-Key") == "my-secret-key")
@@ -104,9 +98,8 @@ struct AuthInterceptorTests {
             apiKey: ""
         )
 
-        let request = URLRequest(
-            url: URL(string: "https://api.example.com/test")!
-        )
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        let request = URLRequest(url: url)
         let result = try await interceptor.intercept(request)
 
         #expect(result.value(forHTTPHeaderField: "X-API-Key") == "")
@@ -120,9 +113,8 @@ struct AuthInterceptorTests {
             apiKey: specialKey
         )
 
-        let request = URLRequest(
-            url: URL(string: "https://api.example.com/test")!
-        )
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        let request = URLRequest(url: url)
         let result = try await interceptor.intercept(request)
 
         #expect(result.value(forHTTPHeaderField: "X-API-Key") == specialKey)
@@ -134,7 +126,7 @@ struct AuthInterceptorTests {
     func test_whenTokenProviderReturnsNil_thenRequestUnchanged() async throws {
         let interceptor = AuthInterceptor(tokenProvider: { nil })
 
-        let originalURL = URL(string: "https://api.example.com/test")!
+        let originalURL = try #require(URL(string: "https://api.example.com/test"))
         var request = URLRequest(url: originalURL)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -168,15 +160,13 @@ struct AuthInterceptorTests {
             return "token-\(count)"
         })
 
-        let request1 = URLRequest(
-            url: URL(string: "https://api.example.com/test1")!
-        )
+        let url1 = try #require(URL(string: "https://api.example.com/test1"))
+        let request1 = URLRequest(url: url1)
         let result1 = try await interceptor.intercept(request1)
         #expect(result1.value(forHTTPHeaderField: "Authorization") == "token-1")
 
-        let request2 = URLRequest(
-            url: URL(string: "https://api.example.com/test2")!
-        )
+        let url2 = try #require(URL(string: "https://api.example.com/test2"))
+        let request2 = URLRequest(url: url2)
         let result2 = try await interceptor.intercept(request2)
         #expect(result2.value(forHTTPHeaderField: "Authorization") == "token-2")
 
@@ -191,24 +181,22 @@ struct AuthInterceptorTests {
             return "async-token"
         })
 
-        let request = URLRequest(
-            url: URL(string: "https://api.example.com/test")!
-        )
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        let request = URLRequest(url: url)
         let result = try await interceptor.intercept(request)
 
         #expect(result.value(forHTTPHeaderField: "Authorization") == "async-token")
     }
 
     @Test("Token provider can throw error")
-    func test_whenTokenProviderThrows_thenPropagatesError() async {
+    func test_whenTokenProviderThrows_thenPropagatesError() async throws {
         struct TestError: Error {}
         let interceptor = AuthInterceptor(tokenProvider: {
             throw TestError()
         })
 
-        let request = URLRequest(
-            url: URL(string: "https://api.example.com/test")!
-        )
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        let request = URLRequest(url: url)
 
         await #expect(throws: TestError.self) {
             try await interceptor.intercept(request)
@@ -221,7 +209,8 @@ struct AuthInterceptorTests {
     func test_whenInterceptRequest_thenPreservesExistingHeaders() async throws {
         let interceptor = AuthInterceptor(tokenProvider: { "test-token" })
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        var request = URLRequest(url: url)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("gzip", forHTTPHeaderField: "Accept-Encoding")
 
@@ -236,7 +225,8 @@ struct AuthInterceptorTests {
     func test_whenExistingAuthHeader_thenOverwrites() async throws {
         let interceptor = AuthInterceptor(tokenProvider: { "new-token" })
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        var request = URLRequest(url: url)
         request.setValue("old-token", forHTTPHeaderField: "Authorization")
 
         let result = try await interceptor.intercept(request)
@@ -248,7 +238,8 @@ struct AuthInterceptorTests {
     func test_whenIntercept_thenPreservesMethod() async throws {
         let interceptor = AuthInterceptor(tokenProvider: { "test-token" })
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
 
         let result = try await interceptor.intercept(request)
@@ -261,7 +252,8 @@ struct AuthInterceptorTests {
     func test_whenInterceptWithBody_thenPreservesBody() async throws {
         let interceptor = AuthInterceptor(tokenProvider: { "test-token" })
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        var request = URLRequest(url: url)
         let bodyData = Data("test body".utf8)
         request.httpBody = bodyData
 
@@ -275,7 +267,8 @@ struct AuthInterceptorTests {
     func test_whenInterceptWithTimeout_thenPreservesTimeout() async throws {
         let interceptor = AuthInterceptor(tokenProvider: { "test-token" })
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        var request = URLRequest(url: url)
         request.timeoutInterval = 120.0
 
         let result = try await interceptor.intercept(request)
@@ -288,7 +281,8 @@ struct AuthInterceptorTests {
     func test_whenInterceptWithCachePolicy_thenPreservesCachePolicy() async throws {
         let interceptor = AuthInterceptor(tokenProvider: { "test-token" })
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        var request = URLRequest(url: url)
         request.cachePolicy = .reloadIgnoringLocalCacheData
 
         let result = try await interceptor.intercept(request)
@@ -304,9 +298,8 @@ struct AuthInterceptorTests {
         let longToken = String(repeating: "a", count: 10000)
         let interceptor = AuthInterceptor(tokenProvider: { longToken })
 
-        let request = URLRequest(
-            url: URL(string: "https://api.example.com/test")!
-        )
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        let request = URLRequest(url: url)
         let result = try await interceptor.intercept(request)
 
         #expect(result.value(forHTTPHeaderField: "Authorization") == longToken)
@@ -317,16 +310,17 @@ struct AuthInterceptorTests {
         let tokenWithNewlines = "line1\nline2\nline3"
         let interceptor = AuthInterceptor(tokenProvider: { tokenWithNewlines })
 
-        let request = URLRequest(
-            url: URL(string: "https://api.example.com/test")!
-        )
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        let request = URLRequest(url: url)
         let result = try await interceptor.intercept(request)
 
         // Note: URLRequest automatically strips invalid characters (newlines) from HTTP headers
         // This is expected behavior since HTTP headers cannot contain newlines
         // The header will either be nil or have newlines stripped
         let authHeader = result.value(forHTTPHeaderField: "Authorization")
-        #expect(authHeader == nil || !authHeader!.contains("\n"))
+        if let authHeader = authHeader {
+            #expect(!authHeader.contains("\n"))
+        }
     }
 
     @Test("Handles unicode in tokens")
@@ -334,9 +328,8 @@ struct AuthInterceptorTests {
         let unicodeToken = "token-你好-🔐-مرحبا"
         let interceptor = AuthInterceptor(tokenProvider: { unicodeToken })
 
-        let request = URLRequest(
-            url: URL(string: "https://api.example.com/test")!
-        )
+        let url = try #require(URL(string: "https://api.example.com/test"))
+        let request = URLRequest(url: url)
         let result = try await interceptor.intercept(request)
 
         #expect(result.value(forHTTPHeaderField: "Authorization") == unicodeToken)
@@ -363,9 +356,10 @@ struct AuthInterceptorTests {
         await withTaskGroup(of: String?.self) { group in
             for i in 0..<10 {
                 group.addTask {
-                    let request = URLRequest(
-                        url: URL(string: "https://api.example.com/test\(i)")!
-                    )
+                    guard let url = URL(string: "https://api.example.com/test\(i)") else {
+                        return nil
+                    }
+                    let request = URLRequest(url: url)
                     let result = try? await interceptor.intercept(request)
                     return result?.value(forHTTPHeaderField: "Authorization")
                 }
