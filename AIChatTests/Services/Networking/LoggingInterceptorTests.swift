@@ -9,6 +9,7 @@ import Testing
 import Foundation
 @testable import AIChat
 
+// swiftlint:disable file_length force_unwrapping
 @MainActor
 struct LoggingInterceptorTests {
 
@@ -39,7 +40,9 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let request = URLRequest(
+            url: URL(string: "https://api.example.com/test")!
+        )
         _ = try await interceptor.intercept(request)
 
         #expect(loggedMessage == nil)
@@ -56,7 +59,9 @@ struct LoggingInterceptorTests {
             customLogger: { loggedMessage = $0 }
         )
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let request = URLRequest(
+            url: URL(string: "https://api.example.com/test")!
+        )
         let result = try await interceptor.intercept(request)
 
         #expect(loggedMessage == nil)
@@ -428,7 +433,9 @@ struct LoggingInterceptorTests {
             customLogger: { _ in customLogCalled = true }
         )
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let request = URLRequest(
+            url: URL(string: "https://api.example.com/test")!
+        )
         _ = try await interceptor.intercept(request)
 
         #expect(customLogCalled == true)
@@ -443,7 +450,9 @@ struct LoggingInterceptorTests {
             customLogger: { _ in logCount += 1 }
         )
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let request = URLRequest(
+            url: URL(string: "https://api.example.com/test")!
+        )
         _ = try await interceptor.intercept(request)
 
         let response = NetworkResponse(
@@ -465,7 +474,9 @@ struct LoggingInterceptorTests {
             customLogger: nil
         )
 
-        var request = URLRequest(url: URL(string: "https://api.example.com/test")!)
+        let request = URLRequest(
+            url: URL(string: "https://api.example.com/test")!
+        )
         let result = try await interceptor.intercept(request)
 
         #expect(result.url == request.url)
@@ -532,7 +543,7 @@ struct LoggingInterceptorTests {
         )
 
         // Note: URLRequest requires a URL, so this test verifies the guard works
-        var request = URLRequest(url: URL(string: "https://api.example.com")!)
+        let request = URLRequest(url: URL(string: "https://api.example.com")!)
         _ = try await interceptor.intercept(request)
 
         #expect(loggedMessage?.contains("[Network Request]") == true)
@@ -664,3 +675,4 @@ struct LoggingInterceptorTests {
         }
     }
 }
+// swiftlint:enable file_length
