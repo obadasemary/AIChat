@@ -101,7 +101,7 @@ struct NewsFeedManagerTests {
 
         // Verify articles were saved to local storage
         let cachedArticles = try mockLocalService.fetchCachedNews()
-        #expect(cachedArticles.count > 0)
+        #expect(!cachedArticles.isEmpty)
     }
 
     @Test("Filter News by Category")
@@ -141,7 +141,7 @@ struct NewsFeedManagerTests {
         let result = try await manager.fetchTopHeadlines(country: "us", language: nil, page: 1, pageSize: 20)
 
         #expect(result.source == .remote)
-        #expect(result.articles.count > 0)
+        #expect(!result.articles.isEmpty)
         #expect(result.totalResults != nil)
     }
 
