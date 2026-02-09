@@ -1036,7 +1036,9 @@ private final class MockURLProtocol: URLProtocol {
 }
 
 /// Test request interceptor that adds a header
-private final class TestRequestInterceptor: RequestInterceptor {
+/// - Note: @unchecked Sendable is safe here because this test suite is serialized (@Suite(.serialized))
+///   and instances are never shared across concurrent tests.
+private final class TestRequestInterceptor: RequestInterceptor, @unchecked Sendable {
     let headerKey: String
     let headerValue: String
     var interceptCalled = false
@@ -1055,7 +1057,9 @@ private final class TestRequestInterceptor: RequestInterceptor {
 }
 
 /// Test response interceptor that tracks calls
-private final class TestResponseInterceptor: ResponseInterceptor {
+/// - Note: @unchecked Sendable is safe here because this test suite is serialized (@Suite(.serialized))
+///   and instances are never shared across concurrent tests.
+private final class TestResponseInterceptor: ResponseInterceptor, @unchecked Sendable {
     let statusCodeModifier: Int
     var interceptCalled = false
 
