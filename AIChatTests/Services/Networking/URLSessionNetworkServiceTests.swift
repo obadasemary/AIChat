@@ -10,6 +10,7 @@ import Foundation
 @testable import AIChat
 
 // swiftlint:disable type_body_length
+// swiftlint:disable file_length
 
 @MainActor
 @Suite(.serialized) // Run tests serially to avoid MockURLProtocol race conditions
@@ -1048,3 +1049,5 @@ struct URLSessionNetworkServiceTests {
         }
     }
 }
+// swiftlint:enable type_body_length
+// swiftlint:enable file_length
