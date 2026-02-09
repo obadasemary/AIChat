@@ -131,9 +131,12 @@ struct NetworkResponseTests {
     @Test("Init from URLResponse with valid HTTP response succeeds")
     func test_whenValidHTTPResponse_thenInitSucceeds() {
         let data = Data("test".utf8)
-        let url = URL(string: "https://api.example.com/test")
+        guard let url = URL(string: "https://api.example.com/test") else {
+            Issue.record("Failed to create URL")
+            return
+        }
         let httpResponse = HTTPURLResponse(
-            url: url!,
+            url: url,
             statusCode: 200,
             httpVersion: "HTTP/1.1",
             headerFields: ["Content-Type": "application/json"]
@@ -149,7 +152,10 @@ struct NetworkResponseTests {
     @Test("Init from non-HTTP response returns nil")
     func test_whenNonHTTPResponse_thenInitReturnsNil() {
         let data = Data("test".utf8)
-        let url = URL(string: "https://api.example.com/test")!
+        guard let url = URL(string: "https://api.example.com/test") else {
+            Issue.record("Failed to create URL")
+            return
+        }
         let urlResponse = URLResponse(
             url: url,
             mimeType: "application/json",
