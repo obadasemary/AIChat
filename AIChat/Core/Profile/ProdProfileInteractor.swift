@@ -15,12 +15,14 @@ struct ProdProfileInteractor {
     private let avatarManager: AvatarManager
     private let logManager: LogManager
     
+    // swiftlint:disable force_unwrapping
     init(container: DependencyContainer) {
         self.authManager = container.resolve(AuthManager.self)!
         self.userManager = container.resolve(UserManager.self)!
         self.avatarManager = container.resolve(AvatarManager.self)!
         self.logManager = container.resolve(LogManager.self)!
     }
+    // swiftlint:enable force_unwrapping
 }
 
 extension ProdProfileInteractor: ProfileInteractor {
