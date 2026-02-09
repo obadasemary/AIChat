@@ -26,7 +26,7 @@ struct NewsFeedViewModelTests {
 
         await viewModel.loadInitialDataAndWait()
 
-        #expect(viewModel.articles.count > 0)
+        #expect(!viewModel.articles.isEmpty)
         if case .loaded = viewModel.state {
             // Success
         } else {
@@ -67,13 +67,13 @@ struct NewsFeedViewModelTests {
         // Load initial data
         await viewModel.loadInitialDataAndWait()
 
-        let initialCount = viewModel.articles.count
+        _ = viewModel.articles.count
 
         // Refresh
         await viewModel.refreshDataAndWait()
 
         #expect(viewModel.currentPage == 1)
-        #expect(viewModel.articles.count > 0)
+        #expect(!viewModel.articles.isEmpty)
     }
 
     // MARK: - Pagination Tests

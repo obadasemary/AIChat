@@ -544,5 +544,5 @@ private extension ChatView {
     }
     .previewEnvironment()
 }
-// swiftlint:disable file_length
+// swiftlint:enable file_length
 // swiftlint:enable blanket_disable_command

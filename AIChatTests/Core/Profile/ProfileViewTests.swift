@@ -9,6 +9,7 @@ import Testing
 import Foundation
 @testable import AIChat
 
+// swiftlint:disable file_length
 @MainActor
 struct ProfileViewTests {
 
@@ -252,8 +253,7 @@ struct ProfileViewTests {
         #expect(viewModel.currentUser?.userId == useCase.currentUser?.userId)
         #expect(viewModel.myAvatars.count == useCase.avatars.count)
     }
-    
-    
+        
     @Test("onNewAvatarButtonPressed")
     func testOnNewAvatarButtonPressed() async throws {
 
@@ -397,6 +397,7 @@ struct ProfileViewTests {
         )
     }
     
+    // swiftlint:disable function_body_length
     @Test("onDeleteAvatar Does Fail")
     func testOnDeleteAvatarFail() async throws {
 
@@ -465,6 +466,7 @@ struct ProfileViewTests {
                 }
         )
     }
+    // swiftlint:enable function_body_length
     
     @Test("onDeleteAvatar Does Not Log Success When Avatar Not Found Locally")
     func testOnDeleteAvatarDoesNotLogSuccessWhenAvatarNotFoundLocally() async throws {
@@ -567,3 +569,4 @@ struct ProfileViewTests {
         }
     }
 }
+// swiftlint:enable file_length
