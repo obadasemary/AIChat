@@ -29,7 +29,7 @@ struct NewsFeedManagerTests {
         let result = try await manager.fetchNews(category: nil, language: nil, page: 1, pageSize: 20)
 
         #expect(result.source == .remote)
-        #expect(result.articles.count > 0)
+        #expect(!result.articles.isEmpty)
         #expect(result.totalResults != nil)
     }
 
