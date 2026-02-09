@@ -9,37 +9,29 @@ import Testing
 import Foundation
 @testable import AIChat
 
+// swiftlint:disable type_body_length
+
 @MainActor
 @Suite(.serialized) // Run tests serially to avoid MockURLProtocol race conditions
 struct URLSessionNetworkServiceTests {
-
-    // MARK: - Test Helpers
-
-    /// Creates a URL session configuration for testing with MockURLProtocol
-    private func createMockConfiguration() -> URLSessionConfiguration {
-        let config = URLSessionConfiguration.default
-        config.protocolClasses = [MockURLProtocol.self]
-        config.requestCachePolicy = .reloadIgnoringLocalCacheData
-        return config
-    }
-
+    
     // MARK: - Initialization Tests
-
+    
     @Test("Initialize with default parameters")
     func test_whenInitWithDefaults_thenHasCorrectDefaults() {
         let service = URLSessionNetworkService()
-
+        
         #expect(service.baseURL == nil)
     }
-
+    
     @Test("Initialize with base URL")
     func test_whenInitWithBaseURL_thenBaseURLIsSet() {
         let baseURL = URL(string: "https://api.example.com")
         let service = URLSessionNetworkService(baseURL: baseURL)
-
+        
         #expect(service.baseURL == baseURL)
     }
-
+    
     @Test("Initialize with configuration")
     func test_whenInitWithConfiguration_thenUsesConfiguration() {
         let baseURL = URL(string: "https://api.example.com")
@@ -48,29 +40,32 @@ struct URLSessionNetworkServiceTests {
             baseURL: baseURL,
             configuration: config
         )
-
+        
         #expect(service.baseURL == baseURL)
     }
-
+    
     @Test("Initialize with default headers")
     func test_whenInitWithDefaultHeaders_thenHeadersAreSet() async throws {
         let baseURL = URL(string: "https://api.example.com")
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [MockURLProtocol.self]
-
+        
         MockURLProtocol.requestHandler = { request in
             #expect(request.value(forHTTPHeaderField: "X-Custom-Header") == "CustomValue")
             #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer token")
-
-            let response = HTTPURLResponse(
-                url: request.url ?? URL(string: "https://api.example.com")!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            
+            guard let fallbackURL = URL(string: "https://api.example.com"),
+                  let response = HTTPURLResponse(
+                      url: request.url ?? fallbackURL,
+                      statusCode: 200,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
-
+        
         let service = URLSessionNetworkService(
             baseURL: baseURL,
             configuration: config,
@@ -79,11 +74,11 @@ struct URLSessionNetworkServiceTests {
                 "Authorization": "Bearer token"
             ]
         )
-
+        
         let request = NetworkRequest.get("/test")
         _ = try await service.execute(request)
     }
-
+    
     // MARK: - URL Building Tests
 
     @Test("Execute with relative path appends to base URL")
@@ -95,12 +90,15 @@ struct URLSessionNetworkServiceTests {
         MockURLProtocol.requestHandler = { request in
             #expect(request.url?.absoluteString == "https://api.example.com/users")
 
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 200,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -118,12 +116,15 @@ struct URLSessionNetworkServiceTests {
         MockURLProtocol.requestHandler = { request in
             #expect(request.url?.absoluteString == "https://other.example.com/data")
 
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 200,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -143,12 +144,15 @@ struct URLSessionNetworkServiceTests {
             #expect(urlString.contains("page=1"))
             #expect(urlString.contains("limit=10"))
 
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 200,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -167,6 +171,87 @@ struct URLSessionNetworkServiceTests {
         }
     }
 
+    @Test("Execute with empty path uses base URL")
+    func test_whenEmptyPath_thenUsesBaseURL() async throws {
+        let baseURL = URL(string: "https://api.example.com")
+        let config = URLSessionConfiguration.ephemeral
+        config.protocolClasses = [MockURLProtocol.self]
+
+        MockURLProtocol.requestHandler = { request in
+            #expect(request.url?.absoluteString == "https://api.example.com")
+
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 200,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
+            return (response, Data())
+        }
+
+        let service = URLSessionNetworkService(baseURL: baseURL, configuration: config)
+        let request = NetworkRequest(path: "")
+        _ = try await service.execute(request)
+    }
+
+    @Test("Execute with path containing multiple segments")
+    func test_whenMultiplePathSegments_thenBuildsCorrectURL() async throws {
+        let baseURL = URL(string: "https://api.example.com")
+        let config = URLSessionConfiguration.ephemeral
+        config.protocolClasses = [MockURLProtocol.self]
+
+        MockURLProtocol.requestHandler = { request in
+            #expect(request.url?.absoluteString == "https://api.example.com/api/v1/users")
+
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 200,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
+            return (response, Data())
+        }
+
+        let service = URLSessionNetworkService(baseURL: baseURL, configuration: config)
+        let request = NetworkRequest.get("/api/v1/users")
+        _ = try await service.execute(request)
+    }
+
+    @Test("Execute with special characters in query parameters")
+    func test_whenSpecialCharactersInQueryParams_thenEncodesCorrectly() async throws {
+        let baseURL = URL(string: "https://api.example.com")
+        let config = URLSessionConfiguration.ephemeral
+        config.protocolClasses = [MockURLProtocol.self]
+
+        MockURLProtocol.requestHandler = { request in
+            let urlString = request.url?.absoluteString ?? ""
+            // The actual encoding will be handled by URLComponents
+            #expect(urlString.contains("search="))
+            #expect(urlString.contains("test"))
+
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 200,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
+            return (response, Data())
+        }
+
+        let service = URLSessionNetworkService(baseURL: baseURL, configuration: config)
+        let request = NetworkRequest.get("/search", queryParameters: ["search": "test value"])
+        _ = try await service.execute(request)
+    }
+    
     // MARK: - Request Building Tests
 
     @Test("Execute sets HTTP method correctly for GET")
@@ -178,12 +263,15 @@ struct URLSessionNetworkServiceTests {
         MockURLProtocol.requestHandler = { request in
             #expect(request.httpMethod == HTTPMethod.get.rawValue)
 
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 200,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -201,12 +289,15 @@ struct URLSessionNetworkServiceTests {
         MockURLProtocol.requestHandler = { request in
             #expect(request.httpMethod == HTTPMethod.post.rawValue)
 
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 200,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -225,12 +316,15 @@ struct URLSessionNetworkServiceTests {
             #expect(request.value(forHTTPHeaderField: "Content-Type") == "application/json")
             #expect(request.value(forHTTPHeaderField: "Accept") == "application/json")
 
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 200,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -252,12 +346,15 @@ struct URLSessionNetworkServiceTests {
             #expect(request.value(forHTTPHeaderField: "X-API-Key") == "default-key")
             #expect(request.value(forHTTPHeaderField: "Content-Type") == "application/json")
 
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 200,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -282,12 +379,15 @@ struct URLSessionNetworkServiceTests {
         MockURLProtocol.requestHandler = { request in
             #expect(request.value(forHTTPHeaderField: "X-Custom") == "request-value")
 
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 200,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -319,12 +419,15 @@ struct URLSessionNetworkServiceTests {
                 bodyWasSet = true
             }
 
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 200,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -344,12 +447,15 @@ struct URLSessionNetworkServiceTests {
         MockURLProtocol.requestHandler = { request in
             #expect(request.timeoutInterval == 60)
 
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 200,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -369,12 +475,15 @@ struct URLSessionNetworkServiceTests {
         MockURLProtocol.requestHandler = { request in
             capturedCachePolicy = request.cachePolicy
 
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 200,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -388,7 +497,7 @@ struct URLSessionNetworkServiceTests {
         // Verify that a cache policy was captured (configuration may affect the exact value)
         #expect(capturedCachePolicy != nil)
     }
-
+    
     // MARK: - Successful Execution Tests
 
     @Test("Execute returns successful response with data")
@@ -398,12 +507,15 @@ struct URLSessionNetworkServiceTests {
 
         // Set the mock handler FIRST
         MockURLProtocol.requestHandler = { request in
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: ["Content-Type": "application/json"]
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 200,
+                      httpVersion: nil,
+                      headerFields: ["Content-Type": "application/json"]
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, responseData)
         }
 
@@ -424,12 +536,15 @@ struct URLSessionNetworkServiceTests {
         let baseURL = URL(string: "https://api.example.com")
 
         MockURLProtocol.requestHandler = { request in
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 204,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 204,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -442,6 +557,35 @@ struct URLSessionNetworkServiceTests {
         #expect(response.data.isEmpty)
     }
 
+    @Test("Execute throws invalid response for non-HTTP response")
+    func test_whenNonHTTPResponse_thenThrowsInvalidResponse() async {
+        let config = URLSessionConfiguration.ephemeral
+        config.protocolClasses = [MockURLProtocol.self]
+
+        MockURLProtocol.requestHandler = { request in
+            guard let url = request.url else {
+                fatalError("Failed to get request URL")
+            }
+            let response = URLResponse(
+                url: url,
+                mimeType: nil,
+                expectedContentLength: 0,
+                textEncodingName: nil
+            )
+            return (response, Data())
+        }
+
+        let service = URLSessionNetworkService(
+            baseURL: URL(string: "https://api.example.com"),
+            configuration: config
+        )
+        let request = NetworkRequest.get("/test")
+
+        await #expect(throws: NetworkError.invalidResponse) {
+            try await service.execute(request)
+        }
+    }
+    
     // MARK: - HTTP Error Handling Tests
 
     @Test("Execute throws unauthorized error for 401")
@@ -451,12 +595,15 @@ struct URLSessionNetworkServiceTests {
         config.protocolClasses = [MockURLProtocol.self]
 
         MockURLProtocol.requestHandler = { request in
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 401,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 401,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -475,12 +622,15 @@ struct URLSessionNetworkServiceTests {
         config.protocolClasses = [MockURLProtocol.self]
 
         MockURLProtocol.requestHandler = { request in
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 403,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 403,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -499,12 +649,15 @@ struct URLSessionNetworkServiceTests {
         config.protocolClasses = [MockURLProtocol.self]
 
         MockURLProtocol.requestHandler = { request in
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 404,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 404,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -523,12 +676,15 @@ struct URLSessionNetworkServiceTests {
         config.protocolClasses = [MockURLProtocol.self]
 
         MockURLProtocol.requestHandler = { request in
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 408,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 408,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -550,12 +706,15 @@ struct URLSessionNetworkServiceTests {
 
         for statusCode in statusCodes {
             MockURLProtocol.requestHandler = { request in
-                let response = HTTPURLResponse(
-                    url: request.url!,
-                    statusCode: statusCode,
-                    httpVersion: nil,
-                    headerFields: nil
-                )!
+                guard let url = request.url,
+                      let response = HTTPURLResponse(
+                          url: url,
+                          statusCode: statusCode,
+                          httpVersion: nil,
+                          headerFields: nil
+                      ) else {
+                    fatalError("Failed to create mock response")
+                }
                 return (response, Data())
             }
 
@@ -582,12 +741,15 @@ struct URLSessionNetworkServiceTests {
         config.protocolClasses = [MockURLProtocol.self]
 
         MockURLProtocol.requestHandler = { request in
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 418,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 418,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -704,36 +866,8 @@ struct URLSessionNetworkServiceTests {
             }
         }
     }
-
-    // MARK: - Invalid Response Tests
-
-    @Test("Execute throws invalid response for non-HTTP response")
-    func test_whenNonHTTPResponse_thenThrowsInvalidResponse() async {
-        let config = URLSessionConfiguration.ephemeral
-        config.protocolClasses = [MockURLProtocol.self]
-
-        MockURLProtocol.requestHandler = { request in
-            let response = URLResponse(
-                url: request.url!,
-                mimeType: nil,
-                expectedContentLength: 0,
-                textEncodingName: nil
-            )
-            return (response, Data())
-        }
-
-        let service = URLSessionNetworkService(
-            baseURL: URL(string: "https://api.example.com"),
-            configuration: config
-        )
-        let request = NetworkRequest.get("/test")
-
-        await #expect(throws: NetworkError.invalidResponse) {
-            try await service.execute(request)
-        }
-    }
-
-    // MARK: - Request Interceptor Tests
+    
+    // MARK: - Request and Response Interceptor Tests
 
     @Test("Execute applies request interceptors")
     func test_whenRequestInterceptors_thenAppliesInterceptors() async throws {
@@ -748,12 +882,15 @@ struct URLSessionNetworkServiceTests {
             #expect(request.value(forHTTPHeaderField: "X-Interceptor-1") == "Value1")
             #expect(request.value(forHTTPHeaderField: "X-Interceptor-2") == "Value2")
 
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 200,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -781,12 +918,15 @@ struct URLSessionNetworkServiceTests {
         let interceptor3 = OrderedRequestInterceptor(id: 3, orderTracker: orderTracker)
 
         MockURLProtocol.requestHandler = { request in
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 200,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -813,12 +953,15 @@ struct URLSessionNetworkServiceTests {
         let interceptor2 = TestResponseInterceptor(statusCodeModifier: 1)
 
         MockURLProtocol.requestHandler = { request in
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 200,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -849,12 +992,15 @@ struct URLSessionNetworkServiceTests {
         let interceptor3 = OrderedResponseInterceptor(id: 3, orderTracker: orderTracker)
 
         MockURLProtocol.requestHandler = { request in
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 200,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -878,12 +1024,15 @@ struct URLSessionNetworkServiceTests {
         let interceptor = ErrorThrowingResponseInterceptor()
 
         MockURLProtocol.requestHandler = { request in
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
+            guard let url = request.url,
+                  let response = HTTPURLResponse(
+                      url: url,
+                      statusCode: 200,
+                      httpVersion: nil,
+                      headerFields: nil
+                  ) else {
+                fatalError("Failed to create mock response")
+            }
             return (response, Data())
         }
 
@@ -897,235 +1046,5 @@ struct URLSessionNetworkServiceTests {
         await #expect(throws: NetworkError.unauthorized) {
             try await service.execute(request)
         }
-    }
-
-    // MARK: - Edge Cases
-
-    @Test("Execute with empty path uses base URL")
-    func test_whenEmptyPath_thenUsesBaseURL() async throws {
-        let baseURL = URL(string: "https://api.example.com")
-        let config = URLSessionConfiguration.ephemeral
-        config.protocolClasses = [MockURLProtocol.self]
-
-        MockURLProtocol.requestHandler = { request in
-            #expect(request.url?.absoluteString == "https://api.example.com")
-
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
-            return (response, Data())
-        }
-
-        let service = URLSessionNetworkService(baseURL: baseURL, configuration: config)
-        let request = NetworkRequest(path: "")
-        _ = try await service.execute(request)
-    }
-
-    @Test("Execute with path containing multiple segments")
-    func test_whenMultiplePathSegments_thenBuildsCorrectURL() async throws {
-        let baseURL = URL(string: "https://api.example.com")
-        let config = URLSessionConfiguration.ephemeral
-        config.protocolClasses = [MockURLProtocol.self]
-
-        MockURLProtocol.requestHandler = { request in
-            #expect(request.url?.absoluteString == "https://api.example.com/api/v1/users")
-
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
-            return (response, Data())
-        }
-
-        let service = URLSessionNetworkService(baseURL: baseURL, configuration: config)
-        let request = NetworkRequest.get("/api/v1/users")
-        _ = try await service.execute(request)
-    }
-
-    @Test("Execute with special characters in query parameters")
-    func test_whenSpecialCharactersInQueryParams_thenEncodesCorrectly() async throws {
-        let baseURL = URL(string: "https://api.example.com")
-        let config = URLSessionConfiguration.ephemeral
-        config.protocolClasses = [MockURLProtocol.self]
-
-        MockURLProtocol.requestHandler = { request in
-            let urlString = request.url?.absoluteString ?? ""
-            // The actual encoding will be handled by URLComponents
-            #expect(urlString.contains("search="))
-            #expect(urlString.contains("test"))
-
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
-            return (response, Data())
-        }
-
-        let service = URLSessionNetworkService(baseURL: baseURL, configuration: config)
-        let request = NetworkRequest.get("/search", queryParameters: ["search": "test value"])
-        _ = try await service.execute(request)
-    }
-}
-
-// MARK: - Test Helpers
-
-/// Mock URLProtocol for testing network requests
-private final class MockURLProtocol: URLProtocol {
-    private static let lock = NSLock()
-    private static var _requestHandler: ((URLRequest) throws -> (URLResponse, Data))?
-
-    static var requestHandler: ((URLRequest) throws -> (URLResponse, Data))? {
-        get {
-            lock.lock()
-            defer { lock.unlock() }
-            return _requestHandler
-        }
-        set {
-            lock.lock()
-            defer { lock.unlock() }
-            _requestHandler = newValue
-        }
-    }
-
-    override class func canInit(with request: URLRequest) -> Bool {
-        true
-    }
-
-    override class func canonicalRequest(for request: URLRequest) -> URLRequest {
-        request
-    }
-
-    override func startLoading() {
-        // Get the handler
-        let handler = MockURLProtocol.requestHandler
-
-        guard let handler = handler else {
-            // Return a default 200 response if no handler is set
-            let response = HTTPURLResponse(
-                url: request.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
-            client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
-            client?.urlProtocol(self, didLoad: Data())
-            client?.urlProtocolDidFinishLoading(self)
-            return
-        }
-
-        do {
-            let (response, data) = try handler(request)
-            client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
-            client?.urlProtocol(self, didLoad: data)
-            client?.urlProtocolDidFinishLoading(self)
-        } catch {
-            client?.urlProtocol(self, didFailWithError: error)
-        }
-    }
-
-    override func stopLoading() {
-        // No-op
-    }
-}
-
-/// Test request interceptor that adds a header
-/// - Note: @unchecked Sendable is safe here because this test suite is serialized (@Suite(.serialized))
-///   and instances are never shared across concurrent tests.
-private final class TestRequestInterceptor: RequestInterceptor, @unchecked Sendable {
-    let headerKey: String
-    let headerValue: String
-    var interceptCalled = false
-
-    init(headerKey: String, headerValue: String) {
-        self.headerKey = headerKey
-        self.headerValue = headerValue
-    }
-
-    func intercept(_ request: URLRequest) async throws -> URLRequest {
-        interceptCalled = true
-        var modifiedRequest = request
-        modifiedRequest.setValue(headerValue, forHTTPHeaderField: headerKey)
-        return modifiedRequest
-    }
-}
-
-/// Test response interceptor that tracks calls
-/// - Note: @unchecked Sendable is safe here because this test suite is serialized (@Suite(.serialized))
-///   and instances are never shared across concurrent tests.
-private final class TestResponseInterceptor: ResponseInterceptor, @unchecked Sendable {
-    let statusCodeModifier: Int
-    var interceptCalled = false
-
-    init(statusCodeModifier: Int = 0) {
-        self.statusCodeModifier = statusCodeModifier
-    }
-
-    func intercept(_ response: NetworkResponse) async throws -> NetworkResponse {
-        interceptCalled = true
-        return response
-    }
-}
-
-/// Helper class to track ordering of interceptor calls
-private final class OrderTracker: @unchecked Sendable {
-    private var _order: [Int] = []
-    private let lock = NSLock()
-
-    var order: [Int] {
-        lock.lock()
-        defer { lock.unlock() }
-        return _order
-    }
-
-    func append(_ id: Int) {
-        lock.lock()
-        defer { lock.unlock() }
-        _order.append(id)
-    }
-}
-
-/// Test request interceptor that tracks order
-private final class OrderedRequestInterceptor: RequestInterceptor {
-    let id: Int
-    let orderTracker: OrderTracker
-
-    init(id: Int, orderTracker: OrderTracker) {
-        self.id = id
-        self.orderTracker = orderTracker
-    }
-
-    func intercept(_ request: URLRequest) async throws -> URLRequest {
-        orderTracker.append(id)
-        return request
-    }
-}
-
-/// Test response interceptor that tracks order
-private final class OrderedResponseInterceptor: ResponseInterceptor {
-    let id: Int
-    let orderTracker: OrderTracker
-
-    init(id: Int, orderTracker: OrderTracker) {
-        self.id = id
-        self.orderTracker = orderTracker
-    }
-
-    func intercept(_ response: NetworkResponse) async throws -> NetworkResponse {
-        orderTracker.append(id)
-        return response
-    }
-}
-
-/// Test response interceptor that throws an error
-private final class ErrorThrowingResponseInterceptor: ResponseInterceptor {
-    func intercept(_ response: NetworkResponse) async throws -> NetworkResponse {
-        throw NetworkError.unauthorized
     }
 }
