@@ -172,7 +172,7 @@ extension SettingsPresenter {
     }
 
     func onAdminPressed() {
-        settingsUseCase.trackEvent(event: Event.adminPressed)
+        settingsInteractor.trackEvent(event: Event.adminPressed)
         router.showAdminView()
     }
 
