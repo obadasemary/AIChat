@@ -198,7 +198,7 @@ private extension SettingsView {
                 SettingRowButton(
                     title: "Admin",
                     textColor: .primary,
-                    action: viewModel.onAdminPressed,
+                    action: presenter.onAdminPressed,
                     isFirst: false,
                     isLast: false
                 )
