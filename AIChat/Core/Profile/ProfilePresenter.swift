@@ -159,19 +159,19 @@ extension ProfilePresenter {
     
     func onColorChanged(color: Color) {
         let hexString = color.asHex()
-        profileUseCase.trackEvent(event: Event.colorChangeStart(colorHex: hexString))
+        profileInteractor.trackEvent(event: Event.colorChangeStart(colorHex: hexString))
         
         Task { @MainActor [weak self] in
             guard let self else { return }
             do {
-                try await self.profileUseCase.updateProfileColor(profileColorHex: hexString)
-                self.profileUseCase.trackEvent(event: Event.colorChangeSuccess(colorHex: hexString))
+                try await self.profileInteractor.updateProfileColor(profileColorHex: hexString)
+                self.profileInteractor.trackEvent(event: Event.colorChangeSuccess(colorHex: hexString))
             } catch {
                 self.router.showSimpleAlert(
                     title: "Unable to update color",
                     subtitle: "Please try again later."
                 )
-                self.profileUseCase.trackEvent(event: Event.colorChangeFail(error: error))
+                self.profileInteractor.trackEvent(event: Event.colorChangeFail(error: error))
             }
         }
     }
