@@ -61,9 +61,13 @@ extension ProfileInteractor: ProfileInteractorProtocol {
     func getAvatarsForAuthor(userId: String) async throws -> [AvatarModel] {
         try await avatarManager.getAvatarsForAuthor(userId: userId)
     }
-    
+        
     func removeAuthorIdFromAvatar(avatarId: String) async throws {
         try await avatarManager.removeAuthorIdFromAvatar(avatarId: avatarId)
+    }
+    
+    func updateProfileColor(profileColorHex: String) async throws {
+        try await userManager.updateProfileColorForCurrentUser(profileColorHex: profileColorHex)
     }
     
     func trackEvent(event: any LoggableEvent) {
