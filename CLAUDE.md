@@ -79,11 +79,11 @@ swiftlint lint --path AIChat/Core/Chat/ChatView.swift
 
 ## Architecture Overview
 
-### Clean Architecture with MVVM Pattern
-AIChat follows **Clean Architecture** principles with **MVVM** pattern and **Builder Pattern** for dependency injection.
+### Clean Architecture with VIPER Pattern
+AIChat follows **Clean Architecture** principles with **VIPER** pattern and **Builder Pattern** for dependency injection.
 
 **Core Architectural Concepts:**
-1. **Three-layer separation**: View → ViewModel → UseCase
+1. **Three-layer separation**: View → Presenter → Interactor
 2. **Centralized dependency management** via `DependencyContainer` (service locator pattern)
 3. **Protocol-based services** with multiple implementations (production, mock)
 4. **Builder pattern** for view construction with dependency injection
@@ -94,15 +94,15 @@ Every feature follows this consistent structure:
 ```
 Feature/
 ├── FeatureView.swift          # SwiftUI view (UI only)
-├── FeatureViewModel.swift     # View state & presentation logic
-├── FeatureUseCase.swift       # Business logic (accesses managers)
+├── FeaturePresenter.swift     # View state & presentation logic
+├── FeatureInteractor.swift    # Business logic (accesses managers)
 ├── FeatureBuilder.swift       # Dependency injection & view construction
 └── FeatureRouter.swift        # Navigation (optional)
 ```
 
 **Example Data Flow:**
 ```
-User Action → View → ViewModel → UseCase → Manager → Service → External API
+User Action → View → Presenter → Interactor → Manager → Service → External API
                 ↓         ↓          ↓         ↓         ↓
             State Update ← Presentation ← Business Logic ← Response
 ```
@@ -112,7 +112,7 @@ User Action → View → ViewModel → UseCase → Manager → Service → Exter
 **DependencyContainer** (`AIChat/App/DependencyContainer.swift`):
 - Service locator pattern for managing dependencies
 - All managers are registered centrally in `Dependencies.swift`
-- UseCases resolve dependencies from container: `container.resolve(AIManager.self)`
+- Interactors resolve dependencies from container: `container.resolve(AIManager.self)`
 
 **Dependencies.swift** (`AIChat/App/Dependencies.swift`):
 - Central configuration for all managers
@@ -220,7 +220,7 @@ AIChat/Services/
 ### Dependency Injection Pattern
 **ALWAYS use DependencyContainer to resolve dependencies:**
 ```swift
-// In UseCase
+// In Interactor
 let aiManager = container.resolve(AIManager.self)
 let chatManager = container.resolve(ChatManager.self)
 ```
@@ -234,8 +234,8 @@ let chatManager = container.resolve(ChatManager.self)
 
     func buildFeatureView() -> some View {
         FeatureView(
-            viewModel: FeatureViewModel(
-                featureUseCase: FeatureUseCase(container: container)
+            presenter: FeaturePresenter(
+                featureInteractor: FeatureInteractor(container: container)
             )
         )
     }
@@ -258,7 +258,7 @@ func test_whenUserTapsSendButton_thenMessageIsSent() {
 5. **DO NOT create service instances directly** - use managers from container
 6. **DO NOT forget to register new services** in `Dependencies.swift`
 7. **DO NOT commit Config.plist or Firebase plist files** - they are gitignored
-8. **DO NOT mix view logic with business logic** - keep UseCase and ViewModel separate
+8. **DO NOT mix view logic with business logic** - keep Interactor and Presenter separate
 9. **DO NOT assume simulator names** - use 'iPhone 17 Pro' or 'OS=latest' for compatibility
 
 ## File Organization

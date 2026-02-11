@@ -22,8 +22,8 @@ final class OnboardingCommunityBuilder {
         delegate: OnboardingCommunityDelegate
     ) -> some View {
         OnboardingCommunityView(
-            viewModel: OnboardingCommunityViewModel(
-                onboardingCommunityUseCase: OnboardingCommunityUseCase(
+            presenter: OnboardingCommunityPresenter(
+                onboardingCommunityInteractor: OnboardingCommunityInteractor(
                     container: container
                 ),
                 router: OnboardingCommunityRouter(

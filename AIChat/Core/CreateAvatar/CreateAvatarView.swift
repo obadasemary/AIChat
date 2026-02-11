@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CreateAvatarView: View {
     
-    @State var viewModel: CreateAvatarViewModel
+    @State var presenter: CreateAvatarPresenter
     
     var body: some View {
         NavigationStack {
@@ -36,7 +36,7 @@ private extension CreateAvatarView {
     var dismissButton: some View {
         if #available(iOS 26.0, *) {
             return Button(role: .close) {
-                viewModel.onDismissButtonTapped()
+                presenter.onDismissButtonTapped()
             }
             .tint(.accent)
         } else {
@@ -45,7 +45,7 @@ private extension CreateAvatarView {
                 .font(.title2)
                 .fontWeight(.semibold)
                 .anyButton(.plain) {
-                    viewModel.onDismissButtonTapped()
+                    presenter.onDismissButtonTapped()
                 }
                 .foregroundStyle(.accent)
         }
@@ -53,7 +53,7 @@ private extension CreateAvatarView {
     
     var nameSection: some View {
         Section {
-            TextField("Avatar name", text: $viewModel.avatarName)
+            TextField("Avatar name", text: $presenter.avatarName)
         } header: {
             Text("Name your avatar *")
                 .lineLimit(1)
@@ -63,7 +63,7 @@ private extension CreateAvatarView {
     
     var attributesSection: some View {
         Section {
-            Picker(selection: $viewModel.characterOption) {
+            Picker(selection: $presenter.characterOption) {
                 ForEach(CharacterOption.allCases, id: \.self) { option in
                     Text(option.rawValue.capitalized)
                         .tag(option)
@@ -72,7 +72,7 @@ private extension CreateAvatarView {
                 Text("is a...")
             }
             
-            Picker(selection: $viewModel.characterAction) {
+            Picker(selection: $presenter.characterAction) {
                 ForEach(CharacterAction.allCases, id: \.self) { option in
                     Text(option.rawValue.capitalized)
                         .tag(option)
@@ -81,7 +81,7 @@ private extension CreateAvatarView {
                 Text("that is...")
             }
             
-            Picker(selection: $viewModel.characterLocation) {
+            Picker(selection: $presenter.characterLocation) {
                 ForEach(CharacterLocation.allCases, id: \.self) { option in
                     Text(option.rawValue.capitalized)
                         .tag(option)
@@ -106,21 +106,21 @@ private extension CreateAvatarView {
                         .lineLimit(1)
                         .minimumScaleFactor(0.2)
                         .anyButton(.plain) {
-                            viewModel.onGenerateImageTapped()
+                            presenter.onGenerateImageTapped()
                         }
-                        .opacity(viewModel.isGenerating ? 0 : 1)
+                        .opacity(presenter.isGenerating ? 0 : 1)
                     
                     ProgressView()
                         .tint(.accent)
-                        .opacity(viewModel.isGenerating ? 1 : 0)
+                        .opacity(presenter.isGenerating ? 1 : 0)
                 }
-                .disabled(viewModel.isGenerating || viewModel.avatarName.isEmpty)
+                .disabled(presenter.isGenerating || presenter.avatarName.isEmpty)
                 
                 Circle()
                     .fill(.secondary.opacity(0.3))
                     .overlay {
                         ZStack {
-                            if let generatedImage = viewModel.generatedImage {
+                            if let generatedImage = presenter.generatedImage {
                                 Image(uiImage: generatedImage)
                                     .resizable()
                                     .scaledToFill()
@@ -136,15 +136,15 @@ private extension CreateAvatarView {
     var saveSection: some View {
         Section {
             AsyncCallToActionButton(
-                isLoading: viewModel.isSaving,
+                isLoading: presenter.isSaving,
                 title: "Save",
                 action: {
-                    viewModel.onSaveTapped()
+                    presenter.onSaveTapped()
                 }
             )
             .removeListRowFormatting()
-            .opacity(viewModel.generatedImage == nil ? 0.5 : 1)
-            .disabled(viewModel.generatedImage == nil)
+            .opacity(presenter.generatedImage == nil ? 0.5 : 1)
+            .disabled(presenter.generatedImage == nil)
             .frame(maxWidth: 500)
             .frame(maxWidth: .infinity)
         }

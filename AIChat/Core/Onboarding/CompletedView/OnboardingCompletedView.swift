@@ -9,7 +9,7 @@ import SwiftUI
 
 struct OnboardingCompletedView: View {
     
-    @State var viewModel: OnboardingCompletedViewModel
+    @State var presenter: OnboardingCompletedPresenter
     let delegate: OnboardingCompletedDelegate
     
     var body: some View {
@@ -31,10 +31,10 @@ struct OnboardingCompletedView: View {
             spacing: 16,
             content: {
                 AsyncCallToActionButton(
-                    isLoading: viewModel.isCompletingProfileSetup,
+                    isLoading: presenter.isCompletingProfileSetup,
                     title: "Finish",
                     action: {
-                        viewModel
+                        presenter
                             .onFinishButtonPressed(
                                 selectedColor: delegate.selectedColor
                             )

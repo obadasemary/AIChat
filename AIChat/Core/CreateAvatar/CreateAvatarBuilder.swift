@@ -19,8 +19,8 @@ final class CreateAvatarBuilder {
     
     func buildCreateAvatarView(router: Router) -> some View {
         CreateAvatarView(
-            viewModel: CreateAvatarViewModel(
-                createAvatarUseCase: CreateAvatarUseCase(container: container),
+            presenter: CreateAvatarPresenter(
+                createAvatarInteractor: CreateAvatarInteractor(container: container),
                 router: CreateAvatarRouter(router: router)
             )
         )

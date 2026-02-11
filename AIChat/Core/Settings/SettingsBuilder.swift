@@ -13,7 +13,7 @@ import SUIRouting
 /// Architectural Pattern:
 /// - Follows Builder Pattern for view construction
 /// - Uses DependencyContainer (service locator) for dependency resolution
-/// - Creates UseCases directly, which internally resolve their own dependencies
+/// - Creates Interactors directly, which internally resolve their own dependencies
 /// - Provides nested builders to routers for child view navigation
 @Observable
 @MainActor
@@ -29,10 +29,10 @@ final class SettingsBuilder {
         onSignedIn: @escaping () -> Void = {}
     ) -> some View {
         SettingsView(
-            viewModel: SettingsViewModel(
-                // UseCase handles its own dependency resolution from container
+            presenter: SettingsPresenter(
+                // Interactor handles its own dependency resolution from container
                 // This keeps builder logic simple while maintaining testability
-                settingsUseCase: SettingsUseCase(container: container),
+                settingsInteractor: SettingsInteractor(container: container),
                 router: SettingsRouter(
                     router: router,
                     // Multiple nested builders enable navigation to different child views

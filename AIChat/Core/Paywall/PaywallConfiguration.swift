@@ -25,7 +25,7 @@ final class PaywallConfiguration {
     /// Updates the current paywall option in memory.
     ///
     /// - Warning: This method only updates the in-memory value and does NOT persist to UserDefaults.
-    /// For persistent changes, use `DevSettingsViewModel.handlePaywallOptionChange()` which saves
+    /// For persistent changes, use `DevSettingsPresenter.handlePaywallOptionChange()` which saves
     /// through the AB test system.
     ///
     /// - Parameter option: The new paywall option to set

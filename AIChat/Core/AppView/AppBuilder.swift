@@ -19,8 +19,8 @@ final class AppBuilder {
 
     func buildAppView() -> some View {
         AppView(
-            viewModel: AppViewModel(
-                appViewUseCase: AppViewUseCase(
+            presenter: AppPresenter(
+                appViewInteractor: AppViewInteractor(
                     container: container
                 )
             )

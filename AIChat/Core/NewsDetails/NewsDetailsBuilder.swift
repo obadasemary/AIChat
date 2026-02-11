@@ -23,9 +23,9 @@ final class NewsDetailsBuilder {
     @MainActor
     func buildNewsDetailsView(router: Router, article: NewsArticle) -> some View {
         NewsDetailsView(
-            viewModel: NewsDetailsViewModel(
+            presenter: NewsDetailsPresenter(
                 article: article,
-                newsDetailsUseCase: NewsDetailsUseCase(container: container),
+                newsDetailsInteractor: NewsDetailsInteractor(container: container),
                 router: NewsDetailsRouter(router: router)
             )
         )

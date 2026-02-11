@@ -9,30 +9,30 @@ import SwiftUI
 
 struct ExploreView: View {
     
-    @State var viewModel: ExploreViewModel
+    @State var presenter: ExplorePresenter
     
     var body: some View {
         List {
-            if viewModel.featuredAvatars.isEmpty && viewModel.popularAvatars.isEmpty {
-                if viewModel.isLoadingFeatured || viewModel.isLoadingPopular {
+            if presenter.featuredAvatars.isEmpty && presenter.popularAvatars.isEmpty {
+                if presenter.isLoadingFeatured || presenter.isLoadingPopular {
                     loadingIndicator
                 } else {
                     contentUnavailableView
                 }
             }
             
-            if !viewModel.popularAvatars.isEmpty {
-                if viewModel.categoryRowTest == .top {
+            if !presenter.popularAvatars.isEmpty {
+                if presenter.categoryRowTest == .top {
                     categoriesSection
                 }
             }
             
-            if !viewModel.featuredAvatars.isEmpty {
+            if !presenter.featuredAvatars.isEmpty {
                 featuredSection
             }
             
-            if !viewModel.popularAvatars.isEmpty {
-                if viewModel.categoryRowTest == .original {
+            if !presenter.popularAvatars.isEmpty {
+                if presenter.categoryRowTest == .original {
                     categoriesSection
                 }
                 popularSection
@@ -42,14 +42,14 @@ struct ExploreView: View {
         .screenAppearAnalytics(name: "ExploreView")
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
-                if viewModel.showDevSettingsButton {
+                if presenter.showDevSettingsButton {
                     devSettingsButton
                 }
             }
             
             // Notification button
             ToolbarItem(placement: .topBarTrailing) {
-                if viewModel.showNotificationButton {
+                if presenter.showNotificationButton {
                     pushNotificationButton
                 }
             }
@@ -70,23 +70,23 @@ struct ExploreView: View {
             }
         }
         .task {
-            await viewModel.loadFeaturedAvatars()
+            await presenter.loadFeaturedAvatars()
         }
         .task {
-            await viewModel.loadPopularAvatars()
+            await presenter.loadPopularAvatars()
         }
         .refreshable {
-            await viewModel.refreshAvatars()
+            await presenter.refreshAvatars()
         }
         .task {
-            await viewModel.handleShowPushNotificationButton()
+            await presenter.handleShowPushNotificationButton()
         }
         .onFirstAppear {
-            viewModel.schedulePushNotifications()
-            viewModel.showCreateAccountScreenIfNeeded()
+            presenter.schedulePushNotifications()
+            presenter.showCreateAccountScreenIfNeeded()
         }
         .onOpenURL { url in
-            viewModel.handleDeepLink(url)
+            presenter.handleDeepLink(url)
         }
     }
 }
@@ -114,14 +114,14 @@ private extension ExploreView {
     var featuredSection: some View {
         Section {
             ZStack {
-                CarouselView(items: viewModel.featuredAvatars) { avatar in
+                CarouselView(items: presenter.featuredAvatars) { avatar in
                     HeroCellView(
                         title: avatar.name,
                         subtitle: avatar.characterDescription,
                         imageName: avatar.profileImageName
                     )
                     .anyButton {
-                        viewModel.onAvaterSelected(avatar: avatar)
+                        presenter.onAvaterSelected(avatar: avatar)
                     }
                 }
             }
@@ -136,8 +136,8 @@ private extension ExploreView {
             ZStack {
                 ScrollView(.horizontal) {
                     HStack(spacing: 12) {
-                        ForEach(viewModel.categories, id: \.self) { category in
-                            let imageName = viewModel.popularAvatars
+                        ForEach(presenter.categories, id: \.self) { category in
+                            let imageName = presenter.popularAvatars
                                 .last(where: { $0.characterOption == category })?
                                 .profileImageName
                             if let imageName {
@@ -146,7 +146,7 @@ private extension ExploreView {
                                     imageName: imageName
                                 )
                                 .anyButton {
-                                    viewModel.onCategorySelected(
+                                    presenter.onCategorySelected(
                                         category: category,
                                         imageName: imageName
                                     )
@@ -168,14 +168,14 @@ private extension ExploreView {
     
     var popularSection: some View {
         Section {
-            ForEach(viewModel.popularAvatars, id: \.self) { avatar in
+            ForEach(presenter.popularAvatars, id: \.self) { avatar in
                 CustomListCellView(
                     imageName: avatar.profileImageName,
                     title: avatar.name,
                     subtitle: avatar.characterDescription
                 )
                 .anyButton(.highlight) {
-                    viewModel.onAvaterSelected(avatar: avatar)
+                    presenter.onAvaterSelected(avatar: avatar)
                 }
                 .removeListRowFormatting()
             }
@@ -191,7 +191,7 @@ private extension ExploreView {
             .foregroundStyle(.accent)
             .tappableBackground()
             .anyButton(.press) {
-                viewModel.onDevSettingsButtonTapped()
+                presenter.onDevSettingsButtonTapped()
             }
     }
     
@@ -202,7 +202,7 @@ private extension ExploreView {
             .tappableBackground()
             .foregroundStyle(.accent)
             .anyButton {
-                viewModel.onPushNotificationButtonTapped()
+                presenter.onPushNotificationButtonTapped()
             }
     }
     
@@ -211,7 +211,7 @@ private extension ExploreView {
             .font(.headline)
             .foregroundStyle(.accent)
             .anyButton {
-                viewModel.onLogoutButtonPressed()
+                presenter.onLogoutButtonPressed()
             }
     }
 }
