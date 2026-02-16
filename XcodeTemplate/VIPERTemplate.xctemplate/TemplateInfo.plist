@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Kind</key>
+    <string>Xcode.IDEKit.TextSubstitutionFileTemplateKind</string>
+    <key>Summary</key>
+    <string>VIPER Feature with Clean Architecture</string>
+    <key>Description</key>
+    <string>Creates View, Presenter, Interactor, Builder, and Router files</string>
+    <key>Platforms</key>
+    <array>
+        <string>com.apple.platform.iphoneos</string>
+    </array>
+    <key>Options</key>
+    <array>
+        <!-- Module Name -->
+        <dict>
+            <key>Identifier</key>
+            <string>productName</string>
+            <key>Required</key>
+            <true/>
+            <key>Name</key>
+            <string>Feature Name (PascalCase):</string>
+            <key>Description</key>
+            <string>Feature name starting with capital letter (e.g., UserProfile, Settings)</string>
+            <key>Type</key>
+            <string>text</string>
+            <key>Default</key>
+            <string>NewFeature</string>
+        </dict>
+
+        <!-- camelCase Module Name -->
+        <dict>
+            <key>Identifier</key>
+            <string>camelCasedProductName</string>
+            <key>Required</key>
+            <true/>
+            <key>Name</key>
+            <string>Feature Name (camelCase):</string>
+            <key>Description</key>
+            <string>Same name with lowercase first letter (e.g., userProfile, settings)</string>
+            <key>Type</key>
+            <string>text</string>
+            <key>Default</key>
+            <string>newFeature</string>
+        </dict>
+    </array>
+    <key>Definitions</key>
+    <dict>
+        <key>coreName</key>
+        <string>Core</string>
+    </dict>
+</dict>
+</plist>

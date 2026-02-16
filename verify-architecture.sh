@@ -1,25 +1,25 @@
 #!/bin/bash
 
 # verify-architecture.sh
-# Verifies that all features in AIChat/Core follow the MVVM + Clean Architecture pattern
+# Verifies that all features in AIChat/Core follow the VIPER + Clean Architecture pattern
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-echo "🔍 Verifying AIChat Architecture Pattern..."
+echo "🔍 Verifying AIChat VIPER Architecture Pattern..."
 echo "=========================================="
 echo ""
 
 CORE_DIR="AIChat/Core"
 ISSUES_FOUND=0
 
-# Expected file patterns for each feature
+# Expected file patterns for each feature (VIPER)
 declare -a EXPECTED_FILES=(
     "View.swift"
-    "ViewModel.swift"
-    "UseCase.swift"
+    "Presenter.swift"
+    "Interactor.swift"
     "Builder.swift"
     "Router.swift"
 )
@@ -61,8 +61,8 @@ for feature_dir in "$CORE_DIR"/*; do
             ISSUES_FOUND=$((ISSUES_FOUND + 1))
         fi
 
-        # Check for extra files (excluding delegates and models)
-        extra_files=$(find "$feature_dir" -maxdepth 1 -name "*.swift" ! -name "${feature_name}View.swift" ! -name "${feature_name}ViewModel.swift" ! -name "${feature_name}UseCase.swift" ! -name "${feature_name}Builder.swift" ! -name "${feature_name}Router.swift" ! -name "*Delegate.swift" ! -name "*Models.swift" ! -name "*Configuration.swift" ! -name "*Interactor.swift")
+        # Check for extra files (excluding delegates, models, and configuration files)
+        extra_files=$(find "$feature_dir" -maxdepth 1 -name "*.swift" ! -name "${feature_name}View.swift" ! -name "${feature_name}Presenter.swift" ! -name "${feature_name}Interactor.swift" ! -name "${feature_name}Builder.swift" ! -name "${feature_name}Router.swift" ! -name "*Delegate.swift" ! -name "*Models.swift" ! -name "*Configuration.swift")
 
         if [ -n "$extra_files" ]; then
             echo -e "   ${YELLOW}⚠️  Additional files found:${NC}"
@@ -79,13 +79,13 @@ done
 
 echo "=========================================="
 if [ $ISSUES_FOUND -eq 0 ]; then
-    echo -e "${GREEN}✅ All features follow the MVVM pattern!${NC}"
+    echo -e "${GREEN}✅ All features follow the VIPER pattern!${NC}"
     exit 0
 else
     echo -e "${RED}❌ Found $ISSUES_FOUND feature(s) with missing files${NC}"
     echo ""
     echo "💡 To fix:"
-    echo "   1. Use the MVVMTemplate in Xcode to generate missing files"
+    echo "   1. Use the VIPERTemplate in Xcode to generate missing files"
     echo "   2. Or manually create files following the pattern in AIChat/Core/About"
     exit 1
 fi

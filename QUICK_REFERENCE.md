@@ -1,29 +1,29 @@
-# MVVM Template - Quick Reference Card
+# VIPER Template - Quick Reference Card
 
-## 🎯 5-Second Summary
-Every feature = 5 files: View, ViewModel, UseCase, Builder, Router
+## 5-Second Summary
+Every feature = 5 files: View, Presenter, Interactor, Builder, Router
 
-## 🚀 Create New Feature (30 seconds)
+## Create New Feature (30 seconds)
 1. Right-click `AIChat/Core/` in Xcode
-2. New File → Custom Templates → MVVMTemplate
+2. New File -> Custom Templates -> VIPERTemplate
 3. Enter feature name (e.g., "Notifications")
 4. Enter camelCase name (e.g., "notifications")
 5. Click Create
 
-## 📁 File Structure
+## File Structure
 ```
 YourFeature/
-├── YourFeatureView.swift       # UI
-├── YourFeatureViewModel.swift  # State
-├── YourFeatureUseCase.swift    # Logic
-├── YourFeatureBuilder.swift    # DI
-└── YourFeatureRouter.swift     # Nav
+├── YourFeatureView.swift          # UI
+├── YourFeaturePresenter.swift     # State & presentation
+├── YourFeatureInteractor.swift    # Logic
+├── YourFeatureBuilder.swift       # DI
+└── YourFeatureRouter.swift        # Nav
 ```
 
-## 💡 Common Tasks
+## Common Tasks
 
 ### Add Business Logic
-**File**: `YourFeatureUseCase.swift`
+**File**: `YourFeatureInteractor.swift`
 ```swift
 init(container: DependencyContainer) {
     self.manager = container.resolve(Manager.self)
@@ -35,17 +35,17 @@ func fetchData() async throws -> Data {
 ```
 
 ### Add UI State
-**File**: `YourFeatureViewModel.swift`
+**File**: `YourFeaturePresenter.swift`
 ```swift
 @Observable
 @MainActor
-class YourFeatureViewModel {
+class YourFeaturePresenter {
     var items: [Item] = []
     var isLoading = false
 
     func loadData() async {
         isLoading = true
-        items = try await useCase.fetchData()
+        items = try await interactor.fetchData()
         isLoading = false
     }
 }
@@ -60,7 +60,7 @@ func navigateToDetail(item: Item) {
 }
 ```
 
-## ✅ Checklist Before Committing
+## Checklist Before Committing
 - [ ] All 5 files present
 - [ ] No force unwrap (`!`)
 - [ ] No force try (`try!`)
@@ -69,45 +69,44 @@ func navigateToDetail(item: Item) {
 - [ ] Run: `./verify-architecture.sh`
 - [ ] Run: `swiftlint lint`
 
-## 🔍 Verify Your Feature
+## Verify Your Feature
 ```bash
 ./verify-architecture.sh
 ```
 
-## 📚 Documentation
+## Documentation
 - `TEMPLATE_SETUP.md` - Full guide
-- `ARCHITECTURE_DIAGRAM.md` - Visual guide
 - `CLAUDE.md` - Project guidelines
 - Template `README.md` - Template details
 
-## 🚨 Common Mistakes
+## Common Mistakes
 
-| ❌ Don't | ✅ Do |
-|---------|------|
+| Don't | Do |
+|-------|-----|
 | `let x = manager!` | `guard let manager else { return }` |
 | `try! service.call()` | `try await service.call()` |
 | `let x = Manager()` | `container.resolve(Manager.self)` |
-| Mix View & Logic | Keep UseCase separate |
+| Mix View & Logic | Keep Interactor separate |
 | Skip protocols | Always use protocols |
 | Forget @MainActor | Add to UI classes |
 
-## 🎓 Architecture Cheat Sheet
+## Architecture Cheat Sheet
 
-**View** → Displays UI
-**ViewModel** → Manages state
-**UseCase** → Business logic
-**Builder** → Wires it up
-**Router** → Navigation
+**View** -> Displays UI
+**Presenter** -> Manages state & presentation logic
+**Interactor** -> Business logic & data operations
+**Builder** -> Wires it up via DI
+**Router** -> Navigation
 
-**Data Flow**: View → ViewModel → UseCase → Manager → Service
+**Data Flow**: View -> Presenter -> Interactor -> Manager -> Service
 
 **Dependency**: Always use `container.resolve(Type.self)`
 
-## 🔗 Quick Links
+## Quick Links
 
 ### Template Location
 ```
-~/Library/Developer/Xcode/Templates/CustomTemplates/MVVMTemplate.xctemplate/
+~/Library/Developer/Xcode/Templates/CustomTemplates/VIPERTemplate.xctemplate/
 ```
 
 ### Reference Feature
@@ -126,11 +125,11 @@ swiftlint lint
 swiftlint lint --fix
 ```
 
-## 🎯 Pro Tips
+## Pro Tips
 
-1. **Start with UseCase** - Define business logic first
+1. **Start with Interactor** - Define business logic first
 2. **Use protocols** - Easy to mock for testing
-3. **Keep Views simple** - Delegate to ViewModel
+3. **Keep Views simple** - Delegate to Presenter
 4. **One concern per file** - Don't mix responsibilities
 5. **Check the reference** - Look at About feature when stuck
 
