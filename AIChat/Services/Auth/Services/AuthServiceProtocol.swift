@@ -24,6 +24,10 @@ protocol AuthServiceProtocol: Sendable {
     
     func signInWithGoogle() async throws -> (user: UserAuthInfo, isNewUser: Bool)
     
+    func linkAppleAccount() async throws -> UserAuthInfo
+    
+    func linkGoogleAccount() async throws -> UserAuthInfo
+    
     func signOut() throws
     
     func deleteAccount() async throws
