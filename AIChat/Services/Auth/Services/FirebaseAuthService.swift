@@ -60,7 +60,7 @@ extension FirebaseAuthService: AuthServiceProtocol {
     func signInWithGoogle() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
         
         guard let clientID = FirebaseApp.app()?.options.clientID else {
-            throw AuthError.missingClientID
+            throw FirebaseAuthError.missingClientID
         }
         
         let googleHelper = SignInWithGoogleHelper(GIDClientID: clientID)
@@ -76,7 +76,7 @@ extension FirebaseAuthService: AuthServiceProtocol {
     
     func linkAppleAccount() async throws -> UserAuthInfo {
         guard let user = Auth.auth().currentUser else {
-            throw AuthError.userNotFound
+            throw FirebaseAuthError.userNotFound
         }
         
         let helper = SignInWithAppleHelper()
@@ -94,11 +94,11 @@ extension FirebaseAuthService: AuthServiceProtocol {
     
     func linkGoogleAccount() async throws -> UserAuthInfo {
         guard let user = Auth.auth().currentUser else {
-            throw AuthError.userNotFound
+            throw FirebaseAuthError.userNotFound
         }
         
         guard let clientID = FirebaseApp.app()?.options.clientID else {
-            throw AuthError.missingClientID
+            throw FirebaseAuthError.missingClientID
         }
         
         let googleHelper = SignInWithGoogleHelper(GIDClientID: clientID)
@@ -119,7 +119,7 @@ extension FirebaseAuthService: AuthServiceProtocol {
     
     func deleteAccount() async throws {
         guard let user = Auth.auth().currentUser else {
-            throw AuthError.userNotFound
+            throw FirebaseAuthError.userNotFound
         }
         
         do {
@@ -169,7 +169,7 @@ private extension FirebaseAuthService {
             switch authError {
             case .accountExistsWithDifferentCredential:
                 if let email = error.userInfo[AuthErrorUserInfoEmailKey] as? String {
-                    throw AuthError.accountExistsWithDifferentProvider(email: email)
+                    throw FirebaseAuthError.accountExistsWithDifferentProvider(email: email)
                 }
                 throw error
             default:
@@ -182,7 +182,7 @@ private extension FirebaseAuthService {
         guard let user = Auth.auth().currentUser,
               let providerId = user.providerData.first?.providerID
         else {
-            throw AuthError.userNotFound
+            throw FirebaseAuthError.userNotFound
         }
         
         switch providerId {
@@ -190,36 +190,36 @@ private extension FirebaseAuthService {
             let result = try await signInWithApple()
             
             guard user.uid == result.user.uid else {
-                throw AuthError.reauthAccountChanged
+                throw FirebaseAuthError.reauthAccountChanged
             }
         case "google.com":
             let result = try await signInWithGoogle()
             
             guard user.uid == result.user.uid else {
-                throw AuthError.reauthAccountChanged
+                throw FirebaseAuthError.reauthAccountChanged
             }
         default:
             throw error
         }
     }
-      
-    enum AuthError: LocalizedError {
-        case userNotFound
-        case missingClientID
-        case reauthAccountChanged
-        case accountExistsWithDifferentProvider(email: String)
-        
-        var errorDescription: String? {
-            switch self {
-            case .userNotFound:
-                "Current authenticated User not found."
-            case .missingClientID:
-                "Firebase Client ID is missing."
-            case .reauthAccountChanged:
-                "Reauthenticated user has switched accounts. Please check your account."
-            case .accountExistsWithDifferentProvider:
-                "An account with this email already exists with a different sign-in method. Please sign in with your original method and link this account in settings."
-            }
+}
+
+enum FirebaseAuthError: LocalizedError {
+    case userNotFound
+    case missingClientID
+    case reauthAccountChanged
+    case accountExistsWithDifferentProvider(email: String)
+    
+    var errorDescription: String? {
+        switch self {
+        case .userNotFound:
+            "Current authenticated User not found."
+        case .missingClientID:
+            "Firebase Client ID is missing."
+        case .reauthAccountChanged:
+            "Reauthenticated user has switched accounts. Please check your account."
+        case .accountExistsWithDifferentProvider(email: let email):
+            "An account with email \(email) already exists with a different sign-in method. Please sign in with your original method and link this account in settings."
         }
     }
 }
