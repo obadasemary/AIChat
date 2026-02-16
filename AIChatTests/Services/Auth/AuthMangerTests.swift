@@ -96,6 +96,24 @@ struct AuthMangerTests {
         #expect(result.hasAppleLinked == true)
         await #expect(authManager.auth?.hasAppleLinked == true)
     }
+    
+    @Test("Link Apple Account Tracks Analytics")
+    func test_whenLinkAppleAccount_thenAnalyticsTracked() async throws {
+        let mockUser = UserAuthInfo.mock(isAnonymous: true)
+        let authService = await MockAuthService(currentUser: mockUser)
+        let mockLogService = MockLogService()
+        let logManager = await LogManager(services: [mockLogService])
+        let authManager = await AuthManager(service: authService, logManager: logManager)
+        
+        _ = try await authManager.linkAppleAccount()
+        
+        #expect(mockLogService.trackedEvents.contains {
+            $0.eventName == "AuthMan_LinkApple_Start"
+        })
+        #expect(mockLogService.trackedEvents.contains {
+            $0.eventName == "AuthMan_LinkApple_Success"
+        })
+    }
 
     @Test("Link Google Account")
     func test_whenLinkGoogleAccount_thenUserAuthInfoUpdated() async throws {
