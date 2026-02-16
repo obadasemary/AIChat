@@ -12,6 +12,8 @@ protocol SettingsUseCaseProtocol {
     var auth: UserAuthInfo? { get }
     func signOut() throws
     func deleteAccount() async throws
+    func linkAppleAccount() async throws -> UserAuthInfo
+    func linkGoogleAccount() async throws -> UserAuthInfo
     func updateAppState(showTabBarView: Bool)
     func trackEvent(event: any LoggableEvent)
 }
@@ -96,6 +98,14 @@ extension SettingsUseCase: SettingsUseCaseProtocol {
         // FIXME: implement
         // try await purchaseManager.logOut()
         logManager.deleteUserProfile()
+    }
+    
+    func linkAppleAccount() async throws -> UserAuthInfo {
+        try await authManager.linkAppleAccount()
+    }
+    
+    func linkGoogleAccount() async throws -> UserAuthInfo {
+        try await authManager.linkGoogleAccount()
     }
     
     func updateAppState(showTabBarView: Bool) {
