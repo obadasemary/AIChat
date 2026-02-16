@@ -1,34 +1,11 @@
 //
-//  LogSystem.swift
-//  AIChat
-//
-//  Created by Abdelrahman Mohamed on 24.06.2025.
+//  LogType.swift
+//  LoggingService
 //
 
-import Foundation
 import OSLog
 
-actor LogSystem {
-    
-    // swiftlint:disable force_unwrapping
-    private let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier!,
-        category: "ConsoleLogger"
-    )
-    // swiftlint:enable force_unwrapping
-    
-    func log(level: OSLogType, message: String) {
-        logger.log(level: level, "\(message)")
-    }
-    
-    nonisolated func log(level: LogType, message: String) {
-        Task {
-            await log(level: level.OsLogType, message: message)
-        }
-    }
-}
-
-enum LogType {
+public enum LogType: Sendable {
     /// Use 'info' for informative tasks, These are not considered analytics, issues, or errors.
     case info
     /// Default type for analytics.
@@ -37,8 +14,8 @@ enum LogType {
     case warning
     /// Issues or errors that negatively affect user experience.
     case severe
-    
-    var emoji: String {
+
+    public var emoji: String {
         switch self {
         case .info:
             "🚀🚀🚀"
@@ -50,8 +27,8 @@ enum LogType {
             "🚨🚨🚨"
         }
     }
-    
-    var OsLogType: OSLogType {
+
+    public var osLogType: OSLogType {
         switch self {
         case .info:
                 .info

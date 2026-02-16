@@ -1,27 +1,25 @@
 //
 //  LoggableEvent.swift
-//  AIChat
-//
-//  Created by Abdelrahman Mohamed on 24.06.2025.
+//  LoggingService
 //
 
 import Foundation
 
-protocol LoggableEvent {
+public protocol LoggableEvent {
     var eventName: String { get }
     var parameters: [String: Any]? { get }
     var type: LogType { get }
 }
 
-struct AnyLoggableEvent: LoggableEvent {
-    
-    let eventName: String
-    let parameters: [String : Any]?
-    let type: LogType
-    
-    init(
+public struct AnyLoggableEvent: LoggableEvent {
+
+    public let eventName: String
+    public let parameters: [String: Any]?
+    public let type: LogType
+
+    public init(
         eventName: String,
-        parameters: [String : Any]? = nil,
+        parameters: [String: Any]? = nil,
         type: LogType = .analytic
     ) {
         self.eventName = eventName

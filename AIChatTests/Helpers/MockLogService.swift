@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import LoggingService
 @testable import AIChat
 
 final class MockLogService: @unchecked Sendable {
@@ -28,7 +29,7 @@ extension MockLogService: LogServiceProtocol {
 
     func deleteUserProfile() {}
 
-    func trackEvent(event: any AIChat.LoggableEvent) {
+    func trackEvent(event: any LoggableEvent) {
         let anyEvent = AnyLoggableEvent(
             eventName: event.eventName,
             parameters: event.parameters,
@@ -38,7 +39,7 @@ extension MockLogService: LogServiceProtocol {
         trackedEvents.append(anyEvent)
     }
 
-    func trackScreen(event: any AIChat.LoggableEvent) {
+    func trackScreen(event: any LoggableEvent) {
         let anyEvent = AnyLoggableEvent(
             eventName: event.eventName,
             parameters: event.parameters,

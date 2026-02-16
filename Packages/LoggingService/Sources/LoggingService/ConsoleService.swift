@@ -1,18 +1,16 @@
 //
 //  ConsoleService.swift
-//  AIChat
-//
-//  Created by Abdelrahman Mohamed on 24.06.2025.
+//  LoggingService
 //
 
 import Foundation
 
-struct ConsoleService {
-    
+public struct ConsoleService {
+
     private let logger: LogSystem
     private let printParameters: Bool
-    
-    init(
+
+    public init(
         logger: LogSystem = LogSystem(),
         printParameters: Bool = true
     ) {
@@ -22,18 +20,18 @@ struct ConsoleService {
 }
 
 extension ConsoleService: LogServiceProtocol {
-    func identify(userId: String, name: String?, email: String?) {
+    public func identify(userId: String, name: String?, email: String?) {
         let message = """
 📊 Identify User
     userId: \(userId)
     name: \(name ?? "unknown")
     email: \(email ?? "unknown")
 """
-        
+
         logger.log(level: LogType.info, message: message)
     }
 
-    func addUserProperties(dict: [String : Any], isHighPriority: Bool) {
+    public func addUserProperties(dict: [String: Any], isHighPriority: Bool) {
         var message = """
 📊 Log User Properties (isHighPriority: \(isHighPriority.description))
 """
@@ -45,23 +43,23 @@ extension ConsoleService: LogServiceProtocol {
                 }
             }
         }
-        
+
         logger.log(level: LogType.info, message: message)
     }
 
-    func deleteUserProfile() {
+    public func deleteUserProfile() {
         let message = """
-📊 Delete User Profile                
+📊 Delete User Profile
 """
-        
+
         logger.log(level: LogType.info, message: message)
     }
 
-    func trackEvent(event: any LoggableEvent) {
+    public func trackEvent(event: any LoggableEvent) {
         var message = "\(event.type.emoji) \(event.eventName)"
-        
+
         if printParameters, let parameters = event.parameters, !parameters.isEmpty {
-            
+
             let sortedKeys = parameters.keys.sorted()
             for key in sortedKeys {
                 if let value = parameters[key] {
@@ -69,11 +67,11 @@ extension ConsoleService: LogServiceProtocol {
                 }
             }
         }
-        
+
         logger.log(level: event.type, message: message)
     }
 
-    func trackScreen(event: any LoggableEvent) {
+    public func trackScreen(event: any LoggableEvent) {
         trackEvent(event: event)
     }
 }

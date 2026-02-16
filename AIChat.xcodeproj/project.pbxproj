@@ -24,6 +24,10 @@
 		AFEF44072DFF1489000E87DC /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = AFEF44062DFF1489000E87DC /* OpenAI */; };
 		AFEF464A2E007365000E87DC /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = AFEF46492E007365000E87DC /* FirebaseStorage */; };
 		AFSC00022E7F000000000002 /* Configuration in Frameworks */ = {isa = PBXBuildFile; productRef = AFSC00032E7F000000000003 /* Configuration */; };
+		AFC000052E90000000000005 /* LoggingService in Frameworks */ = {isa = PBXBuildFile; productRef = AFC000022E90000000000002 /* LoggingService */; };
+		AFC000062E90000000000006 /* LoggingServiceFirebase in Frameworks */ = {isa = PBXBuildFile; productRef = AFC000032E90000000000003 /* LoggingServiceFirebase */; };
+		AFC000072E90000000000007 /* LoggingServiceMixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = AFC000042E90000000000004 /* LoggingServiceMixpanel */; };
+		AFC000092E90000000000009 /* LoggingService in Frameworks */ = {isa = PBXBuildFile; productRef = AFC000082E90000000000008 /* LoggingService */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,6 +108,9 @@
 				AF2ECC132DE7D88A00BD1602 /* SwiftfulUtilities in Frameworks */,
 				AF3986932DF8D2E5000F064C /* GoogleSignIn in Frameworks */,
 				AFSC00022E7F000000000002 /* Configuration in Frameworks */,
+				AFC000052E90000000000005 /* LoggingService in Frameworks */,
+				AFC000062E90000000000006 /* LoggingServiceFirebase in Frameworks */,
+				AFC000072E90000000000007 /* LoggingServiceMixpanel in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -111,6 +118,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AFC000092E90000000000009 /* LoggingService in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -192,6 +200,9 @@
 				AF1E6BF42E0C4DE3005D93F8 /* FirebaseCrashlytics */,
 				AFCE8E3B2E1D443900CC88C7 /* FirebaseRemoteConfig */,
 				AFC575A92E5E243100B3C3F0 /* SUIRouting */,
+				AFC000022E90000000000002 /* LoggingService */,
+				AFC000032E90000000000003 /* LoggingServiceFirebase */,
+				AFC000042E90000000000004 /* LoggingServiceMixpanel */,
 			);
 			productName = AIChat;
 			productReference = AF9034FB2DA3FDB000A35095 /* AIChat.app */;
@@ -215,6 +226,7 @@
 			);
 			name = AIChatTests;
 			packageProductDependencies = (
+				AFC000082E90000000000008 /* LoggingService */,
 			);
 			productName = AIChatTests;
 			productReference = AF90350C2DA3FDB100A35095 /* AIChatTests.xctest */;
@@ -287,6 +299,7 @@
 				AF3E88B02E0B7CA1002FAC13 /* XCRemoteSwiftPackageReference "mixpanel-swift" */,
 				AFC575A82E5E243100B3C3F0 /* XCRemoteSwiftPackageReference "SUIRouting" */,
 				AFSC00012E7F000000000001 /* XCRemoteSwiftPackageReference "swift-configuration" */,
+				AFC000012E90000000000001 /* XCLocalSwiftPackageReference "LoggingService" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = AF9034FC2DA3FDB000A35095 /* Products */;
@@ -1010,6 +1023,13 @@
 		};
 /* End XCRemoteSwiftPackageReference section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		AFC000012E90000000000001 /* XCLocalSwiftPackageReference "LoggingService" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/LoggingService;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		AF1B57882E0B526200C28263 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1095,6 +1115,22 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AFSC00012E7F000000000001 /* XCRemoteSwiftPackageReference "swift-configuration" */;
 			productName = Configuration;
+		};
+		AFC000022E90000000000002 /* LoggingService */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LoggingService;
+		};
+		AFC000032E90000000000003 /* LoggingServiceFirebase */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LoggingServiceFirebase;
+		};
+		AFC000042E90000000000004 /* LoggingServiceMixpanel */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LoggingServiceMixpanel;
+		};
+		AFC000082E90000000000008 /* LoggingService */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LoggingService;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

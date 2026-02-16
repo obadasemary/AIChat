@@ -1,26 +1,25 @@
 //
 //  FirebaseCrashlyticsService.swift
-//  AIChat
-//
-//  Created by Abdelrahman Mohamed on 25.06.2025.
+//  LoggingService
 //
 
 import Foundation
 import FirebaseCrashlytics
+import LoggingService
 
-struct FirebaseCrashlyticsService {}
+public struct FirebaseCrashlyticsService {}
 
 extension FirebaseCrashlyticsService: LogServiceProtocol {
-    
-    func identify(userId: String, name: String?, email: String?) {
+
+    public func identify(userId: String, name: String?, email: String?) {
         Crashlytics.crashlytics().setUserID(userId)
-        
+
         if let name {
             Crashlytics
                 .crashlytics()
                 .setCustomValue(name, forKey: "account_name")
         }
-        
+
         if let email {
             Crashlytics
                 .crashlytics()
@@ -28,7 +27,7 @@ extension FirebaseCrashlyticsService: LogServiceProtocol {
         }
     }
 
-    func addUserProperties(dict: [String : Any], isHighPriority: Bool) {
+    public func addUserProperties(dict: [String: Any], isHighPriority: Bool) {
         guard isHighPriority else { return }
         for (key, value) in dict {
             Crashlytics
@@ -37,11 +36,11 @@ extension FirebaseCrashlyticsService: LogServiceProtocol {
         }
     }
 
-    func deleteUserProfile() {
+    public func deleteUserProfile() {
         Crashlytics.crashlytics().setUserID("new")
     }
 
-    func trackEvent(event: any LoggableEvent) {
+    public func trackEvent(event: any LoggableEvent) {
         switch event.type {
         case .info, .analytic:
             break
@@ -57,7 +56,7 @@ extension FirebaseCrashlyticsService: LogServiceProtocol {
         }
     }
 
-    func trackScreen(event: any LoggableEvent) {
+    public func trackScreen(event: any LoggableEvent) {
         trackEvent(event: event)
     }
 }
