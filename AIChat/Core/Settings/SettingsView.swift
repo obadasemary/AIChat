@@ -16,6 +16,11 @@ struct SettingsView: View {
         ScrollView {
             VStack(spacing: 16) {
                 accountSection
+                
+                if !viewModel.isAnonymousUser {
+                    linkedAccountsSection
+                }
+                
                 purchaseSection
                 contentSection
                 applicationSection
@@ -33,6 +38,7 @@ struct SettingsView: View {
             viewModel.setAnonymousAccountStatus()
         }
         .screenAppearAnalytics(name: "SettingsView")
+        .showCustomAlert(alert: $viewModel.alert)
     }
 }
 
@@ -75,6 +81,60 @@ private extension SettingsView {
                     isFirst: false,
                     isLast: true
                 )
+            }
+            .background(Color(uiColor: .systemBackground))
+            .cornerRadius(12)
+        }
+    }
+    
+    var linkedAccountsSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Linked Accounts")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 16)
+            
+            VStack(spacing: 0) {
+                HStack(spacing: 12) {
+                    Image(systemName: "applelogo")
+                        .font(.title3)
+                    Text("Apple")
+                    Spacer()
+                    if viewModel.hasAppleLinked {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                    } else {
+                        Button("Link") {
+                            viewModel.onLinkAppleAccountPressed()
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                }
+                .padding(.vertical, 14)
+                .padding(.horizontal, 16)
+                .background(Color(uiColor: .systemBackground))
+                
+                Divider()
+                    .padding(.leading, 16)
+                
+                HStack(spacing: 12) {
+                    Image(systemName: "globe")
+                        .font(.title3)
+                    Text("Google")
+                    Spacer()
+                    if viewModel.hasGoogleLinked {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                    } else {
+                        Button("Link") {
+                            viewModel.onLinkGoogleAccountPressed()
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                }
+                .padding(.vertical, 14)
+                .padding(.horizontal, 16)
+                .background(Color(uiColor: .systemBackground))
             }
             .background(Color(uiColor: .systemBackground))
             .cornerRadius(12)
