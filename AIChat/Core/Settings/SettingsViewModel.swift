@@ -193,47 +193,49 @@ extension SettingsViewModel {
     }
     
     func onLinkAppleAccountPressed() {
-        settingsUseCase.trackEvent(event: Event.linkAppleStart)
-        
-        Task { [weak self] in
-            guard let self else { return }
-            do {
-                let user = try await self.settingsUseCase.linkAppleAccount()
-                await MainActor.run {
-                    self.settingsUseCase.trackEvent(event: Event.linkAppleSuccess(user: user))
-                    self.setAnonymousAccountStatus()
-                    self.alert = AnyAppAlert(
-                        title: "Account Linked",
-                        subtitle: "Your Apple account has been successfully linked. You can now sign in with Apple."
-                    )
-                }
-            } catch {
-                await MainActor.run {
-                    self.settingsUseCase.trackEvent(event: Event.linkAppleFail(error: error))
-                    self.alert = AnyAppAlert(error: error)
-                }
-            }
-        }
+        linkAccount(
+            providerName: "Apple",
+            startEvent: .linkAppleStart,
+            linkAction: settingsUseCase.linkAppleAccount,
+            successEvent: Event.linkAppleSuccess,
+            failureEvent: Event.linkAppleFail
+        )
     }
     
     func onLinkGoogleAccountPressed() {
-        settingsUseCase.trackEvent(event: Event.linkGoogleStart)
+        linkAccount(
+            providerName: "Google",
+            startEvent: .linkGoogleStart,
+            linkAction: settingsUseCase.linkGoogleAccount,
+            successEvent: Event.linkGoogleSuccess,
+            failureEvent: Event.linkGoogleFail
+        )
+    }
+
+    private func linkAccount(
+        providerName: String,
+        startEvent: Event,
+        linkAction: @escaping () async throws -> UserAuthInfo,
+        successEvent: @escaping (UserAuthInfo) -> Event,
+        failureEvent: @escaping (Error) -> Event
+    ) {
+        settingsUseCase.trackEvent(event: startEvent)
         
         Task { [weak self] in
             guard let self else { return }
             do {
-                let user = try await self.settingsUseCase.linkGoogleAccount()
+                let user = try await linkAction()
                 await MainActor.run {
-                    self.settingsUseCase.trackEvent(event: Event.linkGoogleSuccess(user: user))
+                    self.settingsUseCase.trackEvent(event: successEvent(user))
                     self.setAnonymousAccountStatus()
                     self.alert = AnyAppAlert(
                         title: "Account Linked",
-                        subtitle: "Your Google account has been successfully linked. You can now sign in with Google."
+                        subtitle: "Your \(providerName) account has been successfully linked. You can now sign in with \(providerName)."
                     )
                 }
             } catch {
                 await MainActor.run {
-                    self.settingsUseCase.trackEvent(event: Event.linkGoogleFail(error: error))
+                    self.settingsUseCase.trackEvent(event: failureEvent(error))
                     self.alert = AnyAppAlert(error: error)
                 }
             }
