@@ -63,8 +63,8 @@ extension MockAuthService: AuthServiceProtocol {
         }
         
         var updatedProviders = existingUser.providerIDs
-        if !updatedProviders.contains("apple.com") {
-            updatedProviders.append("apple.com")
+        if !updatedProviders.contains(AuthProviderIdentifier.apple) {
+            updatedProviders.append(AuthProviderIdentifier.apple)
         }
         
         let user = UserAuthInfo(
@@ -85,8 +85,8 @@ extension MockAuthService: AuthServiceProtocol {
         }
         
         var updatedProviders = existingUser.providerIDs
-        if !updatedProviders.contains("google.com") {
-            updatedProviders.append("google.com")
+        if !updatedProviders.contains(AuthProviderIdentifier.google) {
+            updatedProviders.append(AuthProviderIdentifier.google)
         }
         
         let user = UserAuthInfo(

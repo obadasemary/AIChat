@@ -186,13 +186,13 @@ private extension FirebaseAuthService {
         }
         
         switch providerId {
-        case "apple.com":
+        case AuthProviderIdentifier.apple:
             let result = try await signInWithApple()
             
             guard user.uid == result.user.uid else {
                 throw FirebaseAuthError.reauthAccountChanged
             }
-        case "google.com":
+        case AuthProviderIdentifier.google:
             let result = try await signInWithGoogle()
             
             guard user.uid == result.user.uid else {
