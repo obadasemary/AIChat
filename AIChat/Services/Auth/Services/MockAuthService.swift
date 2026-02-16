@@ -58,35 +58,21 @@ extension MockAuthService: AuthServiceProtocol {
     }
     
     func linkAppleAccount() async throws -> UserAuthInfo {
-        guard let existingUser = currentUser else {
-            throw MockAuthError.userNotFound
-        }
-        
-        var updatedProviders = existingUser.providerIDs
-        if !updatedProviders.contains(AuthProviderIdentifier.apple) {
-            updatedProviders.append(AuthProviderIdentifier.apple)
-        }
-        
-        let user = UserAuthInfo(
-            uid: existingUser.uid,
-            email: existingUser.email,
-            isAnonymous: existingUser.isAnonymous,
-            creationDate: existingUser.creationDate,
-            lastSignInDate: existingUser.lastSignInDate,
-            providerIDs: updatedProviders
-        )
-        currentUser = user
-        return user
+        try linkAccount(provider: AuthProviderIdentifier.apple)
     }
     
     func linkGoogleAccount() async throws -> UserAuthInfo {
+        try linkAccount(provider: AuthProviderIdentifier.google)
+    }
+    
+    private func linkAccount(provider: String) throws -> UserAuthInfo {
         guard let existingUser = currentUser else {
             throw MockAuthError.userNotFound
         }
         
         var updatedProviders = existingUser.providerIDs
-        if !updatedProviders.contains(AuthProviderIdentifier.google) {
-            updatedProviders.append(AuthProviderIdentifier.google)
+        if !updatedProviders.contains(provider) {
+            updatedProviders.append(provider)
         }
         
         let user = UserAuthInfo(
