@@ -14,19 +14,22 @@ struct UserAuthInfo: Sendable, Codable {
     let isAnonymous: Bool
     let creationDate: Date?
     let lastSignInDate: Date?
+    let providerIDs: [String]
     
     init(
         uid: String,
         email: String? = nil,
         isAnonymous: Bool = false,
         creationDate: Date? = nil,
-        lastSignInDate: Date? = nil
+        lastSignInDate: Date? = nil,
+        providerIDs: [String] = []
     ) {
         self.uid = uid
         self.email = email
         self.isAnonymous = isAnonymous
         self.creationDate = creationDate
         self.lastSignInDate = lastSignInDate
+        self.providerIDs = providerIDs
     }
     
     enum CodingKeys: String, CodingKey {
@@ -35,6 +38,7 @@ struct UserAuthInfo: Sendable, Codable {
         case isAnonymous = "is_anonymous"
         case creationDate = "created_at"
         case lastSignInDate = "last_sign_in_at"
+        case providerIDs = "provider_ids"
     }
     
     static func mock(isAnonymous: Bool = false) -> Self {
@@ -43,7 +47,8 @@ struct UserAuthInfo: Sendable, Codable {
             email: "ai@example.com",
             isAnonymous: isAnonymous,
             creationDate: .now,
-            lastSignInDate: .now
+            lastSignInDate: .now,
+            providerIDs: isAnonymous ? ["anonymous"] : ["google.com"]
         )
     }
     
@@ -53,8 +58,17 @@ struct UserAuthInfo: Sendable, Codable {
             "uauth_\(CodingKeys.email.rawValue)": email,
             "uauth_\(CodingKeys.isAnonymous.rawValue)": isAnonymous,
             "uauth_\(CodingKeys.creationDate.rawValue)": creationDate,
-            "uauth_\(CodingKeys.lastSignInDate.rawValue)": lastSignInDate
+            "uauth_\(CodingKeys.lastSignInDate.rawValue)": lastSignInDate,
+            "uauth_\(CodingKeys.providerIDs.rawValue)": providerIDs.joined(separator: ",")
         ]
         return dict.compactMapValues { $0 }
+    }
+    
+    var hasAppleLinked: Bool {
+        providerIDs.contains("apple.com")
+    }
+    
+    var hasGoogleLinked: Bool {
+        providerIDs.contains("google.com")
     }
 }
