@@ -85,6 +85,40 @@ struct AuthMangerTests {
         )
     }
     
+    @Test("Link Apple Account")
+    func test_whenLinkAppleAccount_thenUserAuthInfoUpdated() async throws {
+        let mockUser = UserAuthInfo.mock(isAnonymous: true)
+        let authService = await MockAuthService(currentUser: mockUser)
+        let authManager = await AuthManager(service: authService)
+        
+        let result = try await authManager.linkAppleAccount()
+        
+        #expect(result.hasAppleLinked == true)
+        await #expect(authManager.auth?.hasAppleLinked == true)
+    }
+
+    @Test("Link Google Account")
+    func test_whenLinkGoogleAccount_thenUserAuthInfoUpdated() async throws {
+        let mockUser = UserAuthInfo.mock(isAnonymous: true)
+        let authService = await MockAuthService(currentUser: mockUser)
+        let authManager = await AuthManager(service: authService)
+        
+        let result = try await authManager.linkGoogleAccount()
+        
+        #expect(result.hasGoogleLinked == true)
+        await #expect(authManager.auth?.hasGoogleLinked == true)
+    }
+
+    @Test("Link Account When User Not Found")
+    func test_whenLinkAccountWithNoUser_thenThrowsError() async throws {
+        let authService = await MockAuthService(currentUser: nil)
+        let authManager = await AuthManager(service: authService)
+        
+        await #expect(throws: MockAuthService.MockAuthError.userNotFound) {
+            try await authManager.linkAppleAccount()
+        }
+    }
+    
     @Test("Sign Out")
     func testSignOut() async throws {
         let mockUser = UserAuthInfo.mock(isAnonymous: false)
