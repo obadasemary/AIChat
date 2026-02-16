@@ -18,6 +18,10 @@ class SettingsViewModel {
     
     private(set) var isPremium: Bool = false
     private(set) var isAnonymousUser: Bool = true
+    private(set) var hasAppleLinked: Bool = false
+    private(set) var hasGoogleLinked: Bool = false
+    
+    var alert: AnyAppAlert?
     
     init(
         settingsUseCase: SettingsUseCaseProtocol,
@@ -35,6 +39,8 @@ extension SettingsViewModel {
     
     func setAnonymousAccountStatus() {
         isAnonymousUser = settingsUseCase.auth?.isAnonymous == true
+        hasAppleLinked = settingsUseCase.auth?.hasAppleLinked == true
+        hasGoogleLinked = settingsUseCase.auth?.hasGoogleLinked == true
     }
 }
 
@@ -185,6 +191,46 @@ extension SettingsViewModel {
         settingsUseCase.trackEvent(event: Event.bookmarksPressed)
         router.showBookmarksView()
     }
+    
+    func onLinkAppleAccountPressed() {
+        settingsUseCase.trackEvent(event: Event.linkAppleStart)
+        
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                let user = try await self.settingsUseCase.linkAppleAccount()
+                self.settingsUseCase.trackEvent(event: Event.linkAppleSuccess(user: user))
+                self.setAnonymousAccountStatus()
+                self.alert = AnyAppAlert(
+                    title: "Account Linked",
+                    subtitle: "Your Apple account has been successfully linked. You can now sign in with Apple."
+                )
+            } catch {
+                self.settingsUseCase.trackEvent(event: Event.linkAppleFail(error: error))
+                self.alert = AnyAppAlert(error: error)
+            }
+        }
+    }
+    
+    func onLinkGoogleAccountPressed() {
+        settingsUseCase.trackEvent(event: Event.linkGoogleStart)
+        
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                let user = try await self.settingsUseCase.linkGoogleAccount()
+                self.settingsUseCase.trackEvent(event: Event.linkGoogleSuccess(user: user))
+                self.setAnonymousAccountStatus()
+                self.alert = AnyAppAlert(
+                    title: "Account Linked",
+                    subtitle: "Your Google account has been successfully linked. You can now sign in with Google."
+                )
+            } catch {
+                self.settingsUseCase.trackEvent(event: Event.linkGoogleFail(error: error))
+                self.alert = AnyAppAlert(error: error)
+            }
+        }
+    }
 }
 
 // MARK: - Helper
@@ -217,6 +263,12 @@ private extension SettingsViewModel {
         case adminPressed
         case newsFeedPressed
         case bookmarksPressed
+        case linkAppleStart
+        case linkAppleSuccess(user: UserAuthInfo)
+        case linkAppleFail(error: Error)
+        case linkGoogleStart
+        case linkGoogleSuccess(user: UserAuthInfo)
+        case linkGoogleFail(error: Error)
 
         var eventName: String {
             switch self {
@@ -236,13 +288,22 @@ private extension SettingsViewModel {
             case .adminPressed: "SettingsView_Admin_Pressed"
             case .newsFeedPressed: "SettingsView_NewsFeed_Pressed"
             case .bookmarksPressed: "SettingsView_Bookmarks_Pressed"
+            case .linkAppleStart: "SettingsView_LinkApple_Start"
+            case .linkAppleSuccess: "SettingsView_LinkApple_Success"
+            case .linkAppleFail: "SettingsView_LinkApple_Fail"
+            case .linkGoogleStart: "SettingsView_LinkGoogle_Start"
+            case .linkGoogleSuccess: "SettingsView_LinkGoogle_Success"
+            case .linkGoogleFail: "SettingsView_LinkGoogle_Fail"
             }
         }
         
         var parameters: [String: Any]? {
             switch self {
-            case .signOutFail(error: let error), .deleteAccountFail(error: let error):
+            case .signOutFail(error: let error), .deleteAccountFail(error: let error),
+                    .linkAppleFail(error: let error), .linkGoogleFail(error: let error):
                 return error.eventParameters
+            case .linkAppleSuccess(user: let user), .linkGoogleSuccess(user: let user):
+                return user.eventParameters
             default:
                 return nil
             }
@@ -250,7 +311,7 @@ private extension SettingsViewModel {
         
         var type: LogType {
             switch self {
-            case .signOutFail, .deleteAccountFail:
+            case .signOutFail, .deleteAccountFail, .linkAppleFail, .linkGoogleFail:
                 return .severe
             default:
                 return .analytic
