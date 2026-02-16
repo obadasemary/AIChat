@@ -168,7 +168,7 @@ private extension FirebaseAuthService {
             let authError = AuthErrorCode(rawValue: error.code)
             switch authError {
             case .accountExistsWithDifferentCredential:
-                if let email = error.userInfo["FIRAuthErrorUserInfoEmailKey"] as? String {
+                if let email = error.userInfo[AuthErrorUserInfoEmailKey] as? String {
                     throw AuthError.accountExistsWithDifferentProvider(email: email)
                 }
                 throw error
