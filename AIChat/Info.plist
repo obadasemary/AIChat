@@ -32,5 +32,7 @@
 	<false/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>NSCalendarsUsageDescription</key>
+	<string>This app uses third-party analytics services that may require calendar access for performance monitoring and crash reporting.</string>
 </dict>
 </plist>
