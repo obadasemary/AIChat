@@ -121,6 +121,8 @@ private extension SettingsView {
                     viewModel.onLinkAppleAccountPressed()
                 }
                 .buttonStyle(.bordered)
+                .accessibilityLabel("Link Apple account")
+                .accessibilityHint("Links your Apple ID to this account")
             }
         }
         .padding(.vertical, 14)
@@ -142,6 +144,8 @@ private extension SettingsView {
                     viewModel.onLinkGoogleAccountPressed()
                 }
                 .buttonStyle(.bordered)
+                .accessibilityLabel("Link Google account")
+                .accessibilityHint("Links your Google ID to this account")
             }
         }
         .padding(.vertical, 14)
@@ -320,7 +324,6 @@ private struct SettingRowButtonStyle: ButtonStyle {
             .animation(.smooth, value: configuration.isPressed)
     }
 }
-
 
 #Preview("No Auth") {
     let container = DevPreview.shared.container
