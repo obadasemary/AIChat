@@ -57,6 +57,7 @@ struct CreateAccountView: View {
         .padding(16)
         .padding(.top, 40)
         .screenAppearAnalytics(name: "CreateAccountView")
+        .showCustomAlert(alert: $viewModel.alert)
     }
 }
 
