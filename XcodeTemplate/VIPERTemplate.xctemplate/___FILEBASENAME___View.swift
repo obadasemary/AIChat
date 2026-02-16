@@ -4,7 +4,7 @@ import SwiftUI
 
 struct ___VARIABLE_productName:identifier___View: View {
 
-    @State var viewModel: ___VARIABLE_productName:identifier___ViewModel
+    @State var presenter: ___VARIABLE_productName:identifier___Presenter
 
     var body: some View {
         Text("___VARIABLE_productName:identifier___ View")

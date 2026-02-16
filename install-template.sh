@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # install-template.sh
-# Installs the MVVM Xcode template for AIChat project
+# Installs the VIPER Xcode template for AIChat project
 
 set -e
 
@@ -11,13 +11,13 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 echo -e "${BLUE}╔══════════════════════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║      AIChat MVVM Template Installer                     ║${NC}"
+echo -e "${BLUE}║      AIChat VIPER Template Installer                    ║${NC}"
 echo -e "${BLUE}╚══════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
 # Define paths
-TEMPLATE_SOURCE="XcodeTemplate/MVVMTemplate.xctemplate"
-TEMPLATE_DEST="$HOME/Library/Developer/Xcode/Templates/CustomTemplates/MVVMTemplate.xctemplate"
+TEMPLATE_SOURCE="XcodeTemplate/VIPERTemplate.xctemplate"
+TEMPLATE_DEST="$HOME/Library/Developer/Xcode/Templates/CustomTemplates/VIPERTemplate.xctemplate"
 
 # Check if source template exists
 if [ ! -d "$TEMPLATE_SOURCE" ]; then
@@ -26,7 +26,7 @@ if [ ! -d "$TEMPLATE_SOURCE" ]; then
     exit 1
 fi
 
-echo "📦 Installing MVVM Template..."
+echo "📦 Installing VIPER Template..."
 echo ""
 
 # Create destination directory if it doesn't exist
@@ -73,13 +73,11 @@ if [ -d "$TEMPLATE_DEST" ]; then
     echo "   1. Open Xcode"
     echo "   2. Right-click 'AIChat/Core/' folder"
     echo "   3. Select 'New File...'"
-    echo "   4. Choose 'Custom Templates' → 'MVVMTemplate'"
+    echo "   4. Choose 'Custom Templates' → 'VIPERTemplate'"
     echo ""
     echo "📚 Documentation:"
     echo "   • Quick Reference: QUICK_REFERENCE.md"
     echo "   • Setup Guide: TEMPLATE_SETUP.md"
-    echo "   • Architecture: ARCHITECTURE_DIAGRAM.md"
-    echo "   • Full Index: ARCHITECTURE_INDEX.md"
     echo ""
 
     exit 0

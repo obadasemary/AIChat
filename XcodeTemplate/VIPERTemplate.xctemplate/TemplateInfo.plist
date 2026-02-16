@@ -5,9 +5,9 @@
     <key>Kind</key>
     <string>Xcode.IDEKit.TextSubstitutionFileTemplateKind</string>
     <key>Summary</key>
-    <string>MVVM Feature with Clean Architecture</string>
+    <string>VIPER Feature with Clean Architecture</string>
     <key>Description</key>
-    <string>Creates View, ViewModel, UseCase, Builder, and Router files</string>
+    <string>Creates View, Presenter, Interactor, Builder, and Router files</string>
     <key>Platforms</key>
     <array>
         <string>com.apple.platform.iphoneos</string>

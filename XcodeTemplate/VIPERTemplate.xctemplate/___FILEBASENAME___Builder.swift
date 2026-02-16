@@ -14,8 +14,8 @@ final class ___VARIABLE_productName:identifier___Builder {
 
     func build___VARIABLE_productName:identifier___View(router: Router) -> some View {
         ___VARIABLE_productName:identifier___View(
-            viewModel: ___VARIABLE_productName:identifier___ViewModel(
-                ___VARIABLE_camelCasedProductName:identifier___UseCase: ___VARIABLE_productName:identifier___UseCase(container: container),
+            presenter: ___VARIABLE_productName:identifier___Presenter(
+                ___VARIABLE_camelCasedProductName:identifier___Interactor: ___VARIABLE_productName:identifier___Interactor(container: container),
                 router: ___VARIABLE_productName:identifier___Router(router: router)
             )
         )

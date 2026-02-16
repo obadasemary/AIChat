@@ -4,13 +4,13 @@ import Foundation
 import SwiftfulUtilities
 
 @MainActor
-protocol ___VARIABLE_productName:identifier___UseCaseProtocol {
+protocol ___VARIABLE_productName:identifier___InteractorProtocol {
     func trackEvent(event: any LoggableEvent)
-    // Add use case methods here
+    // Add interactor methods here
 }
 
 @MainActor
-final class ___VARIABLE_productName:identifier___UseCase {
+final class ___VARIABLE_productName:identifier___Interactor {
 
     private let logManager: LogManager?
 
@@ -20,11 +20,11 @@ final class ___VARIABLE_productName:identifier___UseCase {
     }
 }
 
-extension ___VARIABLE_productName:identifier___UseCase: ___VARIABLE_productName:identifier___UseCaseProtocol {
+extension ___VARIABLE_productName:identifier___Interactor: ___VARIABLE_productName:identifier___InteractorProtocol {
 
     func trackEvent(event: any LoggableEvent) {
         logManager?.trackEvent(event: event)
     }
 
-    // Implement use case methods here
+    // Implement interactor methods here
 }

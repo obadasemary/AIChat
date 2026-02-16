@@ -17,12 +17,12 @@ fi
 
 mkdir -p "$DIR"
 
-for file in View ViewModel UseCase Builder Router; do
+for file in View Presenter Interactor Builder Router; do
     sed -e "s/___VARIABLE_productName:identifier___/$FEATURE/g" \
         -e "s/___VARIABLE_camelCasedProductName:identifier___/$FEATURE_LOWER/g" \
         -e "s/___VARIABLE_coreName:identifier___/Core/g" \
         -e "s|___FILEHEADER___|//  ${FEATURE}${file}.swift|" \
-        "XcodeTemplate/MVVMTemplate.xctemplate/___FILEBASENAME___${file}.swift" \
+        "XcodeTemplate/VIPERTemplate.xctemplate/___FILEBASENAME___${file}.swift" \
         > "$DIR/${FEATURE}${file}.swift"
 done
 
