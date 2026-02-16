@@ -97,7 +97,8 @@ extension CreateAccountViewModel {
     }
     
     private func handleAuthError(_ error: Error) {
-        if error.localizedDescription.contains("already exists with a different sign-in method") {
+        if let authError = error as? FirebaseAuthError,
+           case .accountExistsWithDifferentProvider = authError {
             self.alert = AnyAppAlert(
                 title: "Account Already Exists",
                 subtitle: "An account with this email already exists. Please sign in with your original sign-in method first. After signing in, you can link additional sign-in methods from your profile settings."
