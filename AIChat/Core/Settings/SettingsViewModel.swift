@@ -199,15 +199,19 @@ extension SettingsViewModel {
             guard let self else { return }
             do {
                 let user = try await self.settingsUseCase.linkAppleAccount()
-                self.settingsUseCase.trackEvent(event: Event.linkAppleSuccess(user: user))
-                self.setAnonymousAccountStatus()
-                self.alert = AnyAppAlert(
-                    title: "Account Linked",
-                    subtitle: "Your Apple account has been successfully linked. You can now sign in with Apple."
-                )
+                await MainActor.run {
+                    self.settingsUseCase.trackEvent(event: Event.linkAppleSuccess(user: user))
+                    self.setAnonymousAccountStatus()
+                    self.alert = AnyAppAlert(
+                        title: "Account Linked",
+                        subtitle: "Your Apple account has been successfully linked. You can now sign in with Apple."
+                    )
+                }
             } catch {
-                self.settingsUseCase.trackEvent(event: Event.linkAppleFail(error: error))
-                self.alert = AnyAppAlert(error: error)
+                await MainActor.run {
+                    self.settingsUseCase.trackEvent(event: Event.linkAppleFail(error: error))
+                    self.alert = AnyAppAlert(error: error)
+                }
             }
         }
     }
@@ -219,15 +223,19 @@ extension SettingsViewModel {
             guard let self else { return }
             do {
                 let user = try await self.settingsUseCase.linkGoogleAccount()
-                self.settingsUseCase.trackEvent(event: Event.linkGoogleSuccess(user: user))
-                self.setAnonymousAccountStatus()
-                self.alert = AnyAppAlert(
-                    title: "Account Linked",
-                    subtitle: "Your Google account has been successfully linked. You can now sign in with Google."
-                )
+                await MainActor.run {
+                    self.settingsUseCase.trackEvent(event: Event.linkGoogleSuccess(user: user))
+                    self.setAnonymousAccountStatus()
+                    self.alert = AnyAppAlert(
+                        title: "Account Linked",
+                        subtitle: "Your Google account has been successfully linked. You can now sign in with Google."
+                    )
+                }
             } catch {
-                self.settingsUseCase.trackEvent(event: Event.linkGoogleFail(error: error))
-                self.alert = AnyAppAlert(error: error)
+                await MainActor.run {
+                    self.settingsUseCase.trackEvent(event: Event.linkGoogleFail(error: error))
+                    self.alert = AnyAppAlert(error: error)
+                }
             }
         }
     }
