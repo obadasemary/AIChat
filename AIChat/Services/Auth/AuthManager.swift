@@ -64,6 +64,26 @@ extension AuthManager: AuthManagerProtocol {
         return result
     }
     
+    func linkAppleAccount() async throws -> UserAuthInfo {
+        logManager?.trackEvent(event: Event.linkAppleStart)
+        
+        let user = try await service.linkAppleAccount()
+        self.auth = user
+        
+        logManager?.trackEvent(event: Event.linkAppleSuccess(user: user))
+        return user
+    }
+    
+    func linkGoogleAccount() async throws -> UserAuthInfo {
+        logManager?.trackEvent(event: Event.linkGoogleStart)
+        
+        let user = try await service.linkGoogleAccount()
+        self.auth = user
+        
+        logManager?.trackEvent(event: Event.linkGoogleSuccess(user: user))
+        return user
+    }
+    
     func signOut() throws {
         logManager?.trackEvent(event: Event.signOutStart)
         
@@ -121,6 +141,10 @@ extension AuthManager {
         case signOutSuccess
         case deleteAccountStart
         case deleteAccountSuccess
+        case linkAppleStart
+        case linkAppleSuccess(user: UserAuthInfo)
+        case linkGoogleStart
+        case linkGoogleSuccess(user: UserAuthInfo)
 
         var eventName: String {
             switch self {
@@ -130,6 +154,10 @@ extension AuthManager {
             case .signOutSuccess: "AuthMan_SignOut_Success"
             case .deleteAccountStart: "AuthMan_DeleteAccount_Start"
             case .deleteAccountSuccess: "AuthMan_DeleteAccount_Success"
+            case .linkAppleStart: "AuthMan_LinkApple_Start"
+            case .linkAppleSuccess: "AuthMan_LinkApple_Success"
+            case .linkGoogleStart: "AuthMan_LinkGoogle_Start"
+            case .linkGoogleSuccess: "AuthMan_LinkGoogle_Success"
             }
         }
         
@@ -137,6 +165,8 @@ extension AuthManager {
             switch self {
             case .authListenerSuccess(user: let user):
                 return user?.eventParameters
+            case .linkAppleSuccess(user: let user), .linkGoogleSuccess(user: let user):
+                return user.eventParameters
             default:
                 return nil
             }
