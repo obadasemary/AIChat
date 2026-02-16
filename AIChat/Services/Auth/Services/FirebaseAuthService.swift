@@ -217,8 +217,8 @@ private extension FirebaseAuthService {
                 "Firebase Client ID is missing."
             case .reauthAccountChanged:
                 "Reauthenticated user has switched accounts. Please check your account."
-            case .accountExistsWithDifferentProvider(email: let email):
-                "An account with email \(email) already exists with a different sign-in method. Please sign in with your original method and link this account in settings."
+            case .accountExistsWithDifferentProvider:
+                "An account with this email already exists with a different sign-in method. Please sign in with your original method and link this account in settings."
             }
         }
     }
