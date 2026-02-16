@@ -95,50 +95,58 @@ private extension SettingsView {
                 .padding(.horizontal, 16)
             
             VStack(spacing: 0) {
-                HStack(spacing: 12) {
-                    Image(systemName: "applelogo")
-                        .font(.title3)
-                    Text("Apple")
-                    Spacer()
-                    if viewModel.hasAppleLinked {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundStyle(.green)
-                    } else {
-                        Button("Link") {
-                            viewModel.onLinkAppleAccountPressed()
-                        }
-                        .buttonStyle(.bordered)
-                    }
-                }
-                .padding(.vertical, 14)
-                .padding(.horizontal, 16)
-                .background(Color(uiColor: .systemBackground))
+                appleAccountRow
                 
                 Divider()
                     .padding(.leading, 16)
                 
-                HStack(spacing: 12) {
-                    Image(systemName: "globe")
-                        .font(.title3)
-                    Text("Google")
-                    Spacer()
-                    if viewModel.hasGoogleLinked {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundStyle(.green)
-                    } else {
-                        Button("Link") {
-                            viewModel.onLinkGoogleAccountPressed()
-                        }
-                        .buttonStyle(.bordered)
-                    }
-                }
-                .padding(.vertical, 14)
-                .padding(.horizontal, 16)
-                .background(Color(uiColor: .systemBackground))
+                googleAccountRow
             }
             .background(Color(uiColor: .systemBackground))
             .cornerRadius(12)
         }
+    }
+
+    var appleAccountRow: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "applelogo")
+                .font(.title3)
+            Text("Apple")
+            Spacer()
+            if viewModel.hasAppleLinked {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundStyle(.green)
+            } else {
+                Button("Link") {
+                    viewModel.onLinkAppleAccountPressed()
+                }
+                .buttonStyle(.bordered)
+            }
+        }
+        .padding(.vertical, 14)
+        .padding(.horizontal, 16)
+        .background(Color(uiColor: .systemBackground))
+    }
+
+    var googleAccountRow: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "globe")
+                .font(.title3)
+            Text("Google")
+            Spacer()
+            if viewModel.hasGoogleLinked {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundStyle(.green)
+            } else {
+                Button("Link") {
+                    viewModel.onLinkGoogleAccountPressed()
+                }
+                .buttonStyle(.bordered)
+            }
+        }
+        .padding(.vertical, 14)
+        .padding(.horizontal, 16)
+        .background(Color(uiColor: .systemBackground))
     }
     
     var purchaseSection: some View {
@@ -163,7 +171,7 @@ private extension SettingsView {
             .padding(.vertical, 14)
             .padding(.horizontal, 16)
             .background(Color(uiColor: .systemBackground))
-            .cornerRadius(12)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
         }
     }
 
@@ -195,7 +203,7 @@ private extension SettingsView {
                 )
             }
             .background(Color(uiColor: .systemBackground))
-            .cornerRadius(12)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
         }
     }
 
