@@ -14,6 +14,8 @@ final class CreateAccountViewModel {
     private let createAccountUseCase: CreateAccountUseCaseProtocol
     private let router: CreateAccountRouterProtocol
     
+    var alert: AnyAppAlert?
+    
     init(
         createAccountUseCase: CreateAccountUseCaseProtocol,
         router: CreateAccountRouterProtocol
@@ -55,6 +57,7 @@ extension CreateAccountViewModel {
                 self.router.dismissScreen()
             } catch {
                 self.createAccountUseCase.trackEvent(event: Event.appleAuthFail(error: error))
+                self.handleAuthError(error)
             }
         }
     }
@@ -88,7 +91,19 @@ extension CreateAccountViewModel {
                 self.router.dismissScreen()
             } catch {
                 self.createAccountUseCase.trackEvent(event: Event.googleAuthFail(error: error))
+                self.handleAuthError(error)
             }
+        }
+    }
+    
+    private func handleAuthError(_ error: Error) {
+        if error.localizedDescription.contains("already exists with a different sign-in method") {
+            self.alert = AnyAppAlert(
+                title: "Account Already Exists",
+                subtitle: "An account with this email already exists. Please sign in with your original sign-in method first. After signing in, you can link additional sign-in methods from your profile settings."
+            )
+        } else {
+            self.alert = AnyAppAlert(error: error)
         }
     }
 }
