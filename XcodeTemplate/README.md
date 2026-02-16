@@ -1,19 +1,34 @@
-# Xcode VIPER Template Installation
+# Xcode Templates Installation
 
-This directory contains the Xcode template for creating VIPER features in AIChat.
+This directory contains Xcode templates for creating features in AIChat.
+
+## Available Templates
+
+### VIPERTemplate (Recommended)
+Generates: **View, Presenter, Interactor, Builder, Router**
+- Used by the current VIPER architecture branch
+- Presenter handles presentation logic & UI state
+- Interactor handles business logic
+
+### MVVMTemplate
+Generates: **View, ViewModel, UseCase, Builder, Router**
+- Original MVVM architecture template
+- ViewModel handles presentation logic & UI state
+- UseCase handles business logic
 
 ## Template Location
 
-The template files are installed in:
+After installation, templates are available in:
 ```
 ~/Library/Developer/Xcode/Templates/CustomTemplates/VIPERTemplate.xctemplate/
+~/Library/Developer/Xcode/Templates/CustomTemplates/MVVMTemplate.xctemplate/
 ```
 
 ## Installation
 
 ### Automatic Installation (Recommended)
 
-Run the installation script:
+Run the installation script to install both templates:
 ```bash
 ./install-template.sh
 ```
@@ -25,9 +40,10 @@ Run the installation script:
    mkdir -p ~/Library/Developer/Xcode/Templates/CustomTemplates
    ```
 
-2. Copy the template folder:
+2. Copy the template folders:
    ```bash
    cp -r XcodeTemplate/VIPERTemplate.xctemplate ~/Library/Developer/Xcode/Templates/CustomTemplates/
+   cp -r XcodeTemplate/MVVMTemplate.xctemplate ~/Library/Developer/Xcode/Templates/CustomTemplates/
    ```
 
 3. Restart Xcode if it's running:
@@ -38,49 +54,27 @@ Run the installation script:
 
 ## Verification
 
-After installation, verify the template is available:
+After installation, verify the templates are available:
 
 1. Open Xcode
 2. Right-click any folder in Project Navigator
 3. Select **New File...**
 4. Scroll to **Custom Templates** section
-5. You should see **VIPERTemplate**
+5. You should see both **VIPERTemplate** and **MVVMTemplate**
 
 ## Usage
 
 1. Right-click on `AIChat/Core/` folder in Xcode
 2. Select **New File...**
-3. Choose **Custom Templates** -> **VIPERTemplate**
+3. Choose **Custom Templates** -> **VIPERTemplate** or **MVVMTemplate**
 4. Enter:
    - Feature Name (PascalCase): Your feature name (e.g., `Notifications`)
    - Feature Name (camelCase): Your feature name (e.g., `notifications`)
 5. Click **Create**
 
-## Documentation
+## Template Structures
 
-- [TEMPLATE_SETUP.md](../TEMPLATE_SETUP.md) - Complete setup guide
-- [QUICK_REFERENCE.md](../QUICK_REFERENCE.md) - Daily quick reference
-
-## Updating the Template
-
-If you update the template files:
-
-1. Update files in:
-   ```
-   XcodeTemplate/VIPERTemplate.xctemplate/
-   ```
-
-2. Reinstall the template:
-   ```bash
-   ./install-template.sh
-   ```
-
-3. Restart Xcode
-
-## Template Structure
-
-The template generates 5 files for each feature:
-
+### VIPER Template (5 files)
 ```
 YourFeature/
 ├── YourFeatureView.swift          # SwiftUI UI
@@ -89,6 +83,21 @@ YourFeature/
 ├── YourFeatureBuilder.swift       # Dependency injection
 └── YourFeatureRouter.swift        # Navigation
 ```
+
+### MVVM Template (5 files)
+```
+YourFeature/
+├── YourFeatureView.swift          # SwiftUI UI
+├── YourFeatureViewModel.swift     # Presentation logic & state
+├── YourFeatureUseCase.swift       # Business logic
+├── YourFeatureBuilder.swift       # Dependency injection
+└── YourFeatureRouter.swift        # Navigation
+```
+
+## Documentation
+
+- [TEMPLATE_SETUP.md](../TEMPLATE_SETUP.md) - Complete setup guide
+- [QUICK_REFERENCE.md](../QUICK_REFERENCE.md) - Daily quick reference
 
 ## Tips
 
@@ -102,7 +111,7 @@ YourFeature/
 
 1. Verify installation:
    ```bash
-   ls -la ~/Library/Developer/Xcode/Templates/CustomTemplates/VIPERTemplate.xctemplate/
+   ls -la ~/Library/Developer/Xcode/Templates/CustomTemplates/
    ```
 
 2. Restart Xcode:
@@ -115,7 +124,7 @@ YourFeature/
 
 1. Check template files are properly formatted
 2. Verify placeholders: `___VARIABLE_productName:identifier___`
-3. Reinstall the template: `./install-template.sh`
+3. Reinstall the templates: `./install-template.sh`
 
 ## Need Help?
 
