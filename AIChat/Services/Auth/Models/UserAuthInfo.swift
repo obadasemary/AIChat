@@ -48,7 +48,7 @@ struct UserAuthInfo: Sendable, Codable {
             isAnonymous: isAnonymous,
             creationDate: .now,
             lastSignInDate: .now,
-            providerIDs: isAnonymous ? ["anonymous"] : ["google.com"]
+            providerIDs: isAnonymous ? [AuthProviderIdentifier.anonymous] : [AuthProviderIdentifier.google]
         )
     }
     
@@ -65,10 +65,10 @@ struct UserAuthInfo: Sendable, Codable {
     }
     
     var hasAppleLinked: Bool {
-        providerIDs.contains("apple.com")
+        providerIDs.contains(AuthProviderIdentifier.apple)
     }
     
     var hasGoogleLinked: Bool {
-        providerIDs.contains("google.com")
+        providerIDs.contains(AuthProviderIdentifier.google)
     }
 }
