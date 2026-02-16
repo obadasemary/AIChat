@@ -108,44 +108,42 @@ private extension SettingsView {
     }
 
     var appleAccountRow: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "applelogo")
-                .font(.title3)
-            Text("Apple")
-            Spacer()
-            if viewModel.hasAppleLinked {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundStyle(.green)
-            } else {
-                Button("Link") {
-                    viewModel.onLinkAppleAccountPressed()
-                }
-                .buttonStyle(.bordered)
-                .accessibilityLabel("Link Apple account")
-                .accessibilityHint("Links your Apple ID to this account")
-            }
-        }
-        .padding(.vertical, 14)
-        .padding(.horizontal, 16)
-        .background(Color(uiColor: .systemBackground))
+        linkedAccountRow(
+            imageName: "applelogo",
+            providerName: "Apple",
+            isLinked: viewModel.hasAppleLinked,
+            linkAction: viewModel.onLinkAppleAccountPressed
+        )
     }
 
     var googleAccountRow: some View {
+        linkedAccountRow(
+            imageName: "globe",
+            providerName: "Google",
+            isLinked: viewModel.hasGoogleLinked,
+            linkAction: viewModel.onLinkGoogleAccountPressed
+        )
+    }
+
+    private func linkedAccountRow(
+        imageName: String,
+        providerName: String,
+        isLinked: Bool,
+        linkAction: @escaping () -> Void
+    ) -> some View {
         HStack(spacing: 12) {
-            Image(systemName: "globe")
+            Image(systemName: imageName)
                 .font(.title3)
-            Text("Google")
+            Text(providerName)
             Spacer()
-            if viewModel.hasGoogleLinked {
+            if isLinked {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundStyle(.green)
             } else {
-                Button("Link") {
-                    viewModel.onLinkGoogleAccountPressed()
-                }
-                .buttonStyle(.bordered)
-                .accessibilityLabel("Link Google account")
-                .accessibilityHint("Links your Google ID to this account")
+                Button("Link", action: linkAction)
+                    .buttonStyle(.bordered)
+                    .accessibilityLabel("Link \(providerName) account")
+                    .accessibilityHint("Links your \(providerName) ID to this account")
             }
         }
         .padding(.vertical, 14)
