@@ -57,9 +57,64 @@ extension MockAuthService: AuthServiceProtocol {
         return (user, false)
     }
     
+    func linkAppleAccount() async throws -> UserAuthInfo {
+        guard let existingUser = currentUser else {
+            throw MockAuthError.userNotFound
+        }
+        
+        var updatedProviders = existingUser.providerIDs
+        if !updatedProviders.contains("apple.com") {
+            updatedProviders.append("apple.com")
+        }
+        
+        let user = UserAuthInfo(
+            uid: existingUser.uid,
+            email: existingUser.email,
+            isAnonymous: existingUser.isAnonymous,
+            creationDate: existingUser.creationDate,
+            lastSignInDate: existingUser.lastSignInDate,
+            providerIDs: updatedProviders
+        )
+        currentUser = user
+        return user
+    }
+    
+    func linkGoogleAccount() async throws -> UserAuthInfo {
+        guard let existingUser = currentUser else {
+            throw MockAuthError.userNotFound
+        }
+        
+        var updatedProviders = existingUser.providerIDs
+        if !updatedProviders.contains("google.com") {
+            updatedProviders.append("google.com")
+        }
+        
+        let user = UserAuthInfo(
+            uid: existingUser.uid,
+            email: existingUser.email,
+            isAnonymous: existingUser.isAnonymous,
+            creationDate: existingUser.creationDate,
+            lastSignInDate: existingUser.lastSignInDate,
+            providerIDs: updatedProviders
+        )
+        currentUser = user
+        return user
+    }
+    
     func signOut() throws {
         currentUser = nil
     }
     
     func deleteAccount() async throws {}
+    
+    enum MockAuthError: LocalizedError {
+        case userNotFound
+        
+        var errorDescription: String? {
+            switch self {
+            case .userNotFound:
+                "No user is currently signed in."
+            }
+        }
+    }
 }

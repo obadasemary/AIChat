@@ -74,6 +74,45 @@ extension FirebaseAuthService: AuthServiceProtocol {
         return try await signIn(with: credential)
     }
     
+    func linkAppleAccount() async throws -> UserAuthInfo {
+        guard let user = Auth.auth().currentUser else {
+            throw AuthError.userNotFound
+        }
+        
+        let helper = SignInWithAppleHelper()
+        let response = try await helper.signIn()
+        
+        let credential = OAuthProvider.credential(
+            providerID: AuthProviderID.apple,
+            idToken: response.token,
+            rawNonce: response.nonce
+        )
+        
+        let result = try await user.link(with: credential)
+        return UserAuthInfo(user: result.user)
+    }
+    
+    func linkGoogleAccount() async throws -> UserAuthInfo {
+        guard let user = Auth.auth().currentUser else {
+            throw AuthError.userNotFound
+        }
+        
+        guard let clientID = FirebaseApp.app()?.options.clientID else {
+            throw AuthError.missingClientID
+        }
+        
+        let googleHelper = SignInWithGoogleHelper(GIDClientID: clientID)
+        let tokens = try await googleHelper.signIn()
+        
+        let credential = GoogleAuthProvider.credential(
+            withIDToken: tokens.idToken,
+            accessToken: tokens.accessToken
+        )
+        
+        let result = try await user.link(with: credential)
+        return UserAuthInfo(user: result.user)
+    }
+    
     func signOut() throws {
         try Auth.auth().signOut()
     }
@@ -122,8 +161,21 @@ private extension FirebaseAuthService {
             }
         }
         
-        let result = try await Auth.auth().signIn(with: credential)
-        return result.asAuthInfo
+        do {
+            let result = try await Auth.auth().signIn(with: credential)
+            return result.asAuthInfo
+        } catch let error as NSError {
+            let authError = AuthErrorCode(rawValue: error.code)
+            switch authError {
+            case .accountExistsWithDifferentCredential:
+                if let email = error.userInfo["FIRAuthErrorUserInfoEmailKey"] as? String {
+                    throw AuthError.accountExistsWithDifferentProvider(email: email)
+                }
+                throw error
+            default:
+                throw error
+            }
+        }
     }
     
     func reauthenticateUser(error: Error) async throws {
@@ -155,6 +207,7 @@ private extension FirebaseAuthService {
         case userNotFound
         case missingClientID
         case reauthAccountChanged
+        case accountExistsWithDifferentProvider(email: String)
         
         var errorDescription: String? {
             switch self {
@@ -164,6 +217,8 @@ private extension FirebaseAuthService {
                 "Firebase Client ID is missing."
             case .reauthAccountChanged:
                 "Reauthenticated user has switched accounts. Please check your account."
+            case .accountExistsWithDifferentProvider(email: let email):
+                "An account with email \(email) already exists with a different sign-in method. Please sign in with your original method and link this account in settings."
             }
         }
     }
