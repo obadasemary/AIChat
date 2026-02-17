@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import AuthenticationServices
 
 struct CreateAccountView: View {
 
@@ -30,8 +29,10 @@ struct CreateAccountView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             VStack(spacing: 12) {
-                // Official Sign in with Apple button
-                appleSignInButton()
+                // Apple Sign In button with Apple-style design
+                appleSignInButton {
+                    viewModel.onSignInWithAppleTapped(delegate: delegate)
+                }
 
                 // Google Sign In button with Apple-style design
                 googleSignInButton {
@@ -49,20 +50,19 @@ struct CreateAccountView: View {
         .showCustomAlert(alert: $viewModel.alert)
     }
     
-    private func appleSignInButton() -> some View {
-        SignInWithAppleButton(.signIn) { request in
-            // Configure request if needed
-            request.requestedScopes = [.fullName, .email]
-        } onCompletion: { result in
-            // Handle completion through view model
-            Task {
-                await viewModel.handleAppleSignInResult(result, delegate: delegate)
-            }
+    private func appleSignInButton(action: @escaping () -> Void) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: "apple.logo")
+                .font(.system(size: 17, weight: .semibold))
+            Text("Sign in with Apple")
+                .font(.system(size: 17, weight: .semibold))
         }
-        .signInWithAppleButtonStyle(colorScheme == .dark ? .white: .black)
-        .frame(height: 50)
+        .foregroundStyle(colorScheme == .dark ? .black : .white)
         .frame(maxWidth: .infinity)
+        .frame(height: 50)
+        .background(colorScheme == .dark ? .white : .black)
         .clipShape(RoundedRectangle(cornerRadius: 25, style: .continuous))
+        .anyButton(.press, action: action)
     }
 
     private func googleSignInButton(action: @escaping () -> Void) -> some View {
@@ -70,7 +70,7 @@ struct CreateAccountView: View {
             Image("GoogleLogo")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 12, height: 20)
+                .frame(width: 20, height: 20)
             Text("Sign in with Google")
                 .font(.system(size: 17, weight: .semibold))
         }
