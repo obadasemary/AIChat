@@ -7,6 +7,7 @@
 
 import Foundation
 import AuthenticationServices
+import GoogleSignIn
 
 @Observable
 @MainActor
@@ -29,81 +30,43 @@ final class CreateAccountViewModel {
 // MARK: - Action
 extension CreateAccountViewModel {
     
-    func handleAppleSignInResult(
-        _ result: Result<ASAuthorization, Error>,
+    func onSignInWithAppleTapped(
         delegate: CreateAccountDelegate
-    ) async {
+    ) {
         createAccountUseCase.trackEvent(event: Event.appleAuthStart)
         
-        switch result {
-        case .success:
-            // The SignInWithAppleButton handles the authorization request,
-            // but we still need to process it through our existing auth flow
+        Task { [weak self] in
+            guard let self else { return }
             do {
-                let authResult = try await self.createAccountUseCase.signInWithApple()
+                let result = try await self.createAccountUseCase.signInWithApple()
                 self.createAccountUseCase.trackEvent(
                     event: Event.appleAuthSuccess(
-                        user: authResult.user,
-                        isNewUser: authResult.isNewUser
+                        user: result.user,
+                        isNewUser: result.isNewUser
                     )
                 )
                 try await self.createAccountUseCase
-                    .logIn(auth: authResult.user, isNewUser: authResult.isNewUser)
+                    .logIn(auth: result.user, isNewUser: result.isNewUser)
                 self.createAccountUseCase
                     .trackEvent(
                         event: Event.appleAuthLoginSuccess(
-                            user: authResult.user,
-                            isNewUser: authResult.isNewUser
+                            user: result.user,
+                            isNewUser: result.isNewUser
                         )
                     )
                 
-                delegate.onDidSignIn?(authResult.isNewUser)
+                delegate.onDidSignIn?(result.isNewUser)
                 self.router.dismissScreen()
             } catch {
+                if let authError = error as? ASAuthorizationError,
+                   authError.code == .canceled {
+                    return
+                }
                 self.createAccountUseCase.trackEvent(event: Event.appleAuthFail(error: error))
                 self.handleAuthError(error)
             }
-            
-        case .failure(let error):
-            self.createAccountUseCase.trackEvent(event: Event.appleAuthFail(error: error))
-            self.handleAuthError(error)
         }
     }
-    
-    // TODO: FIXME let's remove this later
-//    func onSignInWithAppleTapped(
-//        delegate: CreateAccountDelegate
-//    ) {
-//        createAccountUseCase.trackEvent(event: Event.appleAuthStart)
-//        
-//        Task { [weak self] in
-//            guard let self else { return }
-//            do {
-//                let result = try await self.createAccountUseCase.signInWithApple()
-//                self.createAccountUseCase.trackEvent(
-//                    event: Event.appleAuthSuccess(
-//                        user: result.user,
-//                        isNewUser: result.isNewUser
-//                    )
-//                )
-//                try await self.createAccountUseCase
-//                    .logIn(auth: result.user, isNewUser: result.isNewUser)
-//                self.createAccountUseCase
-//                    .trackEvent(
-//                        event: Event.appleAuthLoginSuccess(
-//                            user: result.user,
-//                            isNewUser: result.isNewUser
-//                        )
-//                    )
-//                
-//                delegate.onDidSignIn?(result.isNewUser)
-//                self.router.dismissScreen()
-//            } catch {
-//                self.createAccountUseCase.trackEvent(event: Event.appleAuthFail(error: error))
-//                self.handleAuthError(error)
-//            }
-//        }
-//    }
     
     func onSignInWithGoogleTapped(
         delegate: CreateAccountDelegate
@@ -133,6 +96,11 @@ extension CreateAccountViewModel {
                 delegate.onDidSignIn?(result.isNewUser)
                 self.router.dismissScreen()
             } catch {
+                // Don't show error if user cancelled the sign-in flow
+                if let signInError = error as? GIDSignInError,
+                   signInError.code == .canceled {
+                    return
+                }
                 self.createAccountUseCase.trackEvent(event: Event.googleAuthFail(error: error))
                 self.handleAuthError(error)
             }
