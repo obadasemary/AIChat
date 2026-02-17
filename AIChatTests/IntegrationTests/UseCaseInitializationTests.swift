@@ -92,15 +92,15 @@ struct UseCaseInitializationTests {
     }
 
     @Test func test_OnboardingColorUseCase() {
-        let useCase = OnboardingColorUseCase(container: container)
+        _ = OnboardingColorUseCase(container: container)
     }
 
     @Test func test_OnboardingCommunityUseCase() {
-        let useCase = OnboardingCommunityUseCase(container: container)
+        _ = OnboardingCommunityUseCase(container: container)
     }
 
     @Test func test_OnboardingCompletedUseCase() {
-        let useCase = OnboardingCompletedUseCase(container: container)
+        _ = OnboardingCompletedUseCase(container: container)
     }
 
     @Test func test_OnboardingIntroUseCase() {
