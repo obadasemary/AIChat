@@ -78,7 +78,7 @@ struct CreateAccountView: View {
         provider: String,
         action: @escaping () -> Void
     ) -> some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 10) {
             icon
             Text(title)
                 .font(.system(size: 17, weight: .semibold))
