@@ -51,27 +51,36 @@ struct CreateAccountView: View {
     }
     
     private func appleSignInButton(action: @escaping () -> Void) -> some View {
-        HStack(spacing: 8) {
-            Image(systemName: "apple.logo")
-                .font(.system(size: 17, weight: .semibold))
-            Text("Sign in with Apple")
-                .font(.system(size: 17, weight: .semibold))
-        }
-        .foregroundStyle(colorScheme == .dark ? .black : .white)
-        .frame(maxWidth: .infinity)
-        .frame(height: 50)
-        .background(colorScheme == .dark ? .white : .black)
-        .clipShape(RoundedRectangle(cornerRadius: 25, style: .continuous))
-        .anyButton(.press, action: action)
+        signInButton(
+            icon: Image(systemName: "apple.logo"),
+            title: "Sign in with Apple",
+            provider: "Apple",
+            action: action
+        )
     }
 
     private func googleSignInButton(action: @escaping () -> Void) -> some View {
-        HStack(spacing: 8) {
-            Image("GoogleLogo")
+        signInButton(
+            icon: Image("GoogleLogo")
+                .renderingMode(.original)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 20, height: 20)
-            Text("Sign in with Google")
+                .frame(width: 20, height: 20),
+            title: "Sign in with Google",
+            provider: "Google",
+            action: action
+        )
+    }
+    
+    private func signInButton(
+        icon: some View,
+        title: String,
+        provider: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        HStack(spacing: 8) {
+            icon
+            Text(title)
                 .font(.system(size: 17, weight: .semibold))
         }
         .foregroundStyle(colorScheme == .dark ? .black : .white)
@@ -80,6 +89,8 @@ struct CreateAccountView: View {
         .background(colorScheme == .dark ? .white : .black)
         .clipShape(RoundedRectangle(cornerRadius: 25, style: .continuous))
         .anyButton(.press, action: action)
+        .accessibilityLabel("Sign in with \(provider)")
+        .accessibilityHint("Double tap to authenticate with your \(provider) ID")
     }
 }
 
