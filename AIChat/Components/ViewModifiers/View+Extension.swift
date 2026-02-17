@@ -15,7 +15,7 @@ extension View {
             .frame(maxWidth: .infinity)
             .frame(height: 50)
             .background(.accent)
-            .cornerRadius(16)
+            .cornerRadius(25)
     }
     
     func badgeButton() -> some View {
