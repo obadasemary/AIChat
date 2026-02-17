@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import AuthenticationServices
 
 struct CreateAccountView: View {
 
     @State var viewModel: CreateAccountViewModel
     var delegate: CreateAccountDelegate = CreateAccountDelegate()
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         VStack(spacing: 24) {
@@ -27,24 +29,12 @@ struct CreateAccountView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            VStack(spacing: 16) {
-                signInButton(
-                    icon: Image(systemName: "apple.logo")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 20, height: 20),
-                    title: "Sign in with Apple"
-                ) {
-                    viewModel.onSignInWithAppleTapped(delegate: delegate)
-                }
+            VStack(spacing: 12) {
+                // Official Sign in with Apple button
+                appleSignInButton()
 
-                signInButton(
-                    icon: Image("GoogleLogo")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 20, height: 20),
-                    title: "Sign in with Google"
-                ) {
+                // Google Sign In button with Apple-style design
+                googleSignInButton {
                     viewModel.onSignInWithGoogleTapped(delegate: delegate)
                 }
             }
@@ -58,32 +48,42 @@ struct CreateAccountView: View {
         .screenAppearAnalytics(name: "CreateAccountView")
         .showCustomAlert(alert: $viewModel.alert)
     }
-
-    private func signInButton(
-        icon: some View,
-        title: String,
-        action: @escaping () -> Void
-    ) -> some View {
-        HStack(spacing: 12) {
-            icon
-            Text(title)
-                .font(.body)
-                .fontWeight(.medium)
+    
+    private func appleSignInButton() -> some View {
+        SignInWithAppleButton(.signIn) { request in
+            // Configure request if needed
+            request.requestedScopes = [.fullName, .email]
+        } onCompletion: { result in
+            // Handle completion through view model
+            Task {
+                await viewModel.handleAppleSignInResult(result, delegate: delegate)
+            }
         }
-        .foregroundStyle(.primary)
+        .signInWithAppleButtonStyle(colorScheme == .dark ? .white: .black)
+        .frame(height: 50)
         .frame(maxWidth: .infinity)
-        .frame(height: 55)
-        .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color(.separator), lineWidth: 1)
-        )
+        .clipShape(RoundedRectangle(cornerRadius: 25, style: .continuous))
+    }
+
+    private func googleSignInButton(action: @escaping () -> Void) -> some View {
+        HStack(spacing: 8) {
+            Image("GoogleLogo")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 12, height: 20)
+            Text("Sign in with Google")
+                .font(.system(size: 17, weight: .semibold))
+        }
+        .foregroundStyle(colorScheme == .dark ? .black : .white)
+        .frame(maxWidth: .infinity)
+        .frame(height: 50)
+        .background(colorScheme == .dark ? .white : .black)
+        .clipShape(RoundedRectangle(cornerRadius: 25, style: .continuous))
         .anyButton(.press, action: action)
     }
 }
 
-#Preview {
+#Preview("Light Mode") {
     let builder = CreateAccountBuilder(container: DevPreview.shared.container)
     let delegate = CreateAccountDelegate()
 
@@ -92,4 +92,17 @@ struct CreateAccountView: View {
             .buildCreateAccountView(router: router, delegate: delegate)
     }
     .previewEnvironment()
+    .preferredColorScheme(.light)
 }
+#Preview("Dark Mode") {
+    let builder = CreateAccountBuilder(container: DevPreview.shared.container)
+    let delegate = CreateAccountDelegate()
+
+    return RouterView { router in
+        builder
+            .buildCreateAccountView(router: router, delegate: delegate)
+    }
+    .previewEnvironment()
+    .preferredColorScheme(.dark)
+}
+
