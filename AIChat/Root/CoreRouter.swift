@@ -195,6 +195,12 @@ struct CoreRouter {
     
     // MARK: Profile View
     
+    func showProfileView() {
+        router.showScreen(.push) { router in
+            builder.profileView(router: router)
+        }
+    }
+    
     func showCreateAvatarView(onDisappear: @escaping () -> Void) {
         router.showScreen(.fullScreenCover) { router in
             builder.createAvatarView(router: router)

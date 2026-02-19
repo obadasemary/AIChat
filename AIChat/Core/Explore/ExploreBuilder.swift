@@ -32,7 +32,10 @@ final class ExploreBuilder {
                     devSettingsBuilder: DevSettingsBuilder(container: container),
                     createAccountBuilder: CreateAccountBuilder(
                         container: container
-                    )
+                    ),
+                    settingsBuilder: SettingsBuilder(container: container),
+                    profileBuilder: ProfileBuilder(container: container),
+                    createAvatarBuilder: CreateAvatarBuilder(container: container)
                 )
             )
         )

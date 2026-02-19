@@ -17,6 +17,12 @@ protocol ExploreRouterProtocol {
         delegate: CreateAccountDelegate,
         onDisappear: (() -> Void)?
     )
+    func showSettingsView(
+        onSignedIn: @escaping () -> Void,
+        onDisappear: @escaping () -> Void
+    )
+    func showProfileView()
+    func showCreateAvatarView(onDisappear: @escaping () -> Void)
     func dismissScreen()
     
     func showPushNotificationModal(
@@ -35,6 +41,9 @@ struct ExploreRouter {
     let chatBuilder: ChatBuilder
     let devSettingsBuilder: DevSettingsBuilder
     let createAccountBuilder: CreateAccountBuilder
+    let settingsBuilder: SettingsBuilder
+    let profileBuilder: ProfileBuilder
+    let createAvatarBuilder: CreateAvatarBuilder
 }
     
 extension ExploreRouter: ExploreRouterProtocol {
@@ -75,6 +84,33 @@ extension ExploreRouter: ExploreRouterProtocol {
                 .onDisappear {
                     onDisappear?()
                 }
+        }
+    }
+    
+    func showSettingsView(
+        onSignedIn: @escaping () -> Void,
+        onDisappear: @escaping () -> Void
+    ) {
+        router.showScreen(.sheet) { router in
+            settingsBuilder
+                .buildSettingsView(
+                    router: router,
+                    onSignedIn: onSignedIn
+                )
+                .onDisappear(perform: onDisappear)
+        }
+    }
+    
+    func showProfileView() {
+        router.showScreen(.push) { router in
+            profileBuilder.buildProfileView(router: router)
+        }
+    }
+    
+    func showCreateAvatarView(onDisappear: @escaping () -> Void) {
+        router.showScreen(.fullScreenCover) { router in
+            createAvatarBuilder.buildCreateAvatarView(router: router)
+                .onDisappear(perform: onDisappear)
         }
     }
     
