@@ -22,6 +22,7 @@ protocol ExploreUseCaseProtocol {
     func reuestAuthorization() async throws -> Bool
     
     func updateAppState(showTabBarView: Bool)
+    func switchToTab(_ tab: AppTab)
     func signOut() throws
     
     func trackEvent(event: LoggableEvent)
@@ -107,6 +108,10 @@ extension ExploreUseCase: ExploreUseCaseProtocol {
     
     func updateAppState(showTabBarView: Bool) {
         appState.updateViewState(showTabBarView: showTabBarView)
+    }
+    
+    func switchToTab(_ tab: AppTab) {
+        appState.switchToTab(tab)
     }
     
     func signOut() throws {
