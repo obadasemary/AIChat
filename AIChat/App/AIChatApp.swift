@@ -44,6 +44,7 @@ struct AIChatApp: App {
                 .environment(delegate.bookmarksBuilder)
                 .environment(delegate.createAvatarBuilder)
                 .environment(delegate.dependencies.logManager)
+                .environment(delegate.dependencies.appState)
         }
     }
 }
