@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-enum AppTab: Int {
-    case explore = 0
-    case chats = 1
-    case profile = 2
+enum AppTab: Hashable {
+    case explore
+    case chats
+    case profile
 }
 
 @Observable
