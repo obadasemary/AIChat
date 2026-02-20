@@ -43,6 +43,15 @@ final class ExploreViewModel {
     }
 }
 
+// MARK: - DeepLinkScreen
+
+private enum DeepLinkScreen: String {
+    case settings
+    case chats
+    case profile
+    case createAvatar
+}
+
 // MARK: - Load
 
 extension ExploreViewModel {
@@ -143,33 +152,27 @@ extension ExploreViewModel {
                 return
             }
             
-            if queryItem.name == "screen", let value = queryItem.value {
-                if value == "settings" {
+            if queryItem.name == "screen",
+               let value = queryItem.value,
+               let screen = DeepLinkScreen(rawValue: value) {
+                switch screen {
+                case .settings:
                     router.showSettingsView(
                         onSignedIn: {},
                         onDisappear: {}
                     )
                     exploreUseCase.trackEvent(event: Event.deepLinkSettings)
-                    return
-                }
-                
-                if value == "chats" {
+                case .chats:
                     exploreUseCase.switchToTab(.chats)
                     exploreUseCase.trackEvent(event: Event.deepLinkChats)
-                    return
-                }
-                
-                if value == "profile" {
+                case .profile:
                     exploreUseCase.switchToTab(.profile)
                     exploreUseCase.trackEvent(event: Event.deepLinkProfile)
-                    return
-                }
-                
-                if value == "createAvatar" {
+                case .createAvatar:
                     router.showCreateAvatarView(onDisappear: {})
-                    exploreUseCase.trackEvent(event: Event.deepLinkProfile)
-                    return
+                    exploreUseCase.trackEvent(event: Event.deepLinkCreateAvatar)
                 }
+                return
             }
         }
         
@@ -309,6 +312,7 @@ private extension ExploreViewModel {
         case deepLinkSettings
         case deepLinkChats
         case deepLinkProfile
+        case deepLinkCreateAvatar
         case deepLinkUnknown
 
         var eventName: String {
@@ -333,6 +337,7 @@ private extension ExploreViewModel {
             case .deepLinkSettings: "ExploreView_DeepLink_Settings"
             case .deepLinkChats: "ExploreView_DeepLink_Chats"
             case .deepLinkProfile: "ExploreView_DeepLink_Profile"
+            case .deepLinkCreateAvatar: "ExploreView_DeepLink_CreateAvatar"
             case .deepLinkUnknown: "ExploreView_DeepLink_Unknown"
             }
         }
