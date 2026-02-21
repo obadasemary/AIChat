@@ -43,6 +43,15 @@ final class ExploreViewModel {
     }
 }
 
+// MARK: - DeepLinkScreen
+
+private enum DeepLinkScreen: String {
+    case settings
+    case chats
+    case profile
+    case createAvatar
+}
+
 // MARK: - Load
 
 extension ExploreViewModel {
@@ -132,8 +141,39 @@ extension ExploreViewModel {
                 router.showCategoryListView(delegate: delegate)
                 
                 exploreUseCase.trackEvent(event: Event.deepLinkCategory(category: category))
+                return
             }
-            return
+            
+            if queryItem.name == "avatarId", let avatarId = queryItem.value {
+                let chatDelegate = ChatDelegate(avatarId: avatarId, chat: nil)
+                router.showChatView(delegate: chatDelegate)
+                
+                exploreUseCase.trackEvent(event: Event.deepLinkChat(avatarId: avatarId))
+                return
+            }
+            
+            if queryItem.name == "screen",
+               let value = queryItem.value,
+               let screen = DeepLinkScreen(rawValue: value) {
+                switch screen {
+                case .settings:
+                    router.showSettingsView(
+                        onSignedIn: {},
+                        onDisappear: {}
+                    )
+                    exploreUseCase.trackEvent(event: Event.deepLinkSettings)
+                case .chats:
+                    exploreUseCase.switchToTab(.chats)
+                    exploreUseCase.trackEvent(event: Event.deepLinkChats)
+                case .profile:
+                    exploreUseCase.switchToTab(.profile)
+                    exploreUseCase.trackEvent(event: Event.deepLinkProfile)
+                case .createAvatar:
+                    router.showCreateAvatarView(onDisappear: {})
+                    exploreUseCase.trackEvent(event: Event.deepLinkCreateAvatar)
+                }
+                return
+            }
         }
         
         exploreUseCase.trackEvent(event: Event.deepLinkUnknown)
@@ -268,6 +308,11 @@ private extension ExploreViewModel {
         case deepLinkStart
         case deepLinkNoQueryItems
         case deepLinkCategory(category: CharacterOption)
+        case deepLinkChat(avatarId: String)
+        case deepLinkSettings
+        case deepLinkChats
+        case deepLinkProfile
+        case deepLinkCreateAvatar
         case deepLinkUnknown
 
         var eventName: String {
@@ -288,6 +333,11 @@ private extension ExploreViewModel {
             case .deepLinkStart: "ExploreView_DeepLink_Start"
             case .deepLinkNoQueryItems: "ExploreView_DeepLink_NoQueryItems"
             case .deepLinkCategory: "ExploreView_DeepLink_Category"
+            case .deepLinkChat: "ExploreView_DeepLink_Chat"
+            case .deepLinkSettings: "ExploreView_DeepLink_Settings"
+            case .deepLinkChats: "ExploreView_DeepLink_Chats"
+            case .deepLinkProfile: "ExploreView_DeepLink_Profile"
+            case .deepLinkCreateAvatar: "ExploreView_DeepLink_CreateAvatar"
             case .deepLinkUnknown: "ExploreView_DeepLink_Unknown"
             }
         }
@@ -306,6 +356,10 @@ private extension ExploreViewModel {
                     .deepLinkCategory(category: let category):
                 [
                     "category": category.rawValue
+                ]
+            case .deepLinkChat(avatarId: let avatarId):
+                [
+                    "avatar_id": avatarId
                 ]
             case .pushNotificationEnabled(isAuthorized: let isAuthorized):
                 [

@@ -7,6 +7,12 @@
 
 import SwiftUI
 
+enum AppTab: Hashable {
+    case explore
+    case chats
+    case profile
+}
+
 @Observable
 class AppState {
     
@@ -16,12 +22,18 @@ class AppState {
         }
     }
     
+    var selectedTab: AppTab = .explore
+    
     init(showTabBar: Bool = UserDefaults.showTabBarView) {
         self.showTabBar = showTabBar
     }
     
     func updateViewState(showTabBarView: Bool) {
         showTabBar = showTabBarView
+    }
+    
+    func switchToTab(_ tab: AppTab) {
+        selectedTab = tab
     }
 }
 

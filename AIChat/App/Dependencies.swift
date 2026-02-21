@@ -291,6 +291,9 @@ extension View {
             .environment(
                 BookmarksBuilder(container: DevPreview.shared.container)
             )
+            .environment(
+                DevPreview.shared.container.resolve(AppState.self) ?? AppState()
+            )
     }
     // swiftlint:enable function_body_length
 }
