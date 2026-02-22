@@ -22,7 +22,7 @@ class AppState {
         }
     }
     
-    var selectedTab: AppTab = .explore
+    private(set) var selectedTab: AppTab = .explore
     
     init(showTabBar: Bool = UserDefaults.showTabBarView) {
         self.showTabBar = showTabBar
