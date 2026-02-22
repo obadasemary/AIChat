@@ -131,10 +131,43 @@ struct AuthMangerTests {
     func test_whenLinkAccountWithNoUser_thenThrowsError() async throws {
         let authService = await MockAuthService(currentUser: nil)
         let authManager = await AuthManager(service: authService)
-        
+
         await #expect(throws: MockAuthService.MockAuthError.userNotFound) {
             try await authManager.linkAppleAccount()
         }
+    }
+
+    @Test("Link Google Account When User Not Found - throws error")
+    func test_whenLinkGoogleAccountWithNoUser_thenThrowsError() async throws {
+        let authService = await MockAuthService(currentUser: nil)
+        let authManager = await AuthManager(service: authService)
+
+        await #expect(throws: MockAuthService.MockAuthError.userNotFound) {
+            try await authManager.linkGoogleAccount()
+        }
+    }
+
+    @Test("Sign In With Apple - tracks analytics events")
+    func test_signInWithApple_tracksAnalyticsEvents() async throws {
+        let authService = await MockAuthService()
+        let mockLogService = MockLogService()
+        let logManager = await LogManager(services: [mockLogService])
+        let authManager = await AuthManager(service: authService, logManager: logManager)
+
+        _ = try await authManager.signInWithApple()
+
+        #expect(mockLogService.trackedEvents.contains { $0.eventName == AuthManager.Event.authListenerStart.eventName })
+    }
+
+    @Test("Sign In Anonymously - returns new user flag")
+    func test_signInAnonymously_returnsNewUserFlag() async throws {
+        let authService = await MockAuthService()
+        let authManager = await AuthManager(service: authService)
+
+        let result = try await authManager.signInAnonymously()
+
+        #expect(result.isNewUser == true)
+        #expect(result.user.isAnonymous == true)
     }
     
     @Test("Sign Out")
