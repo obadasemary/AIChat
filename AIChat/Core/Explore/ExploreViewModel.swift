@@ -252,7 +252,7 @@ extension ExploreViewModel {
     
     
     
-    func onAvaterSelected(avatar: AvatarModel) {
+    func onAvatarSelected(avatar: AvatarModel) {
         exploreUseCase
             .trackEvent(
                 event: Event.avatarPressed(
