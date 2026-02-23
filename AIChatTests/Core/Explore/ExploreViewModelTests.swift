@@ -187,7 +187,7 @@ struct ExploreViewModelTests {
         let viewModel = ExploreViewModel(exploreUseCase: MockExploreUseCase(), router: mockRouter)
         let avatar = AvatarModel.mock
 
-        viewModel.onAvaterSelected(avatar: avatar)
+        viewModel.onAvatarSelected(avatar: avatar)
 
         #expect(mockRouter.showChatViewCalled)
         #expect(mockRouter.chatDelegate?.avatarId == avatar.avatarId)
