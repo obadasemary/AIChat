@@ -6,6 +6,8 @@
 //
 
 import Testing
+import SwiftUI
+import Foundation
 @testable import AIChat
 
 @MainActor
@@ -71,7 +73,7 @@ struct ChatViewModelTests {
 
         viewModel.onViewFirstAppear(chat: expectedChat)
 
-        #expect(viewModel.currentUser?.uid == mockUseCase.currentUser?.uid)
+        #expect(viewModel.currentUser?.userId == mockUseCase.currentUser?.userId)
         #expect(viewModel.chat?.id == expectedChat.id)
     }
 
@@ -432,7 +434,9 @@ final class MockChatUseCase: ChatUseCaseProtocol {
 
     func addChatMessage(message: ChatMessageModel) async throws {
         if shouldFailAddMessage { throw MockChatError.messageAddFailed }
-        lastAddedMessage = message
+        if lastAddedMessage == nil {
+            lastAddedMessage = message
+        }
         addChatMessageCallCount += 1
     }
 
