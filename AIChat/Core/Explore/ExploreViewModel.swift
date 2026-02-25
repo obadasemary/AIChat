@@ -250,8 +250,6 @@ extension ExploreViewModel {
             )
     }
     
-    
-    
     func onAvatarSelected(avatar: AvatarModel) {
         exploreUseCase
             .trackEvent(
@@ -281,7 +279,7 @@ extension ExploreViewModel {
     }
     
     func onLogoutButtonPressed() {
-        if (exploreUseCase.auth != nil) {
+        if exploreUseCase.auth != nil {
             try? exploreUseCase.signOut()
         }
         exploreUseCase.updateAppState(showTabBarView: false)

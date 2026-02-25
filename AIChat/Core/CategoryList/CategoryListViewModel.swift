@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-
-
 @Observable
 @MainActor
 final class CategoryListViewModel {

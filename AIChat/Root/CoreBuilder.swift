@@ -32,7 +32,7 @@ class CoreBuilder {
         TabBarView()
     }
     
-    func welcomeView(router: Router,) -> some View {
+    func welcomeView(router: Router) -> some View {
         WelcomeView(
             viewModel: WelcomeViewModel(
                 welcomeUseCase: WelcomeUseCase(container: container),
