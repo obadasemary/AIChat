@@ -166,7 +166,7 @@ struct ChatViewModelTests {
         viewModel.onSendMessageTapped(avatarId: AvatarModel.mock.avatarId)
         try? await Task.sleep(nanoseconds: 200_000_000)
 
-        #expect(mockUseCase.addedMessages.contains { $0.replyToMessageId == replyTarget.id })
+#expect(mockUseCase.addedMessages.filter { $0.replyToMessageId == replyTarget.id }.count == 1)
         #expect(viewModel.replyingToMessage == nil)
     }
 
