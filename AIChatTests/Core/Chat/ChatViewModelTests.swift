@@ -61,6 +61,7 @@ struct ChatViewModelTests {
         await viewModel.loadChat(avatarId: "any-id")
 
         #expect(viewModel.chat == nil)
+        #expect(mockUseCase.trackedEvents.contains { $0.eventName.contains("LoadChat_Fail") })
     }
 
     // MARK: - onViewFirstAppear
