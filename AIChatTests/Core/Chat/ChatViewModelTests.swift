@@ -86,9 +86,8 @@ struct ChatViewModelTests {
         let viewModel = ChatViewModel(chatUseCase: mockUseCase, router: MockChatRouter())
         viewModel.textFieldText = ""
         
-        viewModel.onSendMessageTapped(avatarId: "any-id")
-        try? await Task.sleep(nanoseconds: 100_000_000)
-        
+        await viewModel.onSendMessageTapped(avatarId: "any-id").value
+
         #expect(mockUseCase.trackedEvents.isEmpty)
     }
     
@@ -105,9 +104,8 @@ struct ChatViewModelTests {
         await viewModel.listenToChatMessages()
         
         viewModel.textFieldText = "Hello"
-        viewModel.onSendMessageTapped(avatarId: AvatarModel.mock.avatarId)
-        try? await Task.sleep(nanoseconds: 100_000_000)
-        
+        await viewModel.onSendMessageTapped(avatarId: AvatarModel.mock.avatarId).value
+
         #expect(mockRouter.showPaywallViewCalled)
     }
     
@@ -117,9 +115,8 @@ struct ChatViewModelTests {
         let viewModel = ChatViewModel(chatUseCase: mockUseCase, router: MockChatRouter())
         
         viewModel.textFieldText = "Hello"
-        viewModel.onSendMessageTapped(avatarId: AvatarModel.mock.avatarId)
-        try? await Task.sleep(nanoseconds: 100_000_000)
-        
+        await viewModel.onSendMessageTapped(avatarId: AvatarModel.mock.avatarId).value
+
         #expect(mockUseCase.createNewChatCalled)
     }
     
@@ -130,9 +127,8 @@ struct ChatViewModelTests {
         viewModel.onViewFirstAppear(chat: ChatModel.mock)
         
         viewModel.textFieldText = "Hello world"
-        viewModel.onSendMessageTapped(avatarId: AvatarModel.mock.avatarId)
-        try? await Task.sleep(nanoseconds: 200_000_000)
-        
+        await viewModel.onSendMessageTapped(avatarId: AvatarModel.mock.avatarId).value
+
         #expect(viewModel.textFieldText.isEmpty)
     }
     
@@ -146,9 +142,8 @@ struct ChatViewModelTests {
         viewModel.onMessageEditTapped(message: existingMessage)
         viewModel.textFieldText = "Edited content"
         
-        viewModel.onSendMessageTapped(avatarId: AvatarModel.mock.avatarId)
-        try? await Task.sleep(nanoseconds: 200_000_000)
-        
+        await viewModel.onSendMessageTapped(avatarId: AvatarModel.mock.avatarId).value
+
         #expect(mockUseCase.updateChatMessageCalled)
         #expect(viewModel.editingMessage == nil)
         #expect(viewModel.textFieldText.isEmpty)
@@ -164,9 +159,8 @@ struct ChatViewModelTests {
         viewModel.onMessageReplyTapped(message: replyTarget)
         viewModel.textFieldText = "My reply"
         
-        viewModel.onSendMessageTapped(avatarId: AvatarModel.mock.avatarId)
-        try? await Task.sleep(nanoseconds: 200_000_000)
-        
+        await viewModel.onSendMessageTapped(avatarId: AvatarModel.mock.avatarId).value
+
         #expect(mockUseCase.addedMessages.filter { $0.replyToMessageId == replyTarget.id }.count == 1)
         #expect(viewModel.replyingToMessage == nil)
     }
@@ -180,9 +174,8 @@ struct ChatViewModelTests {
         viewModel.onViewFirstAppear(chat: ChatModel.mock)
         
         viewModel.textFieldText = "Hello"
-        viewModel.onSendMessageTapped(avatarId: AvatarModel.mock.avatarId)
-        try? await Task.sleep(nanoseconds: 200_000_000)
-        
+        await viewModel.onSendMessageTapped(avatarId: AvatarModel.mock.avatarId).value
+
         #expect(mockRouter.showAlertErrorCalled)
     }
     
@@ -193,9 +186,8 @@ struct ChatViewModelTests {
         viewModel.onViewFirstAppear(chat: ChatModel.mock)
         
         viewModel.textFieldText = "Hello"
-        viewModel.onSendMessageTapped(avatarId: AvatarModel.mock.avatarId)
-        try? await Task.sleep(nanoseconds: 200_000_000)
-        
+        await viewModel.onSendMessageTapped(avatarId: AvatarModel.mock.avatarId).value
+
         #expect(mockUseCase.addChatMessageCallCount >= 2)
     }
     
@@ -311,9 +303,8 @@ struct ChatViewModelTests {
         let viewModel = ChatViewModel(chatUseCase: mockUseCase, router: mockRouter)
         viewModel.onViewFirstAppear(chat: ChatModel.mock)
         
-        viewModel.onDeleteChatTapped()
-        try? await Task.sleep(nanoseconds: 200_000_000)
-        
+        await viewModel.onDeleteChatTapped().value
+
         #expect(mockRouter.dismissModalCalled)
         #expect(mockUseCase.trackedEvents.contains { $0.eventName.contains("DeleteChat_Success") })
     }
@@ -325,9 +316,8 @@ struct ChatViewModelTests {
         let viewModel = ChatViewModel(chatUseCase: mockUseCase, router: mockRouter)
         viewModel.onViewFirstAppear(chat: ChatModel.mock)
         
-        viewModel.onReportChatTapped()
-        try? await Task.sleep(nanoseconds: 200_000_000)
-        
+        await viewModel.onReportChatTapped().value
+
         #expect(mockRouter.showAlertCalled)
         #expect(mockUseCase.trackedEvents.contains { $0.eventName.contains("ReportChat_Success") })
     }
@@ -341,13 +331,11 @@ struct ChatViewModelTests {
         let message = ChatMessageModel.mock
         
         // First tap: should add translation
-        viewModel.onMessageTranslateTapped(message: message)
-        try? await Task.sleep(nanoseconds: 200_000_000)
+        await viewModel.onMessageTranslateTapped(message: message).value
         #expect(viewModel.translatedMessages[message.id] != nil)
-        
+
         // Second tap: should remove translation
-        viewModel.onMessageTranslateTapped(message: message)
-        try? await Task.sleep(nanoseconds: 100_000_000)
+        await viewModel.onMessageTranslateTapped(message: message).value
         #expect(viewModel.translatedMessages[message.id] == nil)
     }
 }

@@ -120,16 +120,17 @@ extension ChatViewModel {
 // MARK: - Action
 extension ChatViewModel {
     // swiftlint:disable function_body_length
-    func onSendMessageTapped(avatarId: String) {
-        guard !textFieldText.isEmpty else { return }
-        
+    @discardableResult
+    func onSendMessageTapped(avatarId: String) -> Task<Void, Never> {
+        guard !textFieldText.isEmpty else { return Task {} }
+
         let content = textFieldText
         chatUseCase
             .trackEvent(
                 event: Event.sendMessageStart(chat: chat, avatar: avatar)
             )
-        
-        Task {
+
+        return Task {
             do {
                 // Show paywall if needed
                 if !chatUseCase.isPremium && chatMessages.count >= 999 {
@@ -292,9 +293,10 @@ extension ChatViewModel {
             }
     }
     
-    func onReportChatTapped() {
+    @discardableResult
+    func onReportChatTapped() -> Task<Void, Never> {
         chatUseCase.trackEvent(event: Event.reportChatStart)
-        Task {
+        return Task {
             do {
                 let chatId = try getChatId()
                 let userId = try chatUseCase.getAuthId()
@@ -321,9 +323,10 @@ extension ChatViewModel {
         }
     }
     
-    func onDeleteChatTapped() {
+    @discardableResult
+    func onDeleteChatTapped() -> Task<Void, Never> {
         chatUseCase.trackEvent(event: Event.deleteChatStart)
-        Task {
+        return Task {
             do {
                 let chatId = try getChatId()
                 try await chatUseCase.deleteChat(chatId: chatId)
@@ -433,9 +436,10 @@ extension ChatViewModel {
         textFieldText = ""
     }
 
-    func onMessageTranslateTapped(message: ChatMessageModel) {
+    @discardableResult
+    func onMessageTranslateTapped(message: ChatMessageModel) -> Task<Void, Never> {
         chatUseCase.trackEvent(event: Event.messageTranslateTapped)
-        Task {
+        return Task {
             do {
                 guard let text = message.content?.message else { return }
 
