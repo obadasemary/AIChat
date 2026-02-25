@@ -253,38 +253,33 @@ struct ChatViewModelTests {
     // MARK: - messageIsDelayed
 
     @Test("messageIsDelayed - returns true when gap is over 45 minutes")
-    func test_messageIsDelayed_whenOver45Minutes() {
+    func test_messageIsDelayed_whenOver45Minutes() async {
         let mockUseCase = MockChatUseCase()
         let viewModel = ChatViewModel(chatUseCase: mockUseCase, router: MockChatRouter())
         let now = Date()
         let oldMessage = ChatMessageModel(id: "old", chatId: "c1", dateCreated: now.addingTimeInterval(-3000)) // 50 min ago
         let newMessage = ChatMessageModel(id: "new", chatId: "c1", dateCreated: now)
 
-        // Simulate chatMessages being set (via internal storage workaround)
+        viewModel.onViewFirstAppear(chat: ChatModel.mock)
         mockUseCase.messagesToStream = [oldMessage, newMessage]
+        await viewModel.listenToChatMessages()
 
-        // Manually set via a helper — we construct two messages with known dates
-        let isDelayed = viewModel.messageIsDelayed(
-            message: newMessage,
-            inMessages: [oldMessage, newMessage]
-        )
-
-        #expect(isDelayed == true)
+        #expect(viewModel.messageIsDelayed(message: newMessage) == true)
     }
 
     @Test("messageIsDelayed - returns false when gap is under 45 minutes")
-    func test_messageIsDelayed_whenUnder45Minutes() {
-        let viewModel = ChatViewModel(chatUseCase: MockChatUseCase(), router: MockChatRouter())
+    func test_messageIsDelayed_whenUnder45Minutes() async {
+        let mockUseCase = MockChatUseCase()
+        let viewModel = ChatViewModel(chatUseCase: mockUseCase, router: MockChatRouter())
         let now = Date()
         let recentMessage = ChatMessageModel(id: "recent", chatId: "c1", dateCreated: now.addingTimeInterval(-60)) // 1 min ago
         let currentMessage = ChatMessageModel(id: "current", chatId: "c1", dateCreated: now)
 
-        let isDelayed = viewModel.messageIsDelayed(
-            message: currentMessage,
-            inMessages: [recentMessage, currentMessage]
-        )
+        viewModel.onViewFirstAppear(chat: ChatModel.mock)
+        mockUseCase.messagesToStream = [recentMessage, currentMessage]
+        await viewModel.listenToChatMessages()
 
-        #expect(isDelayed == false)
+        #expect(viewModel.messageIsDelayed(message: currentMessage) == false)
     }
 
     // MARK: - messageIsCurrentUser
@@ -354,28 +349,6 @@ struct ChatViewModelTests {
         viewModel.onMessageTranslateTapped(message: message)
         try? await Task.sleep(nanoseconds: 100_000_000)
         #expect(viewModel.translatedMessages[message.id] == nil)
-    }
-}
-
-// MARK: - ChatViewModel Testable Extension
-
-extension ChatViewModel {
-    /// Test-only helper that accepts an explicit message list for `messageIsDelayed`.
-    func messageIsDelayed(message: ChatMessageModel, inMessages messages: [ChatMessageModel]) -> Bool {
-        let currentMessageDate = message.dateCreatedCalculated
-
-        guard
-            let index = messages.firstIndex(where: { $0.id == message.id }),
-            messages.indices.contains(index - 1)
-        else {
-            return false
-        }
-
-        let previousMessageDate = messages[index - 1].dateCreatedCalculated
-        let timeDiff = currentMessageDate.timeIntervalSince(previousMessageDate)
-        let threshold: TimeInterval = 60 * 45
-
-        return timeDiff > threshold
     }
 }
 
