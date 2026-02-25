@@ -66,10 +66,10 @@ extension ChatViewModel {
                 .trackEvent(event: Event.loadChatSuccess(chat: chat))
         } catch {
             chatUseCase
-                .trackEvent(event: Event.loadAvatarFail(error: error))
+                .trackEvent(event: Event.loadChatFail(error: error))
         }
     }
-    
+
     func listenToChatMessages() async {
         chatUseCase.trackEvent(event: Event.loadMessagesStart)
         do {
