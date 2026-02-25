@@ -6,6 +6,7 @@
 //
 
 import Testing
+import Foundation
 @testable import AIChat
 
 struct PurchaseManagerTests {
@@ -29,9 +30,15 @@ struct PurchaseManagerTests {
         let service = MockPurchaseService(activeEntitlements: [entitlement])
         let manager = await PurchaseManager(service: service)
 
-        try? await Task.sleep(nanoseconds: 100_000_000)
+        // Poll until configure()'s unstructured Task completes
+        var entitlements: [PurchasedEntitlement] = []
+        for _ in 0..<20 {
+            try? await Task.sleep(nanoseconds: 50_000_000)
+            entitlements = await manager.entitlements
+            if !entitlements.isEmpty { break }
+        }
 
-        await #expect(manager.entitlements.isEmpty == false)
+        #expect(entitlements.isEmpty == false)
     }
 
     // MARK: - getProducts
@@ -163,9 +170,13 @@ struct PurchaseManagerTests {
         let service = MockPurchaseService(activeEntitlements: [earlierEntitlement, laterEntitlement])
         let manager = await PurchaseManager(service: service)
 
-        try? await Task.sleep(nanoseconds: 100_000_000)
-
-        let entitlements = await manager.entitlements
+        // Poll until entitlements are populated (configure() uses unstructured Tasks internally)
+        var entitlements: [PurchasedEntitlement] = []
+        for _ in 0..<20 {
+            try? await Task.sleep(nanoseconds: 50_000_000)
+            entitlements = await manager.entitlements
+            if !entitlements.isEmpty { break }
+        }
         #expect(entitlements.first?.id == "later")
         #expect(entitlements.last?.id == "earlier")
     }
