@@ -166,7 +166,7 @@ struct ChatViewModelTests {
         viewModel.onSendMessageTapped(avatarId: AvatarModel.mock.avatarId)
         try? await Task.sleep(nanoseconds: 200_000_000)
 
-        #expect(mockUseCase.lastAddedMessage?.replyToMessageId == replyTarget.id)
+        #expect(mockUseCase.addedMessages.contains { $0.replyToMessageId == replyTarget.id })
         #expect(viewModel.replyingToMessage == nil)
     }
 
@@ -371,7 +371,7 @@ final class MockChatUseCase: ChatUseCaseProtocol {
 
     var createNewChatCalled: Bool = false
     var updateChatMessageCalled: Bool = false
-    var lastAddedMessage: ChatMessageModel?
+    var addedMessages: [ChatMessageModel] = []
     var addChatMessageCallCount: Int = 0
 
     func getAuthId() throws -> String {
@@ -407,9 +407,7 @@ final class MockChatUseCase: ChatUseCaseProtocol {
 
     func addChatMessage(message: ChatMessageModel) async throws {
         if shouldFailAddMessage { throw MockChatError.messageAddFailed }
-        if lastAddedMessage == nil {
-            lastAddedMessage = message
-        }
+        addedMessages.append(message)
         addChatMessageCallCount += 1
     }
 
