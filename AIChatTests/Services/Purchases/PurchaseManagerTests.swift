@@ -66,12 +66,10 @@ struct PurchaseManagerTests {
         let service = MockFailingPurchaseService()
         let manager = await PurchaseManager(service: service, logManager: logManager)
 
-        do {
+        await #expect(throws: MockFailingPurchaseService.MockPurchaseError.self) {
             _ = try await manager.getProducts(productIds: ["any.id"])
-            Issue.record("Expected error to be thrown")
-        } catch {
-            #expect(mockLogService.trackedEvents.contains { $0.eventName == "PurMan_GetProducts_Fail" })
         }
+        #expect(mockLogService.trackedEvents.contains { $0.eventName == "PurMan_GetProducts_Fail" })
     }
 
     // MARK: - purchaseProduct
@@ -98,12 +96,10 @@ struct PurchaseManagerTests {
         let service = MockFailingPurchaseService()
         let manager = await PurchaseManager(service: service, logManager: logManager)
 
-        do {
+        await #expect(throws: MockFailingPurchaseService.MockPurchaseError.self) {
             _ = try await manager.purchaseProduct(productId: "any.id")
-            Issue.record("Expected error to be thrown")
-        } catch {
-            #expect(mockLogService.trackedEvents.contains { $0.eventName == "PurMan_Purchase_Fail" })
         }
+        #expect(mockLogService.trackedEvents.contains { $0.eventName == "PurMan_Purchase_Fail" })
     }
 
     // MARK: - restorePurchase
@@ -130,12 +126,10 @@ struct PurchaseManagerTests {
         let service = MockFailingPurchaseService()
         let manager = await PurchaseManager(service: service, logManager: logManager)
 
-        do {
+        await #expect(throws: MockFailingPurchaseService.MockPurchaseError.self) {
             _ = try await manager.restorePurchase()
-            Issue.record("Expected error to be thrown")
-        } catch {
-            #expect(mockLogService.trackedEvents.contains { $0.eventName == "PurMan_Restore_Fail" })
         }
+        #expect(mockLogService.trackedEvents.contains { $0.eventName == "PurMan_Restore_Fail" })
     }
 
     // MARK: - Entitlement Sorting
