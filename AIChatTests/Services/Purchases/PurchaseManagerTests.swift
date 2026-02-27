@@ -69,7 +69,7 @@ struct PurchaseManagerTests {
         await #expect(throws: MockFailingPurchaseService.MockPurchaseError.self) {
             _ = try await manager.getProducts(productIds: ["any.id"])
         }
-        #expect(mockLogService.trackedEvents.contains { $0.eventName == "PurMan_GetProducts_Fail" })
+#expect(mockLogService.trackedEvents.last?.eventName == "PurMan_GetProducts_Fail")
     }
 
     // MARK: - purchaseProduct
@@ -99,7 +99,7 @@ struct PurchaseManagerTests {
         await #expect(throws: MockFailingPurchaseService.MockPurchaseError.self) {
             _ = try await manager.purchaseProduct(productId: "any.id")
         }
-        #expect(mockLogService.trackedEvents.contains { $0.eventName == "PurMan_Purchase_Fail" })
+#expect(mockLogService.trackedEvents.last?.eventName == "PurMan_Purchase_Fail")
     }
 
     // MARK: - restorePurchase
@@ -129,7 +129,7 @@ struct PurchaseManagerTests {
         await #expect(throws: MockFailingPurchaseService.MockPurchaseError.self) {
             _ = try await manager.restorePurchase()
         }
-        #expect(mockLogService.trackedEvents.contains { $0.eventName == "PurMan_Restore_Fail" })
+#expect(mockLogService.trackedEvents.last?.eventName == "PurMan_Restore_Fail")
     }
 
     // MARK: - Entitlement Sorting
