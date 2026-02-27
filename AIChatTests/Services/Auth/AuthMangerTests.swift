@@ -64,7 +64,7 @@ struct AuthMangerTests {
     }
     
     @Test("Sign In with Google")
-    func testSignInWithGooglee() async throws {
+    func testSignInWithGoogle() async throws {
         let authService = await MockAuthService()
         let mockLogService = MockLogService()
         let logManager = await LogManager(services: [mockLogService])
