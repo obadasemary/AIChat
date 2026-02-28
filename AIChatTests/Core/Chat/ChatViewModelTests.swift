@@ -23,7 +23,7 @@ struct ChatViewModelTests {
         await viewModel.loadAvatar(avatarId: AvatarModel.mock.avatarId)
         
         #expect(viewModel.avatar != nil)
-        #expect(mockUseCase.trackedEvents.contains { $0.eventName.contains("LoadAvatar_Success") })
+        #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ChatView_LoadAvatar_Success" })
     }
     
     @Test("Load Avatar Failure - avatar stays nil and tracks error event")
@@ -35,7 +35,7 @@ struct ChatViewModelTests {
         await viewModel.loadAvatar(avatarId: "any-id")
         
         #expect(viewModel.avatar == nil)
-        #expect(mockUseCase.trackedEvents.contains { $0.eventName.contains("LoadAvatar_Fail") })
+        #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ChatView_LoadAvatar_Fail" })
     }
     
     // MARK: - Load Chat
@@ -49,7 +49,7 @@ struct ChatViewModelTests {
         await viewModel.loadChat(avatarId: ChatModel.mock.avatarId)
         
         #expect(viewModel.chat != nil)
-        #expect(mockUseCase.trackedEvents.contains { $0.eventName.contains("LoadChat_Success") })
+        #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ChatView_LoadChat_Success" })
     }
     
     @Test("Load Chat Failure - tracks error event")
@@ -61,7 +61,7 @@ struct ChatViewModelTests {
         await viewModel.loadChat(avatarId: "any-id")
         
         #expect(viewModel.chat == nil)
-        #expect(mockUseCase.trackedEvents.contains { $0.eventName.contains("LoadChat_Fail") })
+        #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ChatView_LoadChat_Fail" })
     }
     
     // MARK: - onViewFirstAppear
@@ -315,7 +315,7 @@ struct ChatViewModelTests {
         try? await Task.sleep(nanoseconds: 200_000_000)
         
         #expect(mockRouter.dismissModalCalled)
-        #expect(mockUseCase.trackedEvents.contains { $0.eventName.contains("DeleteChat_Success") })
+        #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ChatView_DeleteChat_Success" })
     }
     
     @Test("Report Chat Success - shows confirmation alert")
@@ -329,7 +329,7 @@ struct ChatViewModelTests {
         try? await Task.sleep(nanoseconds: 200_000_000)
         
         #expect(mockRouter.showAlertCalled)
-        #expect(mockUseCase.trackedEvents.contains { $0.eventName.contains("ReportChat_Success") })
+        #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ChatView_ReportChat_Success" })
     }
     
     // MARK: - Translate
