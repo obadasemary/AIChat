@@ -1,5 +1,5 @@
 //
-//  AuthMangerTests.swift
+//  AuthManagerTests.swift
 //  AIChatTests
 //
 //  Created by Abdelrahman Mohamed on 16.07.2025.
@@ -8,36 +8,36 @@
 import Testing
 @testable import AIChat
 
-struct AuthMangerTests {
+struct AuthManagerTests {
 
     @Test("Initialization with Authenticated User")
     func testInitializationWithAuthenticatedUser() async throws {
         let mockUser = UserAuthInfo.mock(isAnonymous: false)
         let authService = await MockAuthService(currentUser: mockUser)
-        
+
         let mockLogService = MockLogService()
         let logManager = await LogManager(services: [mockLogService])
-        
+
         let authManager = await AuthManager(
             service: authService,
             logManager: logManager
         )
-        
+
         await #expect(authManager.auth?.uid == mockUser.uid)
     }
-    
+
     @Test("Initialization with Non-Authenticated User")
     func testInitializationWithNonAuthenticatedUser() async throws {
         let authService = await MockAuthService(currentUser: nil)
-        
+
         let mockLogService = MockLogService()
         let logManager = await LogManager(services: [mockLogService])
-        
+
         let authManager = await AuthManager(
             service: authService,
             logManager: logManager
         )
-        
+
         await #expect(authManager.auth == nil)
     }
 
@@ -46,23 +46,23 @@ struct AuthMangerTests {
         let mockUser = UserAuthInfo.mock(isAnonymous: true)
         let authService = await MockAuthService(currentUser: mockUser)
         let authManager = await AuthManager(service: authService)
-        
+
         let result = try await authManager.signInAnonymously()
-        
+
         #expect(result.user.isAnonymous == true)
         await #expect(authManager.auth?.isAnonymous == true)
     }
-    
+
     @Test("Sign In with Apple")
     func testSignInWithApple() async throws {
         let authService = await MockAuthService()
         let authManager = await AuthManager(service: authService)
-        
+
         let result = try await authManager.signInWithApple()
-        
+
         #expect(result.user.isAnonymous == false)
     }
-    
+
     @Test("Sign In with Google")
     func testSignInWithGoogle() async throws {
         let authService = await MockAuthService()
@@ -72,9 +72,9 @@ struct AuthMangerTests {
             service: authService,
             logManager: logManager
         )
-        
+
         let result = try await authManager.signInWithGoogle()
-        
+
         #expect(result.user.isAnonymous == false)
         await #expect(authManager.auth?.isAnonymous == false)
         #expect(
@@ -84,19 +84,19 @@ struct AuthMangerTests {
                 }
         )
     }
-    
+
     @Test("Link Apple Account")
     func test_whenLinkAppleAccount_thenUserAuthInfoUpdated() async throws {
         let mockUser = UserAuthInfo.mock(isAnonymous: true)
         let authService = await MockAuthService(currentUser: mockUser)
         let authManager = await AuthManager(service: authService)
-        
+
         let result = try await authManager.linkAppleAccount()
-        
+
         #expect(result.hasAppleLinked == true)
         await #expect(authManager.auth?.hasAppleLinked == true)
     }
-    
+
     @Test("Link Apple Account Tracks Analytics")
     func test_whenLinkAppleAccount_thenAnalyticsTracked() async throws {
         let mockUser = UserAuthInfo.mock(isAnonymous: true)
@@ -104,9 +104,9 @@ struct AuthMangerTests {
         let mockLogService = MockLogService()
         let logManager = await LogManager(services: [mockLogService])
         let authManager = await AuthManager(service: authService, logManager: logManager)
-        
+
         _ = try await authManager.linkAppleAccount()
-        
+
         #expect(mockLogService.trackedEvents.contains {
             $0.eventName == "AuthMan_LinkApple_Start"
         })
@@ -120,9 +120,9 @@ struct AuthMangerTests {
         let mockUser = UserAuthInfo.mock(isAnonymous: true)
         let authService = await MockAuthService(currentUser: mockUser)
         let authManager = await AuthManager(service: authService)
-        
+
         let result = try await authManager.linkGoogleAccount()
-        
+
         #expect(result.hasGoogleLinked == true)
         await #expect(authManager.auth?.hasGoogleLinked == true)
     }
@@ -169,7 +169,7 @@ struct AuthMangerTests {
         #expect(result.isNewUser == true)
         #expect(result.user.isAnonymous == true)
     }
-    
+
     @Test("Sign Out")
     func testSignOut() async throws {
         let mockUser = UserAuthInfo.mock(isAnonymous: false)
@@ -180,11 +180,11 @@ struct AuthMangerTests {
             service: authService,
             logManager: logManager
         )
-        
+
         try await authManager.signOut()
-        
+
 //        await #expect(authManager.auth == nil)
-        
+
         #expect(
             mockLogService.trackedEvents
                 .contains {
@@ -198,7 +198,7 @@ struct AuthMangerTests {
                 }
         )
     }
-    
+
     @Test("Delete Account")
     func testDeleteAccount() async throws {
         let mockUser = UserAuthInfo.mock(isAnonymous: false)
@@ -209,10 +209,10 @@ struct AuthMangerTests {
             service: authService,
             logManager: logManager
         )
-        
+
         _ = try await authManager.deleteAccount()
         await #expect(authManager.auth == nil)
-        
+
         #expect(
             mockLogService.trackedEvents
                 .contains {
