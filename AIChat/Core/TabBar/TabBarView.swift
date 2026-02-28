@@ -15,9 +15,12 @@ struct TabBarView: View {
     @Environment(AppState.self) private var appState
 
     var body: some View {
-        @Bindable var appState = appState
-        
-        TabView(selection: $appState.selectedTab) {
+        let tabBinding = Binding(
+            get: { appState.selectedTab },
+            set: { appState.switchToTab($0) }
+        )
+
+        TabView(selection: tabBinding) {
             RouterView { router in
                 exploreBuilder.buildExploreView(router: router)
             }
