@@ -122,7 +122,7 @@ extension ChatViewModel {
     // swiftlint:disable function_body_length
     @discardableResult
     func onSendMessageTapped(avatarId: String) -> Task<Void, Never> {
-        guard !textFieldText.isEmpty else { return Task {} }
+        guard !textFieldText.isEmpty else { return .noop }
         
         let content = textFieldText
         chatUseCase
