@@ -132,8 +132,8 @@ private extension PurchaseManager {
     }
 }
 
-private extension PurchaseManager {
-    
+extension PurchaseManager {
+
     func configure() async {
         let entitlements = await service.getUserEntitlements()
         updateActiveEntitlements(entitlements)
