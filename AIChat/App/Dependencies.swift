@@ -92,10 +92,12 @@ struct Dependencies {
                 service: abTestService,
                 logManager: logManager
             )
-            purchaseManager = PurchaseManager(
+            let mockPurchaseManager = PurchaseManager(
                 service: MockPurchaseService(),
                 logManager: logManager
             )
+            Task { await mockPurchaseManager.configure() }
+            purchaseManager = mockPurchaseManager
             networkMonitor = MockNetworkMonitor(isConnected: true)
             newsFeedManager = NewsFeedManager(
                 remoteService: MockRemoteNewsFeedService(),
@@ -138,10 +140,12 @@ struct Dependencies {
                 service: LocalABTestService(),
                 logManager: logManager
             )
-            purchaseManager = PurchaseManager(
+            let devPurchaseManager = PurchaseManager(
                 service: StoreKitPurchaseService(),
                 logManager: logManager
             )
+            Task { await devPurchaseManager.configure() }
+            purchaseManager = devPurchaseManager
             networkMonitor = NetworkMonitor(logManager: logManager)
             newsFeedManager = NewsFeedManager(
                 remoteService: RemoteNewsFeedService(),
@@ -190,10 +194,12 @@ struct Dependencies {
                 service: FirebaseABTestService(),
                 logManager: logManager
             )
-            purchaseManager = PurchaseManager(
+            let prodPurchaseManager = PurchaseManager(
                 service: StoreKitPurchaseService(),
                 logManager: logManager
             )
+            Task { await prodPurchaseManager.configure() }
+            purchaseManager = prodPurchaseManager
             networkMonitor = NetworkMonitor(logManager: logManager)
             newsFeedManager = NewsFeedManager(
                 remoteService: RemoteNewsFeedService(),
