@@ -16,11 +16,7 @@ struct PurchaseManagerTests {
     @Test("Init with no entitlements - entitlements is empty")
     func test_init_withNoEntitlements_entitlementsIsEmpty() async {
         let service = MockPurchaseService(activeEntitlements: [])
-        let manager = await PurchaseManager(service: service)
-        
-        // Allow the configure() Task to complete
-        try? await Task.sleep(nanoseconds: 100_000_000)
-        
+        let manager = await PurchaseManager.create(service: service)
         await #expect(manager.entitlements.isEmpty)
     }
     
@@ -28,17 +24,8 @@ struct PurchaseManagerTests {
     func test_init_withActiveEntitlements_entitlementsPopulated() async {
         let entitlement = PurchasedEntitlement.mock
         let service = MockPurchaseService(activeEntitlements: [entitlement])
-        let manager = await PurchaseManager(service: service)
-        
-        // Poll until configure()'s unstructured Task completes
-        var entitlements: [PurchasedEntitlement] = []
-        for _ in 0..<20 {
-            try? await Task.sleep(nanoseconds: 50_000_000)
-            entitlements = await manager.entitlements
-            if !entitlements.isEmpty { break }
-        }
-        
-        #expect(entitlements.isEmpty == false)
+        let manager = await PurchaseManager.create(service: service)
+        await #expect(manager.entitlements.isEmpty == false)
     }
     
     // MARK: - getProducts
@@ -162,15 +149,8 @@ struct PurchaseManagerTests {
         
         // The service returns them in reverse order to verify sorting
         let service = MockPurchaseService(activeEntitlements: [earlierEntitlement, laterEntitlement])
-        let manager = await PurchaseManager(service: service)
-        
-        // Poll until entitlements are populated (configure() uses unstructured Tasks internally)
-        var entitlements: [PurchasedEntitlement] = []
-        for _ in 0..<20 {
-            try? await Task.sleep(nanoseconds: 50_000_000)
-            entitlements = await manager.entitlements
-            if !entitlements.isEmpty { break }
-        }
+        let manager = await PurchaseManager.create(service: service)
+        let entitlements = await manager.entitlements
         #expect(entitlements.first?.id == "later")
         #expect(entitlements.last?.id == "earlier")
     }
