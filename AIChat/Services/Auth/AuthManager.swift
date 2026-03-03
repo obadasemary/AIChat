@@ -16,6 +16,7 @@ final class AuthManager {
     
     private(set) var auth: UserAuthInfo?
     private var listener: (any NSObjectProtocol)?
+    private var listenerTask: Task<Void, Never>?
     
     init(
         service: AuthServiceProtocol,
@@ -87,6 +88,8 @@ extension AuthManager: AuthManagerProtocol {
     func signOut() throws {
         logManager?.trackEvent(event: Event.signOutStart)
         
+        listenerTask?.cancel()
+        listenerTask = nil
         try service.signOut()
         auth = nil
         
@@ -96,6 +99,8 @@ extension AuthManager: AuthManagerProtocol {
     func deleteAccount() async throws {
         logManager?.trackEvent(event: Event.deleteAccountStart)
         
+        listenerTask?.cancel()
+        listenerTask = nil
         try await service.deleteAccount()
         auth = nil
         
@@ -110,7 +115,7 @@ private extension AuthManager {
             service.removeAuthenticatedUserListener(listener: listener)
         }
         
-        Task {
+        listenerTask = Task {
             for await value in service.addAuthenticatedUserListener(onListenerAttached: { listener in
                 self.listener = listener
             }) {
