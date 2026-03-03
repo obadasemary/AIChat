@@ -155,12 +155,12 @@ struct AuthManagerTests {
         let authManager = await AuthManager(service: authService, logManager: logManager)
 
         let eventName = AuthManager.Event.authListenerStart.eventName
-        let countBeforeSignIn = mockLogService.trackedEvents.filter { $0.eventName == eventName }.count
+        let countEvents = { mockLogService.trackedEvents.filter { $0.eventName == eventName }.count }
+        let countBeforeSignIn = countEvents()
 
         _ = try await authManager.signInWithApple()
 
-        let countAfterSignIn = mockLogService.trackedEvents.filter { $0.eventName == eventName }.count
-        #expect(countAfterSignIn == countBeforeSignIn + 1)
+        #expect(countEvents() == countBeforeSignIn + 1)
     }
 
     @Test("Sign In Anonymously - returns new user flag")
