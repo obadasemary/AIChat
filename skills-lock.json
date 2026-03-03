@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "skills": {
+    "core-data-expert": {
+      "source": "avdlee/core-data-agent-skill",
+      "sourceType": "github",
+      "computedHash": "b8d2829005b1f2fefbaa8af2ea7d7d64e2fbeca2f2172033176ad0780edc3970"
+    },
+    "swift-concurrency": {
+      "source": "avdlee/swift-concurrency-agent-skill",
+      "sourceType": "github",
+      "computedHash": "fb91a851df4a0aabcb8eb8f9b3af98aa2fda5775c0f2ebc9aa61e8206e37d6ef"
+    },
+    "swift-testing-expert": {
+      "source": "avdlee/swift-testing-agent-skill",
+      "sourceType": "github",
+      "computedHash": "cd86f35466a2d831467ef748b402bfddfb063ca3ddd03f63305864d91367da0c"
+    },
+    "swiftui-expert-skill": {
+      "source": "avdlee/swiftui-agent-skill",
+      "sourceType": "github",
+      "computedHash": "814c1fddae24a5b544447639b1a958927e488df34ebe395398a9f56f5eccc472"
+    }
+  }
+}
