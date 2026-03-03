@@ -9,6 +9,7 @@ import Testing
 import Foundation
 @testable import AIChat
 
+@MainActor
 struct PurchaseManagerTests {
     
     // MARK: - Initialization
