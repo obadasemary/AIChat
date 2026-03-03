@@ -88,10 +88,10 @@ extension AuthManager: AuthManagerProtocol {
     func signOut() throws {
         logManager?.trackEvent(event: Event.signOutStart)
         
-        listenerTask?.cancel()
-        listenerTask = nil
         try service.signOut()
         auth = nil
+        listenerTask?.cancel()
+        listenerTask = nil
         
         logManager?.trackEvent(event: Event.signOutSuccess)
     }
@@ -99,10 +99,10 @@ extension AuthManager: AuthManagerProtocol {
     func deleteAccount() async throws {
         logManager?.trackEvent(event: Event.deleteAccountStart)
         
-        listenerTask?.cancel()
-        listenerTask = nil
         try await service.deleteAccount()
         auth = nil
+        listenerTask?.cancel()
+        listenerTask = nil
         
         logManager?.trackEvent(event: Event.deleteAccountSuccess)
     }
