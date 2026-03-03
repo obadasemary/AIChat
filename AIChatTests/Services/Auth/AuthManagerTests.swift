@@ -230,5 +230,49 @@ struct AuthManagerTests {
                 }
         )
     }
+
+    @Test("Delete Account Failure Preserves Auth Listener")
+    @MainActor
+    func test_whenDeleteAccountFails_thenAuthListenerRemainsActive() async throws {
+        let mockUser = UserAuthInfo.mock(isAnonymous: false)
+        let authService = MockAuthService(currentUser: mockUser)
+        authService.shouldThrowOnDeleteAccount = true
+        let authManager = AuthManager(service: authService)
+
+        await #expect(throws: MockAuthService.MockAuthError.operationFailed) {
+            try await authManager.deleteAccount()
+        }
+
+        // Auth should still be set — listener was not cancelled on failure
+        #expect(authManager.auth?.uid == mockUser.uid)
+
+        // Listener must still be active: subsequent auth state changes must propagate
+        let newUser = UserAuthInfo.mock(isAnonymous: false)
+        authService.currentUser = newUser
+        try await Task.sleep(nanoseconds: 100_000_000)
+        #expect(authManager.auth?.uid == newUser.uid)
+    }
+
+    @Test("Sign Out Failure Preserves Auth Listener")
+    @MainActor
+    func test_whenSignOutFails_thenAuthListenerRemainsActive() async throws {
+        let mockUser = UserAuthInfo.mock(isAnonymous: false)
+        let authService = MockAuthService(currentUser: mockUser)
+        authService.shouldThrowOnSignOut = true
+        let authManager = AuthManager(service: authService)
+
+        #expect(throws: MockAuthService.MockAuthError.operationFailed) {
+            try authManager.signOut()
+        }
+
+        // Auth should still be set — listener was not cancelled on failure
+        #expect(authManager.auth?.uid == mockUser.uid)
+
+        // Listener must still be active: subsequent auth state changes must propagate
+        let newUser = UserAuthInfo.mock(isAnonymous: false)
+        authService.currentUser = newUser
+        try await Task.sleep(nanoseconds: 100_000_000)
+        #expect(authManager.auth?.uid == newUser.uid)
+    }
 }
 
