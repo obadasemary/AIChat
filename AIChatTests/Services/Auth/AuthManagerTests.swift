@@ -183,7 +183,7 @@ struct AuthManagerTests {
 
         try await authManager.signOut()
 
-//        await #expect(authManager.auth == nil)
+        await #expect(authManager.auth == nil)
 
         #expect(
             mockLogService.trackedEvents
