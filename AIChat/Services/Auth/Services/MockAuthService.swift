@@ -23,8 +23,6 @@ extension MockAuthService: AuthServiceProtocol {
         onListenerAttached: (any NSObjectProtocol) -> Void
     ) -> AsyncStream<UserAuthInfo?> {
         AsyncStream { continuation in
-            continuation.yield(currentUser)
-            
             Task {
                 for await value in $currentUser.values {
                     continuation.yield(value)
@@ -91,7 +89,9 @@ extension MockAuthService: AuthServiceProtocol {
         currentUser = nil
     }
     
-    func deleteAccount() async throws {}
+    func deleteAccount() async throws {
+        currentUser = nil
+    }
     
     enum MockAuthError: LocalizedError {
         case userNotFound
