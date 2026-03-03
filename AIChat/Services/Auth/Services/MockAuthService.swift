@@ -11,6 +11,8 @@ import Foundation
 class MockAuthService {
     
     @Published var currentUser: UserAuthInfo?
+    var shouldThrowOnSignOut: Bool = false
+    var shouldThrowOnDeleteAccount: Bool = false
     
     init(currentUser: UserAuthInfo? = nil) {
         self.currentUser = currentUser
@@ -86,20 +88,29 @@ extension MockAuthService: AuthServiceProtocol {
     }
     
     func signOut() throws {
+        if shouldThrowOnSignOut {
+            throw MockAuthError.operationFailed
+        }
         currentUser = nil
     }
     
     func deleteAccount() async throws {
+        if shouldThrowOnDeleteAccount {
+            throw MockAuthError.operationFailed
+        }
         currentUser = nil
     }
     
     enum MockAuthError: LocalizedError {
         case userNotFound
+        case operationFailed
         
         var errorDescription: String? {
             switch self {
             case .userNotFound:
                 "No user is currently signed in."
+            case .operationFailed:
+                "The operation failed."
             }
         }
     }
