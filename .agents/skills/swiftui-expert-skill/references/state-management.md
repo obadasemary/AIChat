@@ -52,7 +52,40 @@ struct MyView: View {
 }
 ```
 
+**Critical**: When a view *owns* an `@Observable` object, always use `@State` -- not `let`. Without `@State`, SwiftUI may recreate the instance when a parent view redraws, losing accumulated state. `@State` tells SwiftUI to preserve the instance across view redraws. Using `@State` also provides bindings directly (no need for `@Bindable`).
+
 **Note**: You may want to mark `@Observable` classes with `@MainActor` to ensure thread safety with SwiftUI, unless your project or package uses Default Actor Isolation set to `MainActor`—in which case, the explicit attribute is redundant and can be omitted.
+
+## Property Wrappers Inside @Observable Classes
+
+**Critical**: The `@Observable` macro transforms stored properties to add observation tracking. Property wrappers (like `@AppStorage`, `@SceneStorage`, `@Query`) also transform properties with their own storage. These two transformations conflict, causing a compiler error.
+
+**Always annotate property-wrapper properties with `@ObservationIgnored` inside `@Observable` classes.**
+
+```swift
+@Observable
+@MainActor
+final class SettingsModel {
+    // WRONG - compiler error: property wrappers conflict with @Observable
+    // @AppStorage("username") var username = ""
+
+    // CORRECT - @ObservationIgnored prevents the conflict
+    @ObservationIgnored @AppStorage("username") var username = ""
+    @ObservationIgnored @AppStorage("isDarkMode") var isDarkMode = false
+
+    // Regular stored properties work fine with @Observable
+    var isLoading = false
+}
+```
+
+This applies to **any** property wrapper used inside an `@Observable` class, including but not limited to:
+- `@AppStorage`
+- `@SceneStorage`
+- `@Query` (SwiftData)
+
+**Note**: Since `@ObservationIgnored` disables observation tracking for that property, SwiftUI won't detect changes through the Observation framework. However, property wrappers like `@AppStorage` already notify SwiftUI of changes through their own mechanisms (e.g., UserDefaults KVO), so views still update correctly.
+
+**Never remove `@ObservationIgnored`** from property-wrapper properties in `@Observable` classes — doing so causes a compiler error.
 
 ## @Binding
 
@@ -96,6 +129,74 @@ struct DisplayView: View {
     let title: String
     var body: some View {
         Text(title)
+    }
+}
+```
+
+## @FocusState
+
+Use `@FocusState` to control text input focus in SwiftUI. Choose the focus value type based on how many fields the view manages.
+
+### Bool vs enum
+
+- Use `@FocusState private var isFocused: Bool` when the view has a single focusable field.
+- Use a `Hashable` enum optional value for multiple fields, for better readability and type safety.
+
+### Single Field: Bool
+
+`Bool` keeps the code simple when there is only one field to focus.
+
+```swift
+struct LoginView: View {
+    @State private var email = ""
+    @FocusState private var isEmailFocused: Bool
+
+    var body: some View {
+        TextField("Email", text: $email)
+            .focused($isEmailFocused)
+            .onAppear {
+                isEmailFocused = true
+            }
+    }
+}
+```
+
+### Multiple Fields: Enum (Preferred)
+
+Use a `Hashable` enum optional focus value when a view manages multiple fields. This keeps focus transitions readable and type-safe.
+
+```swift
+struct SignUpView: View {
+    enum Field: Hashable {
+        case name
+        case email
+        case password
+    }
+
+    @State private var name = ""
+    @State private var email = ""
+    @State private var password = ""
+    @FocusState private var focusedField: Field?
+
+    var body: some View {
+        Form {
+            TextField("Name", text: $name)
+                .focused($focusedField, equals: .name)
+
+            TextField("Email", text: $email)
+                .focused($focusedField, equals: .email)
+
+            SecureField("Password", text: $password)
+                .focused($focusedField, equals: .password)
+
+            Button("Next") {
+                switch focusedField {
+                case .name: focusedField = .email
+                case .email: focusedField = .password
+                default: focusedField = nil
+                }
+            }
+        }
     }
 }
 ```
@@ -150,7 +251,9 @@ struct GoodView: View {
 }
 ```
 
-### @StateObject instantiation in View's initializer
+### @StateObject instantiation in View's initializer (if it's a Parent view)
+
+This approach is an anti-pattern in general. Prefer storing the StateObject in the parent view or wherever the model is actually owned, then pass it down (use @ObservedObject, @EnvironmentObject, or @Bindable (for @Observable)) to keep ownership and lifecycle explicit.
 If you need to create a @StateObject with initialization parameters in your view's custom initializer, be aware of redundant allocations and hidden side effects.
 
 ```swift
@@ -312,6 +415,27 @@ struct MyView: View {
 }
 ```
 
+### Custom Environment Values with @Entry
+
+Use the `@Entry` macro (Xcode 16+, backward compatible to iOS 13) to define custom environment values without boilerplate:
+
+```swift
+extension EnvironmentValues {
+    @Entry var accentTheme: Theme = .default
+}
+
+// Inject
+ContentView()
+    .environment(\.accentTheme, customTheme)
+
+// Access
+struct ThemedView: View {
+    @Environment(\.accentTheme) private var theme
+}
+```
+
+The `@Entry` macro replaces the manual `EnvironmentKey` conformance pattern. It also works with `TransactionValues`, `ContainerValues`, and `FocusedValues`.
+
 ### @Environment with @Observable (iOS 17+ - Preferred)
 
 **Always prefer this pattern** for sharing state through the environment:
@@ -445,3 +569,4 @@ struct ChildView: View {
 5. **Always mark `@State` and `@StateObject` as `private`**
 6. **Never declare passed values as `@State` or `@StateObject`**
 7. With `@Observable`, nested objects work fine; with `ObservableObject`, pass nested objects directly to child views
+8. **Always add `@ObservationIgnored` to property wrappers** (e.g., `@AppStorage`, `@SceneStorage`, `@Query`) inside `@Observable` classes — they conflict with the macro's property transformation
