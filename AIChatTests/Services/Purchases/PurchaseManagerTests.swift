@@ -18,7 +18,7 @@ struct PurchaseManagerTests {
     func test_init_withNoEntitlements_entitlementsIsEmpty() async {
         let service = MockPurchaseService(activeEntitlements: [])
         let manager = await PurchaseManager.create(service: service)
-        await #expect(manager.entitlements.isEmpty)
+        #expect(manager.entitlements.isEmpty)
     }
     
     @Test("Init with active entitlements - entitlements are populated")
@@ -26,7 +26,7 @@ struct PurchaseManagerTests {
         let entitlement = PurchasedEntitlement.mock
         let service = MockPurchaseService(activeEntitlements: [entitlement])
         let manager = await PurchaseManager.create(service: service)
-        await #expect(manager.entitlements.isEmpty == false)
+        #expect(manager.entitlements.isEmpty == false)
     }
     
     // MARK: - getProducts
@@ -34,9 +34,9 @@ struct PurchaseManagerTests {
     @Test("Get Products Success - returns filtered products and tracks events")
     func test_getProducts_success_returnsProductsAndTracksEvents() async throws {
         let mockLogService = MockLogService()
-        let logManager = await LogManager(services: [mockLogService])
+        let logManager = LogManager(services: [mockLogService])
         let service = MockPurchaseService()
-        let manager = await PurchaseManager(service: service, logManager: logManager)
+        let manager = PurchaseManager(service: service, logManager: logManager)
         
         let productIds = [AnyProduct.mockYearly.id]
         let products = try await manager.getProducts(productIds: productIds)
@@ -50,9 +50,9 @@ struct PurchaseManagerTests {
     @Test("Get Products Failure - throws error and tracks fail event")
     func test_getProducts_failure_tracksFailEvent() async {
         let mockLogService = MockLogService()
-        let logManager = await LogManager(services: [mockLogService])
+        let logManager = LogManager(services: [mockLogService])
         let service = MockFailingPurchaseService()
-        let manager = await PurchaseManager(service: service, logManager: logManager)
+        let manager = PurchaseManager(service: service, logManager: logManager)
         
         await #expect(throws: MockFailingPurchaseService.MockPurchaseError.self) {
             _ = try await manager.getProducts(productIds: ["any.id"])
@@ -66,9 +66,9 @@ struct PurchaseManagerTests {
     func test_purchaseProduct_success_returnsEntitlementsAndTracksEvents() async throws {
         let entitlement = PurchasedEntitlement.mock
         let mockLogService = MockLogService()
-        let logManager = await LogManager(services: [mockLogService])
+        let logManager = LogManager(services: [mockLogService])
         let service = MockPurchaseService(activeEntitlements: [entitlement])
-        let manager = await PurchaseManager(service: service, logManager: logManager)
+        let manager = PurchaseManager(service: service, logManager: logManager)
         
         let result = try await manager.purchaseProduct(productId: entitlement.productId)
         
@@ -80,9 +80,9 @@ struct PurchaseManagerTests {
     @Test("Purchase Product Failure - throws error and tracks fail event")
     func test_purchaseProduct_failure_tracksFail() async {
         let mockLogService = MockLogService()
-        let logManager = await LogManager(services: [mockLogService])
+        let logManager = LogManager(services: [mockLogService])
         let service = MockFailingPurchaseService()
-        let manager = await PurchaseManager(service: service, logManager: logManager)
+        let manager = PurchaseManager(service: service, logManager: logManager)
         
         await #expect(throws: MockFailingPurchaseService.MockPurchaseError.self) {
             _ = try await manager.purchaseProduct(productId: "any.id")
@@ -96,9 +96,9 @@ struct PurchaseManagerTests {
     func test_restorePurchase_success_returnsEntitlementsAndTracksEvents() async throws {
         let entitlement = PurchasedEntitlement.mock
         let mockLogService = MockLogService()
-        let logManager = await LogManager(services: [mockLogService])
+        let logManager = LogManager(services: [mockLogService])
         let service = MockPurchaseService(activeEntitlements: [entitlement])
-        let manager = await PurchaseManager(service: service, logManager: logManager)
+        let manager = PurchaseManager(service: service, logManager: logManager)
         
         let result = try await manager.restorePurchase()
         
@@ -110,9 +110,9 @@ struct PurchaseManagerTests {
     @Test("Restore Purchase Failure - throws error and tracks fail event")
     func test_restorePurchase_failure_tracksFail() async {
         let mockLogService = MockLogService()
-        let logManager = await LogManager(services: [mockLogService])
+        let logManager = LogManager(services: [mockLogService])
         let service = MockFailingPurchaseService()
-        let manager = await PurchaseManager(service: service, logManager: logManager)
+        let manager = PurchaseManager(service: service, logManager: logManager)
         
         await #expect(throws: MockFailingPurchaseService.MockPurchaseError.self) {
             _ = try await manager.restorePurchase()
@@ -151,7 +151,7 @@ struct PurchaseManagerTests {
         // The service returns them in reverse order to verify sorting
         let service = MockPurchaseService(activeEntitlements: [earlierEntitlement, laterEntitlement])
         let manager = await PurchaseManager.create(service: service)
-        let entitlements = await manager.entitlements
+        let entitlements = manager.entitlements
         #expect(entitlements.first?.id == "later")
         #expect(entitlements.last?.id == "earlier")
     }
