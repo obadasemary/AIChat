@@ -87,23 +87,31 @@ extension AuthManager: AuthManagerProtocol {
     
     func signOut() throws {
         logManager?.trackEvent(event: Event.signOutStart)
-        
+
         try service.signOut()
         auth = nil
+        if let listener {
+            service.removeAuthenticatedUserListener(listener: listener)
+            self.listener = nil
+        }
         listenerTask?.cancel()
         listenerTask = nil
-        
+
         logManager?.trackEvent(event: Event.signOutSuccess)
     }
-    
+
     func deleteAccount() async throws {
         logManager?.trackEvent(event: Event.deleteAccountStart)
-        
+
         try await service.deleteAccount()
         auth = nil
+        if let listener {
+            service.removeAuthenticatedUserListener(listener: listener)
+            self.listener = nil
+        }
         listenerTask?.cancel()
         listenerTask = nil
-        
+
         logManager?.trackEvent(event: Event.deleteAccountSuccess)
     }
 }
