@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum CategoryRowTestOption: String, Codable, CaseIterable {
+enum CategoryRowTestOption: String, Codable, CaseIterable, Sendable {
     case original
     case top
     case hidden
