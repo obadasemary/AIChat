@@ -217,7 +217,7 @@ extension ExploreViewModel {
             router.dismissModal()
             Task { [weak self] in
                 guard let self else { return }
-                let isAuthorized = try await self.exploreUseCase.reuestAuthorization()
+                let isAuthorized = try await self.exploreUseCase.requestAuthorization()
                 self.exploreUseCase
                     .trackEvent(
                         event: Event

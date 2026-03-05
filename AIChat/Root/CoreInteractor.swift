@@ -259,8 +259,8 @@ extension CoreInteractor {
 // MARK: PushManager
 extension CoreInteractor {
     
-    func reuestAuthorization() async throws -> Bool {
-        try await pushManager.reuestAuthorization()
+    func requestAuthorization() async throws -> Bool {
+        try await pushManager.requestAuthorization()
     }
     
     func canRequestAuthorization() async -> Bool {
