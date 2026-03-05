@@ -17,10 +17,10 @@ struct LoggingInterceptorTests {
 
     @Test("Initializes with default log level")
     func test_whenInitialized_thenUsesBasicLogLevel() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -28,42 +28,42 @@ struct LoggingInterceptorTests {
         request.httpMethod = "GET"
         _ = try await interceptor.intercept(request)
 
-        #expect(loggedMessage?.contains("[Network Request]") == true)
-        #expect(loggedMessage?.contains("GET") == true)
+        #expect(loggedMessage.value?.contains("[Network Request]") == true)
+        #expect(loggedMessage.value?.contains("GET") == true)
     }
 
     @Test("Initializes with custom log level")
     func test_whenInitializedWithLogLevel_thenUsesCustomLevel() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .none,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
         let request = URLRequest(url: url)
         _ = try await interceptor.intercept(request)
 
-        #expect(loggedMessage == nil)
+        #expect(loggedMessage.value == nil)
     }
 
     // MARK: - Request Logging - Log Level None
 
     @Test("None log level does not log requests")
     func test_whenLogLevelNone_thenDoesNotLogRequest() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .none,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
         let request = URLRequest(url: url)
         let result = try await interceptor.intercept(request)
 
-        #expect(loggedMessage == nil)
+        #expect(loggedMessage.value == nil)
         #expect(result.url == request.url)
     }
 
@@ -71,11 +71,11 @@ struct LoggingInterceptorTests {
 
     @Test("Basic log level logs method and URL")
     func test_whenLogLevelBasic_thenLogsMethodAndURL() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .basic,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -83,20 +83,20 @@ struct LoggingInterceptorTests {
         request.httpMethod = "POST"
         _ = try await interceptor.intercept(request)
 
-        #expect(loggedMessage?.contains("[Network Request]") == true)
-        #expect(loggedMessage?.contains("POST") == true)
-        #expect(loggedMessage?.contains("https://api.example.com/test") == true)
-        #expect(loggedMessage?.contains("Headers:") == false)
-        #expect(loggedMessage?.contains("Body:") == false)
+        #expect(loggedMessage.value?.contains("[Network Request]") == true)
+        #expect(loggedMessage.value?.contains("POST") == true)
+        #expect(loggedMessage.value?.contains("https://api.example.com/test") == true)
+        #expect(loggedMessage.value?.contains("Headers:") == false)
+        #expect(loggedMessage.value?.contains("Body:") == false)
     }
 
     @Test("Basic log level does not log headers")
     func test_whenLogLevelBasic_thenDoesNotLogHeaders() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .basic,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -104,19 +104,19 @@ struct LoggingInterceptorTests {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         _ = try await interceptor.intercept(request)
 
-        #expect(loggedMessage?.contains("Headers:") == false)
-        #expect(loggedMessage?.contains("Content-Type") == false)
+        #expect(loggedMessage.value?.contains("Headers:") == false)
+        #expect(loggedMessage.value?.contains("Content-Type") == false)
     }
 
     // MARK: - Request Logging - Log Level Headers
 
     @Test("Headers log level logs headers")
     func test_whenLogLevelHeaders_thenLogsHeaders() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .headers,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -126,21 +126,21 @@ struct LoggingInterceptorTests {
         request.setValue("gzip", forHTTPHeaderField: "Accept-Encoding")
         _ = try await interceptor.intercept(request)
 
-        #expect(loggedMessage?.contains("[Network Request]") == true)
-        #expect(loggedMessage?.contains("Headers:") == true)
-        #expect(loggedMessage?.contains("Content-Type") == true)
-        #expect(loggedMessage?.contains("application/json") == true)
-        #expect(loggedMessage?.contains("Accept-Encoding") == true)
-        #expect(loggedMessage?.contains("gzip") == true)
+        #expect(loggedMessage.value?.contains("[Network Request]") == true)
+        #expect(loggedMessage.value?.contains("Headers:") == true)
+        #expect(loggedMessage.value?.contains("Content-Type") == true)
+        #expect(loggedMessage.value?.contains("application/json") == true)
+        #expect(loggedMessage.value?.contains("Accept-Encoding") == true)
+        #expect(loggedMessage.value?.contains("gzip") == true)
     }
 
     @Test("Headers log level masks sensitive headers")
     func test_whenSensitiveHeaders_thenMasksValues() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .headers,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -150,20 +150,20 @@ struct LoggingInterceptorTests {
         request.setValue("session-cookie", forHTTPHeaderField: "Cookie")
         _ = try await interceptor.intercept(request)
 
-        #expect(loggedMessage?.contains("Authorization") == true)
-        #expect(loggedMessage?.contains("***") == true)
-        #expect(loggedMessage?.contains("secret-token") == false)
-        #expect(loggedMessage?.contains("my-api-key") == false)
-        #expect(loggedMessage?.contains("session-cookie") == false)
+        #expect(loggedMessage.value?.contains("Authorization") == true)
+        #expect(loggedMessage.value?.contains("***") == true)
+        #expect(loggedMessage.value?.contains("secret-token") == false)
+        #expect(loggedMessage.value?.contains("my-api-key") == false)
+        #expect(loggedMessage.value?.contains("session-cookie") == false)
     }
 
     @Test("Headers log level does not log body")
     func test_whenLogLevelHeaders_thenDoesNotLogBody() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .headers,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -171,19 +171,19 @@ struct LoggingInterceptorTests {
         request.httpBody = Data("test body".utf8)
         _ = try await interceptor.intercept(request)
 
-        #expect(loggedMessage?.contains("Body:") == false)
-        #expect(loggedMessage?.contains("test body") == false)
+        #expect(loggedMessage.value?.contains("Body:") == false)
+        #expect(loggedMessage.value?.contains("test body") == false)
     }
 
     // MARK: - Request Logging - Log Level Body
 
     @Test("Body log level logs text body")
     func test_whenLogLevelBody_thenLogsTextBody() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .body,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -191,17 +191,17 @@ struct LoggingInterceptorTests {
         request.httpBody = Data("{\"key\": \"value\"}".utf8)
         _ = try await interceptor.intercept(request)
 
-        #expect(loggedMessage?.contains("Body:") == true)
-        #expect(loggedMessage?.contains("{\"key\": \"value\"}") == true)
+        #expect(loggedMessage.value?.contains("Body:") == true)
+        #expect(loggedMessage.value?.contains("{\"key\": \"value\"}") == true)
     }
 
     @Test("Body log level logs binary data size")
     func test_whenBinaryBody_thenLogsByteCount() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .body,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -210,18 +210,18 @@ struct LoggingInterceptorTests {
         request.httpBody = Data([0xFF, 0xFE, 0xFD, 0xFC])
         _ = try await interceptor.intercept(request)
 
-        #expect(loggedMessage?.contains("Body:") == true)
-        #expect(loggedMessage?.contains("<binary data:") == true)
-        #expect(loggedMessage?.contains("bytes>") == true)
+        #expect(loggedMessage.value?.contains("Body:") == true)
+        #expect(loggedMessage.value?.contains("<binary data:") == true)
+        #expect(loggedMessage.value?.contains("bytes>") == true)
     }
 
     @Test("Body log level truncates long bodies")
     func test_whenLongBody_thenTruncates() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .body,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -230,18 +230,18 @@ struct LoggingInterceptorTests {
         request.httpBody = Data(longString.utf8)
         _ = try await interceptor.intercept(request)
 
-        #expect(loggedMessage?.contains("Body:") == true)
-        #expect(loggedMessage?.contains("...") == true)
-        #expect((loggedMessage?.filter { $0 == "a" }.count ?? 0) < 1500)
+        #expect(loggedMessage.value?.contains("Body:") == true)
+        #expect(loggedMessage.value?.contains("...") == true)
+        #expect((loggedMessage.value?.filter { $0 == "a" }.count ?? 0) < 1500)
     }
 
     @Test("Body log level does not truncate short bodies")
     func test_whenShortBody_thenDoesNotTruncate() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .body,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -250,19 +250,19 @@ struct LoggingInterceptorTests {
         request.httpBody = Data(shortString.utf8)
         _ = try await interceptor.intercept(request)
 
-        #expect(loggedMessage?.contains("...") == false)
-        #expect(loggedMessage?.contains(shortString) == true)
+        #expect(loggedMessage.value?.contains("...") == false)
+        #expect(loggedMessage.value?.contains(shortString) == true)
     }
 
     // MARK: - Response Logging - Log Level None
 
     @Test("None log level does not log responses")
     func test_whenLogLevelNone_thenDoesNotLogResponse() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .none,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -275,7 +275,7 @@ struct LoggingInterceptorTests {
 
         let result = try await interceptor.intercept(response)
 
-        #expect(loggedMessage == nil)
+        #expect(loggedMessage.value == nil)
         #expect(result.statusCode == 200)
     }
 
@@ -283,11 +283,11 @@ struct LoggingInterceptorTests {
 
     @Test("Basic log level logs URL and status code")
     func test_whenLogLevelBasicForResponse_thenLogsURLAndStatus() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .basic,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -300,21 +300,21 @@ struct LoggingInterceptorTests {
 
         _ = try await interceptor.intercept(response)
 
-        #expect(loggedMessage?.contains("[Network Response]") == true)
-        #expect(loggedMessage?.contains("https://api.example.com/test") == true)
-        #expect(loggedMessage?.contains("404") == true)
-        #expect(loggedMessage?.contains("Headers:") == false)
+        #expect(loggedMessage.value?.contains("[Network Response]") == true)
+        #expect(loggedMessage.value?.contains("https://api.example.com/test") == true)
+        #expect(loggedMessage.value?.contains("404") == true)
+        #expect(loggedMessage.value?.contains("Headers:") == false)
     }
 
     // MARK: - Response Logging - Log Level Headers
 
     @Test("Headers log level logs response headers")
     func test_whenLogLevelHeadersForResponse_thenLogsHeaders() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .headers,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -331,20 +331,20 @@ struct LoggingInterceptorTests {
 
         _ = try await interceptor.intercept(response)
 
-        #expect(loggedMessage?.contains("Headers:") == true)
-        #expect(loggedMessage?.contains("Content-Type") == true)
-        #expect(loggedMessage?.contains("application/json") == true)
-        #expect(loggedMessage?.contains("Cache-Control") == true)
-        #expect(loggedMessage?.contains("no-cache") == true)
+        #expect(loggedMessage.value?.contains("Headers:") == true)
+        #expect(loggedMessage.value?.contains("Content-Type") == true)
+        #expect(loggedMessage.value?.contains("application/json") == true)
+        #expect(loggedMessage.value?.contains("Cache-Control") == true)
+        #expect(loggedMessage.value?.contains("no-cache") == true)
     }
 
     @Test("Headers log level does not log empty headers")
     func test_whenNoResponseHeaders_thenDoesNotShowHeadersSection() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .headers,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -357,18 +357,18 @@ struct LoggingInterceptorTests {
 
         _ = try await interceptor.intercept(response)
 
-        #expect(loggedMessage?.contains("Headers:") == false)
+        #expect(loggedMessage.value?.contains("Headers:") == false)
     }
 
     // MARK: - Response Logging - Log Level Body
 
     @Test("Body log level logs text response body")
     func test_whenLogLevelBodyForResponse_thenLogsTextBody() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .body,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -382,17 +382,17 @@ struct LoggingInterceptorTests {
 
         _ = try await interceptor.intercept(response)
 
-        #expect(loggedMessage?.contains("Body:") == true)
-        #expect(loggedMessage?.contains("{\"status\": \"success\"}") == true)
+        #expect(loggedMessage.value?.contains("Body:") == true)
+        #expect(loggedMessage.value?.contains("{\"status\": \"success\"}") == true)
     }
 
     @Test("Body log level logs binary response size")
     func test_whenBinaryResponseBody_thenLogsByteCount() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .body,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -406,18 +406,18 @@ struct LoggingInterceptorTests {
 
         _ = try await interceptor.intercept(response)
 
-        #expect(loggedMessage?.contains("Body:") == true)
-        #expect(loggedMessage?.contains("<binary data:") == true)
-        #expect(loggedMessage?.contains("5 bytes>") == true)
+        #expect(loggedMessage.value?.contains("Body:") == true)
+        #expect(loggedMessage.value?.contains("<binary data:") == true)
+        #expect(loggedMessage.value?.contains("5 bytes>") == true)
     }
 
     @Test("Body log level truncates long response bodies")
     func test_whenLongResponseBody_thenTruncates() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .body,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -432,36 +432,36 @@ struct LoggingInterceptorTests {
 
         _ = try await interceptor.intercept(response)
 
-        #expect(loggedMessage?.contains("Body:") == true)
-        #expect(loggedMessage?.contains("...") == true)
-        #expect((loggedMessage?.filter { $0 == "b" }.count ?? 0) < 2000)
+        #expect(loggedMessage.value?.contains("Body:") == true)
+        #expect(loggedMessage.value?.contains("...") == true)
+        #expect((loggedMessage.value?.filter { $0 == "b" }.count ?? 0) < 2000)
     }
 
     // MARK: - Console Logging Tests
 
     @Test("Console logging can be disabled")
     func test_whenConsoleLoggingDisabled_thenOnlyUsesCustomLogger() async throws {
-        var customLogCalled = false
+        let customLogCalled = LockedBox(false)
         let interceptor = LoggingInterceptor(
             logLevel: .basic,
             logToConsole: false,
-            customLogger: { _ in customLogCalled = true }
+            customLogger: { _ in customLogCalled.set(true) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
         let request = URLRequest(url: url)
         _ = try await interceptor.intercept(request)
 
-        #expect(customLogCalled == true)
+        #expect(customLogCalled.value == true)
     }
 
     @Test("Custom logger receives all logs")
     func test_whenCustomLogger_thenReceivesAllLogs() async throws {
-        var logCount = 0
+        let logCount = LockedBox(0)
         let interceptor = LoggingInterceptor(
             logLevel: .body,
             logToConsole: false,
-            customLogger: { _ in logCount += 1 }
+            customLogger: { _ in logCount.update { $0 += 1 } }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -476,7 +476,7 @@ struct LoggingInterceptorTests {
         )
         _ = try await interceptor.intercept(response)
 
-        #expect(logCount == 2)
+        #expect(logCount.value == 2)
     }
 
     @Test("No custom logger works correctly")
@@ -549,11 +549,11 @@ struct LoggingInterceptorTests {
 
     @Test("Handles request with no URL")
     func test_whenRequestHasNoURL_thenDoesNotCrash() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .basic,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         // Note: URLRequest requires a URL, so this test verifies the guard works
@@ -561,16 +561,16 @@ struct LoggingInterceptorTests {
         let request = URLRequest(url: url)
         _ = try await interceptor.intercept(request)
 
-        #expect(loggedMessage?.contains("[Network Request]") == true)
+        #expect(loggedMessage.value?.contains("[Network Request]") == true)
     }
 
     @Test("Handles response with no request URL")
     func test_whenResponseHasNoRequestURL_thenLogsWithoutURL() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .basic,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         // Create response with request that has no URL (edge case)
@@ -583,17 +583,17 @@ struct LoggingInterceptorTests {
 
         _ = try await interceptor.intercept(response)
 
-        #expect(loggedMessage?.contains("[Network Response]") == true)
-        #expect(loggedMessage?.contains("200") == true)
+        #expect(loggedMessage.value?.contains("[Network Response]") == true)
+        #expect(loggedMessage.value?.contains("200") == true)
     }
 
     @Test("Handles empty body gracefully")
     func test_whenEmptyBody_thenLogsCorrectly() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .body,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -601,16 +601,16 @@ struct LoggingInterceptorTests {
         request.httpBody = Data()
         _ = try await interceptor.intercept(request)
 
-        #expect(loggedMessage?.contains("[Network Request]") == true)
+        #expect(loggedMessage.value?.contains("[Network Request]") == true)
     }
 
     @Test("Sensitive headers are case-insensitive")
     func test_whenSensitiveHeadersMixedCase_thenMasksCorrectly() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .headers,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -619,18 +619,18 @@ struct LoggingInterceptorTests {
         request.setValue("key", forHTTPHeaderField: "Api-Key")
         _ = try await interceptor.intercept(request)
 
-        #expect(loggedMessage?.contains("***") == true)
-        #expect(loggedMessage?.contains("secret") == false)
-        #expect(loggedMessage?.contains("key") == false)
+        #expect(loggedMessage.value?.contains("***") == true)
+        #expect(loggedMessage.value?.contains("secret") == false)
+        #expect(loggedMessage.value?.contains("key") == false)
     }
 
     @Test("Headers are sorted alphabetically")
     func test_whenMultipleHeaders_thenSortedAlphabetically() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .headers,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -640,7 +640,7 @@ struct LoggingInterceptorTests {
         request.setValue("value3", forHTTPHeaderField: "M-Header")
         _ = try await interceptor.intercept(request)
 
-        guard let message = loggedMessage else {
+        guard let message = loggedMessage.value else {
             Issue.record("No log message captured")
             return
         }
@@ -657,11 +657,11 @@ struct LoggingInterceptorTests {
 
     @Test("Response headers are sorted alphabetically")
     func test_whenMultipleResponseHeaders_thenSortedAlphabetically() async throws {
-        var loggedMessage: String?
+        let loggedMessage = LockedBox<String?>(nil)
         let interceptor = LoggingInterceptor(
             logLevel: .headers,
             logToConsole: false,
-            customLogger: { loggedMessage = $0 }
+            customLogger: { loggedMessage.set($0) }
         )
 
         let url = try #require(URL(string: "https://api.example.com/test"))
@@ -679,7 +679,7 @@ struct LoggingInterceptorTests {
 
         _ = try await interceptor.intercept(response)
 
-        guard let message = loggedMessage else {
+        guard let message = loggedMessage.value else {
             Issue.record("No log message captured")
             return
         }
@@ -694,4 +694,32 @@ struct LoggingInterceptorTests {
         }
     }
 }
+
+private final class LockedBox<Value>: @unchecked Sendable {
+    private let lock = NSLock()
+    private var storedValue: Value
+
+    init(_ value: Value) {
+        self.storedValue = value
+    }
+
+    var value: Value {
+        lock.lock()
+        defer { lock.unlock() }
+        return storedValue
+    }
+
+    func set(_ newValue: Value) {
+        lock.lock()
+        storedValue = newValue
+        lock.unlock()
+    }
+
+    func update(_ transform: (inout Value) -> Void) {
+        lock.lock()
+        transform(&storedValue)
+        lock.unlock()
+    }
+}
+
 // swiftlint:enable type_body_length
