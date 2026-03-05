@@ -298,7 +298,12 @@ extension View {
                 BookmarksBuilder(container: DevPreview.shared.container)
             )
             .environment(
-                DevPreview.shared.container.resolve(AppState.self) ?? AppState()
+                {
+                    guard let appState = DevPreview.shared.container.resolve(AppState.self) else {
+                        preconditionFailure("AppState must be registered in the DependencyContainer before use.")
+                    }
+                    return appState
+                }()
             )
     }
     // swiftlint:enable function_body_length
