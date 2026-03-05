@@ -77,7 +77,7 @@ struct ConfigurationManagerTests {
         }
 
         // Just verify the API works - keys may be empty in test environment
-        let configManager = ConfigurationManager.shared
+        _ = ConfigurationManager.shared
         print("✅ Test: Priority logic executed without crash")
 
         #expect(true, "Environment variable priority logic should work")
