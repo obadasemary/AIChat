@@ -13,6 +13,7 @@ enum AppTab: Hashable {
     case profile
 }
 
+@MainActor
 @Observable
 class AppState {
     
