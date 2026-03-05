@@ -20,7 +20,7 @@ struct NetworkMonitorTests {
         // Note: This test will pass or fail based on actual network connectivity
         // In a real environment, the monitor should detect the current state
         #expect(monitor.isConnected == true || monitor.isConnected == false)
-        #expect(monitor.connectionType != nil)
+        #expect([.wifi, .cellular, .ethernet, .unknown].contains(monitor.connectionType))
     }
 
     @Test("Mock NetworkMonitor Starts Connected")
@@ -75,9 +75,9 @@ struct NetworkMonitorTests {
 
         // Both should conform to the protocol and provide required properties
         #expect(realMonitor.isConnected == true || realMonitor.isConnected == false)
-        #expect(realMonitor.connectionType != nil)
+        #expect([.wifi, .cellular, .ethernet, .unknown].contains(realMonitor.connectionType))
         #expect(mockMonitor.isConnected == true)
-        #expect(mockMonitor.connectionType != nil)
+        #expect([.wifi, .cellular, .ethernet, .unknown].contains(mockMonitor.connectionType))
     }
 
     // MARK: - Edge Case Tests
