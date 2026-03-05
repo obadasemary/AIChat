@@ -156,6 +156,33 @@ struct ExploreViewModelTests {
         #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ExploreView_DeepLink_Chats" })
     }
 
+    @Test("Handle Deep Link - screen=profile switches to profile tab")
+    func test_handleDeepLink_screenProfile_switchesTab() {
+        let mockUseCase = MockExploreUseCase()
+        let viewModel = ExploreViewModel(exploreUseCase: mockUseCase, router: MockExploreRouter())
+
+        // swiftlint:disable:next force_unwrapping
+        let url = URL(string: "aichat://explore?screen=profile")!
+        viewModel.handleDeepLink(url)
+
+        #expect(mockUseCase.switchedToTab == .profile)
+        #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ExploreView_DeepLink_Profile" })
+    }
+
+    @Test("Handle Deep Link - screen=createAvatar shows create avatar view")
+    func test_handleDeepLink_screenCreateAvatar_showsCreateAvatarView() {
+        let mockUseCase = MockExploreUseCase()
+        let mockRouter = MockExploreRouter()
+        let viewModel = ExploreViewModel(exploreUseCase: mockUseCase, router: mockRouter)
+
+        // swiftlint:disable:next force_unwrapping
+        let url = URL(string: "aichat://explore?screen=createAvatar")!
+        viewModel.handleDeepLink(url)
+
+        #expect(mockRouter.showCreateAvatarViewCalled)
+        #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ExploreView_DeepLink_CreateAvatar" })
+    }
+
     @Test("Handle Deep Link - no query items tracks no-query-items event")
     func test_handleDeepLink_noQueryItems_tracksEvent() {
         let mockUseCase = MockExploreUseCase()
