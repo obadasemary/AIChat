@@ -342,6 +342,7 @@ struct CreateAccountViewModelTests {
             $0.eventName == "CreateAccountView_GoogleAuth_LoginSuccess"
         }
 
+        #expect(delegateCalledWithNewUser == true)
         #expect(successEvents.count == 1)
         #expect(loginEvents.count == 1)
     }
