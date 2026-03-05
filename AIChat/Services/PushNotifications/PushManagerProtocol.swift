@@ -8,7 +8,7 @@
 import Foundation
 
 protocol PushManagerProtocol: Sendable {
-    func reuestAuthorization() async throws -> Bool
+    func requestAuthorization() async throws -> Bool
     func canRequestAuthorization() async -> Bool
     func schedulePushNotificationForTheNextWeek()
 }

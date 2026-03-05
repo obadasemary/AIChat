@@ -19,7 +19,7 @@ protocol ExploreUseCaseProtocol {
     
     func schedulePushNotificationForTheNextWeek()
     func canRequestAuthorization() async -> Bool
-    func reuestAuthorization() async throws -> Bool
+    func requestAuthorization() async throws -> Bool
     
     func updateAppState(showTabBarView: Bool)
     func switchToTab(_ tab: AppTab)
@@ -102,8 +102,8 @@ extension ExploreUseCase: ExploreUseCaseProtocol {
         await pushManager.canRequestAuthorization()
     }
     
-    func reuestAuthorization() async throws -> Bool {
-        try await pushManager.reuestAuthorization()
+    func requestAuthorization() async throws -> Bool {
+        try await pushManager.requestAuthorization()
     }
     
     func updateAppState(showTabBarView: Bool) {
