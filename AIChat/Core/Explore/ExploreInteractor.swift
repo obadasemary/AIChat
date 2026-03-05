@@ -20,7 +20,7 @@ protocol ExploreInteractor {
     func trackEvent(event: LoggableEvent)
     func schedulePushNotificationForTheNextWeek()
     func canRequestAuthorization() async -> Bool
-    func reuestAuthorization() async throws -> Bool
+    func requestAuthorization() async throws -> Bool
     
     func signOut() throws
     func updateAppState(showTabBarView: Bool)

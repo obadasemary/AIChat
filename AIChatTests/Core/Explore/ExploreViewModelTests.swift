@@ -252,7 +252,7 @@ final class MockExploreUseCase: ExploreUseCaseProtocol {
 
     func canRequestAuthorization() async -> Bool { false }
 
-    func reuestAuthorization() async throws -> Bool { false }
+    func requestAuthorization() async throws -> Bool { false }
 
     func updateAppState(showTabBarView: Bool) {}
 

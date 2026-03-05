@@ -21,7 +21,7 @@ final class PushManager {
 
 extension PushManager: PushManagerProtocol {
     
-    func reuestAuthorization() async throws -> Bool {
+    func requestAuthorization() async throws -> Bool {
         let isAuthorized = try await LocalNotifications.requestAuthorization()
         logManager?.addUserProperties(
             dict: [
