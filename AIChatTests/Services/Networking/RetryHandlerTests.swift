@@ -10,6 +10,17 @@ import Foundation
 @testable import AIChat
 
 struct RetryHandlerTests {
+    private actor AttemptCounter {
+        private var count = 0
+
+        func increment() {
+            count += 1
+        }
+
+        func value() -> Int {
+            count
+        }
+    }
 
     // MARK: - Should Retry Tests
 
@@ -122,30 +133,30 @@ struct RetryHandlerTests {
     @Test("Execute succeeds on first attempt")
     func test_whenFirstAttemptSucceeds_thenReturnsResult() async throws {
         let handler = RetryHandler(configuration: RetryConfiguration(maxRetries: 3, baseDelay: 0.01))
-        var attempts = 0
+        let attempts = AttemptCounter()
 
         let result = try await handler.execute {
-            attempts += 1
+            await attempts.increment()
             return "success"
         }
 
         #expect(result == "success")
-        #expect(attempts == 1)
+        #expect(await attempts.value() == 1)
     }
 
     @Test("Execute throws non-retryable error immediately")
     func test_whenNonRetryableError_thenThrowsImmediately() async {
         let handler = RetryHandler(configuration: RetryConfiguration(maxRetries: 3, baseDelay: 0.01))
-        var attempts = 0
+        let attempts = AttemptCounter()
 
         await #expect(throws: NetworkError.self) {
             try await handler.execute {
-                attempts += 1
+                await attempts.increment()
                 throw NetworkError.unauthorized
             }
         }
 
-        #expect(attempts == 1)
+        #expect(await attempts.value() == 1)
     }
 
     // MARK: - Configuration Tests
