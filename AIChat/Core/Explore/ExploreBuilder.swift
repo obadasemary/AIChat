@@ -34,7 +34,6 @@ final class ExploreBuilder {
                         container: container
                     ),
                     settingsBuilder: SettingsBuilder(container: container),
-                    profileBuilder: ProfileBuilder(container: container),
                     createAvatarBuilder: CreateAvatarBuilder(container: container)
                 )
             )
