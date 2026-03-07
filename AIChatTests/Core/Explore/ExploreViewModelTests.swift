@@ -86,6 +86,36 @@ struct ExploreViewModelTests {
         #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ExploreView_LoadPopularAvatars_Success" })
     }
 
+    @Test("Load Popular Avatars - skips fetch when already loaded and force is false")
+    func test_loadPopularAvatars_skipsWhenAlreadyLoaded() async {
+        let mockUseCase = MockExploreUseCase()
+        mockUseCase.popularAvatarsToReturn = AvatarModel.mocks
+        let viewModel = ExploreViewModel(exploreUseCase: mockUseCase, router: MockExploreRouter())
+
+        // Load once
+        await viewModel.loadPopularAvatars()
+        let firstCallCount = mockUseCase.getPopularAvatarsCallCount
+
+        // Load again without force
+        await viewModel.loadPopularAvatars(force: false)
+
+        #expect(mockUseCase.getPopularAvatarsCallCount == firstCallCount)
+    }
+
+    @Test("Load Popular Avatars - force refreshes even when already loaded")
+    func test_loadPopularAvatars_forceRefreshesEvenWhenLoaded() async {
+        let mockUseCase = MockExploreUseCase()
+        mockUseCase.popularAvatarsToReturn = AvatarModel.mocks
+        let viewModel = ExploreViewModel(exploreUseCase: mockUseCase, router: MockExploreRouter())
+
+        await viewModel.loadPopularAvatars()
+        let firstCallCount = mockUseCase.getPopularAvatarsCallCount
+
+        await viewModel.loadPopularAvatars(force: true)
+
+        #expect(mockUseCase.getPopularAvatarsCallCount > firstCallCount)
+    }
+
     @Test("Load Popular Avatars Failure - tracks error event and stops loading")
     func test_loadPopularAvatars_failure_tracksErrorEvent() async {
         let mockUseCase = MockExploreUseCase()
