@@ -2,7 +2,7 @@
 //  ExploreViewModelTests.swift
 //  AIChatTests
 //
-//  Created by Claude on 22.02.2026.
+//  Created by Abdelrahman Mohamed on 22.02.2026.
 //
 
 import Testing
@@ -141,6 +141,7 @@ struct ExploreViewModelTests {
         let url = URL(string: "aichat://explore?category=alien")!
         viewModel.handleDeepLink(url)
 
+        #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ExploreView_DeepLink_Start" })
         #expect(mockRouter.showCategoryListViewCalled)
         #expect(mockRouter.categoryListDelegate?.category == .alien)
     }
@@ -156,6 +157,7 @@ struct ExploreViewModelTests {
         let url = URL(string: "aichat://explore?avatarId=\(targetAvatarId)")!
         viewModel.handleDeepLink(url)
 
+        #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ExploreView_DeepLink_Start" })
         #expect(mockRouter.showChatViewCalled)
         #expect(mockRouter.chatDelegate?.avatarId == targetAvatarId)
     }
@@ -175,6 +177,7 @@ struct ExploreViewModelTests {
         let url = URL(string: "aichat://explore?screen=\(screen)")!
         viewModel.handleDeepLink(url)
 
+        #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ExploreView_DeepLink_Start" })
         #expect(mockUseCase.switchedToTab == tab)
         #expect(mockUseCase.trackedEvents.contains { $0.eventName == eventName })
     }
@@ -199,6 +202,7 @@ struct ExploreViewModelTests {
         let url = URL(string: "aichat://explore?screen=\(screen)")!
         viewModel.handleDeepLink(url)
 
+        #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ExploreView_DeepLink_Start" })
         #expect(mockRouter[keyPath: routerAssertion])
         #expect(mockUseCase.trackedEvents.contains { $0.eventName == eventName })
     }
@@ -212,6 +216,7 @@ struct ExploreViewModelTests {
         let url = URL(string: "aichat://explore")!
         viewModel.handleDeepLink(url)
 
+        #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ExploreView_DeepLink_Start" })
         #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ExploreView_DeepLink_NoQueryItems" })
     }
 
@@ -224,6 +229,7 @@ struct ExploreViewModelTests {
         let url = URL(string: "aichat://explore?unknownParam=value")!
         viewModel.handleDeepLink(url)
 
+        #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ExploreView_DeepLink_Start" })
         #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ExploreView_DeepLink_Unknown" })
     }
 
@@ -360,7 +366,7 @@ final class MockExploreRouter: ExploreRouterProtocol {
         showSettingsViewCalled = true
     }
 
-    func showProfileView() {}
+
 
     func showCreateAvatarView(onDisappear: @escaping () -> Void) {
         showCreateAvatarViewCalled = true
