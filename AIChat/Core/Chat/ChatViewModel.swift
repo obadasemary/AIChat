@@ -66,10 +66,10 @@ extension ChatViewModel {
                 .trackEvent(event: Event.loadChatSuccess(chat: chat))
         } catch {
             chatUseCase
-                .trackEvent(event: Event.loadAvatarFail(error: error))
+                .trackEvent(event: Event.loadChatFail(error: error))
         }
     }
-    
+
     func listenToChatMessages() async {
         chatUseCase.trackEvent(event: Event.loadMessagesStart)
         do {
@@ -120,8 +120,9 @@ extension ChatViewModel {
 // MARK: - Action
 extension ChatViewModel {
     // swiftlint:disable function_body_length
-    func onSendMessageTapped(avatarId: String) {
-        guard !textFieldText.isEmpty else { return }
+    @discardableResult
+    func onSendMessageTapped(avatarId: String) -> Task<Void, Never> {
+        guard !textFieldText.isEmpty else { return .noop }
         
         let content = textFieldText
         chatUseCase
@@ -129,10 +130,14 @@ extension ChatViewModel {
                 event: Event.sendMessageStart(chat: chat, avatar: avatar)
             )
         
-        Task {
+        return Task {
             do {
                 // Show paywall if needed
                 if !chatUseCase.isPremium && chatMessages.count >= 999 {
+                    chatUseCase
+                        .trackEvent(
+                            event: Event.sendMessagePaywall(chat: chat, avatar: avatar)
+                        )
                     router.showPaywallView()
                     return
                 }
@@ -151,9 +156,9 @@ extension ChatViewModel {
                     )
                 }
                 
-                // if there is no chatm throw error (shold never happen)
+                // if there is no chat, throw error (should never happen)
                 guard let chat else {
-                    throw ChatViewEror.failedToCreateNewChat
+                    throw ChatViewError.failedToCreateNewChat
                 }
 
                 // Handle editing existing message
@@ -292,9 +297,10 @@ extension ChatViewModel {
             }
     }
     
-    func onReportChatTapped() {
+    @discardableResult
+    func onReportChatTapped() -> Task<Void, Never> {
         chatUseCase.trackEvent(event: Event.reportChatStart)
-        Task {
+        return Task {
             do {
                 let chatId = try getChatId()
                 let userId = try chatUseCase.getAuthId()
@@ -321,9 +327,10 @@ extension ChatViewModel {
         }
     }
     
-    func onDeleteChatTapped() {
+    @discardableResult
+    func onDeleteChatTapped() -> Task<Void, Never> {
         chatUseCase.trackEvent(event: Event.deleteChatStart)
-        Task {
+        return Task {
             do {
                 let chatId = try getChatId()
                 try await chatUseCase.deleteChat(chatId: chatId)
@@ -433,9 +440,10 @@ extension ChatViewModel {
         textFieldText = ""
     }
 
-    func onMessageTranslateTapped(message: ChatMessageModel) {
+    @discardableResult
+    func onMessageTranslateTapped(message: ChatMessageModel) -> Task<Void, Never> {
         chatUseCase.trackEvent(event: Event.messageTranslateTapped)
-        Task {
+        return Task {
             do {
                 guard let text = message.content?.message else { return }
 
@@ -482,12 +490,12 @@ extension ChatViewModel {
     
     func getChatId() throws -> String {
         guard let chat else {
-            throw ChatViewEror.failedToCreateNewChat
+            throw ChatViewError.failedToCreateNewChat
         }
         return chat.id
     }
     
-    enum ChatViewEror: Error {
+    enum ChatViewError: Error {
         case failedToCreateNewChat
     }
     

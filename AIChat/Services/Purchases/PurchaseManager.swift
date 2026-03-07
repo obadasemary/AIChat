@@ -22,7 +22,15 @@ class PurchaseManager {
     ) {
         self.service = service
         self.logManager = logManager
-        self.configure()
+    }
+
+    static func create(
+        service: PurchaseServiceProtocol,
+        logManager: LogManagerProtocol? = nil
+    ) async -> PurchaseManager {
+        let manager = PurchaseManager(service: service, logManager: logManager)
+        await manager.configure()
+        return manager
     }
 }
 
@@ -124,13 +132,11 @@ private extension PurchaseManager {
     }
 }
 
-private extension PurchaseManager {
-    
-    func configure() {
-        Task {
-            let entitlements = await service.getUserEntitlements()
-            updateActiveEntitlements(entitlements)
-        }
+extension PurchaseManager {
+
+    func configure() async {
+        let entitlements = await service.getUserEntitlements()
+        updateActiveEntitlements(entitlements)
         Task {
             await service.listenForTransactions { entitlements in
                 await updateActiveEntitlements(entitlements)

@@ -43,6 +43,15 @@ final class ExploreViewModel {
     }
 }
 
+// MARK: - DeepLinkScreen
+
+private enum DeepLinkScreen: String {
+    case settings
+    case chats
+    case profile
+    case createAvatar
+}
+
 // MARK: - Load
 
 extension ExploreViewModel {
@@ -132,8 +141,39 @@ extension ExploreViewModel {
                 router.showCategoryListView(delegate: delegate)
                 
                 exploreUseCase.trackEvent(event: Event.deepLinkCategory(category: category))
+                return
             }
-            return
+            
+            if queryItem.name == "avatarId", let avatarId = queryItem.value {
+                let chatDelegate = ChatDelegate(avatarId: avatarId, chat: nil)
+                router.showChatView(delegate: chatDelegate)
+                
+                exploreUseCase.trackEvent(event: Event.deepLinkChat(avatarId: avatarId))
+                return
+            }
+            
+            if queryItem.name == "screen",
+               let value = queryItem.value,
+               let screen = DeepLinkScreen(rawValue: value) {
+                switch screen {
+                case .settings:
+                    router.showSettingsView(
+                        onSignedIn: {},
+                        onDisappear: {}
+                    )
+                    exploreUseCase.trackEvent(event: Event.deepLinkSettings)
+                case .chats:
+                    exploreUseCase.switchToTab(.chats)
+                    exploreUseCase.trackEvent(event: Event.deepLinkChats)
+                case .profile:
+                    exploreUseCase.switchToTab(.profile)
+                    exploreUseCase.trackEvent(event: Event.deepLinkProfile)
+                case .createAvatar:
+                    router.showCreateAvatarView(onDisappear: {})
+                    exploreUseCase.trackEvent(event: Event.deepLinkCreateAvatar)
+                }
+                return
+            }
         }
         
         exploreUseCase.trackEvent(event: Event.deepLinkUnknown)
@@ -177,13 +217,20 @@ extension ExploreViewModel {
             router.dismissModal()
             Task { [weak self] in
                 guard let self else { return }
-                let isAuthorized = try await self.exploreUseCase.reuestAuthorization()
-                self.exploreUseCase
-                    .trackEvent(
-                        event: Event
-                            .pushNotificationEnabled(isAuthorized: isAuthorized)
-                    )
-                await self.handleShowPushNotificationButton()
+                do {
+                    let isAuthorized = try await self.exploreUseCase.requestAuthorization()
+                    self.exploreUseCase
+                        .trackEvent(
+                            event: Event
+                                .pushNotificationEnabled(isAuthorized: isAuthorized)
+                        )
+                    await self.handleShowPushNotificationButton()
+                } catch {
+                    self.exploreUseCase
+                        .trackEvent(
+                            event: Event.pushNotificationFail(error: error)
+                        )
+                }
             }
         }
         
@@ -210,9 +257,7 @@ extension ExploreViewModel {
             )
     }
     
-    
-    
-    func onAvaterSelected(avatar: AvatarModel) {
+    func onAvatarSelected(avatar: AvatarModel) {
         exploreUseCase
             .trackEvent(
                 event: Event.avatarPressed(
@@ -241,7 +286,7 @@ extension ExploreViewModel {
     }
     
     func onLogoutButtonPressed() {
-        if (exploreUseCase.auth != nil) {
+        if exploreUseCase.auth != nil {
             try? exploreUseCase.signOut()
         }
         exploreUseCase.updateAppState(showTabBarView: false)
@@ -264,10 +309,16 @@ private extension ExploreViewModel {
         case categoryPressed(category: CharacterOption)
         case pushNotificationStart
         case pushNotificationEnabled(isAuthorized: Bool)
+        case pushNotificationFail(error: Error)
         case pushNotificationCancel
         case deepLinkStart
         case deepLinkNoQueryItems
         case deepLinkCategory(category: CharacterOption)
+        case deepLinkChat(avatarId: String)
+        case deepLinkSettings
+        case deepLinkChats
+        case deepLinkProfile
+        case deepLinkCreateAvatar
         case deepLinkUnknown
 
         var eventName: String {
@@ -284,10 +335,16 @@ private extension ExploreViewModel {
             case .categoryPressed: "ExploreView_Category_Pressed"
             case .pushNotificationStart: "ExploreView_PushNotification_Start"
             case .pushNotificationEnabled: "ExploreView_PushNotification_Enabled"
+            case .pushNotificationFail: "ExploreView_PushNotification_Fail"
             case .pushNotificationCancel: "ExploreView_PushNotification_Cancel"
             case .deepLinkStart: "ExploreView_DeepLink_Start"
             case .deepLinkNoQueryItems: "ExploreView_DeepLink_NoQueryItems"
             case .deepLinkCategory: "ExploreView_DeepLink_Category"
+            case .deepLinkChat: "ExploreView_DeepLink_Chat"
+            case .deepLinkSettings: "ExploreView_DeepLink_Settings"
+            case .deepLinkChats: "ExploreView_DeepLink_Chats"
+            case .deepLinkProfile: "ExploreView_DeepLink_Profile"
+            case .deepLinkCreateAvatar: "ExploreView_DeepLink_CreateAvatar"
             case .deepLinkUnknown: "ExploreView_DeepLink_Unknown"
             }
         }
@@ -307,10 +364,16 @@ private extension ExploreViewModel {
                 [
                     "category": category.rawValue
                 ]
+            case .deepLinkChat(avatarId: let avatarId):
+                [
+                    "avatar_id": avatarId
+                ]
             case .pushNotificationEnabled(isAuthorized: let isAuthorized):
                 [
                     "is_authorized": isAuthorized
                 ]
+            case .pushNotificationFail(error: let error):
+                error.eventParameters
             default:
                 nil
             }
@@ -318,7 +381,7 @@ private extension ExploreViewModel {
         
         var type: LogType {
             switch self {
-            case .loadPopularAvatarsFail, .loadFeaturedAvatarsFail, .deepLinkUnknown:
+            case .loadPopularAvatarsFail, .loadFeaturedAvatarsFail, .deepLinkUnknown, .pushNotificationFail:
                     .severe
             default:
                     .analytic

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum PaywallOptional: String, Codable, CaseIterable {
+public enum PaywallOptional: String, Codable, CaseIterable, Sendable {
     case custom = "Custom"
     case storeKit = "StoreKit"
     

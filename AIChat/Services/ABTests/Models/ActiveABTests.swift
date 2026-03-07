@@ -8,7 +8,7 @@
 import Foundation
 import FirebaseRemoteConfig
 
-struct ActiveABTests: Codable {
+struct ActiveABTests: Codable, Sendable {
     
     private(set) var createAccountTest: Bool
     private(set) var onboardingCommunityTest: Bool

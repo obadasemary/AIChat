@@ -121,7 +121,7 @@ private extension ExploreView {
                         imageName: avatar.profileImageName
                     )
                     .anyButton {
-                        viewModel.onAvaterSelected(avatar: avatar)
+                        viewModel.onAvatarSelected(avatar: avatar)
                     }
                 }
             }
@@ -175,7 +175,7 @@ private extension ExploreView {
                     subtitle: avatar.characterDescription
                 )
                 .anyButton(.highlight) {
-                    viewModel.onAvaterSelected(avatar: avatar)
+                    viewModel.onAvatarSelected(avatar: avatar)
                 }
                 .removeListRowFormatting()
             }

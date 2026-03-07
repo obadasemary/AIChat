@@ -17,6 +17,11 @@ protocol ExploreRouterProtocol {
         delegate: CreateAccountDelegate,
         onDisappear: (() -> Void)?
     )
+    func showSettingsView(
+        onSignedIn: @escaping () -> Void,
+        onDisappear: @escaping () -> Void
+    )
+    func showCreateAvatarView(onDisappear: @escaping () -> Void)
     func dismissScreen()
     
     func showPushNotificationModal(
@@ -35,6 +40,8 @@ struct ExploreRouter {
     let chatBuilder: ChatBuilder
     let devSettingsBuilder: DevSettingsBuilder
     let createAccountBuilder: CreateAccountBuilder
+    let settingsBuilder: SettingsBuilder
+    let createAvatarBuilder: CreateAvatarBuilder
 }
     
 extension ExploreRouter: ExploreRouterProtocol {
@@ -75,6 +82,27 @@ extension ExploreRouter: ExploreRouterProtocol {
                 .onDisappear {
                     onDisappear?()
                 }
+        }
+    }
+    
+    func showSettingsView(
+        onSignedIn: @escaping () -> Void,
+        onDisappear: @escaping () -> Void
+    ) {
+        router.showScreen(.sheet) { router in
+            settingsBuilder
+                .buildSettingsView(
+                    router: router,
+                    onSignedIn: onSignedIn
+                )
+                .onDisappear(perform: onDisappear)
+        }
+    }
+    
+    func showCreateAvatarView(onDisappear: @escaping () -> Void) {
+        router.showScreen(.fullScreenCover) { router in
+            createAvatarBuilder.buildCreateAvatarView(router: router)
+                .onDisappear(perform: onDisappear)
         }
     }
     
@@ -119,5 +147,6 @@ extension ExploreRouter: ExploreRouterProtocol {
     }
 }
 
-//MARK: FIXME We don't need it just if we going to use CoreRouter and CoreBuilder
+// CoreRouter conforms to ExploreRouterProtocol so it can be used as the router
+// when building ExploreView from CoreBuilder.
 extension CoreRouter: ExploreRouterProtocol {}
