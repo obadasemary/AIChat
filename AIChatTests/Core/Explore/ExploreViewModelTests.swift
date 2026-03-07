@@ -332,7 +332,6 @@ final class MockExploreRouter: ExploreRouterProtocol {
     private(set) var showDevSettingsViewCalled: Bool = false
     private(set) var showCreateAccountViewCalled: Bool = false
     private(set) var showSettingsViewCalled: Bool = false
-    private(set) var showProfileViewCalled: Bool = false
     private(set) var showCreateAvatarViewCalled: Bool = false
     private(set) var dismissScreenCalled: Bool = false
     private(set) var showPushNotificationModalCalled: Bool = false
@@ -361,9 +360,7 @@ final class MockExploreRouter: ExploreRouterProtocol {
         showSettingsViewCalled = true
     }
 
-    func showProfileView() {
-        showProfileViewCalled = true
-    }
+    func showProfileView() {}
 
     func showCreateAvatarView(onDisappear: @escaping () -> Void) {
         showCreateAvatarViewCalled = true
