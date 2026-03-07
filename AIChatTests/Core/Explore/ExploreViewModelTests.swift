@@ -130,57 +130,47 @@ struct ExploreViewModelTests {
         #expect(mockRouter.chatDelegate?.avatarId == targetAvatarId)
     }
 
-    @Test("Handle Deep Link - screen=settings shows settings view")
-    func test_handleDeepLink_screenSettings_showsSettings() {
+    @Test(
+        "Handle Deep Link - screen parameter switches tab",
+        arguments: [
+            ("chats", AppTab.chats, "ExploreView_DeepLink_Chats"),
+            ("profile", AppTab.profile, "ExploreView_DeepLink_Profile")
+        ]
+    )
+    func test_handleDeepLink_screen_switchesTab(screen: String, tab: AppTab, eventName: String) {
+        let mockUseCase = MockExploreUseCase()
+        let viewModel = ExploreViewModel(exploreUseCase: mockUseCase, router: MockExploreRouter())
+
+        // swiftlint:disable:next force_unwrapping
+        let url = URL(string: "aichat://explore?screen=\(screen)")!
+        viewModel.handleDeepLink(url)
+
+        #expect(mockUseCase.switchedToTab == tab)
+        #expect(mockUseCase.trackedEvents.contains { $0.eventName == eventName })
+    }
+
+    @Test(
+        "Handle Deep Link - screen parameter shows view",
+        arguments: [
+            ("settings", "ExploreView_DeepLink_Settings", \MockExploreRouter.showSettingsViewCalled),
+            ("createAvatar", "ExploreView_DeepLink_CreateAvatar", \MockExploreRouter.showCreateAvatarViewCalled)
+        ]
+    )
+    func test_handleDeepLink_screen_showsView(
+        screen: String,
+        eventName: String,
+        routerAssertion: KeyPath<MockExploreRouter, Bool>
+    ) {
         let mockUseCase = MockExploreUseCase()
         let mockRouter = MockExploreRouter()
         let viewModel = ExploreViewModel(exploreUseCase: mockUseCase, router: mockRouter)
 
         // swiftlint:disable:next force_unwrapping
-        let url = URL(string: "aichat://explore?screen=settings")!
+        let url = URL(string: "aichat://explore?screen=\(screen)")!
         viewModel.handleDeepLink(url)
 
-        #expect(mockRouter.showSettingsViewCalled)
-    }
-
-    @Test("Handle Deep Link - screen=chats switches to chats tab")
-    func test_handleDeepLink_screenChats_switchesTab() {
-        let mockUseCase = MockExploreUseCase()
-        let viewModel = ExploreViewModel(exploreUseCase: mockUseCase, router: MockExploreRouter())
-
-        // swiftlint:disable:next force_unwrapping
-        let url = URL(string: "aichat://explore?screen=chats")!
-        viewModel.handleDeepLink(url)
-
-        #expect(mockUseCase.switchedToTab == .chats)
-        #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ExploreView_DeepLink_Chats" })
-    }
-
-    @Test("Handle Deep Link - screen=profile switches to profile tab")
-    func test_handleDeepLink_screenProfile_switchesTab() {
-        let mockUseCase = MockExploreUseCase()
-        let viewModel = ExploreViewModel(exploreUseCase: mockUseCase, router: MockExploreRouter())
-
-        // swiftlint:disable:next force_unwrapping
-        let url = URL(string: "aichat://explore?screen=profile")!
-        viewModel.handleDeepLink(url)
-
-        #expect(mockUseCase.switchedToTab == .profile)
-        #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ExploreView_DeepLink_Profile" })
-    }
-
-    @Test("Handle Deep Link - screen=createAvatar shows create avatar view")
-    func test_handleDeepLink_screenCreateAvatar_showsCreateAvatarView() {
-        let mockUseCase = MockExploreUseCase()
-        let mockRouter = MockExploreRouter()
-        let viewModel = ExploreViewModel(exploreUseCase: mockUseCase, router: mockRouter)
-
-        // swiftlint:disable:next force_unwrapping
-        let url = URL(string: "aichat://explore?screen=createAvatar")!
-        viewModel.handleDeepLink(url)
-
-        #expect(mockRouter.showCreateAvatarViewCalled)
-        #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ExploreView_DeepLink_CreateAvatar" })
+        #expect(mockRouter[keyPath: routerAssertion])
+        #expect(mockUseCase.trackedEvents.contains { $0.eventName == eventName })
     }
 
     @Test("Handle Deep Link - no query items tracks no-query-items event")
