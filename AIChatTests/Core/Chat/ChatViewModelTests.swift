@@ -2,7 +2,7 @@
 //  ChatViewModelTests.swift
 //  AIChatTests
 //
-//  Created by Claude on 22.02.2026.
+//  Created by Abdelrahman Mohamed on 22.02.2026.
 //
 
 import Testing
