@@ -226,9 +226,10 @@ extension ExploreViewModel {
                         )
                     await self.handleShowPushNotificationButton()
                 } catch {
-                    print(
-                        "Failed to request push notification authorization: \(error.localizedDescription)"
-                    )
+                    self.exploreUseCase
+                        .trackEvent(
+                            event: Event.pushNotificationFail(error: error)
+                        )
                 }
             }
         }
@@ -308,6 +309,7 @@ private extension ExploreViewModel {
         case categoryPressed(category: CharacterOption)
         case pushNotificationStart
         case pushNotificationEnabled(isAuthorized: Bool)
+        case pushNotificationFail(error: Error)
         case pushNotificationCancel
         case deepLinkStart
         case deepLinkNoQueryItems
@@ -333,6 +335,7 @@ private extension ExploreViewModel {
             case .categoryPressed: "ExploreView_Category_Pressed"
             case .pushNotificationStart: "ExploreView_PushNotification_Start"
             case .pushNotificationEnabled: "ExploreView_PushNotification_Enabled"
+            case .pushNotificationFail: "ExploreView_PushNotification_Fail"
             case .pushNotificationCancel: "ExploreView_PushNotification_Cancel"
             case .deepLinkStart: "ExploreView_DeepLink_Start"
             case .deepLinkNoQueryItems: "ExploreView_DeepLink_NoQueryItems"
@@ -369,6 +372,8 @@ private extension ExploreViewModel {
                 [
                     "is_authorized": isAuthorized
                 ]
+            case .pushNotificationFail(error: let error):
+                error.eventParameters
             default:
                 nil
             }
@@ -376,7 +381,7 @@ private extension ExploreViewModel {
         
         var type: LogType {
             switch self {
-            case .loadPopularAvatarsFail, .loadFeaturedAvatarsFail, .deepLinkUnknown:
+            case .loadPopularAvatarsFail, .loadFeaturedAvatarsFail, .deepLinkUnknown, .pushNotificationFail:
                     .severe
             default:
                     .analytic
