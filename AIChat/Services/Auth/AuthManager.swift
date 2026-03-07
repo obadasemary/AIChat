@@ -115,6 +115,7 @@ private extension AuthManager {
             service.removeAuthenticatedUserListener(listener: listener)
         }
         
+        listenerTask?.cancel()
         listenerTask = Task {
             for await value in service.addAuthenticatedUserListener(onListenerAttached: { listener in
                 self.listener = listener
