@@ -207,6 +207,20 @@ struct ExploreViewModelTests {
         #expect(mockUseCase.trackedEvents.contains { $0.eventName == eventName })
     }
 
+    @Test("Handle Deep Link - invalid URL tracks invalid event")
+    func test_handleDeepLink_invalidURL_tracksInvalidEvent() {
+        let mockUseCase = MockExploreUseCase()
+        let viewModel = ExploreViewModel(exploreUseCase: mockUseCase, router: MockExploreRouter())
+
+        // A URL with unescaped spaces causes URLComponents to return nil
+        // swiftlint:disable:next force_unwrapping
+        let url = URL(string: "aichat://explore/path with spaces")!
+        viewModel.handleDeepLink(url)
+
+        #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ExploreView_DeepLink_Start" })
+        #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ExploreView_DeepLink_Invalid" })
+    }
+
     @Test("Handle Deep Link - no query items tracks no-query-items event")
     func test_handleDeepLink_noQueryItems_tracksEvent() {
         let mockUseCase = MockExploreUseCase()
@@ -365,8 +379,6 @@ final class MockExploreRouter: ExploreRouterProtocol {
     func showSettingsView(onSignedIn: @escaping () -> Void, onDisappear: @escaping () -> Void) {
         showSettingsViewCalled = true
     }
-
-
 
     func showCreateAvatarView(onDisappear: @escaping () -> Void) {
         showCreateAvatarViewCalled = true

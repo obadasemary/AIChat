@@ -107,6 +107,7 @@ struct ChatViewModelTests {
         await viewModel.onSendMessageTapped(avatarId: AvatarModel.mock.avatarId).value
         
         #expect(mockRouter.showPaywallViewCalled)
+        #expect(mockUseCase.trackedEvents.contains { $0.eventName == "ChatView_SendMessage_Paywall" })
     }
     
     @Test("Send Message - creates new chat when chat is nil")
