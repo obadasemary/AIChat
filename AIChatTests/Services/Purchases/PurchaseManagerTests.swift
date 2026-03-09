@@ -2,7 +2,7 @@
 //  PurchaseManagerTests.swift
 //  AIChatTests
 //
-//  Created by Claude on 22.02.2026.
+//  Created by Abdelrahman Mohamed on 22.02.2026.
 //
 
 import Testing
@@ -73,6 +73,7 @@ struct PurchaseManagerTests {
         let result = try await manager.purchaseProduct(productId: entitlement.productId)
         
         #expect(result.isEmpty == false)
+        #expect(manager.entitlements.isEmpty == false)
         #expect(mockLogService.trackedEvents.contains { $0.eventName == "PurMan_Purchase_Start" })
         #expect(mockLogService.trackedEvents.contains { $0.eventName == "PurMan_Purchase_Success" })
     }
@@ -103,6 +104,7 @@ struct PurchaseManagerTests {
         let result = try await manager.restorePurchase()
         
         #expect(result.isEmpty == false)
+        #expect(manager.entitlements.isEmpty == false)
         #expect(mockLogService.trackedEvents.contains { $0.eventName == "PurMan_Restore_Start" })
         #expect(mockLogService.trackedEvents.contains { $0.eventName == "PurMan_Restore_Success" })
     }
