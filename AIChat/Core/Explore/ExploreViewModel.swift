@@ -122,10 +122,12 @@ extension ExploreViewModel {
     func handleDeepLink(_ url: URL) {
         exploreUseCase.trackEvent(event: Event.deepLinkStart)
         
-        guard
-            let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-            let queryItems = components.queryItems
-        else {
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            exploreUseCase.trackEvent(event: Event.deepLinkInvalid)
+            return
+        }
+
+        guard let queryItems = components.queryItems else {
             exploreUseCase.trackEvent(event: Event.deepLinkNoQueryItems)
             return
         }
@@ -312,6 +314,7 @@ private extension ExploreViewModel {
         case pushNotificationFail(error: Error)
         case pushNotificationCancel
         case deepLinkStart
+        case deepLinkInvalid
         case deepLinkNoQueryItems
         case deepLinkCategory(category: CharacterOption)
         case deepLinkChat(avatarId: String)
@@ -338,6 +341,7 @@ private extension ExploreViewModel {
             case .pushNotificationFail: "ExploreView_PushNotification_Fail"
             case .pushNotificationCancel: "ExploreView_PushNotification_Cancel"
             case .deepLinkStart: "ExploreView_DeepLink_Start"
+            case .deepLinkInvalid: "ExploreView_DeepLink_Invalid"
             case .deepLinkNoQueryItems: "ExploreView_DeepLink_NoQueryItems"
             case .deepLinkCategory: "ExploreView_DeepLink_Category"
             case .deepLinkChat: "ExploreView_DeepLink_Chat"
