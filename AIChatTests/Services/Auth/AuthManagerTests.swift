@@ -273,7 +273,11 @@ private extension AuthManagerTests {
         // Listener must still be active: subsequent auth state changes must propagate
         let newUser = UserAuthInfo.mock(isAnonymous: false)
         authService.currentUser = newUser
-        try await Task.sleep(nanoseconds: 100_000_000)
+        // Yield to the run loop repeatedly until the listener propagates the new user,
+        // instead of relying on a fixed sleep that can race under CI load.
+        for _ in 0..<50 where authManager.auth?.uid != newUser.uid {
+            await Task.yield()
+        }
         #expect(authManager.auth?.uid == newUser.uid)
     }
 }
