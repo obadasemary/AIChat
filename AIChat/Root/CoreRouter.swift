@@ -221,9 +221,7 @@ struct CoreRouter {
                 .onDisappear(perform: onDisappear)
         }
     }
-    
-    // MARK: Create Avatar View
-    
+
     // MARK: OnboardingIntro
     
     func showOnboardingIntroView(delegate: OnboardingIntroDelegate) {
