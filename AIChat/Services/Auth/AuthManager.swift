@@ -40,6 +40,10 @@ extension AuthManager: AuthManagerProtocol {
     }
     
     func signInAnonymously() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
+        defer {
+            addAuthListener()
+        }
+
         let result = try await service.signInAnonymously()
         self.auth = result.user
         return result
