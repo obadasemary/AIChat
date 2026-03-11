@@ -17,7 +17,7 @@ public final class LoggingInterceptor: RequestInterceptor, ResponseInterceptor, 
     /// Creates a new logging interceptor
     public init(
         logLevel: LogLevel = .basic,
-        logToConsole: Bool = true,
+        logToConsole: Bool = false,
         customLogger: (@Sendable (String) -> Void)? = nil
     ) {
         self.logLevel = logLevel
