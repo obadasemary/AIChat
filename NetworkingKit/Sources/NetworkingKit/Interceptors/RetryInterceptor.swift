@@ -78,15 +78,12 @@ public struct RetryHandler: Sendable {
         operation: @Sendable () async throws -> T
     ) async throws -> T {
         let retries = maxRetries ?? configuration.maxRetries
-        var lastError: Error?
 
-        for attempt in 0...retries {
+        for attempt in 0..<retries {
             do {
                 return try await operation()
             } catch let error as NetworkError {
-                lastError = error
-
-                if shouldRetry(error: error, attempt: attempt) && attempt < retries {
+                if shouldRetry(error: error, attempt: attempt) && attempt < retries - 1 {
                     let delay = delayForRetry(attempt: attempt)
                     try await Task.sleep(for: .seconds(delay))
                     continue
@@ -98,6 +95,6 @@ public struct RetryHandler: Sendable {
             }
         }
 
-        throw lastError ?? NetworkError.unknown("Retry failed")
+        throw NetworkError.unknown("Retry failed: exhausted \(retries) attempts")
     }
 }
