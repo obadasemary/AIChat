@@ -1,32 +1,33 @@
-//
-//  NetworkManager.swift
-//  AIChat
-//
-//  Created on 2026-02-02.
-//
-
 import Foundation
+
+/// A network event emitted by NetworkManager for observability
+public struct NetworkEvent: Sendable {
+    public enum EventType: String, Sendable {
+        case requestStart = "network_request_start"
+        case requestSuccess = "network_request_success"
+        case requestFailed = "network_request_failed"
+    }
+
+    public let type: EventType
+    public let parameters: [String: any Sendable]
+}
 
 /// Protocol defining the network manager interface
 @MainActor
-protocol NetworkManagerProtocol: Sendable {
-    /// Executes a network request and returns the raw response
+public protocol NetworkManagerProtocol: Sendable {
     func execute(_ request: NetworkRequest) async throws -> NetworkResponse
 
-    /// Executes a network request and decodes the response to the specified type
     func execute<T: Decodable>(
         _ request: NetworkRequest,
         responseType: T.Type,
         decoder: JSONDecoder
     ) async throws -> T
 
-    /// Executes a network request with retry logic
     func executeWithRetry(
         _ request: NetworkRequest,
         maxRetries: Int
     ) async throws -> NetworkResponse
 
-    /// Executes a network request with retry logic and decodes the response
     func executeWithRetry<T: Decodable>(
         _ request: NetworkRequest,
         responseType: T.Type,
@@ -38,27 +39,27 @@ protocol NetworkManagerProtocol: Sendable {
 // MARK: - Default parameter values
 
 extension NetworkManagerProtocol {
-    func execute<T: Decodable>(
+    public func execute<T: Decodable>(
         _ request: NetworkRequest,
         responseType: T.Type
     ) async throws -> T {
         try await execute(request, responseType: responseType, decoder: JSONDecoder())
     }
 
-    func executeWithRetry(
+    public func executeWithRetry(
         _ request: NetworkRequest
     ) async throws -> NetworkResponse {
         try await executeWithRetry(request, maxRetries: 3)
     }
 
-    func executeWithRetry<T: Decodable>(
+    public func executeWithRetry<T: Decodable>(
         _ request: NetworkRequest,
         responseType: T.Type
     ) async throws -> T {
         try await executeWithRetry(request, responseType: responseType, decoder: JSONDecoder(), maxRetries: 3)
     }
 
-    func executeWithRetry<T: Decodable>(
+    public func executeWithRetry<T: Decodable>(
         _ request: NetworkRequest,
         responseType: T.Type,
         maxRetries: Int
@@ -70,56 +71,55 @@ extension NetworkManagerProtocol {
 /// Manager for network operations
 @MainActor
 @Observable
-final class NetworkManager: Sendable {
+public final class NetworkManager: Sendable {
     private let service: NetworkServiceProtocol
     private let retryHandler: RetryHandler
-    private let logManager: (any LogManagerProtocol)?
+    /// Optional event handler for observability — bridge to your app's logging system
+    private let eventHandler: (@Sendable (NetworkEvent) -> Void)?
 
-    /// Creates a new network manager
-    /// - Parameters:
-    ///   - service: The network service to use
-    ///   - retryConfiguration: Configuration for retry behavior
-    ///   - logManager: Optional log manager for analytics
-    init(
+    public init(
         service: NetworkServiceProtocol,
         retryConfiguration: RetryConfiguration = .default,
-        logManager: (any LogManagerProtocol)? = nil
+        eventHandler: (@Sendable (NetworkEvent) -> Void)? = nil
     ) {
         self.service = service
         self.retryHandler = RetryHandler(configuration: retryConfiguration)
-        self.logManager = logManager
+        self.eventHandler = eventHandler
     }
 }
 
 // MARK: - NetworkManagerProtocol
 
 extension NetworkManager: NetworkManagerProtocol {
-    func execute(_ request: NetworkRequest) async throws -> NetworkResponse {
-        logManager?.trackEvent(event: Event.requestStart(path: request.path, method: request.method.rawValue))
+    public func execute(_ request: NetworkRequest) async throws -> NetworkResponse {
+        eventHandler?(NetworkEvent(
+            type: .requestStart,
+            parameters: ["path": request.path, "method": request.method.rawValue]
+        ))
 
         do {
             let response = try await service.execute(request)
-            logManager?.trackEvent(event: Event.requestSuccess(
-                path: request.path,
-                statusCode: response.statusCode
+            eventHandler?(NetworkEvent(
+                type: .requestSuccess,
+                parameters: ["path": request.path, "status_code": response.statusCode]
             ))
             return response
         } catch let error as NetworkError {
-            logManager?.trackEvent(event: Event.requestFailed(
-                path: request.path,
-                error: error.localizedDescription
+            eventHandler?(NetworkEvent(
+                type: .requestFailed,
+                parameters: ["path": request.path, "error": error.localizedDescription ?? ""]
             ))
             throw error
         } catch {
-            logManager?.trackEvent(event: Event.requestFailed(
-                path: request.path,
-                error: error.localizedDescription
+            eventHandler?(NetworkEvent(
+                type: .requestFailed,
+                parameters: ["path": request.path, "error": error.localizedDescription]
             ))
             throw NetworkError.unknown(error.localizedDescription)
         }
     }
 
-    func execute<T: Decodable>(
+    public func execute<T: Decodable>(
         _ request: NetworkRequest,
         responseType: T.Type,
         decoder: JSONDecoder
@@ -128,7 +128,7 @@ extension NetworkManager: NetworkManagerProtocol {
         return try response.decode(responseType, decoder: decoder)
     }
 
-    func executeWithRetry(
+    public func executeWithRetry(
         _ request: NetworkRequest,
         maxRetries: Int
     ) async throws -> NetworkResponse {
@@ -137,7 +137,7 @@ extension NetworkManager: NetworkManagerProtocol {
         }
     }
 
-    func executeWithRetry<T: Decodable>(
+    public func executeWithRetry<T: Decodable>(
         _ request: NetworkRequest,
         responseType: T.Type,
         decoder: JSONDecoder,
@@ -145,46 +145,5 @@ extension NetworkManager: NetworkManagerProtocol {
     ) async throws -> T {
         let response = try await executeWithRetry(request, maxRetries: maxRetries)
         return try response.decode(responseType, decoder: decoder)
-    }
-}
-
-// MARK: - Analytics Events
-
-private extension NetworkManager {
-    enum Event: LoggableEvent {
-        case requestStart(path: String, method: String)
-        case requestSuccess(path: String, statusCode: Int)
-        case requestFailed(path: String, error: String)
-
-        var eventName: String {
-            switch self {
-            case .requestStart:
-                return "network_request_start"
-            case .requestSuccess:
-                return "network_request_success"
-            case .requestFailed:
-                return "network_request_failed"
-            }
-        }
-
-        var parameters: [String: Any]? {
-            switch self {
-            case .requestStart(let path, let method):
-                return ["path": path, "method": method]
-            case .requestSuccess(let path, let statusCode):
-                return ["path": path, "status_code": statusCode]
-            case .requestFailed(let path, let error):
-                return ["path": path, "error": error]
-            }
-        }
-
-        var type: LogType {
-            switch self {
-            case .requestStart, .requestSuccess:
-                return .analytic
-            case .requestFailed:
-                return .severe
-            }
-        }
     }
 }

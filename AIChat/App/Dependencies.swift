@@ -8,6 +8,7 @@
 import SwiftUI
 import FirebaseCore
 import FirebaseFirestore
+import NetworkingKit
 
 import SamuraiLogging
 import SamuraiLoggingFirebaseAnalytics
@@ -117,9 +118,10 @@ struct Dependencies {
                 logManager: logManager
             )
             bookmarkManager = BookmarkManager()
+            let mockLog = logManager
             networkManager = NetworkManager(
                 service: MockNetworkService(),
-                logManager: logManager
+                eventHandler: { mockLog.trackEvent(event: AnyLoggableEvent(eventName: $0.type.rawValue, parameters: $0.parameters, type: $0.type == .requestFailed ? .severe : .analytic)) }
             )
             appState = AppState(showTabBar: isSignedIn)
         case .dev:
@@ -165,6 +167,7 @@ struct Dependencies {
                 logManager: logManager
             )
             bookmarkManager = BookmarkManager()
+            let devLog = logManager
             networkManager = NetworkManager(
                 service: URLSessionNetworkService(
                     requestInterceptors: [
@@ -174,7 +177,7 @@ struct Dependencies {
                         LoggingInterceptor(logLevel: .headers)
                     ]
                 ),
-                logManager: logManager
+                eventHandler: { devLog.trackEvent(event: AnyLoggableEvent(eventName: $0.type.rawValue, parameters: $0.parameters, type: $0.type == .requestFailed ? .severe : .analytic)) }
             )
             appState = AppState()
         case .prod:
@@ -219,9 +222,10 @@ struct Dependencies {
                 logManager: logManager
             )
             bookmarkManager = BookmarkManager()
+            let prodLog = logManager
             networkManager = NetworkManager(
                 service: URLSessionNetworkService(),
-                logManager: logManager
+                eventHandler: { prodLog.trackEvent(event: AnyLoggableEvent(eventName: $0.type.rawValue, parameters: $0.parameters, type: $0.type == .requestFailed ? .severe : .analytic)) }
             )
             appState = AppState()
         }
