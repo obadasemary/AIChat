@@ -10,6 +10,11 @@ public struct NetworkEvent: Sendable {
 
     public let type: EventType
     public let parameters: [String: any Sendable]
+
+    public init(type: EventType, parameters: [String: any Sendable]) {
+        self.type = type
+        self.parameters = parameters
+    }
 }
 
 /// Protocol defining the network manager interface
@@ -70,7 +75,6 @@ extension NetworkManagerProtocol {
 
 /// Manager for network operations
 @MainActor
-@Observable
 public final class NetworkManager: Sendable {
     private let service: NetworkServiceProtocol
     private let retryHandler: RetryHandler
@@ -133,7 +137,7 @@ extension NetworkManager: NetworkManagerProtocol {
         maxRetries: Int
     ) async throws -> NetworkResponse {
         try await retryHandler.execute(maxRetries: maxRetries) {
-            try await service.execute(request)
+            try await self.execute(request)
         }
     }
 
