@@ -1,39 +1,23 @@
-//
-//  MockNetworkService.swift
-//  AIChat
-//
-//  Created on 2026-02-02.
-//
-
 import Foundation
 
 /// Mock implementation of NetworkServiceProtocol for testing
-actor MockNetworkService: NetworkServiceProtocol {
-    /// The base URL (not used in mock but required by protocol)
-    let baseURL: URL?
+public actor MockNetworkService: NetworkServiceProtocol {
+    public let baseURL: URL?
 
-    /// Simulated network delay in seconds
     private let delay: TimeInterval
-
-    /// Whether to simulate errors
     private let shouldError: Bool
-
-    /// The error to throw when shouldError is true
     private let errorToThrow: NetworkError
-
-    /// Mock responses keyed by path
     private var mockResponses: [String: MockResponse]
 
-    /// Recorded requests for verification
-    private(set) var recordedRequests: [NetworkRequest] = []
+    public private(set) var recordedRequests: [NetworkRequest] = []
 
     /// A mock response configuration
-    struct MockResponse: Sendable {
-        let data: Data
-        let statusCode: Int
-        let headers: [String: String]
+    public struct MockResponse: Sendable {
+        public let data: Data
+        public let statusCode: Int
+        public let headers: [String: String]
 
-        init(
+        public init(
             data: Data,
             statusCode: Int = 200,
             headers: [String: String] = [:]
@@ -43,8 +27,7 @@ actor MockNetworkService: NetworkServiceProtocol {
             self.headers = headers
         }
 
-        /// Creates a mock response from an Encodable object
-        static func json<T: Encodable>(
+        public static func json<T: Encodable>(
             _ object: T,
             statusCode: Int = 200,
             encoder: JSONEncoder = JSONEncoder()
@@ -57,8 +40,7 @@ actor MockNetworkService: NetworkServiceProtocol {
             )
         }
 
-        /// Creates a mock response from a JSON string
-        static func jsonString(
+        public static func jsonString(
             _ json: String,
             statusCode: Int = 200
         ) -> MockResponse {
@@ -70,14 +52,7 @@ actor MockNetworkService: NetworkServiceProtocol {
         }
     }
 
-    /// Creates a new mock network service
-    /// - Parameters:
-    ///   - baseURL: The base URL (optional, not really used)
-    ///   - delay: Simulated network delay in seconds (default: 0.1)
-    ///   - shouldError: Whether to always throw errors (default: false)
-    ///   - errorToThrow: The error to throw when shouldError is true
-    ///   - mockResponses: Initial mock responses keyed by path
-    init(
+    public init(
         baseURL: URL? = nil,
         delay: TimeInterval = 0.1,
         shouldError: Bool = false,
@@ -91,51 +66,35 @@ actor MockNetworkService: NetworkServiceProtocol {
         self.mockResponses = mockResponses
     }
 
-    /// Registers a mock response for a specific path
-    /// - Parameters:
-    ///   - path: The path to mock
-    ///   - response: The mock response to return
-    func register(path: String, response: MockResponse) {
+    public func register(path: String, response: MockResponse) {
         mockResponses[path] = response
     }
 
-    /// Registers a mock response for a specific path using an Encodable object
-    /// - Parameters:
-    ///   - path: The path to mock
-    ///   - object: The object to encode as the response
-    ///   - statusCode: The HTTP status code
-    func register<T: Encodable>(path: String, object: T, statusCode: Int = 200) throws {
+    public func register<T: Encodable>(path: String, object: T, statusCode: Int = 200) throws {
         let response = try MockResponse.json(object, statusCode: statusCode)
         mockResponses[path] = response
     }
 
-    /// Clears all recorded requests
-    func clearRecordedRequests() {
+    public func clearRecordedRequests() {
         recordedRequests = []
     }
 
-    /// Clears all mock responses
-    func clearMockResponses() {
+    public func clearMockResponses() {
         mockResponses = [:]
     }
 
-    func execute(_ request: NetworkRequest) async throws -> NetworkResponse {
-        // Record the request
+    public func execute(_ request: NetworkRequest) async throws -> NetworkResponse {
         recordedRequests.append(request)
 
-        // Simulate network delay
         if delay > 0 {
             try await Task.sleep(for: .seconds(delay))
         }
 
-        // Check if we should throw an error
         if shouldError {
             throw errorToThrow
         }
 
-        // Look up mock response
         if let mockResponse = mockResponses[request.path] {
-            // Check for error status codes
             if let error = NetworkError.fromStatusCode(mockResponse.statusCode, data: mockResponse.data) {
                 throw error
             }
@@ -147,7 +106,6 @@ actor MockNetworkService: NetworkServiceProtocol {
             )
         }
 
-        // Default empty success response if no mock is registered
         return NetworkResponse(
             data: Data(),
             statusCode: 200,

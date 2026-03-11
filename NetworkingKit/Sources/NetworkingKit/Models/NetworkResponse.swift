@@ -1,38 +1,26 @@
-//
-//  NetworkResponse.swift
-//  AIChat
-//
-//  Created on 2026-02-02.
-//
-
 import Foundation
 
 /// A network response containing data and metadata
-struct NetworkResponse: Sendable {
+public struct NetworkResponse: Sendable {
     /// The response data
-    let data: Data
+    public let data: Data
 
     /// The HTTP status code
-    let statusCode: Int
+    public let statusCode: Int
 
     /// The response headers
-    let headers: [String: String]
+    public let headers: [String: String]
 
     /// The original URL request
-    let request: URLRequest?
+    public let request: URLRequest?
 
     /// Whether the response indicates success (2xx status code)
-    var isSuccess: Bool {
+    public var isSuccess: Bool {
         (200...299).contains(statusCode)
     }
 
     /// Creates a new network response
-    /// - Parameters:
-    ///   - data: The response data
-    ///   - statusCode: The HTTP status code
-    ///   - headers: The response headers
-    ///   - request: The original URL request
-    init(
+    public init(
         data: Data,
         statusCode: Int,
         headers: [String: String] = [:],
@@ -45,11 +33,7 @@ struct NetworkResponse: Sendable {
     }
 
     /// Creates a NetworkResponse from URLResponse
-    /// - Parameters:
-    ///   - data: The response data
-    ///   - response: The URL response
-    ///   - request: The original URL request
-    init?(data: Data, response: URLResponse?, request: URLRequest? = nil) {
+    public init?(data: Data, response: URLResponse?, request: URLRequest? = nil) {
         guard let httpResponse = response as? HTTPURLResponse else {
             return nil
         }
@@ -68,11 +52,7 @@ struct NetworkResponse: Sendable {
     }
 
     /// Decodes the response data to the specified type
-    /// - Parameters:
-    ///   - type: The type to decode to
-    ///   - decoder: The JSON decoder to use
-    /// - Returns: The decoded object
-    func decode<T: Decodable>(_ type: T.Type, decoder: JSONDecoder = JSONDecoder()) throws -> T {
+    public func decode<T: Decodable>(_ type: T.Type, decoder: JSONDecoder = JSONDecoder()) throws -> T {
         do {
             return try decoder.decode(type, from: data)
         } catch let decodingError as DecodingError {
@@ -83,9 +63,7 @@ struct NetworkResponse: Sendable {
     }
 
     /// Returns the response data as a string
-    /// - Parameter encoding: The string encoding to use
-    /// - Returns: The response as a string, or nil if conversion fails
-    func string(encoding: String.Encoding = .utf8) -> String? {
+    public func string(encoding: String.Encoding = .utf8) -> String? {
         String(data: data, encoding: encoding)
     }
 }
