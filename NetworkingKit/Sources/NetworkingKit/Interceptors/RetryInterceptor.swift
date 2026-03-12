@@ -77,7 +77,7 @@ public struct RetryHandler: Sendable {
         maxRetries: Int? = nil,
         operation: @Sendable () async throws -> T
     ) async throws -> T {
-        let retries = maxRetries ?? configuration.maxRetries
+        let retries = max(1, maxRetries ?? configuration.maxRetries)
 
         for attempt in 0..<retries {
             do {
