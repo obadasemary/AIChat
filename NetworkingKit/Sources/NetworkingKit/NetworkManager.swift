@@ -111,7 +111,7 @@ extension NetworkManager: NetworkManagerProtocol {
         } catch let error as NetworkError {
             eventHandler?(NetworkEvent(
                 type: .requestFailed,
-                parameters: ["path": request.path, "error": error.localizedDescription ?? ""]
+                parameters: ["path": request.path, "error": error.localizedDescription]
             ))
             throw error
         } catch {
