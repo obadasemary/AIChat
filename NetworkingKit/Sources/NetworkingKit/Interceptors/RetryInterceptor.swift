@@ -75,24 +75,24 @@ public struct RetryHandler: Sendable {
     /// Executes an operation with retry logic.
     ///
     /// - Parameters:
-    ///   - maxRetries: Total number of attempts (including the first). Passing `nil` falls
-    ///     back to `configuration.maxRetries`. The operation is **always executed at least
-    ///     once** regardless of this value — `max(1, maxRetries)` is applied internally,
-    ///     so `0` is treated the same as `1` (a single attempt, no retries).
+    ///   - maxAttempts: Total number of attempts (including the first). Passing `nil` falls
+    ///     back to `configuration.maxRetries + 1` (i.e. the configured number of retries plus
+    ///     the initial attempt). The operation is **always executed at least once** — values
+    ///     below `1` are clamped to `1` (a single attempt, no retries).
     ///   - operation: The async throwing operation to execute.
     /// - Returns: The result of the operation.
     /// - Throws: The last `NetworkError` if all attempts are exhausted, or a non-retryable error immediately.
     public func execute<T>(
-        maxRetries: Int? = nil,
+        maxAttempts: Int? = nil,
         operation: @Sendable () async throws -> T
     ) async throws -> T {
-        let retries = max(1, maxRetries ?? configuration.maxRetries)
+        let totalAttempts = max(1, maxAttempts ?? (configuration.maxRetries + 1))
 
-        for attempt in 0..<retries {
+        for attempt in 0..<totalAttempts {
             do {
                 return try await operation()
             } catch let error as NetworkError {
-                if shouldRetry(error: error, attempt: attempt) && attempt < retries - 1 {
+                if shouldRetry(error: error, attempt: attempt) && attempt < totalAttempts - 1 {
                     let delay = delayForRetry(attempt: attempt)
                     try await Task.sleep(for: .seconds(delay))
                     continue
@@ -104,6 +104,6 @@ public struct RetryHandler: Sendable {
             }
         }
 
-        throw NetworkError.unknown("Retry failed: exhausted \(retries) attempts")
+        throw NetworkError.unknown("Retry failed: exhausted \(totalAttempts) attempts")
     }
 }
