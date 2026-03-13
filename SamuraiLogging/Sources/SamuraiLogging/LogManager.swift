@@ -7,19 +7,24 @@
 
 import Foundation
 
-@MainActor
+/// Central logging manager that fans events out to all registered log services.
+///
+/// Explicitly `Sendable`: `services` is an immutable `let` array of `Sendable`
+/// values, so all methods are safe to call from any isolation context.
+/// `@Observable` does not require `@MainActor`; removing it allows `LogManager`
+/// to be safely captured in `@Sendable` closures without introducing data races.
 @Observable
 public final class LogManager {
-    
+
     private let services: [LogServiceProtocol]
-    
+
     public init(services: [LogServiceProtocol] = []) {
         self.services = services
     }
 }
 
 extension LogManager: LogManagerProtocol {
-    
+
     nonisolated public func identify(
         userId: String,
         name: String?,
@@ -44,10 +49,10 @@ extension LogManager: LogManagerProtocol {
             service.deleteUserProfile()
         }
     }
-    
+
     nonisolated public func trackEvent(
         eventName: String,
-        parameters: [String : Any]? = nil,
+        parameters: [String: Any]? = nil,
         type: LogType = .analytic
     ) {
         let event = AnyLoggableEvent(
@@ -59,7 +64,7 @@ extension LogManager: LogManagerProtocol {
             service.trackEvent(event: event)
         }
     }
-    
+
     nonisolated public func trackEvent(event: AnyLoggableEvent) {
         for service in self.services {
             service.trackEvent(event: event)
