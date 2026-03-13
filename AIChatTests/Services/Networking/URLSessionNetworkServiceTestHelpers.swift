@@ -7,7 +7,6 @@
 
 import Foundation
 import NetworkingKit
-@testable import AIChat
 
 // MARK: - Test Helpers
 

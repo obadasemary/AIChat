@@ -72,7 +72,16 @@ public struct RetryHandler: Sendable {
         configuration.delay(for: attempt)
     }
 
-    /// Executes a request with retry logic
+    /// Executes an operation with retry logic.
+    ///
+    /// - Parameters:
+    ///   - maxRetries: Total number of attempts (including the first). Passing `nil` falls
+    ///     back to `configuration.maxRetries`. The operation is **always executed at least
+    ///     once** regardless of this value — `max(1, maxRetries)` is applied internally,
+    ///     so `0` is treated the same as `1` (a single attempt, no retries).
+    ///   - operation: The async throwing operation to execute.
+    /// - Returns: The result of the operation.
+    /// - Throws: The last `NetworkError` if all attempts are exhausted, or a non-retryable error immediately.
     public func execute<T>(
         maxRetries: Int? = nil,
         operation: @Sendable () async throws -> T
