@@ -107,10 +107,9 @@ struct Dependencies {
                 logManager: logManager
             )
             bookmarkManager = BookmarkManager()
-            let mockLog = logManager
             networkManager = NetworkManager(
                 service: MockNetworkService(),
-                eventHandler: { mockLog.trackEvent(event: AnyLoggableEvent(eventName: $0.type.rawValue, parameters: $0.parameters, type: $0.type == .requestFailed ? .severe : .analytic)) }
+                eventHandler: Dependencies.networkEventHandler(logManager: logManager)
             )
             appState = AppState(showTabBar: isSignedIn)
         case .dev:
@@ -156,17 +155,17 @@ struct Dependencies {
                 logManager: logManager
             )
             bookmarkManager = BookmarkManager()
-            let devLog = logManager
+            let devLogger: @Sendable (String) -> Void = { [logManager] message in logManager.trackEvent(event: AnyLoggableEvent(eventName: "network_log", parameters: ["message": message])) }
             networkManager = NetworkManager(
                 service: URLSessionNetworkService(
                     requestInterceptors: [
-                        LoggingInterceptor(logLevel: .headers)
+                        LoggingInterceptor(logLevel: .headers, customLogger: devLogger)
                     ],
                     responseInterceptors: [
-                        LoggingInterceptor(logLevel: .headers)
+                        LoggingInterceptor(logLevel: .headers, customLogger: devLogger)
                     ]
                 ),
-                eventHandler: { devLog.trackEvent(event: AnyLoggableEvent(eventName: $0.type.rawValue, parameters: $0.parameters, type: $0.type == .requestFailed ? .severe : .analytic)) }
+                eventHandler: Dependencies.networkEventHandler(logManager: logManager)
             )
             appState = AppState()
         case .prod:
@@ -211,10 +210,9 @@ struct Dependencies {
                 logManager: logManager
             )
             bookmarkManager = BookmarkManager()
-            let prodLog = logManager
             networkManager = NetworkManager(
                 service: URLSessionNetworkService(),
-                eventHandler: { prodLog.trackEvent(event: AnyLoggableEvent(eventName: $0.type.rawValue, parameters: $0.parameters, type: $0.type == .requestFailed ? .severe : .analytic)) }
+                eventHandler: Dependencies.networkEventHandler(logManager: logManager)
             )
             appState = AppState()
         }
@@ -240,6 +238,19 @@ struct Dependencies {
         self.container = container
     }
     // swiftlint:enable function_body_length
+
+    /// Shared factory for the NetworkManager event handler.
+    /// Converts NetworkKit's `NetworkEvent` into the app's logging system,
+    /// mapping failed requests to `.severe` and all others to `.analytic`.
+    private static func networkEventHandler(logManager: LogManager) -> @Sendable (NetworkEvent) -> Void {
+        { event in
+            logManager.trackEvent(event: AnyLoggableEvent(
+                eventName: event.type.rawValue,
+                parameters: event.parameters,
+                type: event.type == .requestFailed ? .severe : .analytic
+            ))
+        }
+    }
 }
 
 extension View {
