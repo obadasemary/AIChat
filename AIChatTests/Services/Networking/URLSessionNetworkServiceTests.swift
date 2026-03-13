@@ -8,7 +8,6 @@
 import Testing
 import Foundation
 import NetworkingKit
-@testable import AIChat
 
 // swiftlint:disable type_body_length
 // swiftlint:disable file_length

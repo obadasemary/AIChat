@@ -15,7 +15,10 @@ let package = Package(
     targets: [
         .target(
             name: "NetworkingKit",
-            path: "Sources/NetworkingKit"
+            path: "Sources/NetworkingKit",
+            swiftSettings: [
+                .enableExperimentalFeature("StrictConcurrency")
+            ]
         ),
         .testTarget(
             name: "NetworkingKitTests",

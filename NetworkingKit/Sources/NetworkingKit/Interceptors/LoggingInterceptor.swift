@@ -1,6 +1,11 @@
 import Foundation
 
-/// Interceptor that logs requests and responses
+/// Interceptor that logs requests and responses.
+///
+/// `@unchecked Sendable`: All stored properties are immutable `let` constants after
+/// initialisation. The `customLogger` closure is constrained to `@Sendable`, making
+/// the overall type safe to use across isolation domains despite the compiler being
+/// unable to prove this automatically.
 public final class LoggingInterceptor: RequestInterceptor, ResponseInterceptor, @unchecked Sendable {
     /// Log level for network logging
     public enum LogLevel: Int, Sendable {
