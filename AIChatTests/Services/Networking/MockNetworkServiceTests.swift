@@ -8,7 +8,6 @@
 import Testing
 import Foundation
 import NetworkingKit
-@testable import AIChat
 
 @MainActor
 struct MockNetworkServiceTests {

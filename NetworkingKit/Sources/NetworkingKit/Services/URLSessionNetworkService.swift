@@ -1,6 +1,11 @@
 import Foundation
 
-/// Production implementation of NetworkServiceProtocol using URLSession
+/// Production implementation of NetworkServiceProtocol using URLSession.
+///
+/// `@unchecked Sendable`: All stored properties are immutable `let` constants after
+/// initialisation. `URLSession` itself is not `Sendable`, which prevents the compiler
+/// from inferring conformance automatically; the `@unchecked` annotation is safe here
+/// because no mutable state is shared across isolation domains.
 public final class URLSessionNetworkService: NetworkServiceProtocol, @unchecked Sendable {
     public let baseURL: URL?
 
@@ -42,6 +47,10 @@ public final class URLSessionNetworkService: NetworkServiceProtocol, @unchecked 
         )
     }
 
+    /// Invalidates the session to release delegate and callback references.
+    /// - Note: Only has an effect when a custom `URLSessionConfiguration` was provided
+    ///   via the `configuration:` initialiser. Calling `finishTasksAndInvalidate()` on
+    ///   `URLSession.shared` is a no-op, so passing the shared session is safe.
     deinit {
         session.finishTasksAndInvalidate()
     }
