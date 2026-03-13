@@ -136,7 +136,7 @@ extension NetworkManager: NetworkManagerProtocol {
         _ request: NetworkRequest,
         maxRetries: Int
     ) async throws -> NetworkResponse {
-        try await retryHandler.execute(maxRetries: maxRetries) {
+        try await retryHandler.execute(maxAttempts: maxRetries + 1) {
             try await self.execute(request)
         }
     }
