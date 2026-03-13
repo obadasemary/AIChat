@@ -9,10 +9,11 @@ import Foundation
 
 /// Central logging manager that fans events out to all registered log services.
 ///
-/// Explicitly `Sendable`: `services` is an immutable `let` array of `Sendable`
-/// values, so all methods are safe to call from any isolation context.
-/// `@Observable` does not require `@MainActor`; removing it allows `LogManager`
-/// to be safely captured in `@Sendable` closures without introducing data races.
+/// `@unchecked Sendable`: all manually-written stored state is an immutable `let`
+/// array of `Sendable` services, so every method is safe to call from any isolation
+/// context. The `@unchecked` qualifier is required because `@Observable` injects a
+/// private `ObservationRegistrar` property that the strict-concurrency checker cannot
+/// see — `ObservationRegistrar` is itself `Sendable`, so the conformance is sound.
 @Observable
 public final class LogManager {
 
