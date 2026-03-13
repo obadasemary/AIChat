@@ -3,9 +3,11 @@ import Foundation
 /// Production implementation of NetworkServiceProtocol using URLSession.
 ///
 /// `@unchecked Sendable`: All stored properties are immutable `let` constants after
-/// initialisation. `URLSession` itself is not `Sendable`, which prevents the compiler
-/// from inferring conformance automatically; the `@unchecked` annotation is safe here
-/// because no mutable state is shared across isolation domains.
+/// initialisation, so no mutable state is shared across isolation domains. The
+/// `@unchecked` qualifier is required because `URLSession` is an Objective-C
+/// `final class` whose `Sendable` conformance cannot be inferred by the Swift
+/// compiler from its declaration alone, even though it has been concurrency-safe
+/// since Swift 5.7 / iOS 16.
 public final class URLSessionNetworkService: NetworkServiceProtocol, @unchecked Sendable {
     public let baseURL: URL?
 
