@@ -1,45 +1,30 @@
-//
-//  NetworkRequest.swift
-//  AIChat
-//
-//  Created on 2026-02-02.
-//
-
 import Foundation
 
 /// A network request configuration
-struct NetworkRequest: Sendable {
+public struct NetworkRequest: Sendable {
     /// The URL path (relative to base URL or absolute)
-    let path: String
+    public let path: String
 
     /// The HTTP method
-    let method: HTTPMethod
+    public let method: HTTPMethod
 
     /// Query parameters to be appended to the URL
-    let queryParameters: [String: String]?
+    public let queryParameters: [String: String]?
 
     /// HTTP headers
-    let headers: [String: String]?
+    public let headers: [String: String]?
 
     /// Request body data
-    let body: Data?
+    public let body: Data?
 
     /// Request timeout interval in seconds
-    let timeoutInterval: TimeInterval
+    public let timeoutInterval: TimeInterval
 
     /// Cache policy for the request
-    let cachePolicy: URLRequest.CachePolicy
+    public let cachePolicy: URLRequest.CachePolicy
 
     /// Creates a new network request
-    /// - Parameters:
-    ///   - path: The URL path
-    ///   - method: The HTTP method (default: .get)
-    ///   - queryParameters: Query parameters (default: nil)
-    ///   - headers: HTTP headers (default: nil)
-    ///   - body: Request body data (default: nil)
-    ///   - timeoutInterval: Timeout in seconds (default: 30)
-    ///   - cachePolicy: Cache policy (default: .useProtocolCachePolicy)
-    init(
+    public init(
         path: String,
         method: HTTPMethod = .get,
         queryParameters: [String: String]? = nil,
@@ -58,7 +43,7 @@ struct NetworkRequest: Sendable {
     }
 
     /// Creates a GET request
-    static func get(
+    public static func get(
         _ path: String,
         queryParameters: [String: String]? = nil,
         headers: [String: String]? = nil,
@@ -74,7 +59,7 @@ struct NetworkRequest: Sendable {
     }
 
     /// Creates a POST request with JSON body
-    static func post<T: Encodable>(
+    public static func post<T: Encodable>(
         _ path: String,
         body: T,
         headers: [String: String]? = nil,
@@ -95,7 +80,7 @@ struct NetworkRequest: Sendable {
     }
 
     /// Creates a POST request with raw data body
-    static func post(
+    public static func post(
         _ path: String,
         data: Data,
         contentType: String = "application/json",
@@ -115,7 +100,7 @@ struct NetworkRequest: Sendable {
     }
 
     /// Creates a PUT request with JSON body
-    static func put<T: Encodable>(
+    public static func put<T: Encodable>(
         _ path: String,
         body: T,
         headers: [String: String]? = nil,
@@ -136,7 +121,7 @@ struct NetworkRequest: Sendable {
     }
 
     /// Creates a PATCH request with JSON body
-    static func patch<T: Encodable>(
+    public static func patch<T: Encodable>(
         _ path: String,
         body: T,
         headers: [String: String]? = nil,
@@ -157,7 +142,7 @@ struct NetworkRequest: Sendable {
     }
 
     /// Creates a DELETE request
-    static func delete(
+    public static func delete(
         _ path: String,
         queryParameters: [String: String]? = nil,
         headers: [String: String]? = nil,

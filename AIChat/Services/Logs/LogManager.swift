@@ -7,40 +7,46 @@
 
 import Foundation
 
-@MainActor
+/// Central logging manager that fans events out to all registered log services.
+///
+/// `@unchecked Sendable`: all manually-written stored state is an immutable `let`
+/// array of `Sendable` services, so every method is safe to call from any isolation
+/// context. The `@unchecked` qualifier is required because `@Observable` injects a
+/// private `ObservationRegistrar` property that the strict-concurrency checker cannot
+/// see — `ObservationRegistrar` is itself `Sendable`, so the conformance is sound.
 @Observable
-final class LogManager {
-    
+final class LogManager: @unchecked Sendable {
+
     private let services: [LogServiceProtocol]
-    
+
     init(services: [LogServiceProtocol] = []) {
         self.services = services
     }
 }
 
 extension LogManager: LogManagerProtocol {
-    
-    nonisolated func identify(userId: String, name: String?, email: String?) {
+
+    func identify(userId: String, name: String?, email: String?) {
         for service in self.services {
             service.identify(userId: userId, name: name, email: email)
         }
     }
 
-    nonisolated func addUserProperties(dict: [String : Any], isHighPriority: Bool) {
+    func addUserProperties(dict: [String: Any], isHighPriority: Bool) {
         for service in self.services {
             service.addUserProperties(dict: dict, isHighPriority: isHighPriority)
         }
     }
 
-    nonisolated func deleteUserProfile() {
+    func deleteUserProfile() {
         for service in self.services {
             service.deleteUserProfile()
         }
     }
-    
-    nonisolated func trackEvent(
+
+    func trackEvent(
         eventName: String,
-        parameters: [String : Any]? = nil,
+        parameters: [String: Any]? = nil,
         type: LogType = .analytic
     ) {
         let event = AnyLoggableEvent(
@@ -52,20 +58,20 @@ extension LogManager: LogManagerProtocol {
             service.trackEvent(event: event)
         }
     }
-    
-    nonisolated func trackEvent(event: AnyLoggableEvent) {
+
+    func trackEvent(event: AnyLoggableEvent) {
         for service in self.services {
             service.trackEvent(event: event)
         }
     }
 
-    nonisolated func trackEvent(event: any LoggableEvent) {
+    func trackEvent(event: any LoggableEvent) {
         for service in self.services {
             service.trackEvent(event: event)
         }
     }
 
-    nonisolated func trackScreen(event: any LoggableEvent) {
+    func trackScreen(event: any LoggableEvent) {
         for service in self.services {
             service.trackScreen(event: event)
         }

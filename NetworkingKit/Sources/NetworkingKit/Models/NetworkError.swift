@@ -1,14 +1,7 @@
-//
-//  NetworkError.swift
-//  AIChat
-//
-//  Created on 2026-02-02.
-//
-
 import Foundation
 
 /// Errors that can occur during network operations
-enum NetworkError: LocalizedError, Equatable {
+public enum NetworkError: LocalizedError, Equatable {
     case invalidURL
     case invalidRequest
     case invalidResponse
@@ -25,7 +18,7 @@ enum NetworkError: LocalizedError, Equatable {
     case cancelled
     case unknown(String)
 
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case .invalidURL:
             return "The URL is invalid."
@@ -61,7 +54,7 @@ enum NetworkError: LocalizedError, Equatable {
     }
 
     /// Creates a NetworkError from an HTTP status code
-    static func fromStatusCode(_ statusCode: Int, data: Data? = nil) -> NetworkError? {
+    public static func fromStatusCode(_ statusCode: Int, data: Data? = nil) -> NetworkError? {
         switch statusCode {
         case 200...299:
             return nil
@@ -81,7 +74,7 @@ enum NetworkError: LocalizedError, Equatable {
     }
 
     /// Creates a NetworkError from a URL error
-    static func fromURLError(_ error: URLError) -> NetworkError {
+    public static func fromURLError(_ error: URLError) -> NetworkError {
         switch error.code {
         case .timedOut:
             return .timeout
@@ -96,7 +89,7 @@ enum NetworkError: LocalizedError, Equatable {
         }
     }
 
-    static func == (lhs: NetworkError, rhs: NetworkError) -> Bool {
+    public static func == (lhs: NetworkError, rhs: NetworkError) -> Bool {
         switch (lhs, rhs) {
         case (.invalidURL, .invalidURL),
              (.invalidRequest, .invalidRequest),

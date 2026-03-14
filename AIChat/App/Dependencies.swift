@@ -8,6 +8,7 @@
 import SwiftUI
 import FirebaseCore
 import FirebaseFirestore
+import NetworkingKit
 
 enum BuildConfiguration {
     case mock(isSignedIn: Bool)
@@ -108,7 +109,7 @@ struct Dependencies {
             bookmarkManager = BookmarkManager()
             networkManager = NetworkManager(
                 service: MockNetworkService(),
-                logManager: logManager
+                eventHandler: Dependencies.networkEventHandler(logManager: logManager)
             )
             appState = AppState(showTabBar: isSignedIn)
         case .dev:
@@ -154,16 +155,22 @@ struct Dependencies {
                 logManager: logManager
             )
             bookmarkManager = BookmarkManager()
+            let devLogger: @Sendable (String) -> Void = { [logManager] message in
+                logManager.trackEvent(event: AnyLoggableEvent(
+                    eventName: "network_log",
+                    parameters: ["message": message]
+                ))
+            }
             networkManager = NetworkManager(
                 service: URLSessionNetworkService(
                     requestInterceptors: [
-                        LoggingInterceptor(logLevel: .headers)
+                        LoggingInterceptor(logLevel: .headers, customLogger: devLogger)
                     ],
                     responseInterceptors: [
-                        LoggingInterceptor(logLevel: .headers)
+                        LoggingInterceptor(logLevel: .headers, customLogger: devLogger)
                     ]
                 ),
-                logManager: logManager
+                eventHandler: Dependencies.networkEventHandler(logManager: logManager)
             )
             appState = AppState()
         case .prod:
@@ -210,7 +217,7 @@ struct Dependencies {
             bookmarkManager = BookmarkManager()
             networkManager = NetworkManager(
                 service: URLSessionNetworkService(),
-                logManager: logManager
+                eventHandler: Dependencies.networkEventHandler(logManager: logManager)
             )
             appState = AppState()
         }
@@ -236,6 +243,19 @@ struct Dependencies {
         self.container = container
     }
     // swiftlint:enable function_body_length
+
+    /// Shared factory for the NetworkManager event handler.
+    /// Converts NetworkKit's `NetworkEvent` into the app's logging system,
+    /// mapping failed requests to `.severe` and all others to `.analytic`.
+    private static func networkEventHandler(logManager: LogManager) -> @Sendable (NetworkEvent) -> Void {
+        { event in
+            logManager.trackEvent(event: AnyLoggableEvent(
+                eventName: event.type.rawValue,
+                parameters: event.parameters,
+                type: event.type == .requestFailed ? .severe : .analytic
+            ))
+        }
+    }
 }
 
 extension View {

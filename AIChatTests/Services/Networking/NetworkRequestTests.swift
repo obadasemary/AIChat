@@ -7,7 +7,7 @@
 
 import Testing
 import Foundation
-@testable import AIChat
+import NetworkingKit
 
 struct NetworkRequestTests {
 

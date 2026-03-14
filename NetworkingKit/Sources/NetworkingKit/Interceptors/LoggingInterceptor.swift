@@ -1,43 +1,28 @@
-//
-//  LoggingInterceptor.swift
-//  AIChat
-//
-//  Created on 2026-02-02.
-//
-
 import Foundation
 
-/// Interceptor that logs requests and responses
-final class LoggingInterceptor: RequestInterceptor, ResponseInterceptor, @unchecked Sendable {
+/// Interceptor that logs requests and responses.
+///
+/// `@unchecked Sendable`: All stored properties are immutable `let` constants after
+/// initialisation. The `customLogger` closure is constrained to `@Sendable`, making
+/// the overall type safe to use across isolation domains despite the compiler being
+/// unable to prove this automatically.
+public final class LoggingInterceptor: RequestInterceptor, ResponseInterceptor, @unchecked Sendable {
     /// Log level for network logging
-    enum LogLevel: Int, Sendable {
-        /// No logging
+    public enum LogLevel: Int, Sendable {
         case none = 0
-        /// Log only basic info (URL, method, status code)
         case basic = 1
-        /// Log headers in addition to basic info
         case headers = 2
-        /// Log full body in addition to headers
         case body = 3
     }
 
-    /// The current log level
     private let logLevel: LogLevel
-
-    /// Whether to log to console
     private let logToConsole: Bool
-
-    /// Optional custom logger
     private let customLogger: (@Sendable (String) -> Void)?
 
     /// Creates a new logging interceptor
-    /// - Parameters:
-    ///   - logLevel: The log level (default: .basic)
-    ///   - logToConsole: Whether to log to console (default: true)
-    ///   - customLogger: Optional custom logger closure
-    init(
+    public init(
         logLevel: LogLevel = .basic,
-        logToConsole: Bool = true,
+        logToConsole: Bool = false,
         customLogger: (@Sendable (String) -> Void)? = nil
     ) {
         self.logLevel = logLevel
@@ -45,28 +30,24 @@ final class LoggingInterceptor: RequestInterceptor, ResponseInterceptor, @unchec
         self.customLogger = customLogger
     }
 
-    func intercept(_ request: URLRequest) async throws -> URLRequest {
+    public func intercept(_ request: URLRequest) async throws -> URLRequest {
         guard logLevel != .none else { return request }
 
         var logMessage = "[Network Request]"
 
-        // Basic info
         if let method = request.httpMethod, let url = request.url {
             logMessage += "\n  \(method) \(url.absoluteString)"
         }
 
-        // Headers
         if logLevel.rawValue >= LogLevel.headers.rawValue,
            let headers = request.allHTTPHeaderFields, !headers.isEmpty {
             logMessage += "\n  Headers:"
             for (key, value) in headers.sorted(by: { $0.key < $1.key }) {
-                // Mask sensitive headers
                 let maskedValue = sensitiveHeaders.contains(key.lowercased()) ? "***" : value
                 logMessage += "\n    \(key): \(maskedValue)"
             }
         }
 
-        // Body
         if logLevel.rawValue >= LogLevel.body.rawValue,
            let body = request.httpBody {
             logMessage += "\n  Body:"
@@ -82,18 +63,16 @@ final class LoggingInterceptor: RequestInterceptor, ResponseInterceptor, @unchec
         return request
     }
 
-    func intercept(_ response: NetworkResponse) async throws -> NetworkResponse {
+    public func intercept(_ response: NetworkResponse) async throws -> NetworkResponse {
         guard logLevel != .none else { return response }
 
         var logMessage = "[Network Response]"
 
-        // Basic info
         if let url = response.request?.url {
             logMessage += "\n  URL: \(url.absoluteString)"
         }
         logMessage += "\n  Status: \(response.statusCode)"
 
-        // Headers
         if logLevel.rawValue >= LogLevel.headers.rawValue, !response.headers.isEmpty {
             logMessage += "\n  Headers:"
             for (key, value) in response.headers.sorted(by: { $0.key < $1.key }) {
@@ -101,7 +80,6 @@ final class LoggingInterceptor: RequestInterceptor, ResponseInterceptor, @unchec
             }
         }
 
-        // Body
         if logLevel.rawValue >= LogLevel.body.rawValue {
             logMessage += "\n  Body:"
             if let bodyString = response.string() {
