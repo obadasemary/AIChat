@@ -14,6 +14,7 @@
 		AF3986932DF8D2E5000F064C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = AF3986922DF8D2E5000F064C /* GoogleSignIn */; };
 		AF3986952DF8D2E5000F064C /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = AF3986942DF8D2E5000F064C /* GoogleSignInSwift */; };
 		AF3E88B22E0B7CA1002FAC13 /* Mixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = AF3E88B12E0B7CA1002FAC13 /* Mixpanel */; };
+		AF7BB1592F670A5500E14903 /* SamuraiLogging in Frameworks */ = {isa = PBXBuildFile; productRef = AFSL00022E9F000000000002 /* SamuraiLogging */; };
 		AF95B1772DF38774003D5BA0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = AF95B1762DF38774003D5BA0 /* FirebaseAuth */; };
 		AFA98BB32DA46E0600492141 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = AFA98BB22DA46E0600492141 /* SDWebImageSwiftUI */; };
 		AFAA66B62DF4E4960013F8DC /* SignInAppleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = AFAA66B52DF4E4960013F8DC /* SignInAppleAsync */; };
@@ -87,6 +88,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AF7BB1592F670A5500E14903 /* SamuraiLogging in Frameworks */,
 				AFEF44072DFF1489000E87DC /* OpenAI in Frameworks */,
 				AFAA66B62DF4E4960013F8DC /* SignInAppleAsync in Frameworks */,
 				AF1B57892E0B526200C28263 /* FirebaseAnalytics in Frameworks */,
@@ -176,6 +178,7 @@
 			);
 			name = AIChat;
 			packageProductDependencies = (
+				AFSL00022E9F000000000002 /* SamuraiLogging */,
 				AFA98BB22DA46E0600492141 /* SDWebImageSwiftUI */,
 				AF2ECC122DE7D88A00BD1602 /* SwiftfulUtilities */,
 				AF95B1762DF38774003D5BA0 /* FirebaseAuth */,
@@ -922,6 +925,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		AFSL00012E9F000000000001 /* XCLocalSwiftPackageReference "SamuraiLogging" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = SamuraiLogging;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		AF2ECC112DE7D88A00BD1602 /* XCRemoteSwiftPackageReference "SwiftfulUtilities" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -1098,6 +1108,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AFSC00012E7F000000000001 /* XCRemoteSwiftPackageReference "swift-configuration" */;
 			productName = Configuration;
+		};
+		AFSL00022E9F000000000002 /* SamuraiLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AFSL00012E9F000000000001 /* XCLocalSwiftPackageReference "SamuraiLogging" */;
+			productName = SamuraiLogging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
