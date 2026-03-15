@@ -18,7 +18,6 @@ public struct NetworkEvent: Sendable {
 }
 
 /// Protocol defining the network manager interface
-@MainActor
 public protocol NetworkManagerProtocol: Sendable {
     func execute(_ request: NetworkRequest) async throws -> NetworkResponse
 
@@ -74,7 +73,6 @@ extension NetworkManagerProtocol {
 }
 
 /// Manager for network operations
-@MainActor
 public final class NetworkManager: Sendable {
     private let service: NetworkServiceProtocol
     private let retryHandler: RetryHandler
