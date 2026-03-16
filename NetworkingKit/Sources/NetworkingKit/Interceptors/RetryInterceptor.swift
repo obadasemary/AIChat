@@ -51,6 +51,7 @@ public struct RetryHandler: Sendable {
 
     /// Determines if a request should be retried based on the error
     public func shouldRetry(error: NetworkError, attempt: Int) -> Bool {
+        guard attempt < configuration.maxRetries else { return false }
         switch error {
         case .timeout, .noConnection:
             return true
