@@ -9,6 +9,13 @@ import SwiftUI
 import FirebaseCore
 import FirebaseFirestore
 
+import SamuraiLogging
+//typealias LogManager = SamuraiLogging.LogManager
+//typealias LoggableEvent = SamuraiLogging.LoggableEvent
+//typealias LogType = SamuraiLogging.LogType
+//typealias LogService = SamuraiLogging.LogService
+//typealias AnyLoggableEvent = SamuraiLogging.AnyLoggableEvent
+
 enum BuildConfiguration {
     case mock(isSignedIn: Bool)
     case dev
