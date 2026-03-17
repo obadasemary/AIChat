@@ -7,6 +7,7 @@
 
 import Foundation
 import Mixpanel
+import SamuraiLogging
 
 struct MixpanelService {
     
