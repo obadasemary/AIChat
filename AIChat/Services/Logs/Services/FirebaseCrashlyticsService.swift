@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseCrashlytics
+import SamuraiLogging
 
 struct FirebaseCrashlyticsService {}
 
