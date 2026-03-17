@@ -28,7 +28,7 @@ struct RetryHandlerTests {
     func test_whenTimeoutError_thenShouldRetry() {
         let handler = RetryHandler(configuration: .default)
 
-        let result = handler.shouldRetry(error: .timeout, attempt: 0)
+        let result = handler.shouldRetry(error: .timeout)
 
         #expect(result == true)
     }
@@ -37,7 +37,7 @@ struct RetryHandlerTests {
     func test_whenNoConnectionError_thenShouldRetry() {
         let handler = RetryHandler(configuration: .default)
 
-        let result = handler.shouldRetry(error: .noConnection, attempt: 0)
+        let result = handler.shouldRetry(error: .noConnection)
 
         #expect(result == true)
     }
@@ -46,7 +46,7 @@ struct RetryHandlerTests {
     func test_when503Error_thenShouldRetry() {
         let handler = RetryHandler(configuration: .default)
 
-        let result = handler.shouldRetry(error: .serverError(statusCode: 503), attempt: 0)
+        let result = handler.shouldRetry(error: .serverError(statusCode: 503))
 
         #expect(result == true)
     }
@@ -55,7 +55,7 @@ struct RetryHandlerTests {
     func test_when429Error_thenShouldRetry() {
         let handler = RetryHandler(configuration: .default)
 
-        let result = handler.shouldRetry(error: .httpError(statusCode: 429, data: nil), attempt: 0)
+        let result = handler.shouldRetry(error: .httpError(statusCode: 429, data: nil))
 
         #expect(result == true)
     }
@@ -64,7 +64,7 @@ struct RetryHandlerTests {
     func test_whenUnauthorizedError_thenShouldNotRetry() {
         let handler = RetryHandler(configuration: .default)
 
-        let result = handler.shouldRetry(error: .unauthorized, attempt: 0)
+        let result = handler.shouldRetry(error: .unauthorized)
 
         #expect(result == false)
     }
@@ -73,18 +73,20 @@ struct RetryHandlerTests {
     func test_whenNotFoundError_thenShouldNotRetry() {
         let handler = RetryHandler(configuration: .default)
 
-        let result = handler.shouldRetry(error: .notFound, attempt: 0)
+        let result = handler.shouldRetry(error: .notFound)
 
         #expect(result == false)
     }
 
-    @Test("Should not retry when max retries exceeded")
-    func test_whenMaxRetriesExceeded_thenShouldNotRetry() {
+    @Test("shouldRetry is not affected by attempt count — bound is enforced by execute")
+    func test_whenRetryableError_thenShouldRetryRegardlessOfAttemptCount() {
+        // shouldRetry only checks error type; the attempt bound is handled by
+        // the `attempt < totalAttempts - 1` guard inside `execute`, so that
+        // per-call maxRetries overrides are respected.
         let handler = RetryHandler(configuration: RetryConfiguration(maxRetries: 3))
 
-        let result = handler.shouldRetry(error: .timeout, attempt: 3)
-
-        #expect(result == false)
+        #expect(handler.shouldRetry(error: .timeout) == true)
+        #expect(handler.shouldRetry(error: .noConnection) == true)
     }
 
     // MARK: - Delay Calculation Tests
