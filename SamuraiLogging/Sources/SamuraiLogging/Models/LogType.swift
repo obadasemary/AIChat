@@ -37,7 +37,5 @@ public enum LogType: Sendable {
         case .warning: return "warning"
         case .severe: return "severe"
         }
-    }
-
-    
+    }    
 }
