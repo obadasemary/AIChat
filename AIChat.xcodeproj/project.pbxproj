@@ -15,6 +15,7 @@
 		AF3986952DF8D2E5000F064C /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = AF3986942DF8D2E5000F064C /* GoogleSignInSwift */; };
 		AF3E88B22E0B7CA1002FAC13 /* Mixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = AF3E88B12E0B7CA1002FAC13 /* Mixpanel */; };
 		AF7BB1592F670A5500E14903 /* SamuraiLogging in Frameworks */ = {isa = PBXBuildFile; productRef = AFSL00022E9F000000000002 /* SamuraiLogging */; };
+		AF9544BE2F6B08800067D29F /* SamuraiLoggingFirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = AF9544BD2F6B08800067D29F /* SamuraiLoggingFirebaseAnalytics */; };
 		AF95B1772DF38774003D5BA0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = AF95B1762DF38774003D5BA0 /* FirebaseAuth */; };
 		AFA98BB32DA46E0600492141 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = AFA98BB22DA46E0600492141 /* SDWebImageSwiftUI */; };
 		AFAA66B62DF4E4960013F8DC /* SignInAppleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = AFAA66B52DF4E4960013F8DC /* SignInAppleAsync */; };
@@ -90,6 +91,7 @@
 			files = (
 				AF7BB1592F670A5500E14903 /* SamuraiLogging in Frameworks */,
 				AFEF44072DFF1489000E87DC /* OpenAI in Frameworks */,
+				AF9544BE2F6B08800067D29F /* SamuraiLoggingFirebaseAnalytics in Frameworks */,
 				AFAA66B62DF4E4960013F8DC /* SignInAppleAsync in Frameworks */,
 				AF1B57892E0B526200C28263 /* FirebaseAnalytics in Frameworks */,
 				AFC575AA2E5E243100B3C3F0 /* SUIRouting in Frameworks */,
@@ -195,6 +197,7 @@
 				AF1E6BF42E0C4DE3005D93F8 /* FirebaseCrashlytics */,
 				AFCE8E3B2E1D443900CC88C7 /* FirebaseRemoteConfig */,
 				AFC575A92E5E243100B3C3F0 /* SUIRouting */,
+				AF9544BD2F6B08800067D29F /* SamuraiLoggingFirebaseAnalytics */,
 			);
 			productName = AIChat;
 			productReference = AF9034FB2DA3FDB000A35095 /* AIChat.app */;
@@ -1058,6 +1061,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AF3E88B02E0B7CA1002FAC13 /* XCRemoteSwiftPackageReference "mixpanel-swift" */;
 			productName = Mixpanel;
+		};
+		AF9544BD2F6B08800067D29F /* SamuraiLoggingFirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SamuraiLoggingFirebaseAnalytics;
 		};
 		AF95B1762DF38774003D5BA0 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
