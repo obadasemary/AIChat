@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftfulUtilities
-import SamuraiLogging
 
 @MainActor
 protocol AdminUseCaseProtocol {
