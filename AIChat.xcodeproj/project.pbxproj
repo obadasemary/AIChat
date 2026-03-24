@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		49EB8E0117744F9C9C6F72CB /* SamuraiLoggingMixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = 28FFD97614C34667940371C3 /* SamuraiLoggingMixpanel */; };
 		AF1B57892E0B526200C28263 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = AF1B57882E0B526200C28263 /* FirebaseAnalytics */; };
 		AF1E6BF52E0C4DE3005D93F8 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = AF1E6BF42E0C4DE3005D93F8 /* FirebaseCrashlytics */; };
 		AF2ECC132DE7D88A00BD1602 /* SwiftfulUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = AF2ECC122DE7D88A00BD1602 /* SwiftfulUtilities */; };
@@ -16,8 +17,6 @@
 		AF3E88B22E0B7CA1002FAC13 /* Mixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = AF3E88B12E0B7CA1002FAC13 /* Mixpanel */; };
 		AF7BB1592F670A5500E14903 /* SamuraiLogging in Frameworks */ = {isa = PBXBuildFile; productRef = AFSL00022E9F000000000002 /* SamuraiLogging */; };
 		AF9544BE2F6B08800067D29F /* SamuraiLoggingFirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = AF9544BD2F6B08800067D29F /* SamuraiLoggingFirebaseAnalytics */; };
-		C7D8F4BD51B648A89EE1412A /* SamuraiLoggingFirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 1362DC316DB244898314A44C /* SamuraiLoggingFirebaseCrashlytics */; };
-		49EB8E0117744F9C9C6F72CB /* SamuraiLoggingMixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = 28FFD97614C34667940371C3 /* SamuraiLoggingMixpanel */; };
 		AF95B1772DF38774003D5BA0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = AF95B1762DF38774003D5BA0 /* FirebaseAuth */; };
 		AFA98BB32DA46E0600492141 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = AFA98BB22DA46E0600492141 /* SDWebImageSwiftUI */; };
 		AFAA66B62DF4E4960013F8DC /* SignInAppleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = AFAA66B52DF4E4960013F8DC /* SignInAppleAsync */; };
@@ -28,6 +27,7 @@
 		AFEF44072DFF1489000E87DC /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = AFEF44062DFF1489000E87DC /* OpenAI */; };
 		AFEF464A2E007365000E87DC /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = AFEF46492E007365000E87DC /* FirebaseStorage */; };
 		AFSC00022E7F000000000002 /* Configuration in Frameworks */ = {isa = PBXBuildFile; productRef = AFSC00032E7F000000000003 /* Configuration */; };
+		C7D8F4BD51B648A89EE1412A /* SamuraiLoggingFirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 1362DC316DB244898314A44C /* SamuraiLoggingFirebaseCrashlytics */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1033,6 +1033,14 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1362DC316DB244898314A44C /* SamuraiLoggingFirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SamuraiLoggingFirebaseCrashlytics;
+		};
+		28FFD97614C34667940371C3 /* SamuraiLoggingMixpanel */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SamuraiLoggingMixpanel;
+		};
 		AF1B57882E0B526200C28263 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = AF95B1752DF38774003D5BA0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
@@ -1071,14 +1079,6 @@
 		AF9544BD2F6B08800067D29F /* SamuraiLoggingFirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SamuraiLoggingFirebaseAnalytics;
-		};
-		1362DC316DB244898314A44C /* SamuraiLoggingFirebaseCrashlytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SamuraiLoggingFirebaseCrashlytics;
-		};
-		28FFD97614C34667940371C3 /* SamuraiLoggingMixpanel */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SamuraiLoggingMixpanel;
 		};
 		AF95B1762DF38774003D5BA0 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
