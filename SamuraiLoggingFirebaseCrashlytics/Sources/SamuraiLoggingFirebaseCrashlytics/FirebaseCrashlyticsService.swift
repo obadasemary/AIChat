@@ -2,7 +2,7 @@
 //  FirebaseCrashlyticsService.swift
 //  SamuraiLoggingFirebaseCrashlytics
 //
-//  Created by Abdelrahman Mohamed on 19.03.2026.
+//  Created by Abdelrahman Mohamed on 18.03.2026.
 //
 
 import Foundation
