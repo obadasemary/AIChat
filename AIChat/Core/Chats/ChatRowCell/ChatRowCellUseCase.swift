@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SamuraiLogging
 
 @MainActor
 final class ChatRowCellUseCase {
