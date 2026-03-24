@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SamuraiLogging
 
 /// Protocol defining the network manager interface
 @MainActor
