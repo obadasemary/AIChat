@@ -7,6 +7,7 @@
 
 import Foundation
 import Network
+import SamuraiLogging
 
 enum NetworkConnectionType {
     case wifi
