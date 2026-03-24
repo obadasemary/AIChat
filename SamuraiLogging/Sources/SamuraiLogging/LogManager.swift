@@ -13,7 +13,7 @@ public final class LogManager {
     
     private let services: [LogServiceProtocol]
     
-    init(services: [LogServiceProtocol] = []) {
+    public init(services: [LogServiceProtocol] = []) {
         self.services = services
     }
 }
