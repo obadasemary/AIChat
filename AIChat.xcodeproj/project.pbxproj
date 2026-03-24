@@ -16,6 +16,8 @@
 		AF3E88B22E0B7CA1002FAC13 /* Mixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = AF3E88B12E0B7CA1002FAC13 /* Mixpanel */; };
 		AF7BB1592F670A5500E14903 /* SamuraiLogging in Frameworks */ = {isa = PBXBuildFile; productRef = AFSL00022E9F000000000002 /* SamuraiLogging */; };
 		AF9544BE2F6B08800067D29F /* SamuraiLoggingFirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = AF9544BD2F6B08800067D29F /* SamuraiLoggingFirebaseAnalytics */; };
+		C7D8F4BD51B648A89EE1412A /* SamuraiLoggingFirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 1362DC316DB244898314A44C /* SamuraiLoggingFirebaseCrashlytics */; };
+		49EB8E0117744F9C9C6F72CB /* SamuraiLoggingMixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = 28FFD97614C34667940371C3 /* SamuraiLoggingMixpanel */; };
 		AF95B1772DF38774003D5BA0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = AF95B1762DF38774003D5BA0 /* FirebaseAuth */; };
 		AFA98BB32DA46E0600492141 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = AFA98BB22DA46E0600492141 /* SDWebImageSwiftUI */; };
 		AFAA66B62DF4E4960013F8DC /* SignInAppleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = AFAA66B52DF4E4960013F8DC /* SignInAppleAsync */; };
@@ -92,6 +94,8 @@
 				AF7BB1592F670A5500E14903 /* SamuraiLogging in Frameworks */,
 				AFEF44072DFF1489000E87DC /* OpenAI in Frameworks */,
 				AF9544BE2F6B08800067D29F /* SamuraiLoggingFirebaseAnalytics in Frameworks */,
+				C7D8F4BD51B648A89EE1412A /* SamuraiLoggingFirebaseCrashlytics in Frameworks */,
+				49EB8E0117744F9C9C6F72CB /* SamuraiLoggingMixpanel in Frameworks */,
 				AFAA66B62DF4E4960013F8DC /* SignInAppleAsync in Frameworks */,
 				AF1B57892E0B526200C28263 /* FirebaseAnalytics in Frameworks */,
 				AFC575AA2E5E243100B3C3F0 /* SUIRouting in Frameworks */,
@@ -198,6 +202,8 @@
 				AFCE8E3B2E1D443900CC88C7 /* FirebaseRemoteConfig */,
 				AFC575A92E5E243100B3C3F0 /* SUIRouting */,
 				AF9544BD2F6B08800067D29F /* SamuraiLoggingFirebaseAnalytics */,
+				1362DC316DB244898314A44C /* SamuraiLoggingFirebaseCrashlytics */,
+				28FFD97614C34667940371C3 /* SamuraiLoggingMixpanel */,
 			);
 			productName = AIChat;
 			productReference = AF9034FB2DA3FDB000A35095 /* AIChat.app */;
@@ -1065,6 +1071,14 @@
 		AF9544BD2F6B08800067D29F /* SamuraiLoggingFirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SamuraiLoggingFirebaseAnalytics;
+		};
+		1362DC316DB244898314A44C /* SamuraiLoggingFirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SamuraiLoggingFirebaseCrashlytics;
+		};
+		28FFD97614C34667940371C3 /* SamuraiLoggingMixpanel */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SamuraiLoggingMixpanel;
 		};
 		AF95B1762DF38774003D5BA0 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;

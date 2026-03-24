@@ -5,6 +5,12 @@
       location = "group:SamuraiLoggingFirebaseAnalytics">
    </FileRef>
    <FileRef
+      location = "group:SamuraiLoggingFirebaseCrashlytics">
+   </FileRef>
+   <FileRef
+      location = "group:SamuraiLoggingMixpanel">
+   </FileRef>
+   <FileRef
       location = "group:SamuraiLogging">
    </FileRef>
    <FileRef
