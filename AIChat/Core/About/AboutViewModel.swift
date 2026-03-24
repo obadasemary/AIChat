@@ -7,7 +7,6 @@
 
 import SwiftUI
 import SwiftfulUtilities
-import SamuraiLogging
 
 @Observable
 @MainActor
