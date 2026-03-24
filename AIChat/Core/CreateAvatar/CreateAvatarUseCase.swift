@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SamuraiLogging
 
 @MainActor
 protocol CreateAvatarUseCaseProtocol {
