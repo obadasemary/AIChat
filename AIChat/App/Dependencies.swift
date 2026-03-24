@@ -10,6 +10,8 @@ import FirebaseCore
 import FirebaseFirestore
 
 import SamuraiLogging
+import SamuraiLoggingFirebaseCrashlytics
+import SamuraiLoggingMixpanel
 typealias LogManager = SamuraiLogging.LogManager
 typealias LoggableEvent = SamuraiLogging.LoggableEvent
 typealias LogType = SamuraiLogging.LogType
