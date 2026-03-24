@@ -18,7 +18,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../SamuraiLogging"),
-        .package(url: "https://github.com/mixpanel/mixpanel-swift.git", "4.0.0"..<"5.0.0")
+        .package(url: "https://github.com/mixpanel/mixpanel-swift.git", "5.0.0"..<"6.0.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
