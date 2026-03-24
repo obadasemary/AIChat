@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  ColorScheme+EXT.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 01.07.2025.
