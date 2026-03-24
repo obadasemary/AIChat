@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SamuraiLogging
 
 @MainActor
 struct AnyChatRowCellUseCase: ChatRowCellUseCaseProtocol {
