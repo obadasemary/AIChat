@@ -8,7 +8,6 @@
 import Foundation
 import AuthenticationServices
 import GoogleSignIn
-import SamuraiLogging
 
 @Observable
 @MainActor
