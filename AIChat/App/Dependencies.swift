@@ -14,6 +14,7 @@ import SamuraiLoggingFirebaseAnalytics
 import SamuraiLoggingFirebaseCrashlytics
 import SamuraiLoggingMixpanel
 typealias LogManager = SamuraiLogging.LogManager
+typealias LogManagerProtocol = SamuraiLogging.LogManagerProtocol
 typealias LoggableEvent = SamuraiLogging.LoggableEvent
 typealias LogType = SamuraiLogging.LogType
 typealias LogService = SamuraiLogging.LogServiceProtocol
