@@ -12,13 +12,13 @@ import Foundation
 class ABTestManager {
     
     private let service: ABTestServiceProtocol
-    private let logManager: LogManager?
-    
+    private let logManager: (any LogManagerProtocol)?
+
     var activeTests: ActiveABTests
-    
+
     init(
         service: ABTestServiceProtocol,
-        logManager: LogManager? = nil
+        logManager: (any LogManagerProtocol)? = nil
     ) {
         self.service = service
         self.logManager = logManager
