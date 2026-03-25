@@ -6,20 +6,19 @@
 //
 
 import Foundation
-import SamuraiLogging
 
 @MainActor
 @Observable
 class PurchaseManager {
     
     private let service: PurchaseServiceProtocol
-    private let logManager: LogManagerProtocol?
+    private let logManager: LogManager?
     
     private(set) var entitlements: [PurchasedEntitlement] = []
     
     init(
         service: PurchaseServiceProtocol,
-        logManager: LogManagerProtocol? = nil
+        logManager: LogManager? = nil
     ) {
         self.service = service
         self.logManager = logManager
@@ -27,7 +26,7 @@ class PurchaseManager {
 
     static func create(
         service: PurchaseServiceProtocol,
-        logManager: LogManagerProtocol? = nil
+        logManager: LogManager? = nil
     ) async -> PurchaseManager {
         let manager = PurchaseManager(service: service, logManager: logManager)
         await manager.configure()
