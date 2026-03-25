@@ -14,7 +14,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/obadasemary/SamuraiLogging.git", from: "1.0.0"),
+        .package(path: "../SamuraiLogging"),
         .package(url: "https://github.com/firebase/firebase-ios-sdk.git", "11.0.0"..<"12.0.0")
     ],
     targets: [

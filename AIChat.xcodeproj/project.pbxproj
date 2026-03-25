@@ -279,6 +279,10 @@
 			mainGroup = AF9034F22DA3FDB000A35095;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				AFSL00012E9F000000000001 /* XCLocalSwiftPackageReference "SamuraiLogging" */,
+				70B3CE4B26BC492892B74D73 /* XCLocalSwiftPackageReference "SamuraiLoggingFirebaseAnalytics" */,
+				C9161119EB3440D380CAA012 /* XCLocalSwiftPackageReference "SamuraiLoggingFirebaseCrashlytics" */,
+				FFEA8C74215249FB9FB9D707 /* XCLocalSwiftPackageReference "SamuraiLoggingMixpanel" */,
 				AFA98BB12DA46E0600492141 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				AF2ECC112DE7D88A00BD1602 /* XCRemoteSwiftPackageReference "SwiftfulUtilities" */,
 				AF95B1752DF38774003D5BA0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
