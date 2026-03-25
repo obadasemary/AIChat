@@ -9,12 +9,10 @@ import OSLog
 
 public actor LogSystem {
 
-    // swiftlint:disable force_unwrapping
     private let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier!,
+        subsystem: Bundle.main.bundleIdentifier ?? "SamuraiLogging",
         category: "ConsoleLogger"
     )
-    // swiftlint:enable force_unwrapping
 
     public init() {}
 
