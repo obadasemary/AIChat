@@ -12,9 +12,9 @@ import SwiftfulUtilities
 @Observable
 final class PushManager {
     
-    private let logManager: LogManager?
-    
-    init(logManager: LogManager? = nil) {
+    private let logManager: (any LogManagerProtocol)?
+
+    init(logManager: (any LogManagerProtocol)? = nil) {
         self.logManager = logManager
     }
 }
