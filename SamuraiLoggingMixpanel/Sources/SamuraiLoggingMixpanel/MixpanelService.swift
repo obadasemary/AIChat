@@ -16,7 +16,11 @@ public struct MixpanelService {
     }
 
     public init(token: String, loggingEnabled: Bool = false) {
+        #if os(iOS)
         Mixpanel.initialize(token: token, trackAutomaticEvents: true)
+        #else
+        Mixpanel.initialize(token: token)
+        #endif
         instance.loggingEnabled = loggingEnabled
     }
 }
