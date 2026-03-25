@@ -926,6 +926,18 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		70B3CE4B26BC492892B74D73 /* XCLocalSwiftPackageReference "SamuraiLoggingFirebaseAnalytics" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = SamuraiLoggingFirebaseAnalytics;
+		};
+		C9161119EB3440D380CAA012 /* XCLocalSwiftPackageReference "SamuraiLoggingFirebaseCrashlytics" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = SamuraiLoggingFirebaseCrashlytics;
+		};
+		FFEA8C74215249FB9FB9D707 /* XCLocalSwiftPackageReference "SamuraiLoggingMixpanel" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = SamuraiLoggingMixpanel;
+		};
 		AFSL00012E9F000000000001 /* XCLocalSwiftPackageReference "SamuraiLogging" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = SamuraiLogging;
@@ -1026,10 +1038,12 @@
 /* Begin XCSwiftPackageProductDependency section */
 		1362DC316DB244898314A44C /* SamuraiLoggingFirebaseCrashlytics */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = C9161119EB3440D380CAA012 /* XCLocalSwiftPackageReference "SamuraiLoggingFirebaseCrashlytics" */;
 			productName = SamuraiLoggingFirebaseCrashlytics;
 		};
 		28FFD97614C34667940371C3 /* SamuraiLoggingMixpanel */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = FFEA8C74215249FB9FB9D707 /* XCLocalSwiftPackageReference "SamuraiLoggingMixpanel" */;
 			productName = SamuraiLoggingMixpanel;
 		};
 		AF2ECC122DE7D88A00BD1602 /* SwiftfulUtilities */ = {
@@ -1054,6 +1068,7 @@
 		};
 		AF9544BD2F6B08800067D29F /* SamuraiLoggingFirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = 70B3CE4B26BC492892B74D73 /* XCLocalSwiftPackageReference "SamuraiLoggingFirebaseAnalytics" */;
 			productName = SamuraiLoggingFirebaseAnalytics;
 		};
 		AF95B1762DF38774003D5BA0 /* FirebaseAuth */ = {
