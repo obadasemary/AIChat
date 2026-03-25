@@ -17,7 +17,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../SamuraiLogging"),
+        .package(url: "https://github.com/obadasemary/SamuraiLogging.git", from: "1.0.0"),
         .package(url: "https://github.com/mixpanel/mixpanel-swift.git", "5.0.0"..<"6.0.0")
     ],
     targets: [
