@@ -6,20 +6,19 @@
 //
 
 import Foundation
-import SamuraiLogging
 
 @MainActor
 @Observable
 class ABTestManager {
     
     private let service: ABTestServiceProtocol
-    private let logManager: LogManagerProtocol?
+    private let logManager: LogManager?
     
     var activeTests: ActiveABTests
     
     init(
         service: ABTestServiceProtocol,
-        logManager: LogManagerProtocol? = nil
+        logManager: LogManager? = nil
     ) {
         self.service = service
         self.logManager = logManager
