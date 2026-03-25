@@ -1,7 +1,7 @@
 # 🤖 AIChat - AI-Powered Chat Application
 
 [![iOS Build & Test](https://github.com/obadasemary/AIChat/actions/workflows/CI.yml/badge.svg)](https://github.com/obadasemary/AIChat/actions/workflows/CI.yml)
-![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/obadasemary/AIChat?utm_source=oss&utm_medium=github&utm_campaign=obadasemary%2FAIChat&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+[![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/obadasemary/AIChat?utm_source=oss&utm_medium=github&utm_campaign=obadasemary%2FAIChat&labelColor=171717&color=FF570A&label=CodeRabbit+Reviews)](https://coderabbit.ai/dashboard/gh/obadasemary/AIChat/prs)
 [![Swift](https://img.shields.io/badge/Swift-5.9--6.2-orange.svg)](https://swift.org)
 [![iOS](https://img.shields.io/badge/iOS-17.6--26.2-blue.svg)](https://developer.apple.com/ios/)
 [![Xcode](https://img.shields.io/badge/Xcode-15.0--26.2-blue.svg)](https://developer.apple.com/xcode/)
