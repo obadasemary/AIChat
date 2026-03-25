@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  GoogleSignInResult.swift
 //  AIChat
 //
 //  Created by Abdelrahman Mohamed on 11.06.2025.
