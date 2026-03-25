@@ -13,14 +13,14 @@ final class UserManager {
     
     private let remoteService: RemoteUserServiceProtocol
     private let localStorage: LocalUserServiceProtocol
-    private let logManager: LogManager?
-    
+    private let logManager: (any LogManagerProtocol)?
+
     private(set) var currentUser: UserModel?
     private var currentUserListener: ListenerRegistration?
-    
+
     init(
         services: UserServicesProtocol,
-        logManager: LogManager? = nil
+        logManager: (any LogManagerProtocol)? = nil
     ) {
         self.remoteService = services.remoteService
         self.localStorage = services.localStorage
