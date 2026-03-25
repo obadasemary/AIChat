@@ -12,13 +12,13 @@ import Foundation
 class PurchaseManager {
     
     private let service: PurchaseServiceProtocol
-    private let logManager: LogManager?
-    
+    private let logManager: (any LogManagerProtocol)?
+
     private(set) var entitlements: [PurchasedEntitlement] = []
-    
+
     init(
         service: PurchaseServiceProtocol,
-        logManager: LogManager? = nil
+        logManager: (any LogManagerProtocol)? = nil
     ) {
         self.service = service
         self.logManager = logManager
@@ -26,7 +26,7 @@ class PurchaseManager {
 
     static func create(
         service: PurchaseServiceProtocol,
-        logManager: LogManager? = nil
+        logManager: (any LogManagerProtocol)? = nil
     ) async -> PurchaseManager {
         let manager = PurchaseManager(service: service, logManager: logManager)
         await manager.configure()
