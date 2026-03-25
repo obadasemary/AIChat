@@ -6,14 +6,13 @@
 //
 
 import Foundation
-import SamuraiLogging
 
 @MainActor
 @Observable
 final class AuthManager {
     
     private let service: AuthServiceProtocol
-    private let logManager: LogManagerProtocol?
+    private let logManager: LogManager?
     
     private(set) var auth: UserAuthInfo?
     private var listener: (any NSObjectProtocol)?
@@ -21,7 +20,7 @@ final class AuthManager {
     
     init(
         service: AuthServiceProtocol,
-        logManager: LogManagerProtocol? = nil
+        logManager: LogManager? = nil
     ) {
         self.service = service
         self.logManager = logManager
