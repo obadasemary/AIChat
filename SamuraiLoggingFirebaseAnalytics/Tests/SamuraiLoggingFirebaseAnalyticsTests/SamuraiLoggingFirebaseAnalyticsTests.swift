@@ -1,4 +1,5 @@
 import Testing
+import Foundation
 @testable import SamuraiLoggingFirebaseAnalytics
 
 // MARK: - String.clipped(maxCharacters:)
