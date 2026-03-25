@@ -102,7 +102,7 @@
 				AF95B1772DF38774003D5BA0 /* FirebaseAuth in Frameworks */,
 				AFCE8E3C2E1D443900CC88C7 /* FirebaseRemoteConfig in Frameworks */,
 				AFCB2B912DFC779000694E6E /* FirebaseFirestore in Frameworks */,
-					AFEF464A2E007365000E87DC /* FirebaseStorage in Frameworks */,
+				AFEF464A2E007365000E87DC /* FirebaseStorage in Frameworks */,
 				AF2ECC132DE7D88A00BD1602 /* SwiftfulUtilities in Frameworks */,
 				AF3986932DF8D2E5000F064C /* GoogleSignIn in Frameworks */,
 				AFSC00022E7F000000000002 /* Configuration in Frameworks */,
@@ -190,7 +190,7 @@
 				AFCB2B9F2DFDC20B00694E6E /* SwiftfulFirestore */,
 				AFEF44062DFF1489000E87DC /* OpenAI */,
 				AFEF46492E007365000E87DC /* FirebaseStorage */,
-					AFCE8E3B2E1D443900CC88C7 /* FirebaseRemoteConfig */,
+				AFCE8E3B2E1D443900CC88C7 /* FirebaseRemoteConfig */,
 				AFC575A92E5E243100B3C3F0 /* SUIRouting */,
 				AF9544BD2F6B08800067D29F /* SamuraiLoggingFirebaseAnalytics */,
 				1362DC316DB244898314A44C /* SamuraiLoggingFirebaseCrashlytics */,
@@ -930,6 +930,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = SamuraiLoggingFirebaseAnalytics;
 		};
+		AFSL00012E9F000000000001 /* XCLocalSwiftPackageReference "SamuraiLogging" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = SamuraiLogging;
+		};
 		C9161119EB3440D380CAA012 /* XCLocalSwiftPackageReference "SamuraiLoggingFirebaseCrashlytics" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = SamuraiLoggingFirebaseCrashlytics;
@@ -937,10 +941,6 @@
 		FFEA8C74215249FB9FB9D707 /* XCLocalSwiftPackageReference "SamuraiLoggingMixpanel" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = SamuraiLoggingMixpanel;
-		};
-		AFSL00012E9F000000000001 /* XCLocalSwiftPackageReference "SamuraiLogging" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = SamuraiLogging;
 		};
 /* End XCLocalSwiftPackageReference section */
 
