@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SamuraiLogging
 
 @MainActor
 @Observable
@@ -15,13 +14,13 @@ final class NewsFeedManager {
     private let remoteService: RemoteNewsFeedServiceProtocol
     private let localStorage: LocalNewsFeedServiceProtocol
     private let networkMonitor: NetworkMonitorProtocol
-    private let logManager: LogManagerProtocol?
+    private let logManager: LogManager?
 
     init(
         remoteService: RemoteNewsFeedServiceProtocol,
         localStorage: LocalNewsFeedServiceProtocol,
         networkMonitor: NetworkMonitorProtocol,
-        logManager: LogManagerProtocol? = nil
+        logManager: LogManager? = nil
     ) {
         self.remoteService = remoteService
         self.localStorage = localStorage
