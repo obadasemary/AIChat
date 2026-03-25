@@ -73,7 +73,7 @@ extension NetworkManagerProtocol {
 final class NetworkManager: Sendable {
     private let service: NetworkServiceProtocol
     private let retryHandler: RetryHandler
-    private let logManager: LogManager?
+    private let logManager: (any LogManagerProtocol)?
 
     /// Creates a new network manager
     /// - Parameters:
@@ -83,7 +83,7 @@ final class NetworkManager: Sendable {
     init(
         service: NetworkServiceProtocol,
         retryConfiguration: RetryConfiguration = .default,
-        logManager: LogManager? = nil
+        logManager: (any LogManagerProtocol)? = nil
     ) {
         self.service = service
         self.retryHandler = RetryHandler(configuration: retryConfiguration)
