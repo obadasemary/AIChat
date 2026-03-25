@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SamuraiLogging
 
 /// Protocol defining the network manager interface
 @MainActor
@@ -74,7 +73,7 @@ extension NetworkManagerProtocol {
 final class NetworkManager: Sendable {
     private let service: NetworkServiceProtocol
     private let retryHandler: RetryHandler
-    private let logManager: LogManagerProtocol?
+    private let logManager: LogManager?
 
     /// Creates a new network manager
     /// - Parameters:
@@ -84,7 +83,7 @@ final class NetworkManager: Sendable {
     init(
         service: NetworkServiceProtocol,
         retryConfiguration: RetryConfiguration = .default,
-        logManager: LogManagerProtocol? = nil
+        logManager: LogManager? = nil
     ) {
         self.service = service
         self.retryHandler = RetryHandler(configuration: retryConfiguration)
