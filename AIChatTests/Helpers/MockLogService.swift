@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SamuraiLogging
 @testable import AIChat
 
 final class MockLogService: @unchecked Sendable {
