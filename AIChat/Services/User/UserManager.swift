@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SamuraiLogging
 
 @MainActor
 @Observable
@@ -14,14 +13,14 @@ final class UserManager {
     
     private let remoteService: RemoteUserServiceProtocol
     private let localStorage: LocalUserServiceProtocol
-    private let logManager: LogManagerProtocol?
+    private let logManager: LogManager?
     
     private(set) var currentUser: UserModel?
     private var currentUserListener: ListenerRegistration?
     
     init(
         services: UserServicesProtocol,
-        logManager: LogManagerProtocol? = nil
+        logManager: LogManager? = nil
     ) {
         self.remoteService = services.remoteService
         self.localStorage = services.localStorage
