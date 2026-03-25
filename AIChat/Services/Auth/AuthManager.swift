@@ -12,15 +12,15 @@ import Foundation
 final class AuthManager {
     
     private let service: AuthServiceProtocol
-    private let logManager: LogManager?
-    
+    private let logManager: (any LogManagerProtocol)?
+
     private(set) var auth: UserAuthInfo?
     private var listener: (any NSObjectProtocol)?
     private var listenerTask: Task<Void, Never>?
-    
+
     init(
         service: AuthServiceProtocol,
-        logManager: LogManager? = nil
+        logManager: (any LogManagerProtocol)? = nil
     ) {
         self.service = service
         self.logManager = logManager
