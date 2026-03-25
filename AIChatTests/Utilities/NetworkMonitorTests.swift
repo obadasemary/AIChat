@@ -7,6 +7,7 @@
 
 import Testing
 import Network
+import SamuraiLogging
 @testable import AIChat
 
 @MainActor
@@ -14,7 +15,8 @@ struct NetworkMonitorTests {
 
     @Test("Initial Connection State Detection")
     func testInitialConnectionStateDetection() async throws {
-        let mockLogManager = LogManager(services: [MockLogService()])
+        let mockLogService: any LogServiceProtocol = MockLogService()
+        let mockLogManager = LogManager(services: [mockLogService])
         let monitor = NetworkMonitor(logManager: mockLogManager)
 
         // Note: This test will pass or fail based on actual network connectivity
@@ -69,7 +71,8 @@ struct NetworkMonitorTests {
 
     @Test("NetworkMonitor Protocol Conformance")
     func testNetworkMonitorProtocolConformance() async throws {
-        let mockLogManager = LogManager(services: [MockLogService()])
+        let mockLogService: any LogServiceProtocol = MockLogService()
+        let mockLogManager = LogManager(services: [mockLogService])
         let realMonitor: NetworkMonitorProtocol = NetworkMonitor(logManager: mockLogManager)
         let mockMonitor: NetworkMonitorProtocol = MockNetworkMonitor(isConnected: true)
 
