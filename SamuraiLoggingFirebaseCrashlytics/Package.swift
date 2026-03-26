@@ -5,13 +5,13 @@ let package = Package(
     name: "SamuraiLoggingFirebaseCrashlytics",
     platforms: [
         .iOS(.v17),
-        .macOS(.v14),
+        .macOS(.v14)
     ],
     products: [
         .library(
             name: "SamuraiLoggingFirebaseCrashlytics",
             targets: ["SamuraiLoggingFirebaseCrashlytics"]
-        ),
+        )
     ],
     dependencies: [
         .package(path: "../SamuraiLogging"),
@@ -28,6 +28,6 @@ let package = Package(
         .testTarget(
             name: "SamuraiLoggingFirebaseCrashlyticsTests",
             dependencies: ["SamuraiLoggingFirebaseCrashlytics"]
-        ),
+        )
     ]
 )
