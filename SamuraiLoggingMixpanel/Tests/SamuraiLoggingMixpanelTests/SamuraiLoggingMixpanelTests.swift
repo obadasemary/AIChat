@@ -11,22 +11,22 @@ struct StringClippedTests {
         ["hello", "", "hi"],
         [10, 5, 5]
     ))
-    func shorterThanLimit(input: String, limit: Int) {
+    func test_whenInputShorterThanLimit_thenReturnsUnchanged(input: String, limit: Int) {
         #expect(input.clipped(maxCharacters: limit) == input)
     }
 
     @Test("Clips to exact character count")
-    func clipsToLimit() {
+    func test_whenClippingToExactCount_thenReturnsFirstNCharacters() {
         #expect("Hello, World!".clipped(maxCharacters: 5) == "Hello")
     }
 
     @Test("Returns empty string when limit is zero")
-    func zeroLimit() {
+    func test_whenLimitIsZero_thenReturnsEmptyString() {
         #expect("hello".clipped(maxCharacters: 0) == "")
     }
 
     @Test("Clips a 255-char key to exactly 255 characters")
-    func clipsAtMixpanelKeyLimit() {
+    func test_whenKeyExceeds255_thenClipsTo255() {
         let long = String(repeating: "a", count: 300)
         #expect(long.clipped(maxCharacters: 255).count == 255)
     }
@@ -38,39 +38,39 @@ struct StringClippedTests {
 struct MixpanelServiceTests {
 
     @Test("Can be initialized with a token without crashing")
-    func initialization() {
+    func test_whenInitializedWithToken_thenDoesNotCrash() {
         _ = MixpanelService(token: "test_token")
     }
 
     @Test("Can be initialized with logging enabled without crashing")
-    func initializationWithLogging() {
+    func test_whenInitializedWithLoggingEnabled_thenDoesNotCrash() {
         _ = MixpanelService(token: "test_token", loggingEnabled: true)
     }
 
     // trackEvent: .info events are explicitly dropped before touching Mixpanel
     @Test("trackEvent does not crash for .info events")
-    func trackEvent_info_isNoOp() {
+    func test_whenTrackingInfoEvent_thenDoesNotCrash() {
         let service = MixpanelService(token: "test_token")
         let event = AnyLoggableEvent(eventName: "info_event", type: .info)
         service.trackEvent(event: event)
     }
 
     @Test("trackScreen does not crash for .info events")
-    func trackScreen_info_isNoOp() {
+    func test_whenTrackingInfoScreen_thenDoesNotCrash() {
         let service = MixpanelService(token: "test_token")
         let event = AnyLoggableEvent(eventName: "screen_view", type: .info)
         service.trackScreen(event: event)
     }
 
     @Test("trackEvent does not crash for analytic events with no parameters")
-    func trackEvent_analytic_noParameters() {
+    func test_whenTrackingAnalyticEventWithNoParameters_thenDoesNotCrash() {
         let service = MixpanelService(token: "test_token")
         let event = AnyLoggableEvent(eventName: "purchase_completed", type: .analytic)
         service.trackEvent(event: event)
     }
 
     @Test("trackEvent does not crash for analytic events with parameters")
-    func trackEvent_analytic_withParameters() {
+    func test_whenTrackingAnalyticEventWithParameters_thenDoesNotCrash() {
         let service = MixpanelService(token: "test_token")
         let event = AnyLoggableEvent(
             eventName: "purchase_completed",
@@ -81,13 +81,13 @@ struct MixpanelServiceTests {
     }
 
     @Test("addUserProperties does not crash with valid properties")
-    func addUserProperties() {
+    func test_whenAddingUserProperties_thenDoesNotCrash() {
         let service = MixpanelService(token: "test_token")
         service.addUserProperties(dict: ["plan": "pro", "age": 30], isHighPriority: false)
     }
 
     @Test("deleteUserProfile does not crash")
-    func deleteUserProfile() {
+    func test_whenDeletingUserProfile_thenDoesNotCrash() {
         let service = MixpanelService(token: "test_token")
         service.deleteUserProfile()
     }

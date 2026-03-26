@@ -7,14 +7,14 @@ let package = Package(
     name: "SamuraiLoggingFirebaseAnalytics",
     platforms: [
         .iOS(.v17),
-        .macOS(.v14),
+        .macOS(.v14)
     ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "SamuraiLoggingFirebaseAnalytics",
             targets: ["SamuraiLoggingFirebaseAnalytics"]
-        ),
+        )
     ],
     dependencies: [
         .package(path: "../SamuraiLogging"),
@@ -33,6 +33,6 @@ let package = Package(
         .testTarget(
             name: "SamuraiLoggingFirebaseAnalyticsTests",
             dependencies: ["SamuraiLoggingFirebaseAnalytics"]
-        ),
+        )
     ]
 )
