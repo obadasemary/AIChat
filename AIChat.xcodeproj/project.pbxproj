@@ -12,7 +12,6 @@
 		AF39868C2DF8C958000F064C /* SignInGoogleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = AF39868B2DF8C958000F064C /* SignInGoogleAsync */; };
 		AF3986932DF8D2E5000F064C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = AF3986922DF8D2E5000F064C /* GoogleSignIn */; };
 		AF3986952DF8D2E5000F064C /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = AF3986942DF8D2E5000F064C /* GoogleSignInSwift */; };
-		AF3E88B22E0B7CA1002FAC13 /* Mixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = AF3E88B12E0B7CA1002FAC13 /* Mixpanel */; };
 		AF5A285D2F61E7D40017B265 /* NetworkingKit in Frameworks */ = {isa = PBXBuildFile; productRef = F50C485383FD17FAA5755D41 /* NetworkingKit */; };
 		AF5A2B862F61E8270017B265 /* NetworkingKit in Frameworks */ = {isa = PBXBuildFile; productRef = 027A45D1B9A8B1D6C7A58245 /* NetworkingKit */; };
 		AF7BB1592F670A5500E14903 /* SamuraiLogging in Frameworks */ = {isa = PBXBuildFile; productRef = AFSL00022E9F000000000002 /* SamuraiLogging */; };
@@ -56,7 +55,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		AF90352E2DA4026000A35095 = {
+		AF90352E2DA4026000A35095 /* Exceptions for "AIChat" folder in "AIChat" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -66,9 +65,24 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		AF9034FD2DA3FDB000A35095 /* AIChat */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (AF90352E2DA4026000A35095, ); path = AIChat; sourceTree = "<group>"; };
-		AF90350F2DA3FDB100A35095 /* AIChatTests */ = {isa = PBXFileSystemSynchronizedRootGroup; path = AIChatTests; sourceTree = "<group>"; };
-		AF9035192DA3FDB100A35095 /* AIChatUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; path = AIChatUITests; sourceTree = "<group>"; };
+		AF9034FD2DA3FDB000A35095 /* AIChat */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				AF90352E2DA4026000A35095 /* Exceptions for "AIChat" folder in "AIChat" target */,
+			);
+			path = AIChat;
+			sourceTree = "<group>";
+		};
+		AF90350F2DA3FDB100A35095 /* AIChatTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = AIChatTests;
+			sourceTree = "<group>";
+		};
+		AF9035192DA3FDB100A35095 /* AIChatUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = AIChatUITests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,7 +108,7 @@
 				AFEF464A2E007365000E87DC /* FirebaseStorage in Frameworks */,
 				AF2ECC132DE7D88A00BD1602 /* SwiftfulUtilities in Frameworks */,
 				AF3986932DF8D2E5000F064C /* GoogleSignIn in Frameworks */,
-				AFSC00022E7F000000000002,
+				AFSC00022E7F000000000002 /* Configuration in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,7 +299,7 @@
 				AFEF44052DFF1489000E87DC /* XCRemoteSwiftPackageReference "OpenAI" */,
 				AF3E88B02E0B7CA1002FAC13 /* XCRemoteSwiftPackageReference "mixpanel-swift" */,
 				AFC575A82E5E243100B3C3F0 /* XCRemoteSwiftPackageReference "SUIRouting" */,
-				AFSC00012E7F000000000001,
+				AFSC00012E7F000000000001 /* XCRemoteSwiftPackageReference "swift-configuration" */,
 				C1AD42489BD4149C6AF9E610 /* XCLocalSwiftPackageReference "NetworkingKit" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -1026,7 +1040,7 @@
 				version = 0.3.0;
 			};
 		};
-		'AFSC00012E7F000000000001' = {
+		AFSC00012E7F000000000001 /* XCRemoteSwiftPackageReference "swift-configuration" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-configuration";
 			requirement = {
@@ -1046,11 +1060,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C9161119EB3440D380CAA012 /* XCLocalSwiftPackageReference "SamuraiLoggingFirebaseCrashlytics" */;
 			productName = SamuraiLoggingFirebaseCrashlytics;
-		};
-		AF1B57882E0B526200C28263 /* FirebaseAnalytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = AF95B1752DF38774003D5BA0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAnalytics;
 		};
 		28FFD97614C34667940371C3 /* SamuraiLoggingMixpanel */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1127,9 +1136,9 @@
 			package = AF95B1752DF38774003D5BA0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
 		};
-		'AFSC00032E7F000000000003' = {
+		AFSC00032E7F000000000003 /* Configuration */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = AFSC00012E7F000000000001;
+			package = AFSC00012E7F000000000001 /* XCRemoteSwiftPackageReference "swift-configuration" */;
 			productName = Configuration;
 		};
 		AFSL00022E9F000000000002 /* SamuraiLogging */ = {

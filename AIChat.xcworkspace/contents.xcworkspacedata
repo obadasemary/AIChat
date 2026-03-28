@@ -14,6 +14,9 @@
       location = "group:SamuraiLogging">
    </FileRef>
    <FileRef
+      location = "group:NetworkingKit">
+   </FileRef>
+   <FileRef
       location = "group:AIChat.xcodeproj">
    </FileRef>
 </Workspace>
