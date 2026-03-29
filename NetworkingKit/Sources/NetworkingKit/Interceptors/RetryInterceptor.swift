@@ -50,8 +50,9 @@ public struct RetryHandler: Sendable {
     }
 
     /// Determines if a request should be retried based on the error
-    public func shouldRetry(error: NetworkError, attempt: Int) -> Bool {
-        guard attempt < configuration.maxRetries else { return false }
+    public func shouldRetry(error: NetworkError, attempt: Int, maxRetries: Int? = nil) -> Bool {
+        let effectiveMax = maxRetries ?? configuration.maxRetries
+        guard attempt < effectiveMax else { return false }
         switch error {
         case .timeout, .noConnection:
             return true
@@ -89,7 +90,7 @@ public struct RetryHandler: Sendable {
             do {
                 return try await operation()
             } catch let error as NetworkError {
-                if shouldRetry(error: error, attempt: attempt) && attempt < totalAttempts - 1 {
+                if shouldRetry(error: error, attempt: attempt, maxRetries: totalAttempts - 1) && attempt < totalAttempts - 1 {
                     let delay = delayForRetry(attempt: attempt)
                     try await Task.sleep(for: .seconds(delay))
                     continue
