@@ -13,7 +13,7 @@ import NetworkingKit
 /// Mock URLProtocol for testing network requests
 final class MockURLProtocol: URLProtocol {
     private static let lock = NSLock()
-    private static var _requestHandler: ((URLRequest) throws -> (URLResponse, Data))?
+    nonisolated(unsafe) private static var _requestHandler: ((URLRequest) throws -> (URLResponse, Data))?
 
     static var requestHandler: ((URLRequest) throws -> (URLResponse, Data))? {
         get {
