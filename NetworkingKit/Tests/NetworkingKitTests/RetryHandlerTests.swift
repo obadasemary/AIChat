@@ -128,6 +128,121 @@ struct RetryHandlerTests {
         #expect(handler.delayForRetry(attempt: 5) == 2.0)
     }
 
+    // MARK: - shouldRetry maxRetries Override Tests
+
+    @Test("shouldRetry respects explicit maxRetries override above configuration value")
+    func test_whenExplicitMaxRetriesAboveConfig_thenShouldRetryUpToOverrideCeiling() {
+        let handler = RetryHandler(configuration: RetryConfiguration(maxRetries: 2))
+
+        // Attempt 4 is beyond config.maxRetries (2) but within override (5)
+        let resultWithinOverride = handler.shouldRetry(error: .timeout, attempt: 4, maxRetries: 5)
+        // Attempt 5 equals the override ceiling — should not retry
+        let resultAtOverrideCeiling = handler.shouldRetry(error: .timeout, attempt: 5, maxRetries: 5)
+
+        #expect(resultWithinOverride == true)
+        #expect(resultAtOverrideCeiling == false)
+    }
+
+    @Test("shouldRetry respects explicit maxRetries override below configuration value")
+    func test_whenExplicitMaxRetriesBelowConfig_thenShouldNotRetryBeyondOverride() {
+        let handler = RetryHandler(configuration: RetryConfiguration(maxRetries: 5))
+
+        // Attempt 2 equals the override ceiling — config would allow more, override must win
+        let resultAtOverrideCeiling = handler.shouldRetry(error: .timeout, attempt: 2, maxRetries: 2)
+        // Attempt 1 is within the override ceiling — should retry
+        let resultBelowOverride = handler.shouldRetry(error: .timeout, attempt: 1, maxRetries: 2)
+
+        #expect(resultAtOverrideCeiling == false)
+        #expect(resultBelowOverride == true)
+    }
+
+    @Test("shouldRetry with override zero never retries")
+    func test_whenExplicitMaxRetriesIsZero_thenShouldNeverRetry() {
+        let handler = RetryHandler(configuration: RetryConfiguration(maxRetries: 3))
+
+        let result = handler.shouldRetry(error: .timeout, attempt: 0, maxRetries: 0)
+
+        #expect(result == false)
+    }
+
+    @Test("shouldRetry override does not change retryable error logic")
+    func test_whenExplicitMaxRetriesOverride_thenNonRetryableErrorStillRejected() {
+        let handler = RetryHandler(configuration: RetryConfiguration(maxRetries: 1))
+
+        // Even though override lifts ceiling, unauthorized is never retryable
+        let result = handler.shouldRetry(error: .unauthorized, attempt: 0, maxRetries: 10)
+
+        #expect(result == false)
+    }
+
+    // MARK: - execute(maxAttempts:) Override Tests
+
+    @Test("execute with maxAttempts above configuration retries up to overridden ceiling")
+    func test_whenMaxAttemptsAboveConfig_thenRetriesUpToOverride() async throws {
+        // Config allows 2 retries (3 total). We pass maxAttempts: 5 → 5 total attempts.
+        let handler = RetryHandler(configuration: RetryConfiguration(maxRetries: 2, baseDelay: 0.0))
+        let attempts = AttemptCounter()
+
+        await #expect(throws: NetworkError.self) {
+            try await handler.execute(maxAttempts: 5) {
+                await attempts.increment()
+                throw NetworkError.timeout
+            }
+        }
+
+        #expect(await attempts.value() == 5)
+    }
+
+    @Test("execute with maxAttempts above configuration stops after override ceiling")
+    func test_whenMaxAttemptsAboveConfig_thenStopsExactlyAtOverride() async throws {
+        let handler = RetryHandler(configuration: RetryConfiguration(maxRetries: 2, baseDelay: 0.0))
+        let attempts = AttemptCounter()
+
+        await #expect(throws: NetworkError.self) {
+            try await handler.execute(maxAttempts: 4) {
+                await attempts.increment()
+                throw NetworkError.noConnection
+            }
+        }
+
+        // Must be exactly 4, not 3 (config default) and not more than 4
+        #expect(await attempts.value() == 4)
+    }
+
+    @Test("execute with maxAttempts above configuration succeeds when operation recovers within override window")
+    func test_whenMaxAttemptsAboveConfig_thenSucceedsOnAttemptWithinOverride() async throws {
+        // Config allows 2 retries; override raises ceiling to 5. Succeed on attempt 4.
+        let handler = RetryHandler(configuration: RetryConfiguration(maxRetries: 2, baseDelay: 0.0))
+        let attempts = AttemptCounter()
+
+        let result = try await handler.execute(maxAttempts: 5) {
+            let count = await attempts.value()
+            await attempts.increment()
+            if count < 3 {
+                throw NetworkError.timeout
+            }
+            return "recovered"
+        }
+
+        #expect(result == "recovered")
+        #expect(await attempts.value() == 4)
+    }
+
+    @Test("execute with maxAttempts one makes exactly one attempt regardless of configuration")
+    func test_whenMaxAttemptsIsOne_thenMakesExactlyOneAttempt() async {
+        let handler = RetryHandler(configuration: RetryConfiguration(maxRetries: 5, baseDelay: 0.0))
+        let attempts = AttemptCounter()
+
+        await #expect(throws: NetworkError.self) {
+            try await handler.execute(maxAttempts: 1) {
+                await attempts.increment()
+                throw NetworkError.timeout
+            }
+        }
+
+        #expect(await attempts.value() == 1)
+    }
+
     // MARK: - Execute with Retry Tests
 
     @Test("Execute succeeds on first attempt")
