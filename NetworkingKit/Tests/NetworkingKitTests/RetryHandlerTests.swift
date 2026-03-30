@@ -22,11 +22,17 @@ struct RetryHandlerTests {
         }
     }
     
+    // MARK: - Helpers
+    
+    private func makeDefaultHandler() -> RetryHandler {
+        RetryHandler(configuration: .default)
+    }
+    
     // MARK: - Should Retry Tests
     
     @Test("Should retry on timeout error")
     func test_whenTimeoutError_thenShouldRetry() {
-        let handler = RetryHandler(configuration: .default)
+        let handler = makeDefaultHandler()
         
         let result = handler.shouldRetry(error: .timeout, attempt: 0)
         
@@ -35,7 +41,7 @@ struct RetryHandlerTests {
     
     @Test("Should retry on no connection error")
     func test_whenNoConnectionError_thenShouldRetry() {
-        let handler = RetryHandler(configuration: .default)
+        let handler = makeDefaultHandler()
         
         let result = handler.shouldRetry(error: .noConnection, attempt: 0)
         
@@ -44,7 +50,7 @@ struct RetryHandlerTests {
     
     @Test("Should retry on 503 server error")
     func test_when503Error_thenShouldRetry() {
-        let handler = RetryHandler(configuration: .default)
+        let handler = makeDefaultHandler()
         
         let result = handler.shouldRetry(error: .serverError(statusCode: 503), attempt: 0)
         
@@ -53,7 +59,7 @@ struct RetryHandlerTests {
     
     @Test("Should retry on 429 rate limit error")
     func test_when429Error_thenShouldRetry() {
-        let handler = RetryHandler(configuration: .default)
+        let handler = makeDefaultHandler()
         
         let result = handler.shouldRetry(error: .httpError(statusCode: 429, data: nil), attempt: 0)
         
@@ -62,7 +68,7 @@ struct RetryHandlerTests {
     
     @Test("Should not retry on unauthorized error")
     func test_whenUnauthorizedError_thenShouldNotRetry() {
-        let handler = RetryHandler(configuration: .default)
+        let handler = makeDefaultHandler()
         
         let result = handler.shouldRetry(error: .unauthorized, attempt: 0)
         
@@ -71,7 +77,7 @@ struct RetryHandlerTests {
     
     @Test("Should not retry on not found error")
     func test_whenNotFoundError_thenShouldNotRetry() {
-        let handler = RetryHandler(configuration: .default)
+        let handler = makeDefaultHandler()
         
         let result = handler.shouldRetry(error: .notFound, attempt: 0)
         
