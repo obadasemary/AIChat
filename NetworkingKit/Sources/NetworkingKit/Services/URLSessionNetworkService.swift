@@ -17,6 +17,12 @@ public final class URLSessionNetworkService: NetworkServiceProtocol, @unchecked 
     private let responseInterceptors: [ResponseInterceptor]
 
     /// Creates a new URLSession network service
+    /// - Parameters:
+    ///   - baseURL: The base URL for all requests (optional)
+    ///   - session: The URL session to use (default: .shared)
+    ///   - defaultHeaders: Default headers for all requests
+    ///   - requestInterceptors: Interceptors to apply to requests
+    ///   - responseInterceptors: Interceptors to apply to responses
     public init(
         baseURL: URL? = nil,
         session: URLSession = .shared,

@@ -52,6 +52,13 @@ public actor MockNetworkService: NetworkServiceProtocol {
         }
     }
 
+    /// Creates a new mock network service
+    /// - Parameters:
+    ///   - baseURL: The base URL (optional, not really used)
+    ///   - delay: Simulated network delay in seconds (default: 0.1)
+    ///   - shouldError: Whether to always throw errors (default: false)
+    ///   - errorToThrow: The error to throw when shouldError is true
+    ///   - mockResponses: Initial mock responses keyed by path
     public init(
         baseURL: URL? = nil,
         delay: TimeInterval = 0.1,

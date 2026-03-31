@@ -6,6 +6,8 @@ public protocol NetworkServiceProtocol: Sendable {
     var baseURL: URL? { get }
 
     /// Executes a network request and returns the raw response
+    /// - Parameter request: The network request to execute
+    /// - Returns: The network response
     func execute(_ request: NetworkRequest) async throws -> NetworkResponse
 
     /// Executes a network request and decodes the response
