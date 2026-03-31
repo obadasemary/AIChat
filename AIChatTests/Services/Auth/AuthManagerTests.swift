@@ -16,7 +16,7 @@ struct AuthManagerTests {
         let authService = await MockAuthService(currentUser: mockUser)
         
         let mockLogService = MockLogService()
-        let logManager = await LogManager(services: [mockLogService])
+        let logManager = LogManager(services: [mockLogService])
         
         let authManager = await AuthManager(
             service: authService,
@@ -31,7 +31,7 @@ struct AuthManagerTests {
         let authService = await MockAuthService(currentUser: nil)
         
         let mockLogService = MockLogService()
-        let logManager = await LogManager(services: [mockLogService])
+        let logManager = LogManager(services: [mockLogService])
         
         let authManager = await AuthManager(
             service: authService,
@@ -67,7 +67,7 @@ struct AuthManagerTests {
     func testSignInWithGoogle() async throws {
         let authService = await MockAuthService()
         let mockLogService = MockLogService()
-        let logManager = await LogManager(services: [mockLogService])
+        let logManager = LogManager(services: [mockLogService])
         let authManager = await AuthManager(
             service: authService,
             logManager: logManager
@@ -102,7 +102,7 @@ struct AuthManagerTests {
         let mockUser = UserAuthInfo.mock(isAnonymous: true)
         let authService = await MockAuthService(currentUser: mockUser)
         let mockLogService = MockLogService()
-        let logManager = await LogManager(services: [mockLogService])
+        let logManager = LogManager(services: [mockLogService])
         let authManager = await AuthManager(service: authService, logManager: logManager)
         
         _ = try await authManager.linkAppleAccount()
@@ -151,7 +151,7 @@ struct AuthManagerTests {
     func test_signInWithApple_tracksAnalyticsEvents() async throws {
         let authService = await MockAuthService()
         let mockLogService = MockLogService()
-        let logManager = await LogManager(services: [mockLogService])
+        let logManager = LogManager(services: [mockLogService])
         let authManager = await AuthManager(service: authService, logManager: logManager)
         
         let eventName = AuthManager.Event.authListenerStart.eventName
@@ -179,7 +179,7 @@ struct AuthManagerTests {
         let mockUser = UserAuthInfo.mock(isAnonymous: false)
         let authService = await MockAuthService(currentUser: mockUser)
         let mockLogService = MockLogService()
-        let logManager = await LogManager(services: [mockLogService])
+        let logManager = LogManager(services: [mockLogService])
         let authManager = await AuthManager(
             service: authService,
             logManager: logManager
@@ -208,7 +208,7 @@ struct AuthManagerTests {
         let mockUser = UserAuthInfo.mock(isAnonymous: false)
         let authService = await MockAuthService(currentUser: mockUser)
         let mockLogService = MockLogService()
-        let logManager = await LogManager(services: [mockLogService])
+        let logManager = LogManager(services: [mockLogService])
         let authManager = await AuthManager(
             service: authService,
             logManager: logManager
