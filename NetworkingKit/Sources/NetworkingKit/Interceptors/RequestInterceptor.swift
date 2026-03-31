@@ -3,6 +3,8 @@ import Foundation
 /// Protocol for intercepting and modifying outgoing requests
 public protocol RequestInterceptor: Sendable {
     /// Intercepts and potentially modifies a URL request before it is sent
+    /// - Parameter request: The original URL request
+    /// - Returns: The modified URL request
     func intercept(_ request: URLRequest) async throws -> URLRequest
 }
 

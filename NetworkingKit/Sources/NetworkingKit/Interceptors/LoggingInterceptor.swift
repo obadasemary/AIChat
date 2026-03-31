@@ -10,8 +10,11 @@ public final class LoggingInterceptor: RequestInterceptor, ResponseInterceptor, 
     /// Log level for network logging
     public enum LogLevel: Int, Sendable {
         case none = 0
+        /// Log only basic info (URL, method, status code)
         case basic = 1
+        /// Log headers in addition to basic info
         case headers = 2
+        /// Log full body in addition to headers
         case body = 3
     }
 

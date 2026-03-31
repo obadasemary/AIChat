@@ -2,10 +2,16 @@ import Foundation
 
 /// Configuration for retry behavior
 public struct RetryConfiguration: Sendable {
+    
+    /// Maximum number of retry attempts
     public let maxRetries: Int
+    /// Base delay between retries in seconds
     public let baseDelay: TimeInterval
+    /// Maximum delay between retries in seconds
     public let maxDelay: TimeInterval
+    /// Whether to use exponential backoff
     public let exponentialBackoff: Bool
+    /// Status codes that should trigger a retry
     public let retryableStatusCodes: Set<Int>
 
     /// Default retry configuration

@@ -6,6 +6,9 @@ public final class AuthInterceptor: RequestInterceptor, @unchecked Sendable {
     private let tokenProvider: @Sendable () async throws -> String?
 
     /// Creates a new auth interceptor
+    /// - Parameters:
+    ///   - headerName: The header name for the auth token (default: "Authorization")
+    ///   - tokenProvider: A closure that provides the current auth token
     public init(
         headerName: String = "Authorization",
         tokenProvider: @escaping @Sendable () async throws -> String?
