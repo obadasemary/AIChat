@@ -24,6 +24,14 @@ public struct NetworkRequest: Sendable {
     public let cachePolicy: URLRequest.CachePolicy
 
     /// Creates a new network request
+    /// - Parameters:
+    ///   - path: The URL path
+    ///   - method: The HTTP method (default: .get)
+    ///   - queryParameters: Query parameters (default: nil)
+    ///   - headers: HTTP headers (default: nil)
+    ///   - body: Request body data (default: nil)
+    ///   - timeoutInterval: Timeout in seconds (default: 30)
+    ///   - cachePolicy: Cache policy (default: .useProtocolCachePolicy)
     public init(
         path: String,
         method: HTTPMethod = .get,

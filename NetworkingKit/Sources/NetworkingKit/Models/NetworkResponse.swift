@@ -20,6 +20,11 @@ public struct NetworkResponse: Sendable {
     }
 
     /// Creates a new network response
+    /// - Parameters:
+    ///   - data: The response data
+    ///   - statusCode: The HTTP status code
+    ///   - headers: The response headers
+    ///   - request: The original URL request
     public init(
         data: Data,
         statusCode: Int,
