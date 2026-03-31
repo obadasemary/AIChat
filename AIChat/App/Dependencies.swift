@@ -167,10 +167,11 @@ struct Dependencies {
             )
             bookmarkManager = BookmarkManager()
             let devLogger: @Sendable (String) -> Void = { [logManager] message in
-                logManager.trackEvent(event: AnyLoggableEvent(
-                    eventName: "network_log",
-                    parameters: ["message": message]
-                ))
+                logManager
+                    .trackEvent(
+                        eventName: "network_log",
+                        parameters: ["message": message]
+                    )
             }
             networkManager = NetworkManager(
                 service: URLSessionNetworkService(
