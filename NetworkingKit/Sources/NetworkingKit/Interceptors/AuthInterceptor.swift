@@ -1,6 +1,11 @@
 import Foundation
 
-/// Request interceptor that adds authentication headers
+/// Request interceptor that injects authentication headers into outgoing requests.
+///
+/// `@unchecked Sendable`: `headerName` is an immutable `let` constant and
+/// `tokenProvider` is constrained to a `@Sendable` closure, so there is no
+/// shared mutable state and the type is safe to use across isolation domains
+/// despite the compiler being unable to prove this automatically.
 public final class AuthInterceptor: RequestInterceptor, @unchecked Sendable {
     private let headerName: String
     private let tokenProvider: @Sendable () async throws -> String?
