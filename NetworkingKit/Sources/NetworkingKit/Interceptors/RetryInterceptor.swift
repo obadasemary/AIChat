@@ -108,6 +108,7 @@ public struct RetryHandler: Sendable {
             }
         }
 
-        throw NetworkError.unknown("Retry failed: exhausted \(totalAttempts) attempts")
+        // This line should be unreachable; the loop always returns or throws.
+        preconditionFailure("Retry loop exited without returning or throwing after \(totalAttempts) attempts")
     }
 }
