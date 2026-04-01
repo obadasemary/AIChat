@@ -79,7 +79,8 @@ public final class LoggingInterceptor: RequestInterceptor, ResponseInterceptor, 
         if logLevel.rawValue >= LogLevel.headers.rawValue, !response.headers.isEmpty {
             logMessage += "\n  Headers:"
             for (key, value) in response.headers.sorted(by: { $0.key < $1.key }) {
-                logMessage += "\n    \(key): \(value)"
+                let maskedValue = sensitiveHeaders.contains(key.lowercased()) ? "***" : value
+                logMessage += "\n    \(key): \(maskedValue)"
             }
         }
 
