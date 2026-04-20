@@ -19,6 +19,12 @@ jobs:
         run: |
           echo "✅ Using Xcode 26"
           sudo xcode-select -switch /Applications/Xcode_26.0.1.app
+
+      - name: Install iOS Simulator Runtime
+        run: |
+          echo "📦 Installing iOS Simulator runtime..."
+          xcodebuild -downloadPlatform iOS
+          echo "✅ iOS Simulator runtime installed"
       
       - name: Clear SwiftPM protoc artifact cache (workaround)
         run: |
